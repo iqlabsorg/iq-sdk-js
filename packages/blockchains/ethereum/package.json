@@ -1,0 +1,24 @@
+{
+  "name": "@iqprotocol/ethereum",
+  "version": "0.1.0",
+  "scripts": {
+    "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
+    "build": "tsdx build --tsconfig tsconfig.build.json",
+    "test": "tsdx test",
+    "prepublish": "npm run build"
+  },
+  "main": "dist/index.js",
+  "module": "dist/ethereum.esm.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "README.md",
+    "dist"
+  ],
+  "dependencies": {
+    "@iqprotocol/abstract-blockchain": "0.1.0",
+    "ethers": "^5.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
