@@ -10,6 +10,7 @@
       "@iqprotocol/abstract-storage": ["packages/abstract-storage/src"],
       "@iqprotocol/ethereum": ["packages/blockchains/ethereum/src"],
       "@iqprotocol/postgres": ["packages/storages/postgres/src"],
+      "@iqprotocol/energy": ["packages/energy/src"],
       "$test/*": ["test/*"]
     }
   }
