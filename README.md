@@ -1,1 +1,1 @@
-# iq-sdk-js
+# IQ Protocol JS SDK Monorepo
