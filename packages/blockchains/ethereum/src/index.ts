@@ -1,17 +1,22 @@
 import { BlockchainProvider } from '@iqprotocol/abstract-blockchain';
-import { utils } from 'ethers';
+import {
+  recoverPersonalSignature,
+  recoverTypedSignature_v4,
+  TypedData,
+} from 'eth-sig-util';
 
 export class EthereumBlockchainProvider implements BlockchainProvider {
-  recoverAddress(message: string, signature: string): string {
-    const prefix = Buffer.from('\x19Ethereum Signed Message:\n');
-    const prefixedMsg = utils.keccak256(
-      Buffer.concat([
-        prefix,
-        new Buffer(String(message.length)),
-        Buffer.from(message),
-      ]),
-    );
+  recoverAddress(message: unknown, signature: string): string {
+    if (typeof message === 'string') {
+      return recoverPersonalSignature({
+        data: message,
+        sig: signature,
+      });
+    }
 
-    return utils.recoverAddress(prefixedMsg, signature);
+    return recoverTypedSignature_v4({
+      data: message as TypedData,
+      sig: signature,
+    });
   }
 }
