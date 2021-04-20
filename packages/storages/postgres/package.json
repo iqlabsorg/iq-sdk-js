@@ -15,7 +15,8 @@
     "dist"
   ],
   "dependencies": {
-    "@iqprotocol/abstract-storage": "0.1.0"
+    "@iqprotocol/abstract-storage": "0.1.0",
+    "slonik": "^23.6.4"
   },
   "publishConfig": {
     "access": "public"
