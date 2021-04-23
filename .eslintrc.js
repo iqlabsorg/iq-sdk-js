@@ -20,7 +20,10 @@ module.exports = {
     node: true,
     jest: true,
   },
-  ignorePatterns: ['.eslintrc.js', 'docker'],
+  ignorePatterns: [
+    '.eslintrc.js',
+    'jest.config.js'
+  ],
   rules: {
     '@typescript-eslint/member-ordering': 'error',
     '@typescript-eslint/naming-convention': [
