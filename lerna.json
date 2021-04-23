@@ -3,11 +3,6 @@
   "registry": "https://registry.npmjs.org/",
   "npmClient": "yarn",
   "useWorkspaces": true,
-  "packages": [
-    "packages/*",
-    "packages/blockchains/*",
-    "packages/storages/*"
-  ],
   "command": {
     "version": {
       "message": "chore(release): publish"
