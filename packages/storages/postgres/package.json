@@ -4,7 +4,8 @@
   "scripts": {
     "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
     "build": "tsdx build --tsconfig tsconfig.build.json",
-    "test": "tsdx test",
+    "test": "tsdx test --group=unit",
+    "test:integration": "tsdx test --group=integration",
     "prepublish": "npm run build"
   },
   "main": "dist/index.js",
@@ -14,11 +15,11 @@
     "README.md",
     "dist"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@iqprotocol/abstract-storage": "0.1.0",
     "slonik": "^23.6.4"
-  },
-  "publishConfig": {
-    "access": "public"
   }
 }
