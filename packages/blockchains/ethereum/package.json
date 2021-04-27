@@ -4,8 +4,12 @@
   "scripts": {
     "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
     "build": "tsdx build --tsconfig tsconfig.build.json",
-    "test": "tsdx test",
-    "prepublish": "npm run build"
+    "test": "tsdx test --group=unit",
+    "test:integration": "tsdx test --group=integration",
+    "prepublish": "yarn build",
+    "postinstall": "run-s typechain:clean typechain:generate",
+    "typechain:clean": "rimraf types/contracts",
+    "typechain:generate": "typechain --target ethers-v5 --outDir types/contracts './node_modules/@iqprotocol/solidity-contracts/artifacts/contracts/**/*.json'"
   },
   "main": "dist/index.js",
   "module": "dist/ethereum.esm.js",
@@ -18,6 +22,15 @@
     "@iqprotocol/abstract-blockchain": "0.1.0",
     "eth-sig-util": "^3.0.1",
     "ethers": "^5.1.0"
+  },
+  "devDependencies": {
+    "@iqprotocol/solidity-contracts": "https://github.com/iqalliance/iq-smart-contracts#02067f8a6b5c24883103e4e5aea58c2ea7a53495",
+    "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers",
+    "@typechain/ethers-v5": "^6.0.5",
+    "hardhat": "^2.2.0",
+    "hardhat-deploy": "^0.7.5",
+    "hardhat-deploy-ethers": "^0.3.0-beta.7",
+    "typechain": "^4.0.3"
   },
   "publishConfig": {
     "access": "public"
