@@ -7,6 +7,7 @@ import {
 import {
   EnterpriseData,
   EvmCompatibleBlockchainProvider,
+  ServiceData,
 } from '@iqprotocol/abstract-blockchain';
 
 type DeployedContracts = {
@@ -50,5 +51,34 @@ export class EthereumBlockchainProvider
       enterprise.baseUri(),
     ]);
     return { name, baseUri, tokenAddress };
+  }
+
+  async registerService(
+    enterpriseAddress: string,
+    serviceConfig: ServiceData,
+  ): Promise<ContractTransaction> {
+    const enterprise = Enterprise__factory.connect(
+      enterpriseAddress,
+      this.signer,
+    );
+    const {
+      name,
+      symbol,
+      halfLife,
+      factor,
+      interestRateHalvingPeriod,
+      allowedLoanDurations,
+      allowedRefundCurvatures,
+    } = serviceConfig;
+
+    return enterprise.registerService(
+      name,
+      symbol,
+      halfLife,
+      factor,
+      interestRateHalvingPeriod,
+      allowedLoanDurations,
+      allowedRefundCurvatures,
+    );
   }
 }

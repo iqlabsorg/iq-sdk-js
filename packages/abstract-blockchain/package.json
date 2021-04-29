@@ -14,8 +14,10 @@
     "README.md",
     "dist"
   ],
-  "dependencies": {},
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "@ethersproject/bignumber": "^5.1.1"
   }
 }

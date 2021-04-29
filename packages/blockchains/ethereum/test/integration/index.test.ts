@@ -1,7 +1,6 @@
-import hre from 'hardhat';
-import '@nomiclabs/hardhat-ethers';
+import { deployments, ethers } from 'hardhat';
+import 'hardhat-deploy-ethers';
 import { EthereumBlockchainProvider } from '../../src';
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/dist/src/signer-with-address';
 import { getEnterprise } from './utils';
 import {
   Enterprise,
@@ -10,24 +9,26 @@ import {
 } from '../../types/contracts';
 import { EnterpriseData } from '@iqprotocol/abstract-blockchain';
 
+type Awaited<T> = T extends PromiseLike<infer U> ? Awaited<U> : T;
+
 /**
  * @group integration
  */
 describe('@iqprotocol/ethereum', () => {
   describe('EthereumBlockchainProvider', () => {
     let ethereumProvider: EthereumBlockchainProvider;
-    let deployerSigner: SignerWithAddress;
+    let deployerSigner: Awaited<ReturnType<typeof ethers.getNamedSigner>>;
     let erc20Token: ERC20Mock;
     let enterpriseFactory: EnterpriseFactory;
     let testEnterpriseData: EnterpriseData;
 
     beforeEach(async () => {
-      await hre.deployments.fixture();
-      deployerSigner = await hre.ethers.getNamedSigner('deployer');
-      enterpriseFactory = (await hre.ethers.getContract(
+      await deployments.fixture();
+      deployerSigner = await ethers.getNamedSigner('deployer');
+      enterpriseFactory = (await ethers.getContract(
         'EnterpriseFactory',
       )) as EnterpriseFactory;
-      erc20Token = (await hre.ethers.getContract('ERC20Mock')) as ERC20Mock;
+      erc20Token = (await ethers.getContract('ERC20Mock')) as ERC20Mock;
       ethereumProvider = new EthereumBlockchainProvider(deployerSigner, {
         enterpriseFactory: enterpriseFactory.address,
       });
@@ -73,6 +74,27 @@ describe('@iqprotocol/ethereum', () => {
           enterprise.address,
         );
         expect(data).toEqual(testEnterpriseData);
+      });
+
+      it('registers new services', async () => {
+        const HALF_LIFE = 86400;
+        const FACTOR = ethers.utils.parseUnits('1', 18);
+        const INTEREST_RATE_HALVING_PERIOD = 20000;
+        const ALLOWED_LOAN_DURATIONS = [86400, 2 * 86400, 7 * 86400];
+        const ALLOWED_REFUND_CURVATURES = [1, 2, 4];
+
+        const tx = await ethereumProvider.registerService(enterprise.address, {
+          name: 'IQ Power Test',
+          symbol: 'IQPT',
+          halfLife: HALF_LIFE,
+          factor: FACTOR,
+          interestRateHalvingPeriod: INTEREST_RATE_HALVING_PERIOD,
+          allowedLoanDurations: ALLOWED_LOAN_DURATIONS,
+          allowedRefundCurvatures: ALLOWED_REFUND_CURVATURES,
+        });
+
+        const receipt = await tx.wait(1);
+        expect(receipt.status).toBe(1);
       });
     });
   });
