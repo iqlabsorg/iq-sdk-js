@@ -1036,7 +1036,7 @@
     "@ethersproject/bytes" "^5.1.0"
     "@ethersproject/properties" "^5.1.0"
 
-"@ethersproject/bignumber@5.1.1", "@ethersproject/bignumber@^5.0.0", "@ethersproject/bignumber@^5.1.0":
+"@ethersproject/bignumber@5.1.1", "@ethersproject/bignumber@^5.0.0", "@ethersproject/bignumber@^5.1.0", "@ethersproject/bignumber@^5.1.1":
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/@ethersproject/bignumber/-/bignumber-5.1.1.tgz#84812695253ccbc639117f7ac49ee1529b68e637"
   integrity sha512-AVz5iqz7+70RIqoQTznsdJ6DOVBYciNlvO+AlQmPTB6ofCvoihI9bQdr6wljsX+d5W7Yc4nyvQvP4JMzg0Agig==
@@ -2189,11 +2189,6 @@
     "@nodelib/fs.scandir" "2.1.4"
     fastq "^1.6.0"
 
-"@nomiclabs/hardhat-ethers@npm:hardhat-deploy-ethers", hardhat-deploy-ethers@^0.3.0-beta.7:
-  version "0.3.0-beta.7"
-  resolved "https://registry.yarnpkg.com/hardhat-deploy-ethers/-/hardhat-deploy-ethers-0.3.0-beta.7.tgz#860d86b84ed3c4fdef64283ccf1e8d5623454d02"
-  integrity sha512-JKMNte6vudu9LSNqgmBtNxc1gfxp3NUcPKVAf/FANHfl9pa/mBGg6hpQO7tD8CLkAbe6f4K5BjyYIPWX3p7MKw==
-
 "@npmcli/ci-detect@^1.0.0":
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/@npmcli/ci-detect/-/ci-detect-1.3.0.tgz#6c1d2c625fb6ef1b9dea85ad0a5afcbef85ef22a"
@@ -2290,10 +2285,10 @@
     "@octokit/types" "^6.0.3"
     universal-user-agent "^6.0.0"
 
-"@octokit/openapi-types@^6.1.1":
-  version "6.1.1"
-  resolved "https://registry.yarnpkg.com/@octokit/openapi-types/-/openapi-types-6.1.1.tgz#27f9386fcbcb9846b27b1bc8a41ba6f313c922a6"
-  integrity sha512-ICBhnEb+ahi/TTdNuYb/kTyKVBgAM0VD4k6JPzlhJyzt3Z+Tq/bynwCD+gpkJP7AEcNnzC8YO5R39trmzEo2UA==
+"@octokit/openapi-types@^6.2.1":
+  version "6.2.1"
+  resolved "https://registry.yarnpkg.com/@octokit/openapi-types/-/openapi-types-6.2.1.tgz#5830395622ca0d8e945532c7ace722aec3670508"
+  integrity sha512-rSyuVb2zVwEbWpl1FJzVziyDfvEhNcvIsp6QxmEJkpiFuPfcZ4LwXz2/fhVdVC8Xy7BCugUQr7/ISdhYwgs3zQ==
 
 "@octokit/plugin-enterprise-rest@^6.0.1":
   version "6.0.1"
@@ -2352,11 +2347,11 @@
     "@octokit/plugin-rest-endpoint-methods" "5.0.1"
 
 "@octokit/types@^6.0.3", "@octokit/types@^6.11.0", "@octokit/types@^6.13.1", "@octokit/types@^6.7.1":
-  version "6.13.2"
-  resolved "https://registry.yarnpkg.com/@octokit/types/-/types-6.13.2.tgz#e3423dc733567ac4836e116b34d154a8e9cbbf3c"
-  integrity sha512-jN5LImYHvv7W6SZargq1UMJ3EiaqIz5qkpfsv4GAb4b16SGqctxtOU2TQAZxvsKHkOw2A4zxdsi5wR9en1/ezQ==
+  version "6.14.1"
+  resolved "https://registry.yarnpkg.com/@octokit/types/-/types-6.14.1.tgz#4579bbdabee9a8349ce302f29ebc6f81775f0f5c"
+  integrity sha512-RDzkeFPaT2TgZcNtB2s1HtaMmtOrvXsc5VsAdpzApNkTwNN7Jk76RRCzGYhjm+hQ/HHuQXZkxUDWhJlt2QAyKQ==
   dependencies:
-    "@octokit/openapi-types" "^6.1.1"
+    "@octokit/openapi-types" "^6.2.1"
 
 "@rollup/plugin-babel@^5.1.0":
   version "5.3.0"
@@ -3631,7 +3626,7 @@ browserify-aes@^1.2.0:
     inherits "^2.0.1"
     safe-buffer "^5.0.1"
 
-browserslist@^4.14.5, browserslist@^4.16.4:
+browserslist@^4.14.5, browserslist@^4.16.5:
   version "4.16.5"
   resolved "https://registry.yarnpkg.com/browserslist/-/browserslist-4.16.5.tgz#952825440bca8913c62d0021334cbe928ef062ae"
   integrity sha512-C2HAjrM1AI/djrpAUU/tr4pml1DqLIzJKSLDBXBrNErl9ZCCTXdhwxdJjYc16953+mBWf7Lw+uUJgpgb8cN71A==
@@ -3821,9 +3816,9 @@ camelcase@^6.0.0:
   integrity sha512-c7wVvbw3f37nuobQNtgsgG9POC9qMbNuMQmTCqZv23b6MIz0fcYpBiOlv9gEN/hdLdnZTDQhg6e9Dq5M1vKvfg==
 
 caniuse-lite@^1.0.30001214:
-  version "1.0.30001218"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001218.tgz#9b44f6ed16f875db6373e2debd4d14a07359002f"
-  integrity sha512-0ASydOWSy3bB88FbDpJSTt+PfDwnMqrym3yRZfqG8EXSQ06OZhF+q5wgYP/EN+jJMERItNcDQUqMyNjzZ+r5+Q==
+  version "1.0.30001219"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001219.tgz#5bfa5d0519f41f993618bd318f606a4c4c16156b"
+  integrity sha512-c0yixVG4v9KBc/tQ2rlbB3A/bgBFRvl8h8M4IeUbqCca4gsiCfvtaheUssbnux/Mb66Vjz7x8yYjDgYcNQOhyQ==
 
 capture-exit@^2.0.0:
   version "2.0.0"
@@ -4272,17 +4267,17 @@ copy-descriptor@^0.1.0:
   integrity sha1-Z29us8OZl8LuGsOpJP1hJHSPV40=
 
 core-js-compat@^3.9.0, core-js-compat@^3.9.1:
-  version "3.11.0"
-  resolved "https://registry.yarnpkg.com/core-js-compat/-/core-js-compat-3.11.0.tgz#635683f43480a0b41e3f6be3b1c648dadb8b4390"
-  integrity sha512-3wsN9YZJohOSDCjVB0GequOyHax8zFiogSX3XWLE28M1Ew7dTU57tgHjIylSBKSIouwmLBp3g61sKMz/q3xEGA==
+  version "3.11.1"
+  resolved "https://registry.yarnpkg.com/core-js-compat/-/core-js-compat-3.11.1.tgz#57a91e9b02d3bb8cf37f82eceaf44a3d646fa614"
+  integrity sha512-aZ0e4tmlG/aOBHj92/TuOuZwp6jFvn1WNabU5VOVixzhu5t5Ao+JZkQOPlgNXu6ynwLrwJxklT4Gw1G1VGEh+g==
   dependencies:
-    browserslist "^4.16.4"
+    browserslist "^4.16.5"
     semver "7.0.0"
 
 core-js-pure@^3.0.0, core-js-pure@^3.0.1:
-  version "3.11.0"
-  resolved "https://registry.yarnpkg.com/core-js-pure/-/core-js-pure-3.11.0.tgz#e07f25a8f616d178ec16b0354b008ad28b20b2f0"
-  integrity sha512-PxEiQGjzC+5qbvE7ZIs5Zn6BynNeZO9zHhrrWmkRff2SZLq0CE/H5LuZOJHhmOQ8L38+eMzEHAmPYWrUtDfuDQ==
+  version "3.11.1"
+  resolved "https://registry.yarnpkg.com/core-js-pure/-/core-js-pure-3.11.1.tgz#fd52fa8c8b7b797b3606524b3d97278a8d8e7f09"
+  integrity sha512-2JukQi8HgAOCD5CSimxWWXVrUBoA9Br796uIA5Z06bIjt7PBBI19ircFaAxplgE1mJf3x2BY6MkT/HWA/UryPg==
 
 core-util-is@1.0.2, core-util-is@~1.0.0:
   version "1.0.2"
@@ -4680,9 +4675,9 @@ ecc-jsbn@~0.1.1:
     safer-buffer "^2.1.0"
 
 electron-to-chromium@^1.3.719:
-  version "1.3.722"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.722.tgz#621657f79e7f65402e71aa3403bc941f3a4af0a0"
-  integrity sha512-aAsc906l0RBsVTsGTK+KirVfey9eNtxyejdkbNzkISGxb7AFna3Kf0qvsp8tMttzBt9Bz3HddtYQ+++/PZtRYA==
+  version "1.3.723"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.723.tgz#52769a75635342a4db29af5f1e40bd3dad02c877"
+  integrity sha512-L+WXyXI7c7+G1V8ANzRsPI5giiimLAUDC6Zs1ojHHPhYXb3k/iTABFmWjivEtsWrRQymjnO66/rO2ZTABGdmWg==
 
 elliptic@6.5.4, elliptic@^6.5.2:
   version "6.5.4"
@@ -5462,9 +5457,9 @@ fast-json-stable-stringify@2.x, fast-json-stable-stringify@^2.0.0:
   integrity sha512-lhd/wF+Lk98HZoTCtlVraHtfh5XYijIjalXck7saUtuanSDyLMxnHhSXEDJqHxD7msR8D0uCmqlkwjCV8xvwHw==
 
 fast-json-stringify@^2.5.2:
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/fast-json-stringify/-/fast-json-stringify-2.7.0.tgz#d7793a1e01e2ed7088bd7136de3b817d6ddb2f32"
-  integrity sha512-Faer5r+425rSghwMqIxAAL+5nAcUQBwBsMBXaGZJ2lmbdc/YlTl1GfT9nrbW2kmLYyYn8AXWW8PfEC5496Bq9Q==
+  version "2.7.1"
+  resolved "https://registry.yarnpkg.com/fast-json-stringify/-/fast-json-stringify-2.7.1.tgz#60b46813f771c4554ac213c1d0cfb62e48c14a5d"
+  integrity sha512-DInuFDVNbwjZmcZke80IB1GlMONCAc15QqRhLQCOrAyJr1tFmQsgpXCJS2dtwxLWL1PtTtOLK4itj24wEqIMWg==
   dependencies:
     ajv "^6.11.0"
     deepmerge "^4.2.2"
@@ -6043,6 +6038,11 @@ hard-rejection@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/hard-rejection/-/hard-rejection-2.1.0.tgz#1c6eda5c1685c63942766d79bb40ae773cecd883"
   integrity sha512-VIZB+ibDhx7ObhAe7OVtoEbuP4h/MuOTHJ+J8h/eBXotJYl0fBgR72xDFCKgIh22OJZIOVNxBMWuhAr10r8HdA==
+
+hardhat-deploy-ethers@^0.3.0-beta.7:
+  version "0.3.0-beta.7"
+  resolved "https://registry.yarnpkg.com/hardhat-deploy-ethers/-/hardhat-deploy-ethers-0.3.0-beta.7.tgz#860d86b84ed3c4fdef64283ccf1e8d5623454d02"
+  integrity sha512-JKMNte6vudu9LSNqgmBtNxc1gfxp3NUcPKVAf/FANHfl9pa/mBGg6hpQO7tD8CLkAbe6f4K5BjyYIPWX3p7MKw==
 
 hardhat-deploy@^0.7.5:
   version "0.7.5"

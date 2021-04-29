@@ -1,6 +1,6 @@
 import { HardhatUserConfig } from 'hardhat/types';
 import 'hardhat-deploy';
-import '@nomiclabs/hardhat-ethers';
+import 'hardhat-deploy-ethers';
 
 const config: HardhatUserConfig = {
   solidity: {
