@@ -10,3 +10,11 @@ end_of_line = lf
 
 [*.md]
 trim_trailing_whitespace = false
+
+[*.ts]
+ij_typescript_spaces_within_imports = true
+ij_typescript_spaces_within_object_literal_braces = true
+
+[*.js]
+ij_javascript_spaces_within_imports = true
+ij_javascript_spaces_within_object_literal_braces = true
