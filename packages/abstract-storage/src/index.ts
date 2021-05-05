@@ -1,5 +1,2 @@
-export abstract class StorageProvider {
-  isInitialized(): boolean {
-    return true;
-  }
-}
+export * from './types';
+export * from './in-memory-store';
