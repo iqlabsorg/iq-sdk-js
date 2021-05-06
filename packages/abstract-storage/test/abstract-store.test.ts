@@ -1,10 +1,4 @@
-import {
-  AbstractStore,
-  Account,
-  AccountState,
-  AccountStateValidator,
-  StorageProvider,
-} from '../src';
+import { AbstractStore, Account, AccountState, AccountStateValidator, StorageProvider } from '../src';
 
 class DummyStore extends AbstractStore {
   public getAccount = jest.fn();

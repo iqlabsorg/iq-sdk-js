@@ -14,12 +14,9 @@ describe('@iqprotocol/energy', () => {
       ${0}   | ${199700000001.25}               | ${2373046875} | ${2373046874} | ${99850000029.79036}
       ${0}   | ${4503599627370449.333}          | ${2373046875} | ${2373046874} | ${2251799814342956.5}
       ${0}   | ${Number.MAX_SAFE_INTEGER / 2.0} | ${2373046875} | ${2373046874} | ${2251799814342979.5}
-    `(
-      'returns $expected with t0 = $t0, c0 = $c0, t12 = $t12, t = $t',
-      ({ t0, c0, t12, t, expected }) => {
-        expect(Energy.halfLife(t0, c0, t12, t)).toEqual(expected);
-      },
-    );
+    `('returns $expected with t0 = $t0, c0 = $c0, t12 = $t12, t = $t', ({ t0, c0, t12, t, expected }) => {
+      expect(Energy.halfLife(t0, c0, t12, t)).toEqual(expected);
+    });
 
     it('throws when period is negative', () => {
       expect(() => Energy.halfLife(100, 1000, 20, 50)).toThrow();

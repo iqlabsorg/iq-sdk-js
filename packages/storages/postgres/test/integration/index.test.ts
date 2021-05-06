@@ -3,10 +3,7 @@ import { Account, AccountState } from '@iqprotocol/abstract-storage';
 import { PostgresStorageConfig, PostgresStore } from '../../src';
 import { createPool, DatabasePoolType, sql } from 'slonik';
 import { ensureDatabase, truncateTables } from './support/utils';
-import {
-  DockerComposeEnvironment,
-  StartedDockerComposeEnvironment,
-} from 'testcontainers';
+import { DockerComposeEnvironment, StartedDockerComposeEnvironment } from 'testcontainers';
 
 /**
  * @group integration
@@ -43,10 +40,7 @@ describe('@iqprotocol/postgres', () => {
   let pool: DatabasePoolType;
 
   beforeAll(async () => {
-    environment = await new DockerComposeEnvironment(
-      path.resolve(__dirname, 'support'),
-      'docker-compose.yml',
-    )
+    environment = await new DockerComposeEnvironment(path.resolve(__dirname, 'support'), 'docker-compose.yml')
       .withEnv('POSTGRES_DB', TEST_DATABASE_NAME)
       .up();
 
@@ -84,18 +78,14 @@ describe('@iqprotocol/postgres', () => {
     });
 
     describe('When the store is empty', () => {
-      beforeEach(async () =>
-        truncateTables(pool, [config.accountTable, config.stateTable]),
-      );
+      beforeEach(async () => truncateTables(pool, [config.accountTable, config.stateTable]));
 
       it('does not return account data', async () => {
         await expect(store.getAccount(account.id)).resolves.toBeNull();
       });
 
       it('does not return account state', async () => {
-        await expect(
-          store.getAccountState(accountState.accountId, accountState.serviceId),
-        ).resolves.toBeNull();
+        await expect(store.getAccountState(accountState.accountId, accountState.serviceId)).resolves.toBeNull();
       });
 
       it('saves account', async () => {
@@ -129,16 +119,14 @@ describe('@iqprotocol/postgres', () => {
           },
         };
         await store.saveAccount(updatedAccount);
-        await expect(store.getAccount(account.id)).resolves.toEqual(
-          updatedAccount,
-        );
+        await expect(store.getAccount(account.id)).resolves.toEqual(updatedAccount);
       });
 
       it('saves account state', async () => {
         await store.saveAccountState(accountState);
-        await expect(
-          store.getAccountState(accountState.accountId, accountState.serviceId),
-        ).resolves.toEqual(accountState);
+        await expect(store.getAccountState(accountState.accountId, accountState.serviceId)).resolves.toEqual(
+          accountState,
+        );
       });
     });
 
@@ -149,9 +137,9 @@ describe('@iqprotocol/postgres', () => {
       });
 
       it('returns account state', async () => {
-        await expect(
-          store.getAccountState(accountState.accountId, accountState.serviceId),
-        ).resolves.toEqual(accountState);
+        await expect(store.getAccountState(accountState.accountId, accountState.serviceId)).resolves.toEqual(
+          accountState,
+        );
       });
 
       it('updates account state', async () => {
@@ -162,9 +150,9 @@ describe('@iqprotocol/postgres', () => {
           energyChangedAt: Number(Date.now() / 1000),
         };
         await store.saveAccountState(updatedState);
-        await expect(
-          store.getAccountState(accountState.accountId, accountState.serviceId),
-        ).resolves.toEqual(updatedState);
+        await expect(store.getAccountState(accountState.accountId, accountState.serviceId)).resolves.toEqual(
+          updatedState,
+        );
       });
     });
   });

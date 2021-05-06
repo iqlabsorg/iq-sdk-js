@@ -10,12 +10,7 @@ export class Energy {
     return c0 * 0.5 ** ((t - t0) / t12);
   }
 
-  static calculateEnergy(
-    balance: number,
-    prevEnergy: number,
-    t0: number,
-    t1: number,
-  ): number {
+  static calculateEnergy(balance: number, prevEnergy: number, t0: number, t1: number): number {
     if (balance > prevEnergy) {
       return balance - this.halfLife(t0, balance - prevEnergy, 100, t1);
     }

@@ -1,15 +1,5 @@
-import {
-  Account,
-  AccountData,
-  AccountState,
-  StorageProvider,
-} from '@iqprotocol/abstract-storage';
-import {
-  createPool,
-  DatabasePoolType,
-  IdentifierSqlTokenType,
-  sql,
-} from 'slonik';
+import { Account, AccountData, AccountState, StorageProvider } from '@iqprotocol/abstract-storage';
+import { createPool, DatabasePoolType, IdentifierSqlTokenType, sql } from 'slonik';
 
 export type PostgresStorageConfig = {
   connectionUri: string;
@@ -90,13 +80,7 @@ export class PostgresStore implements StorageProvider {
     });
   }
 
-  async saveAccountState({
-    accountId,
-    serviceId,
-    balance,
-    energy,
-    energyChangedAt,
-  }: AccountState): Promise<void> {
+  async saveAccountState({ accountId, serviceId, balance, energy, energyChangedAt }: AccountState): Promise<void> {
     await this.pool.connect(async connection => {
       await connection.query(
         sql`INSERT INTO ${this.stateTableName} (
@@ -122,10 +106,7 @@ export class PostgresStore implements StorageProvider {
     });
   }
 
-  async getAccountState(
-    accountId: string,
-    serviceId: string,
-  ): Promise<AccountState | null> {
+  async getAccountState(accountId: string, serviceId: string): Promise<AccountState | null> {
     return this.pool.connect(async connection => {
       const row = await connection.maybeOne(
         sql`SELECT account_id, service_id, balance, energy, EXTRACT(EPOCH FROM energy_changed_at) as energy_changed_at

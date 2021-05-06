@@ -1,8 +1,4 @@
-import {
-  recoverPersonalSignature,
-  recoverTypedSignature_v4,
-  TypedData,
-} from 'eth-sig-util';
+import { recoverPersonalSignature, recoverTypedSignature_v4, TypedData } from 'eth-sig-util';
 
 export class Utils {
   static recoverAddress(message: unknown, signature: string): string {

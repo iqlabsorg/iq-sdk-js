@@ -30,9 +30,7 @@ describe('InMemoryStore', () => {
       await expect(store.getAccount(account.id)).resolves.toBeNull();
     });
     it('does not return account state', async () => {
-      await expect(
-        store.getAccountState(accountState.accountId, accountState.serviceId),
-      ).resolves.toBeNull();
+      await expect(store.getAccountState(accountState.accountId, accountState.serviceId)).resolves.toBeNull();
     });
 
     it('saves account', async () => {
@@ -68,25 +66,19 @@ describe('InMemoryStore', () => {
         },
       };
       await store.saveAccount(updatedAccount);
-      await expect(store.getAccount(account.id)).resolves.toEqual(
-        updatedAccount,
-      );
+      await expect(store.getAccount(account.id)).resolves.toEqual(updatedAccount);
     });
 
     it('saves account state', async () => {
       await store.saveAccountState(accountState);
-      await expect(
-        store.getAccountState(accountState.accountId, accountState.serviceId),
-      ).resolves.toEqual(accountState);
+      await expect(store.getAccountState(accountState.accountId, accountState.serviceId)).resolves.toEqual(
+        accountState,
+      );
     });
 
     it('validates account state before insert', async () => {
-      await expect(
-        store.saveAccountState({ ...accountState, balance: -5n }),
-      ).rejects.toThrow('Negative balance');
-      await expect(
-        store.getAccountState(accountState.accountId, accountState.serviceId),
-      ).resolves.toBeNull();
+      await expect(store.saveAccountState({ ...accountState, balance: -5n })).rejects.toThrow('Negative balance');
+      await expect(store.getAccountState(accountState.accountId, accountState.serviceId)).resolves.toBeNull();
     });
   });
 
@@ -96,9 +88,9 @@ describe('InMemoryStore', () => {
     });
 
     it('returns account state', async () => {
-      await expect(
-        store.getAccountState(accountState.accountId, accountState.serviceId),
-      ).resolves.toEqual(accountState);
+      await expect(store.getAccountState(accountState.accountId, accountState.serviceId)).resolves.toEqual(
+        accountState,
+      );
     });
 
     it('updates account state', async () => {
@@ -109,18 +101,16 @@ describe('InMemoryStore', () => {
         energyChangedAt: Number(Date.now() / 1000),
       };
       await store.saveAccountState(updatedState);
-      await expect(
-        store.getAccountState(accountState.accountId, accountState.serviceId),
-      ).resolves.toEqual(updatedState);
+      await expect(store.getAccountState(accountState.accountId, accountState.serviceId)).resolves.toEqual(
+        updatedState,
+      );
     });
 
     it('validates account state before update', async () => {
-      await expect(
-        store.saveAccountState({ ...accountState, balance: -5n }),
-      ).rejects.toThrow('Negative balance');
-      await expect(
-        store.getAccountState(accountState.accountId, accountState.serviceId),
-      ).resolves.toEqual(accountState);
+      await expect(store.saveAccountState({ ...accountState, balance: -5n })).rejects.toThrow('Negative balance');
+      await expect(store.getAccountState(accountState.accountId, accountState.serviceId)).resolves.toEqual(
+        accountState,
+      );
     });
   });
 });

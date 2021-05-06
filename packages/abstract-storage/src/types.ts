@@ -33,8 +33,5 @@ export interface StorageProvider {
 
   saveAccountState(accountState: AccountState): Promise<void>;
 
-  getAccountState(
-    accountId: string,
-    serviceId: string,
-  ): Promise<AccountState | null>;
+  getAccountState(accountId: string, serviceId: string): Promise<AccountState | null>;
 }
