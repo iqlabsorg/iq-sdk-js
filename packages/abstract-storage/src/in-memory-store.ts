@@ -1,15 +1,21 @@
 /* eslint-disable @typescript-eslint/require-await */
-import { Account, AccountState, StorageProvider } from './types';
+import { Account, AccountState } from './types';
+import { AbstractStore } from './abstract-store';
+import { AccountStateValidator } from './validator';
 
-export class InMemoryStore implements StorageProvider {
+export class InMemoryStore extends AbstractStore {
   private readonly accounts: Map<string, Account>;
   private readonly states: Map<string, AccountState>;
 
-  constructor(accounts?: Account[], states?: AccountState[]) {
+  constructor(
+    accounts?: Account[],
+    states?: AccountState[],
+    validator?: AccountStateValidator,
+  ) {
+    super(validator);
     this.accounts = new Map(
       accounts ? accounts.map(account => [account.id, account]) : [],
     );
-
     this.states = new Map(
       // eslint-disable-next-line prettier/prettier
       states ? states.map(state => [InMemoryStore.stateKey(state.accountId, state.serviceId), state]): [],
@@ -24,18 +30,6 @@ export class InMemoryStore implements StorageProvider {
     return this.accounts.get(id) ?? null;
   }
 
-  async saveAccount(account: Account): Promise<void> {
-    this.accounts.set(account.id, account);
-  }
-
-  async saveAccountState(accountState: AccountState): Promise<void> {
-    const { accountId, serviceId } = accountState;
-    if (!this.accounts.has(accountId)) {
-      throw new Error('Unknown account');
-    }
-    this.states.set(InMemoryStore.stateKey(accountId, serviceId), accountState);
-  }
-
   async getAccountState(
     accountId: string,
     serviceId: string,
@@ -43,5 +37,17 @@ export class InMemoryStore implements StorageProvider {
     return (
       this.states.get(InMemoryStore.stateKey(accountId, serviceId)) ?? null
     );
+  }
+
+  protected async _saveAccount(account: Account): Promise<void> {
+    this.accounts.set(account.id, account);
+  }
+
+  protected async _saveAccountState(accountState: AccountState): Promise<void> {
+    const { accountId, serviceId } = accountState;
+    if (!this.accounts.has(accountId)) {
+      throw new Error('Unknown account');
+    }
+    this.states.set(InMemoryStore.stateKey(accountId, serviceId), accountState);
   }
 }
