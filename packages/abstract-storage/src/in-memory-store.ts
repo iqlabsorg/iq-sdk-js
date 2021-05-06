@@ -7,18 +7,11 @@ export class InMemoryStore extends AbstractStore {
   private readonly accounts: Map<string, Account>;
   private readonly states: Map<string, AccountState>;
 
-  constructor(
-    accounts?: Account[],
-    states?: AccountState[],
-    validator?: AccountStateValidator,
-  ) {
+  constructor(accounts?: Account[], states?: AccountState[], validator?: AccountStateValidator) {
     super(validator);
-    this.accounts = new Map(
-      accounts ? accounts.map(account => [account.id, account]) : [],
-    );
+    this.accounts = new Map(accounts ? accounts.map(account => [account.id, account]) : []);
     this.states = new Map(
-      // eslint-disable-next-line prettier/prettier
-      states ? states.map(state => [InMemoryStore.stateKey(state.accountId, state.serviceId), state]): [],
+      states ? states.map(state => [InMemoryStore.stateKey(state.accountId, state.serviceId), state]) : [],
     );
   }
 
@@ -30,13 +23,8 @@ export class InMemoryStore extends AbstractStore {
     return this.accounts.get(id) ?? null;
   }
 
-  async getAccountState(
-    accountId: string,
-    serviceId: string,
-  ): Promise<AccountState | null> {
-    return (
-      this.states.get(InMemoryStore.stateKey(accountId, serviceId)) ?? null
-    );
+  async getAccountState(accountId: string, serviceId: string): Promise<AccountState | null> {
+    return this.states.get(InMemoryStore.stateKey(accountId, serviceId)) ?? null;
   }
 
   protected async _saveAccount(account: Account): Promise<void> {

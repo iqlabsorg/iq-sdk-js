@@ -1,21 +1,12 @@
 import { ContractTransaction, Signer } from 'ethers';
-import {
-  Enterprise__factory,
-  EnterpriseFactory__factory,
-  ERC20Mock__factory,
-} from '../types/contracts';
-import {
-  EnterpriseData,
-  EvmCompatibleBlockchainProvider,
-  ServiceData,
-} from '@iqprotocol/abstract-blockchain';
+import { Enterprise__factory, EnterpriseFactory__factory, ERC20Mock__factory } from '../types/contracts';
+import { EnterpriseData, EvmCompatibleBlockchainProvider, ServiceData } from '@iqprotocol/abstract-blockchain';
 
 type DeployedContracts = {
   enterpriseFactory: string;
 };
 
-export class EthereumBlockchainProvider
-  implements EvmCompatibleBlockchainProvider<ContractTransaction> {
+export class EthereumBlockchainProvider implements EvmCompatibleBlockchainProvider<ContractTransaction> {
   private readonly signer: Signer;
   private readonly contracts: DeployedContracts;
 
@@ -29,22 +20,16 @@ export class EthereumBlockchainProvider
     return (await token.balanceOf(address)).toString();
   }
 
-  async deployEnterprise({
-    name,
-    tokenAddress,
-    baseUri,
-  }: EnterpriseData): Promise<ContractTransaction> {
-    return EnterpriseFactory__factory.connect(
-      this.contracts.enterpriseFactory,
-      this.signer,
-    ).deploy(name, tokenAddress, baseUri);
+  async deployEnterprise({ name, tokenAddress, baseUri }: EnterpriseData): Promise<ContractTransaction> {
+    return EnterpriseFactory__factory.connect(this.contracts.enterpriseFactory, this.signer).deploy(
+      name,
+      tokenAddress,
+      baseUri,
+    );
   }
 
   async getEnterpriseData(enterpriseAddress: string): Promise<EnterpriseData> {
-    const enterprise = Enterprise__factory.connect(
-      enterpriseAddress,
-      this.signer,
-    );
+    const enterprise = Enterprise__factory.connect(enterpriseAddress, this.signer);
     const [name, tokenAddress, baseUri] = await Promise.all([
       enterprise.name(),
       enterprise.liquidityToken(),
@@ -53,14 +38,8 @@ export class EthereumBlockchainProvider
     return { name, baseUri, tokenAddress };
   }
 
-  async registerService(
-    enterpriseAddress: string,
-    serviceConfig: ServiceData,
-  ): Promise<ContractTransaction> {
-    const enterprise = Enterprise__factory.connect(
-      enterpriseAddress,
-      this.signer,
-    );
+  async registerService(enterpriseAddress: string, serviceConfig: ServiceData): Promise<ContractTransaction> {
+    const enterprise = Enterprise__factory.connect(enterpriseAddress, this.signer);
     const {
       name,
       symbol,

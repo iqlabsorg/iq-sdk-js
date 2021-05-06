@@ -12,7 +12,5 @@ export const getEnterprise = async (
   );
 
   const enterpriseAddress = events[0].args?.[3];
-  return (await hre.ethers.getContractFactory('Enterprise')).attach(
-    enterpriseAddress,
-  );
+  return (await hre.ethers.getContractFactory('Enterprise')).attach(enterpriseAddress);
 };

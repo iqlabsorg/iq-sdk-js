@@ -21,8 +21,5 @@ export interface EvmCompatibleBlockchainProvider<TransactionResponse> {
 
   getEnterpriseData(enterpriseAddress: string): Promise<EnterpriseData>;
 
-  registerService(
-    enterpriseAddress: string,
-    serviceConfig: ServiceData,
-  ): Promise<TransactionResponse>;
+  registerService(enterpriseAddress: string, serviceConfig: ServiceData): Promise<TransactionResponse>;
 }
