@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/require-await */
-import { Account, AccountState } from './types';
-import { AbstractStore } from './abstract-store';
-import { AccountStateValidator } from './validator';
+import { AbstractStore, Account, AccountState, AccountStateValidator } from '@iqprotocol/abstract-storage';
 
 export class InMemoryStore extends AbstractStore {
   private readonly accounts: Map<string, Account>;

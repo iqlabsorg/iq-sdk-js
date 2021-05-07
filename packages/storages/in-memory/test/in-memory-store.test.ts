@@ -1,4 +1,5 @@
-import { Account, AccountState, InMemoryStore } from '../src';
+import { Account, AccountState } from '@iqprotocol/abstract-storage';
+import { InMemoryStore } from '../src';
 
 /**
  * @group unit
