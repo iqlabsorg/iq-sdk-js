@@ -6,9 +6,8 @@ class DummyStore extends AbstractStore {
   protected _saveAccount = jest.fn();
   protected _saveAccountState = jest.fn();
 
-  // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   public constructor(validator?: AccountStateValidator) {
-    super(validator);
+    super({ validator });
   }
 }
 
@@ -56,6 +55,16 @@ describe('AbstractStore', () => {
   });
 
   describe('When custom validator is provided', () => {
-    it.todo('uses provided validator to validate state');
+    const validator = { validateAccountState: () => jest.fn() };
+    beforeEach(async () => {
+      store = new DummyStore(validator);
+      await store.saveAccount(account);
+    });
+
+    it('uses provided validator to validate state', async () => {
+      const spy = jest.spyOn(validator, 'validateAccountState');
+      await store.saveAccountState(accountState);
+      expect(spy).toHaveBeenCalledWith(accountState);
+    });
   });
 });
