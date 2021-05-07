@@ -1,12 +1,5 @@
 import { createPool, DatabasePoolType, sql } from 'slonik';
-
-export const truncateTables = async (pool: DatabasePoolType, tables: string[]): Promise<void> => {
-  await pool.transaction(async connection => {
-    for (const tableName of tables) {
-      await connection.query(sql`TRUNCATE TABLE ${sql.identifier([tableName])} CASCADE;`);
-    }
-  });
-};
+import { PostgresStoreConfig } from '@iqprotocol/postgres-storage';
 
 export const ensureDatabase = async (connectionUri: string, databaseName: string): Promise<void> => {
   const pool = createPool(connectionUri, {
@@ -24,4 +17,27 @@ export const ensureDatabase = async (connectionUri: string, databaseName: string
     await connection.query(sql`CREATE DATABASE ${sql.identifier([databaseName])}`);
   });
   await pool.end();
+};
+
+export const truncateTables = async (pool: DatabasePoolType, tables: string[]): Promise<void> => {
+  await pool.transaction(async connection => {
+    for (const tableName of tables) {
+      await connection.query(sql`TRUNCATE TABLE ${sql.identifier([tableName])} CASCADE;`);
+    }
+  });
+};
+
+export const expectCorrectDatabaseStructure = async (
+  pool: DatabasePoolType,
+  { accountTable, stateTable }: Required<Pick<PostgresStoreConfig, 'accountTable' | 'stateTable'>>,
+): Promise<void> => {
+  await pool.connect(async connection => {
+    const count = await connection.oneFirst(
+      sql`SELECT count(*) FROM information_schema.tables WHERE table_name IN (${sql.join(
+        [accountTable, stateTable],
+        sql`, `,
+      )});`,
+    );
+    expect(count).toBe(2);
+  });
 };

@@ -1,5 +1,5 @@
 {
-  "name": "@iqprotocol/postgres",
+  "name": "@iqprotocol/postgres-storage",
   "version": "0.1.0",
   "scripts": {
     "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
@@ -9,7 +9,7 @@
     "prepublish": "npm run build"
   },
   "main": "dist/index.js",
-  "module": "dist/postgres.esm.js",
+  "module": "dist/postgres-storage.esm.js",
   "typings": "dist/index.d.ts",
   "files": [
     "README.md",
