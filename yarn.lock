@@ -1309,9 +1309,9 @@
     "@ethersproject/properties" "^5.1.0"
     "@ethersproject/strings" "^5.1.0"
 
-"@iqprotocol/solidity-contracts@https://github.com/iqalliance/iq-smart-contracts":
+"@iqprotocol/solidity-contracts@https://github.com/iqalliance/iq-smart-contracts#3a8754b":
   version "0.1.0"
-  resolved "https://github.com/iqalliance/iq-smart-contracts#58478ff1d4193798dd700782b9e14371cb5f92af"
+  resolved "https://github.com/iqalliance/iq-smart-contracts#3a8754beb9501a3677b75fc79bcbbdf430465022"
 
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.1.0"

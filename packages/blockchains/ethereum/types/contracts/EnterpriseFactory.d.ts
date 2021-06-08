@@ -21,45 +21,63 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface EnterpriseFactoryInterface extends ethers.utils.Interface {
   functions: {
-    "deploy(string,address,string)": FunctionFragment;
-    "enterpriseImpl()": FunctionFragment;
-    "interestTokenImpl()": FunctionFragment;
-    "powerTokenImpl()": FunctionFragment;
+    "deploy(string,address,string,uint16,address)": FunctionFragment;
+    "deployService(address)": FunctionFragment;
+    "getBorrowTokenImpl()": FunctionFragment;
+    "getEnterpriseImpl()": FunctionFragment;
+    "getInterestTokenImpl()": FunctionFragment;
+    "getPowerTokenImpl()": FunctionFragment;
   };
 
   encodeFunctionData(
     functionFragment: "deploy",
-    values: [string, string, string]
+    values: [string, string, string, BigNumberish, string]
   ): string;
   encodeFunctionData(
-    functionFragment: "enterpriseImpl",
+    functionFragment: "deployService",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getBorrowTokenImpl",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "interestTokenImpl",
+    functionFragment: "getEnterpriseImpl",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "powerTokenImpl",
+    functionFragment: "getInterestTokenImpl",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getPowerTokenImpl",
     values?: undefined
   ): string;
 
   decodeFunctionResult(functionFragment: "deploy", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "enterpriseImpl",
+    functionFragment: "deployService",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "interestTokenImpl",
+    functionFragment: "getBorrowTokenImpl",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "powerTokenImpl",
+    functionFragment: "getEnterpriseImpl",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getInterestTokenImpl",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getPowerTokenImpl",
     data: BytesLike
   ): Result;
 
   events: {
-    "EnterpriseDeployed(address,string,string,address)": EventFragment;
+    "EnterpriseDeployed(address,address,string,string,address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "EnterpriseDeployed"): EventFragment;
@@ -112,96 +130,149 @@ export class EnterpriseFactory extends Contract {
     deploy(
       name: string,
       liquidityToken: string,
-      baseUrl: string,
+      baseUri: string,
+      gcFeePercent: BigNumberish,
+      converter: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "deploy(string,address,string)"(
+    "deploy(string,address,string,uint16,address)"(
       name: string,
       liquidityToken: string,
-      baseUrl: string,
+      baseUri: string,
+      gcFeePercent: BigNumberish,
+      converter: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    enterpriseImpl(overrides?: CallOverrides): Promise<[string]>;
+    deployService(
+      admin: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    "enterpriseImpl()"(overrides?: CallOverrides): Promise<[string]>;
+    "deployService(address)"(
+      admin: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    interestTokenImpl(overrides?: CallOverrides): Promise<[string]>;
+    getBorrowTokenImpl(overrides?: CallOverrides): Promise<[string]>;
 
-    "interestTokenImpl()"(overrides?: CallOverrides): Promise<[string]>;
+    "getBorrowTokenImpl()"(overrides?: CallOverrides): Promise<[string]>;
 
-    powerTokenImpl(overrides?: CallOverrides): Promise<[string]>;
+    getEnterpriseImpl(overrides?: CallOverrides): Promise<[string]>;
 
-    "powerTokenImpl()"(overrides?: CallOverrides): Promise<[string]>;
+    "getEnterpriseImpl()"(overrides?: CallOverrides): Promise<[string]>;
+
+    getInterestTokenImpl(overrides?: CallOverrides): Promise<[string]>;
+
+    "getInterestTokenImpl()"(overrides?: CallOverrides): Promise<[string]>;
+
+    getPowerTokenImpl(overrides?: CallOverrides): Promise<[string]>;
+
+    "getPowerTokenImpl()"(overrides?: CallOverrides): Promise<[string]>;
   };
 
   deploy(
     name: string,
     liquidityToken: string,
-    baseUrl: string,
+    baseUri: string,
+    gcFeePercent: BigNumberish,
+    converter: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "deploy(string,address,string)"(
+  "deploy(string,address,string,uint16,address)"(
     name: string,
     liquidityToken: string,
-    baseUrl: string,
+    baseUri: string,
+    gcFeePercent: BigNumberish,
+    converter: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  enterpriseImpl(overrides?: CallOverrides): Promise<string>;
+  deployService(
+    admin: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-  "enterpriseImpl()"(overrides?: CallOverrides): Promise<string>;
+  "deployService(address)"(
+    admin: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-  interestTokenImpl(overrides?: CallOverrides): Promise<string>;
+  getBorrowTokenImpl(overrides?: CallOverrides): Promise<string>;
 
-  "interestTokenImpl()"(overrides?: CallOverrides): Promise<string>;
+  "getBorrowTokenImpl()"(overrides?: CallOverrides): Promise<string>;
 
-  powerTokenImpl(overrides?: CallOverrides): Promise<string>;
+  getEnterpriseImpl(overrides?: CallOverrides): Promise<string>;
 
-  "powerTokenImpl()"(overrides?: CallOverrides): Promise<string>;
+  "getEnterpriseImpl()"(overrides?: CallOverrides): Promise<string>;
+
+  getInterestTokenImpl(overrides?: CallOverrides): Promise<string>;
+
+  "getInterestTokenImpl()"(overrides?: CallOverrides): Promise<string>;
+
+  getPowerTokenImpl(overrides?: CallOverrides): Promise<string>;
+
+  "getPowerTokenImpl()"(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
     deploy(
       name: string,
       liquidityToken: string,
-      baseUrl: string,
+      baseUri: string,
+      gcFeePercent: BigNumberish,
+      converter: string,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<string>;
 
-    "deploy(string,address,string)"(
+    "deploy(string,address,string,uint16,address)"(
       name: string,
       liquidityToken: string,
-      baseUrl: string,
+      baseUri: string,
+      gcFeePercent: BigNumberish,
+      converter: string,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<string>;
 
-    enterpriseImpl(overrides?: CallOverrides): Promise<string>;
+    deployService(admin: string, overrides?: CallOverrides): Promise<string>;
 
-    "enterpriseImpl()"(overrides?: CallOverrides): Promise<string>;
+    "deployService(address)"(
+      admin: string,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
-    interestTokenImpl(overrides?: CallOverrides): Promise<string>;
+    getBorrowTokenImpl(overrides?: CallOverrides): Promise<string>;
 
-    "interestTokenImpl()"(overrides?: CallOverrides): Promise<string>;
+    "getBorrowTokenImpl()"(overrides?: CallOverrides): Promise<string>;
 
-    powerTokenImpl(overrides?: CallOverrides): Promise<string>;
+    getEnterpriseImpl(overrides?: CallOverrides): Promise<string>;
 
-    "powerTokenImpl()"(overrides?: CallOverrides): Promise<string>;
+    "getEnterpriseImpl()"(overrides?: CallOverrides): Promise<string>;
+
+    getInterestTokenImpl(overrides?: CallOverrides): Promise<string>;
+
+    "getInterestTokenImpl()"(overrides?: CallOverrides): Promise<string>;
+
+    getPowerTokenImpl(overrides?: CallOverrides): Promise<string>;
+
+    "getPowerTokenImpl()"(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
     EnterpriseDeployed(
+      creator: string | null,
       liquidityToken: string | null,
       name: null,
-      baseUrl: null,
+      baseUri: null,
       deployed: null
     ): TypedEventFilter<
-      [string, string, string, string],
+      [string, string, string, string, string],
       {
+        creator: string;
         liquidityToken: string;
         name: string;
-        baseUrl: string;
+        baseUri: string;
         deployed: string;
       }
     >;
@@ -211,60 +282,102 @@ export class EnterpriseFactory extends Contract {
     deploy(
       name: string,
       liquidityToken: string,
-      baseUrl: string,
+      baseUri: string,
+      gcFeePercent: BigNumberish,
+      converter: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "deploy(string,address,string)"(
+    "deploy(string,address,string,uint16,address)"(
       name: string,
       liquidityToken: string,
-      baseUrl: string,
+      baseUri: string,
+      gcFeePercent: BigNumberish,
+      converter: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    enterpriseImpl(overrides?: CallOverrides): Promise<BigNumber>;
+    deployService(
+      admin: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-    "enterpriseImpl()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "deployService(address)"(
+      admin: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-    interestTokenImpl(overrides?: CallOverrides): Promise<BigNumber>;
+    getBorrowTokenImpl(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "interestTokenImpl()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "getBorrowTokenImpl()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    powerTokenImpl(overrides?: CallOverrides): Promise<BigNumber>;
+    getEnterpriseImpl(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "powerTokenImpl()"(overrides?: CallOverrides): Promise<BigNumber>;
+    "getEnterpriseImpl()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getInterestTokenImpl(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "getInterestTokenImpl()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getPowerTokenImpl(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "getPowerTokenImpl()"(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
     deploy(
       name: string,
       liquidityToken: string,
-      baseUrl: string,
+      baseUri: string,
+      gcFeePercent: BigNumberish,
+      converter: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "deploy(string,address,string)"(
+    "deploy(string,address,string,uint16,address)"(
       name: string,
       liquidityToken: string,
-      baseUrl: string,
+      baseUri: string,
+      gcFeePercent: BigNumberish,
+      converter: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    enterpriseImpl(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    deployService(
+      admin: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
-    "enterpriseImpl()"(
+    "deployService(address)"(
+      admin: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    getBorrowTokenImpl(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    interestTokenImpl(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "interestTokenImpl()"(
+    "getBorrowTokenImpl()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    powerTokenImpl(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getEnterpriseImpl(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "powerTokenImpl()"(
+    "getEnterpriseImpl()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getInterestTokenImpl(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getInterestTokenImpl()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getPowerTokenImpl(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "getPowerTokenImpl()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

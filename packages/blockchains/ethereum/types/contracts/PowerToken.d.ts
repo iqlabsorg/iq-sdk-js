@@ -21,111 +21,322 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface PowerTokenInterface extends ethers.utils.Interface {
   functions: {
-    "balanceOf(address,uint256)": FunctionFragment;
-    "balanceOfBatch(address[],uint256[])": FunctionFragment;
-    "burn(address,uint256,uint256)": FunctionFragment;
+    "allowPerpetualForever()": FunctionFragment;
+    "allowance(address,address)": FunctionFragment;
+    "approve(address,uint256)": FunctionFragment;
+    "availableBalanceOf(address)": FunctionFragment;
+    "balanceOf(address)": FunctionFragment;
+    "burnFrom(address,uint256)": FunctionFragment;
+    "decimals()": FunctionFragment;
+    "decreaseAllowance(address,uint256)": FunctionFragment;
     "energyAt(address,uint32)": FunctionFragment;
-    "halfLife()": FunctionFragment;
-    "initialize(string,string,string,uint32)": FunctionFragment;
-    "isApprovedForAll(address,address)": FunctionFragment;
-    "mint(address,uint256,uint256,bytes)": FunctionFragment;
+    "estimateLoan(address,uint112,uint32)": FunctionFragment;
+    "estimateLoanDetailed(address,uint112,uint32)": FunctionFragment;
+    "forceTransfer(address,address,uint256)": FunctionFragment;
+    "getAllowsPerpetual()": FunctionFragment;
+    "getBaseRate()": FunctionFragment;
+    "getBaseToken()": FunctionFragment;
+    "getEnterprise()": FunctionFragment;
+    "getGapHalvingPeriod()": FunctionFragment;
+    "getIndex()": FunctionFragment;
+    "getInfo()": FunctionFragment;
+    "getLambda()": FunctionFragment;
+    "getMaxLoanDuration()": FunctionFragment;
+    "getMinGCFee()": FunctionFragment;
+    "getMinLoanDuration()": FunctionFragment;
+    "getServiceFeePercent()": FunctionFragment;
+    "getState(address)": FunctionFragment;
+    "increaseAllowance(address,uint256)": FunctionFragment;
+    "initialize(address,uint112,uint96,uint32,uint16,address,uint32,uint32,uint16,bool)": FunctionFragment;
+    "isAllowedLoanDuration(uint32)": FunctionFragment;
+    "mint(address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
-    "owner()": FunctionFragment;
-    "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
-    "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
-    "setApprovalForAll(address,bool)": FunctionFragment;
+    "notifyNewLoan(uint256)": FunctionFragment;
+    "setBaseRate(uint112,address,uint96)": FunctionFragment;
+    "setLambda(uint256)": FunctionFragment;
+    "setLoanDurationLimits(uint32,uint32)": FunctionFragment;
+    "setServiceFeePercent(uint16)": FunctionFragment;
     "symbol()": FunctionFragment;
-    "uri(uint256)": FunctionFragment;
+    "totalSupply()": FunctionFragment;
+    "transfer(address,uint256)": FunctionFragment;
+    "transferFrom(address,address,uint256)": FunctionFragment;
+    "unwrap(uint256)": FunctionFragment;
+    "wrap(uint256)": FunctionFragment;
+    "wrapTo(address,uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "balanceOf",
+    functionFragment: "allowPerpetualForever",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "allowance",
+    values: [string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "approve",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "balanceOfBatch",
-    values: [string[], BigNumberish[]]
+    functionFragment: "availableBalanceOf",
+    values: [string]
   ): string;
+  encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
   encodeFunctionData(
-    functionFragment: "burn",
-    values: [string, BigNumberish, BigNumberish]
+    functionFragment: "burnFrom",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "decreaseAllowance",
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "energyAt",
     values: [string, BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "halfLife", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "initialize",
-    values: [string, string, string, BigNumberish]
+    functionFragment: "estimateLoan",
+    values: [string, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "isApprovedForAll",
-    values: [string, string]
+    functionFragment: "estimateLoanDetailed",
+    values: [string, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "forceTransfer",
+    values: [string, string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getAllowsPerpetual",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getBaseRate",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getBaseToken",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getEnterprise",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getGapHalvingPeriod",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "getIndex", values?: undefined): string;
+  encodeFunctionData(functionFragment: "getInfo", values?: undefined): string;
+  encodeFunctionData(functionFragment: "getLambda", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getMaxLoanDuration",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getMinGCFee",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getMinLoanDuration",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getServiceFeePercent",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "getState", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "increaseAllowance",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initialize",
+    values: [
+      string,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      string,
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      boolean
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isAllowedLoanDuration",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "mint",
-    values: [string, BigNumberish, BigNumberish, BytesLike]
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
-  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "safeBatchTransferFrom",
-    values: [string, string, BigNumberish[], BigNumberish[], BytesLike]
+    functionFragment: "notifyNewLoan",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "safeTransferFrom",
-    values: [string, string, BigNumberish, BigNumberish, BytesLike]
+    functionFragment: "setBaseRate",
+    values: [BigNumberish, string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "setApprovalForAll",
-    values: [string, boolean]
+    functionFragment: "setLambda",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setLoanDurationLimits",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setServiceFeePercent",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
-  encodeFunctionData(functionFragment: "uri", values: [BigNumberish]): string;
+  encodeFunctionData(
+    functionFragment: "totalSupply",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transfer",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transferFrom",
+    values: [string, string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "unwrap",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "wrap", values: [BigNumberish]): string;
+  encodeFunctionData(
+    functionFragment: "wrapTo",
+    values: [string, BigNumberish]
+  ): string;
 
-  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "balanceOfBatch",
+    functionFragment: "allowPerpetualForever",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "availableBalanceOf",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "burnFrom", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "decreaseAllowance",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "energyAt", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "halfLife", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "estimateLoan",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "estimateLoanDetailed",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "forceTransfer",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getAllowsPerpetual",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getBaseRate",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getBaseToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getEnterprise",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getGapHalvingPeriod",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "getIndex", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getInfo", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getLambda", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getMaxLoanDuration",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getMinGCFee",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getMinLoanDuration",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getServiceFeePercent",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "getState", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "increaseAllowance",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "isApprovedForAll",
+    functionFragment: "isAllowedLoanDuration",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "safeBatchTransferFrom",
+    functionFragment: "notifyNewLoan",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "safeTransferFrom",
+    functionFragment: "setBaseRate",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "setLambda", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setLoanDurationLimits",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setApprovalForAll",
+    functionFragment: "setServiceFeePercent",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "uri", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "totalSupply",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "transfer", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "transferFrom",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "unwrap", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "wrap", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "wrapTo", data: BytesLike): Result;
 
   events: {
-    "ApprovalForAll(address,address,bool)": EventFragment;
-    "TransferBatch(address,address,address,uint256[],uint256[])": EventFragment;
-    "TransferSingle(address,address,address,uint256,uint256)": EventFragment;
-    "URI(string,uint256)": EventFragment;
+    "Approval(address,address,uint256)": EventFragment;
+    "Transfer(address,address,uint256)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TransferBatch"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TransferSingle"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "URI"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
 
 export class PowerToken extends Contract {
@@ -172,41 +383,80 @@ export class PowerToken extends Contract {
   interface: PowerTokenInterface;
 
   functions: {
-    balanceOf(
-      account: string,
-      id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    "balanceOf(address,uint256)"(
-      account: string,
-      id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    balanceOfBatch(
-      accounts: string[],
-      ids: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<[BigNumber[]]>;
-
-    "balanceOfBatch(address[],uint256[])"(
-      accounts: string[],
-      ids: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<[BigNumber[]]>;
-
-    burn(
-      _account: string,
-      _id: BigNumberish,
-      _value: BigNumberish,
+    allowPerpetualForever(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "burn(address,uint256,uint256)"(
-      _account: string,
-      _id: BigNumberish,
-      _value: BigNumberish,
+    "allowPerpetualForever()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    allowance(
+      owner: string,
+      spender: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    "allowance(address,address)"(
+      owner: string,
+      spender: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    approve(
+      spender: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "approve(address,uint256)"(
+      spender: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    availableBalanceOf(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    "availableBalanceOf(address)"(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    balanceOf(account: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "balanceOf(address)"(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    burnFrom(
+      account: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "burnFrom(address,uint256)"(
+      account: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    decimals(overrides?: CallOverrides): Promise<[number]>;
+
+    "decimals()"(overrides?: CallOverrides): Promise<[number]>;
+
+    decreaseAllowance(
+      spender: string,
+      subtractedValue: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "decreaseAllowance(address,uint256)"(
+      spender: string,
+      subtractedValue: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -222,51 +472,246 @@ export class PowerToken extends Contract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    halfLife(overrides?: CallOverrides): Promise<[number]>;
+    estimateLoan(
+      paymentToken: string,
+      amount: BigNumberish,
+      duration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
-    "halfLife()"(overrides?: CallOverrides): Promise<[number]>;
+    "estimateLoan(address,uint112,uint32)"(
+      paymentToken: string,
+      amount: BigNumberish,
+      duration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
-    initialize(
-      _name: string,
-      _symbol: string,
-      _baseUri: string,
-      _halfLife: BigNumberish,
+    estimateLoanDetailed(
+      paymentToken: string,
+      amount: BigNumberish,
+      duration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        interest: BigNumber;
+        serviceFee: BigNumber;
+        gcFee: BigNumber;
+      }
+    >;
+
+    "estimateLoanDetailed(address,uint112,uint32)"(
+      paymentToken: string,
+      amount: BigNumberish,
+      duration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        interest: BigNumber;
+        serviceFee: BigNumber;
+        gcFee: BigNumber;
+      }
+    >;
+
+    forceTransfer(
+      from: string,
+      to: string,
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "initialize(string,string,string,uint32)"(
-      _name: string,
-      _symbol: string,
-      _baseUri: string,
-      _halfLife: BigNumberish,
+    "forceTransfer(address,address,uint256)"(
+      from: string,
+      to: string,
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    isApprovedForAll(
+    getAllowsPerpetual(overrides?: CallOverrides): Promise<[boolean]>;
+
+    "getAllowsPerpetual()"(overrides?: CallOverrides): Promise<[boolean]>;
+
+    getBaseRate(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "getBaseRate()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    getBaseToken(overrides?: CallOverrides): Promise<[string]>;
+
+    "getBaseToken()"(overrides?: CallOverrides): Promise<[string]>;
+
+    getEnterprise(overrides?: CallOverrides): Promise<[string]>;
+
+    "getEnterprise()"(overrides?: CallOverrides): Promise<[string]>;
+
+    getGapHalvingPeriod(overrides?: CallOverrides): Promise<[number]>;
+
+    "getGapHalvingPeriod()"(overrides?: CallOverrides): Promise<[number]>;
+
+    getIndex(overrides?: CallOverrides): Promise<[number]>;
+
+    "getIndex()"(overrides?: CallOverrides): Promise<[number]>;
+
+    getInfo(
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        string,
+        string,
+        BigNumber,
+        BigNumber,
+        number,
+        number,
+        string,
+        number,
+        number,
+        number,
+        boolean
+      ] & {
+        name: string;
+        symbol: string;
+        baseRate: BigNumber;
+        minGCFee: BigNumber;
+        gapHalvingPeriod: number;
+        index: number;
+        baseToken: string;
+        minLoanDuration: number;
+        maxLoanDuration: number;
+        serviceFeePercent: number;
+        allowsPerpetual: boolean;
+      }
+    >;
+
+    "getInfo()"(
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        string,
+        string,
+        BigNumber,
+        BigNumber,
+        number,
+        number,
+        string,
+        number,
+        number,
+        number,
+        boolean
+      ] & {
+        name: string;
+        symbol: string;
+        baseRate: BigNumber;
+        minGCFee: BigNumber;
+        gapHalvingPeriod: number;
+        index: number;
+        baseToken: string;
+        minLoanDuration: number;
+        maxLoanDuration: number;
+        serviceFeePercent: number;
+        allowsPerpetual: boolean;
+      }
+    >;
+
+    getLambda(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "getLambda()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    getMaxLoanDuration(overrides?: CallOverrides): Promise<[number]>;
+
+    "getMaxLoanDuration()"(overrides?: CallOverrides): Promise<[number]>;
+
+    getMinGCFee(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    "getMinGCFee()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    getMinLoanDuration(overrides?: CallOverrides): Promise<[number]>;
+
+    "getMinLoanDuration()"(overrides?: CallOverrides): Promise<[number]>;
+
+    getServiceFeePercent(overrides?: CallOverrides): Promise<[number]>;
+
+    "getServiceFeePercent()"(overrides?: CallOverrides): Promise<[number]>;
+
+    getState(
       account: string,
-      operator: string,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        [BigNumber, BigNumber, number] & {
+          lockedBalance: BigNumber;
+          energy: BigNumber;
+          timestamp: number;
+        }
+      ]
+    >;
+
+    "getState(address)"(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        [BigNumber, BigNumber, number] & {
+          lockedBalance: BigNumber;
+          energy: BigNumber;
+          timestamp: number;
+        }
+      ]
+    >;
+
+    increaseAllowance(
+      spender: string,
+      addedValue: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "increaseAllowance(address,uint256)"(
+      spender: string,
+      addedValue: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "initialize(address,uint112,uint96,uint32,uint16,address,uint32,uint32,uint16,bool)"(
+      enterprise: string,
+      baseRate: BigNumberish,
+      minGCFee: BigNumberish,
+      gapHalvingPeriod: BigNumberish,
+      index: BigNumberish,
+      baseToken: string,
+      minLoanDuration: BigNumberish,
+      maxLoanDuration: BigNumberish,
+      serviceFeePercent: BigNumberish,
+      allowsPerpetual: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "initialize(string,string)"(
+      name_: string,
+      symbol_: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "initialize(address)"(
+      enterprise: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    isAllowedLoanDuration(
+      duration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    "isApprovedForAll(address,address)"(
-      account: string,
-      operator: string,
+    "isAllowedLoanDuration(uint32)"(
+      duration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     mint(
-      _to: string,
-      _id: BigNumberish,
-      _value: BigNumberish,
-      _data: BytesLike,
+      to: string,
+      value: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "mint(address,uint256,uint256,bytes)"(
-      _to: string,
-      _id: BigNumberish,
-      _value: BigNumberish,
-      _data: BytesLike,
+    "mint(address,uint256)"(
+      to: string,
+      value: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -274,55 +719,59 @@ export class PowerToken extends Contract {
 
     "name()"(overrides?: CallOverrides): Promise<[string]>;
 
-    owner(overrides?: CallOverrides): Promise<[string]>;
-
-    "owner()"(overrides?: CallOverrides): Promise<[string]>;
-
-    safeBatchTransferFrom(
-      _from: string,
-      _to: string,
-      _ids: BigNumberish[],
-      _values: BigNumberish[],
-      _data: BytesLike,
+    notifyNewLoan(
+      tokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)"(
-      _from: string,
-      _to: string,
-      _ids: BigNumberish[],
-      _values: BigNumberish[],
-      _data: BytesLike,
+    "notifyNewLoan(uint256)"(
+      tokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    safeTransferFrom(
-      _from: string,
-      _to: string,
-      _id: BigNumberish,
-      _value: BigNumberish,
-      _data: BytesLike,
+    setBaseRate(
+      baseRate: BigNumberish,
+      baseToken: string,
+      minGCFee: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "safeTransferFrom(address,address,uint256,uint256,bytes)"(
-      _from: string,
-      _to: string,
-      _id: BigNumberish,
-      _value: BigNumberish,
-      _data: BytesLike,
+    "setBaseRate(uint112,address,uint96)"(
+      baseRate: BigNumberish,
+      baseToken: string,
+      minGCFee: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setApprovalForAll(
-      operator: string,
-      approved: boolean,
+    setLambda(
+      lambda: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "setApprovalForAll(address,bool)"(
-      operator: string,
-      approved: boolean,
+    "setLambda(uint256)"(
+      lambda: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setLoanDurationLimits(
+      minLoanDuration: BigNumberish,
+      maxLoanDuration: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "setLoanDurationLimits(uint32,uint32)"(
+      minLoanDuration: BigNumberish,
+      maxLoanDuration: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setServiceFeePercent(
+      newServiceFeePercent: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "setServiceFeePercent(uint16)"(
+      newServiceFeePercent: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -330,49 +779,143 @@ export class PowerToken extends Contract {
 
     "symbol()"(overrides?: CallOverrides): Promise<[string]>;
 
-    uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
+    totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "uri(uint256)"(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
+    "totalSupply()"(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    transfer(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "transfer(address,uint256)"(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    transferFrom(
+      sender: string,
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "transferFrom(address,address,uint256)"(
+      sender: string,
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    unwrap(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "unwrap(uint256)"(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    wrap(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "wrap(uint256)"(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    wrapTo(
+      to: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "wrapTo(address,uint256)"(
+      to: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
-  balanceOf(
-    account: string,
-    id: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  "balanceOf(address,uint256)"(
-    account: string,
-    id: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  balanceOfBatch(
-    accounts: string[],
-    ids: BigNumberish[],
-    overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
-
-  "balanceOfBatch(address[],uint256[])"(
-    accounts: string[],
-    ids: BigNumberish[],
-    overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
-
-  burn(
-    _account: string,
-    _id: BigNumberish,
-    _value: BigNumberish,
+  allowPerpetualForever(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "burn(address,uint256,uint256)"(
-    _account: string,
-    _id: BigNumberish,
-    _value: BigNumberish,
+  "allowPerpetualForever()"(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  allowance(
+    owner: string,
+    spender: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "allowance(address,address)"(
+    owner: string,
+    spender: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  approve(
+    spender: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "approve(address,uint256)"(
+    spender: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  availableBalanceOf(
+    account: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "availableBalanceOf(address)"(
+    account: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  "balanceOf(address)"(
+    account: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  burnFrom(
+    account: string,
+    value: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "burnFrom(address,uint256)"(
+    account: string,
+    value: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  decimals(overrides?: CallOverrides): Promise<number>;
+
+  "decimals()"(overrides?: CallOverrides): Promise<number>;
+
+  decreaseAllowance(
+    spender: string,
+    subtractedValue: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "decreaseAllowance(address,uint256)"(
+    spender: string,
+    subtractedValue: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -388,51 +931,242 @@ export class PowerToken extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  halfLife(overrides?: CallOverrides): Promise<number>;
+  estimateLoan(
+    paymentToken: string,
+    amount: BigNumberish,
+    duration: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
-  "halfLife()"(overrides?: CallOverrides): Promise<number>;
+  "estimateLoan(address,uint112,uint32)"(
+    paymentToken: string,
+    amount: BigNumberish,
+    duration: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
-  initialize(
-    _name: string,
-    _symbol: string,
-    _baseUri: string,
-    _halfLife: BigNumberish,
+  estimateLoanDetailed(
+    paymentToken: string,
+    amount: BigNumberish,
+    duration: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber] & {
+      interest: BigNumber;
+      serviceFee: BigNumber;
+      gcFee: BigNumber;
+    }
+  >;
+
+  "estimateLoanDetailed(address,uint112,uint32)"(
+    paymentToken: string,
+    amount: BigNumberish,
+    duration: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber] & {
+      interest: BigNumber;
+      serviceFee: BigNumber;
+      gcFee: BigNumber;
+    }
+  >;
+
+  forceTransfer(
+    from: string,
+    to: string,
+    amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "initialize(string,string,string,uint32)"(
-    _name: string,
-    _symbol: string,
-    _baseUri: string,
-    _halfLife: BigNumberish,
+  "forceTransfer(address,address,uint256)"(
+    from: string,
+    to: string,
+    amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  isApprovedForAll(
+  getAllowsPerpetual(overrides?: CallOverrides): Promise<boolean>;
+
+  "getAllowsPerpetual()"(overrides?: CallOverrides): Promise<boolean>;
+
+  getBaseRate(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "getBaseRate()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getBaseToken(overrides?: CallOverrides): Promise<string>;
+
+  "getBaseToken()"(overrides?: CallOverrides): Promise<string>;
+
+  getEnterprise(overrides?: CallOverrides): Promise<string>;
+
+  "getEnterprise()"(overrides?: CallOverrides): Promise<string>;
+
+  getGapHalvingPeriod(overrides?: CallOverrides): Promise<number>;
+
+  "getGapHalvingPeriod()"(overrides?: CallOverrides): Promise<number>;
+
+  getIndex(overrides?: CallOverrides): Promise<number>;
+
+  "getIndex()"(overrides?: CallOverrides): Promise<number>;
+
+  getInfo(
+    overrides?: CallOverrides
+  ): Promise<
+    [
+      string,
+      string,
+      BigNumber,
+      BigNumber,
+      number,
+      number,
+      string,
+      number,
+      number,
+      number,
+      boolean
+    ] & {
+      name: string;
+      symbol: string;
+      baseRate: BigNumber;
+      minGCFee: BigNumber;
+      gapHalvingPeriod: number;
+      index: number;
+      baseToken: string;
+      minLoanDuration: number;
+      maxLoanDuration: number;
+      serviceFeePercent: number;
+      allowsPerpetual: boolean;
+    }
+  >;
+
+  "getInfo()"(
+    overrides?: CallOverrides
+  ): Promise<
+    [
+      string,
+      string,
+      BigNumber,
+      BigNumber,
+      number,
+      number,
+      string,
+      number,
+      number,
+      number,
+      boolean
+    ] & {
+      name: string;
+      symbol: string;
+      baseRate: BigNumber;
+      minGCFee: BigNumber;
+      gapHalvingPeriod: number;
+      index: number;
+      baseToken: string;
+      minLoanDuration: number;
+      maxLoanDuration: number;
+      serviceFeePercent: number;
+      allowsPerpetual: boolean;
+    }
+  >;
+
+  getLambda(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "getLambda()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getMaxLoanDuration(overrides?: CallOverrides): Promise<number>;
+
+  "getMaxLoanDuration()"(overrides?: CallOverrides): Promise<number>;
+
+  getMinGCFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+  "getMinGCFee()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getMinLoanDuration(overrides?: CallOverrides): Promise<number>;
+
+  "getMinLoanDuration()"(overrides?: CallOverrides): Promise<number>;
+
+  getServiceFeePercent(overrides?: CallOverrides): Promise<number>;
+
+  "getServiceFeePercent()"(overrides?: CallOverrides): Promise<number>;
+
+  getState(
     account: string,
-    operator: string,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber, number] & {
+      lockedBalance: BigNumber;
+      energy: BigNumber;
+      timestamp: number;
+    }
+  >;
+
+  "getState(address)"(
+    account: string,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber, number] & {
+      lockedBalance: BigNumber;
+      energy: BigNumber;
+      timestamp: number;
+    }
+  >;
+
+  increaseAllowance(
+    spender: string,
+    addedValue: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "increaseAllowance(address,uint256)"(
+    spender: string,
+    addedValue: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "initialize(address,uint112,uint96,uint32,uint16,address,uint32,uint32,uint16,bool)"(
+    enterprise: string,
+    baseRate: BigNumberish,
+    minGCFee: BigNumberish,
+    gapHalvingPeriod: BigNumberish,
+    index: BigNumberish,
+    baseToken: string,
+    minLoanDuration: BigNumberish,
+    maxLoanDuration: BigNumberish,
+    serviceFeePercent: BigNumberish,
+    allowsPerpetual: boolean,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "initialize(string,string)"(
+    name_: string,
+    symbol_: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "initialize(address)"(
+    enterprise: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  isAllowedLoanDuration(
+    duration: BigNumberish,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  "isApprovedForAll(address,address)"(
-    account: string,
-    operator: string,
+  "isAllowedLoanDuration(uint32)"(
+    duration: BigNumberish,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   mint(
-    _to: string,
-    _id: BigNumberish,
-    _value: BigNumberish,
-    _data: BytesLike,
+    to: string,
+    value: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "mint(address,uint256,uint256,bytes)"(
-    _to: string,
-    _id: BigNumberish,
-    _value: BigNumberish,
-    _data: BytesLike,
+  "mint(address,uint256)"(
+    to: string,
+    value: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -440,55 +1174,59 @@ export class PowerToken extends Contract {
 
   "name()"(overrides?: CallOverrides): Promise<string>;
 
-  owner(overrides?: CallOverrides): Promise<string>;
-
-  "owner()"(overrides?: CallOverrides): Promise<string>;
-
-  safeBatchTransferFrom(
-    _from: string,
-    _to: string,
-    _ids: BigNumberish[],
-    _values: BigNumberish[],
-    _data: BytesLike,
+  notifyNewLoan(
+    tokenId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)"(
-    _from: string,
-    _to: string,
-    _ids: BigNumberish[],
-    _values: BigNumberish[],
-    _data: BytesLike,
+  "notifyNewLoan(uint256)"(
+    tokenId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  safeTransferFrom(
-    _from: string,
-    _to: string,
-    _id: BigNumberish,
-    _value: BigNumberish,
-    _data: BytesLike,
+  setBaseRate(
+    baseRate: BigNumberish,
+    baseToken: string,
+    minGCFee: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "safeTransferFrom(address,address,uint256,uint256,bytes)"(
-    _from: string,
-    _to: string,
-    _id: BigNumberish,
-    _value: BigNumberish,
-    _data: BytesLike,
+  "setBaseRate(uint112,address,uint96)"(
+    baseRate: BigNumberish,
+    baseToken: string,
+    minGCFee: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setApprovalForAll(
-    operator: string,
-    approved: boolean,
+  setLambda(
+    lambda: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "setApprovalForAll(address,bool)"(
-    operator: string,
-    approved: boolean,
+  "setLambda(uint256)"(
+    lambda: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setLoanDurationLimits(
+    minLoanDuration: BigNumberish,
+    maxLoanDuration: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "setLoanDurationLimits(uint32,uint32)"(
+    minLoanDuration: BigNumberish,
+    maxLoanDuration: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setServiceFeePercent(
+    newServiceFeePercent: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "setServiceFeePercent(uint16)"(
+    newServiceFeePercent: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -496,51 +1234,141 @@ export class PowerToken extends Contract {
 
   "symbol()"(overrides?: CallOverrides): Promise<string>;
 
-  uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+  totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
-  "uri(uint256)"(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<string>;
+  "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+  transfer(
+    recipient: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "transfer(address,uint256)"(
+    recipient: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  transferFrom(
+    sender: string,
+    recipient: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "transferFrom(address,address,uint256)"(
+    sender: string,
+    recipient: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  unwrap(
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "unwrap(uint256)"(
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  wrap(
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "wrap(uint256)"(
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  wrapTo(
+    to: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "wrapTo(address,uint256)"(
+    to: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   callStatic: {
-    balanceOf(
-      account: string,
-      id: BigNumberish,
+    allowPerpetualForever(overrides?: CallOverrides): Promise<void>;
+
+    "allowPerpetualForever()"(overrides?: CallOverrides): Promise<void>;
+
+    allowance(
+      owner: string,
+      spender: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "balanceOf(address,uint256)"(
-      account: string,
-      id: BigNumberish,
+    "allowance(address,address)"(
+      owner: string,
+      spender: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    balanceOfBatch(
-      accounts: string[],
-      ids: BigNumberish[],
+    approve(
+      spender: string,
+      amount: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
+    ): Promise<boolean>;
 
-    "balanceOfBatch(address[],uint256[])"(
-      accounts: string[],
-      ids: BigNumberish[],
+    "approve(address,uint256)"(
+      spender: string,
+      amount: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
+    ): Promise<boolean>;
 
-    burn(
-      _account: string,
-      _id: BigNumberish,
-      _value: BigNumberish,
+    availableBalanceOf(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "availableBalanceOf(address)"(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    "balanceOf(address)"(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    burnFrom(
+      account: string,
+      value: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "burn(address,uint256,uint256)"(
-      _account: string,
-      _id: BigNumberish,
-      _value: BigNumberish,
+    "burnFrom(address,uint256)"(
+      account: string,
+      value: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    decimals(overrides?: CallOverrides): Promise<number>;
+
+    "decimals()"(overrides?: CallOverrides): Promise<number>;
+
+    decreaseAllowance(
+      spender: string,
+      subtractedValue: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "decreaseAllowance(address,uint256)"(
+      spender: string,
+      subtractedValue: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     energyAt(
       who: string,
@@ -554,51 +1382,242 @@ export class PowerToken extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    halfLife(overrides?: CallOverrides): Promise<number>;
-
-    "halfLife()"(overrides?: CallOverrides): Promise<number>;
-
-    initialize(
-      _name: string,
-      _symbol: string,
-      _baseUri: string,
-      _halfLife: BigNumberish,
+    estimateLoan(
+      paymentToken: string,
+      amount: BigNumberish,
+      duration: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<BigNumber>;
 
-    "initialize(string,string,string,uint32)"(
-      _name: string,
-      _symbol: string,
-      _baseUri: string,
-      _halfLife: BigNumberish,
+    "estimateLoan(address,uint112,uint32)"(
+      paymentToken: string,
+      amount: BigNumberish,
+      duration: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<BigNumber>;
 
-    isApprovedForAll(
-      account: string,
-      operator: string,
+    estimateLoanDetailed(
+      paymentToken: string,
+      amount: BigNumberish,
+      duration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        interest: BigNumber;
+        serviceFee: BigNumber;
+        gcFee: BigNumber;
+      }
+    >;
+
+    "estimateLoanDetailed(address,uint112,uint32)"(
+      paymentToken: string,
+      amount: BigNumberish,
+      duration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        interest: BigNumber;
+        serviceFee: BigNumber;
+        gcFee: BigNumber;
+      }
+    >;
+
+    forceTransfer(
+      from: string,
+      to: string,
+      amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    "isApprovedForAll(address,address)"(
+    "forceTransfer(address,address,uint256)"(
+      from: string,
+      to: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    getAllowsPerpetual(overrides?: CallOverrides): Promise<boolean>;
+
+    "getAllowsPerpetual()"(overrides?: CallOverrides): Promise<boolean>;
+
+    getBaseRate(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "getBaseRate()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getBaseToken(overrides?: CallOverrides): Promise<string>;
+
+    "getBaseToken()"(overrides?: CallOverrides): Promise<string>;
+
+    getEnterprise(overrides?: CallOverrides): Promise<string>;
+
+    "getEnterprise()"(overrides?: CallOverrides): Promise<string>;
+
+    getGapHalvingPeriod(overrides?: CallOverrides): Promise<number>;
+
+    "getGapHalvingPeriod()"(overrides?: CallOverrides): Promise<number>;
+
+    getIndex(overrides?: CallOverrides): Promise<number>;
+
+    "getIndex()"(overrides?: CallOverrides): Promise<number>;
+
+    getInfo(
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        string,
+        string,
+        BigNumber,
+        BigNumber,
+        number,
+        number,
+        string,
+        number,
+        number,
+        number,
+        boolean
+      ] & {
+        name: string;
+        symbol: string;
+        baseRate: BigNumber;
+        minGCFee: BigNumber;
+        gapHalvingPeriod: number;
+        index: number;
+        baseToken: string;
+        minLoanDuration: number;
+        maxLoanDuration: number;
+        serviceFeePercent: number;
+        allowsPerpetual: boolean;
+      }
+    >;
+
+    "getInfo()"(
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        string,
+        string,
+        BigNumber,
+        BigNumber,
+        number,
+        number,
+        string,
+        number,
+        number,
+        number,
+        boolean
+      ] & {
+        name: string;
+        symbol: string;
+        baseRate: BigNumber;
+        minGCFee: BigNumber;
+        gapHalvingPeriod: number;
+        index: number;
+        baseToken: string;
+        minLoanDuration: number;
+        maxLoanDuration: number;
+        serviceFeePercent: number;
+        allowsPerpetual: boolean;
+      }
+    >;
+
+    getLambda(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "getLambda()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getMaxLoanDuration(overrides?: CallOverrides): Promise<number>;
+
+    "getMaxLoanDuration()"(overrides?: CallOverrides): Promise<number>;
+
+    getMinGCFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "getMinGCFee()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getMinLoanDuration(overrides?: CallOverrides): Promise<number>;
+
+    "getMinLoanDuration()"(overrides?: CallOverrides): Promise<number>;
+
+    getServiceFeePercent(overrides?: CallOverrides): Promise<number>;
+
+    "getServiceFeePercent()"(overrides?: CallOverrides): Promise<number>;
+
+    getState(
       account: string,
-      operator: string,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, number] & {
+        lockedBalance: BigNumber;
+        energy: BigNumber;
+        timestamp: number;
+      }
+    >;
+
+    "getState(address)"(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, number] & {
+        lockedBalance: BigNumber;
+        energy: BigNumber;
+        timestamp: number;
+      }
+    >;
+
+    increaseAllowance(
+      spender: string,
+      addedValue: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "increaseAllowance(address,uint256)"(
+      spender: string,
+      addedValue: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "initialize(address,uint112,uint96,uint32,uint16,address,uint32,uint32,uint16,bool)"(
+      enterprise: string,
+      baseRate: BigNumberish,
+      minGCFee: BigNumberish,
+      gapHalvingPeriod: BigNumberish,
+      index: BigNumberish,
+      baseToken: string,
+      minLoanDuration: BigNumberish,
+      maxLoanDuration: BigNumberish,
+      serviceFeePercent: BigNumberish,
+      allowsPerpetual: boolean,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "initialize(string,string)"(
+      name_: string,
+      symbol_: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "initialize(address)"(
+      enterprise: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    isAllowedLoanDuration(
+      duration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "isAllowedLoanDuration(uint32)"(
+      duration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     mint(
-      _to: string,
-      _id: BigNumberish,
-      _value: BigNumberish,
-      _data: BytesLike,
+      to: string,
+      value: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "mint(address,uint256,uint256,bytes)"(
-      _to: string,
-      _id: BigNumberish,
-      _value: BigNumberish,
-      _data: BytesLike,
+    "mint(address,uint256)"(
+      to: string,
+      value: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -606,55 +1625,56 @@ export class PowerToken extends Contract {
 
     "name()"(overrides?: CallOverrides): Promise<string>;
 
-    owner(overrides?: CallOverrides): Promise<string>;
-
-    "owner()"(overrides?: CallOverrides): Promise<string>;
-
-    safeBatchTransferFrom(
-      _from: string,
-      _to: string,
-      _ids: BigNumberish[],
-      _values: BigNumberish[],
-      _data: BytesLike,
+    notifyNewLoan(
+      tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)"(
-      _from: string,
-      _to: string,
-      _ids: BigNumberish[],
-      _values: BigNumberish[],
-      _data: BytesLike,
+    "notifyNewLoan(uint256)"(
+      tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    safeTransferFrom(
-      _from: string,
-      _to: string,
-      _id: BigNumberish,
-      _value: BigNumberish,
-      _data: BytesLike,
+    setBaseRate(
+      baseRate: BigNumberish,
+      baseToken: string,
+      minGCFee: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "safeTransferFrom(address,address,uint256,uint256,bytes)"(
-      _from: string,
-      _to: string,
-      _id: BigNumberish,
-      _value: BigNumberish,
-      _data: BytesLike,
+    "setBaseRate(uint112,address,uint96)"(
+      baseRate: BigNumberish,
+      baseToken: string,
+      minGCFee: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setApprovalForAll(
-      operator: string,
-      approved: boolean,
+    setLambda(lambda: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
+    "setLambda(uint256)"(
+      lambda: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "setApprovalForAll(address,bool)"(
-      operator: string,
-      approved: boolean,
+    setLoanDurationLimits(
+      minLoanDuration: BigNumberish,
+      maxLoanDuration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setLoanDurationLimits(uint32,uint32)"(
+      minLoanDuration: BigNumberish,
+      maxLoanDuration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setServiceFeePercent(
+      newServiceFeePercent: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "setServiceFeePercent(uint16)"(
+      newServiceFeePercent: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -662,103 +1682,158 @@ export class PowerToken extends Contract {
 
     "symbol()"(overrides?: CallOverrides): Promise<string>;
 
-    uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+    totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "uri(uint256)"(
-      arg0: BigNumberish,
+    "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    transfer(
+      recipient: string,
+      amount: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<string>;
+    ): Promise<boolean>;
+
+    "transfer(address,uint256)"(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    transferFrom(
+      sender: string,
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "transferFrom(address,address,uint256)"(
+      sender: string,
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    unwrap(amount: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
+
+    "unwrap(uint256)"(
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    wrap(amount: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
+
+    "wrap(uint256)"(
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    wrapTo(
+      to: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "wrapTo(address,uint256)"(
+      to: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
   };
 
   filters: {
-    ApprovalForAll(
-      _owner: string | null,
-      _operator: string | null,
-      _approved: null
+    Approval(
+      owner: string | null,
+      spender: string | null,
+      value: null
     ): TypedEventFilter<
-      [string, string, boolean],
-      { _owner: string; _operator: string; _approved: boolean }
+      [string, string, BigNumber],
+      { owner: string; spender: string; value: BigNumber }
     >;
 
-    TransferBatch(
-      _operator: string | null,
-      _from: string | null,
-      _to: string | null,
-      _ids: null,
-      _values: null
+    Transfer(
+      from: string | null,
+      to: string | null,
+      value: null
     ): TypedEventFilter<
-      [string, string, string, BigNumber[], BigNumber[]],
-      {
-        _operator: string;
-        _from: string;
-        _to: string;
-        _ids: BigNumber[];
-        _values: BigNumber[];
-      }
-    >;
-
-    TransferSingle(
-      _operator: string | null,
-      _from: string | null,
-      _to: string | null,
-      _id: null,
-      _value: null
-    ): TypedEventFilter<
-      [string, string, string, BigNumber, BigNumber],
-      {
-        _operator: string;
-        _from: string;
-        _to: string;
-        _id: BigNumber;
-        _value: BigNumber;
-      }
-    >;
-
-    URI(
-      _value: null,
-      _id: BigNumberish | null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { _value: string; _id: BigNumber }
+      [string, string, BigNumber],
+      { from: string; to: string; value: BigNumber }
     >;
   };
 
   estimateGas: {
-    balanceOf(
-      account: string,
-      id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "balanceOf(address,uint256)"(
-      account: string,
-      id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    balanceOfBatch(
-      accounts: string[],
-      ids: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "balanceOfBatch(address[],uint256[])"(
-      accounts: string[],
-      ids: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    burn(
-      _account: string,
-      _id: BigNumberish,
-      _value: BigNumberish,
+    allowPerpetualForever(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "burn(address,uint256,uint256)"(
-      _account: string,
-      _id: BigNumberish,
-      _value: BigNumberish,
+    "allowPerpetualForever()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    allowance(
+      owner: string,
+      spender: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "allowance(address,address)"(
+      owner: string,
+      spender: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    approve(
+      spender: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "approve(address,uint256)"(
+      spender: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    availableBalanceOf(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "availableBalanceOf(address)"(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    "balanceOf(address)"(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    burnFrom(
+      account: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "burnFrom(address,uint256)"(
+      account: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    decimals(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "decimals()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    decreaseAllowance(
+      spender: string,
+      subtractedValue: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "decreaseAllowance(address,uint256)"(
+      spender: string,
+      subtractedValue: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -774,51 +1849,159 @@ export class PowerToken extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    halfLife(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "halfLife()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    initialize(
-      _name: string,
-      _symbol: string,
-      _baseUri: string,
-      _halfLife: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "initialize(string,string,string,uint32)"(
-      _name: string,
-      _symbol: string,
-      _baseUri: string,
-      _halfLife: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    isApprovedForAll(
-      account: string,
-      operator: string,
+    estimateLoan(
+      paymentToken: string,
+      amount: BigNumberish,
+      duration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "isApprovedForAll(address,address)"(
+    "estimateLoan(address,uint112,uint32)"(
+      paymentToken: string,
+      amount: BigNumberish,
+      duration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    estimateLoanDetailed(
+      paymentToken: string,
+      amount: BigNumberish,
+      duration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "estimateLoanDetailed(address,uint112,uint32)"(
+      paymentToken: string,
+      amount: BigNumberish,
+      duration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    forceTransfer(
+      from: string,
+      to: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "forceTransfer(address,address,uint256)"(
+      from: string,
+      to: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    getAllowsPerpetual(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "getAllowsPerpetual()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getBaseRate(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "getBaseRate()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getBaseToken(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "getBaseToken()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getEnterprise(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "getEnterprise()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getGapHalvingPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "getGapHalvingPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getIndex(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "getIndex()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getInfo(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "getInfo()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getLambda(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "getLambda()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getMaxLoanDuration(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "getMaxLoanDuration()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getMinGCFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "getMinGCFee()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getMinLoanDuration(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "getMinLoanDuration()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getServiceFeePercent(overrides?: CallOverrides): Promise<BigNumber>;
+
+    "getServiceFeePercent()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getState(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    "getState(address)"(
       account: string,
-      operator: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    increaseAllowance(
+      spender: string,
+      addedValue: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "increaseAllowance(address,uint256)"(
+      spender: string,
+      addedValue: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "initialize(address,uint112,uint96,uint32,uint16,address,uint32,uint32,uint16,bool)"(
+      enterprise: string,
+      baseRate: BigNumberish,
+      minGCFee: BigNumberish,
+      gapHalvingPeriod: BigNumberish,
+      index: BigNumberish,
+      baseToken: string,
+      minLoanDuration: BigNumberish,
+      maxLoanDuration: BigNumberish,
+      serviceFeePercent: BigNumberish,
+      allowsPerpetual: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "initialize(string,string)"(
+      name_: string,
+      symbol_: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "initialize(address)"(
+      enterprise: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    isAllowedLoanDuration(
+      duration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "isAllowedLoanDuration(uint32)"(
+      duration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     mint(
-      _to: string,
-      _id: BigNumberish,
-      _value: BigNumberish,
-      _data: BytesLike,
+      to: string,
+      value: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "mint(address,uint256,uint256,bytes)"(
-      _to: string,
-      _id: BigNumberish,
-      _value: BigNumberish,
-      _data: BytesLike,
+    "mint(address,uint256)"(
+      to: string,
+      value: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -826,55 +2009,59 @@ export class PowerToken extends Contract {
 
     "name()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "owner()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    safeBatchTransferFrom(
-      _from: string,
-      _to: string,
-      _ids: BigNumberish[],
-      _values: BigNumberish[],
-      _data: BytesLike,
+    notifyNewLoan(
+      tokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)"(
-      _from: string,
-      _to: string,
-      _ids: BigNumberish[],
-      _values: BigNumberish[],
-      _data: BytesLike,
+    "notifyNewLoan(uint256)"(
+      tokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    safeTransferFrom(
-      _from: string,
-      _to: string,
-      _id: BigNumberish,
-      _value: BigNumberish,
-      _data: BytesLike,
+    setBaseRate(
+      baseRate: BigNumberish,
+      baseToken: string,
+      minGCFee: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "safeTransferFrom(address,address,uint256,uint256,bytes)"(
-      _from: string,
-      _to: string,
-      _id: BigNumberish,
-      _value: BigNumberish,
-      _data: BytesLike,
+    "setBaseRate(uint112,address,uint96)"(
+      baseRate: BigNumberish,
+      baseToken: string,
+      minGCFee: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setApprovalForAll(
-      operator: string,
-      approved: boolean,
+    setLambda(
+      lambda: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "setApprovalForAll(address,bool)"(
-      operator: string,
-      approved: boolean,
+    "setLambda(uint256)"(
+      lambda: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setLoanDurationLimits(
+      minLoanDuration: BigNumberish,
+      maxLoanDuration: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "setLoanDurationLimits(uint32,uint32)"(
+      minLoanDuration: BigNumberish,
+      maxLoanDuration: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setServiceFeePercent(
+      newServiceFeePercent: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "setServiceFeePercent(uint16)"(
+      newServiceFeePercent: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -882,50 +2069,147 @@ export class PowerToken extends Contract {
 
     "symbol()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    uri(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+    totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "uri(uint256)"(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
+    "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
+
+    transfer(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "transfer(address,uint256)"(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    transferFrom(
+      sender: string,
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "transferFrom(address,address,uint256)"(
+      sender: string,
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    unwrap(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "unwrap(uint256)"(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    wrap(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "wrap(uint256)"(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    wrapTo(
+      to: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "wrapTo(address,uint256)"(
+      to: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    balanceOf(
-      account: string,
-      id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "balanceOf(address,uint256)"(
-      account: string,
-      id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    balanceOfBatch(
-      accounts: string[],
-      ids: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "balanceOfBatch(address[],uint256[])"(
-      accounts: string[],
-      ids: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    burn(
-      _account: string,
-      _id: BigNumberish,
-      _value: BigNumberish,
+    allowPerpetualForever(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "burn(address,uint256,uint256)"(
-      _account: string,
-      _id: BigNumberish,
-      _value: BigNumberish,
+    "allowPerpetualForever()"(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    allowance(
+      owner: string,
+      spender: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "allowance(address,address)"(
+      owner: string,
+      spender: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    approve(
+      spender: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "approve(address,uint256)"(
+      spender: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    availableBalanceOf(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "availableBalanceOf(address)"(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    balanceOf(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "balanceOf(address)"(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    burnFrom(
+      account: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "burnFrom(address,uint256)"(
+      account: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "decimals()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    decreaseAllowance(
+      spender: string,
+      subtractedValue: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "decreaseAllowance(address,uint256)"(
+      spender: string,
+      subtractedValue: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -941,51 +2225,182 @@ export class PowerToken extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    halfLife(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "halfLife()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    initialize(
-      _name: string,
-      _symbol: string,
-      _baseUri: string,
-      _halfLife: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "initialize(string,string,string,uint32)"(
-      _name: string,
-      _symbol: string,
-      _baseUri: string,
-      _halfLife: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    isApprovedForAll(
-      account: string,
-      operator: string,
+    estimateLoan(
+      paymentToken: string,
+      amount: BigNumberish,
+      duration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "isApprovedForAll(address,address)"(
+    "estimateLoan(address,uint112,uint32)"(
+      paymentToken: string,
+      amount: BigNumberish,
+      duration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    estimateLoanDetailed(
+      paymentToken: string,
+      amount: BigNumberish,
+      duration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "estimateLoanDetailed(address,uint112,uint32)"(
+      paymentToken: string,
+      amount: BigNumberish,
+      duration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    forceTransfer(
+      from: string,
+      to: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "forceTransfer(address,address,uint256)"(
+      from: string,
+      to: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    getAllowsPerpetual(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getAllowsPerpetual()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getBaseRate(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "getBaseRate()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getBaseToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "getBaseToken()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getEnterprise(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "getEnterprise()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getGapHalvingPeriod(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getGapHalvingPeriod()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getIndex(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "getIndex()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getInfo(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "getInfo()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getLambda(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "getLambda()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getMaxLoanDuration(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getMaxLoanDuration()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getMinGCFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "getMinGCFee()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getMinLoanDuration(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getMinLoanDuration()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getServiceFeePercent(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getServiceFeePercent()"(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getState(
       account: string,
-      operator: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getState(address)"(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    increaseAllowance(
+      spender: string,
+      addedValue: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "increaseAllowance(address,uint256)"(
+      spender: string,
+      addedValue: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "initialize(address,uint112,uint96,uint32,uint16,address,uint32,uint32,uint16,bool)"(
+      enterprise: string,
+      baseRate: BigNumberish,
+      minGCFee: BigNumberish,
+      gapHalvingPeriod: BigNumberish,
+      index: BigNumberish,
+      baseToken: string,
+      minLoanDuration: BigNumberish,
+      maxLoanDuration: BigNumberish,
+      serviceFeePercent: BigNumberish,
+      allowsPerpetual: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "initialize(string,string)"(
+      name_: string,
+      symbol_: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "initialize(address)"(
+      enterprise: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    isAllowedLoanDuration(
+      duration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "isAllowedLoanDuration(uint32)"(
+      duration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     mint(
-      _to: string,
-      _id: BigNumberish,
-      _value: BigNumberish,
-      _data: BytesLike,
+      to: string,
+      value: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "mint(address,uint256,uint256,bytes)"(
-      _to: string,
-      _id: BigNumberish,
-      _value: BigNumberish,
-      _data: BytesLike,
+    "mint(address,uint256)"(
+      to: string,
+      value: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -993,55 +2408,59 @@ export class PowerToken extends Contract {
 
     "name()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "owner()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    safeBatchTransferFrom(
-      _from: string,
-      _to: string,
-      _ids: BigNumberish[],
-      _values: BigNumberish[],
-      _data: BytesLike,
+    notifyNewLoan(
+      tokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)"(
-      _from: string,
-      _to: string,
-      _ids: BigNumberish[],
-      _values: BigNumberish[],
-      _data: BytesLike,
+    "notifyNewLoan(uint256)"(
+      tokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    safeTransferFrom(
-      _from: string,
-      _to: string,
-      _id: BigNumberish,
-      _value: BigNumberish,
-      _data: BytesLike,
+    setBaseRate(
+      baseRate: BigNumberish,
+      baseToken: string,
+      minGCFee: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "safeTransferFrom(address,address,uint256,uint256,bytes)"(
-      _from: string,
-      _to: string,
-      _id: BigNumberish,
-      _value: BigNumberish,
-      _data: BytesLike,
+    "setBaseRate(uint112,address,uint96)"(
+      baseRate: BigNumberish,
+      baseToken: string,
+      minGCFee: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setApprovalForAll(
-      operator: string,
-      approved: boolean,
+    setLambda(
+      lambda: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "setApprovalForAll(address,bool)"(
-      operator: string,
-      approved: boolean,
+    "setLambda(uint256)"(
+      lambda: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setLoanDurationLimits(
+      minLoanDuration: BigNumberish,
+      maxLoanDuration: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "setLoanDurationLimits(uint32,uint32)"(
+      minLoanDuration: BigNumberish,
+      maxLoanDuration: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setServiceFeePercent(
+      newServiceFeePercent: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "setServiceFeePercent(uint16)"(
+      newServiceFeePercent: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1049,14 +2468,66 @@ export class PowerToken extends Contract {
 
     "symbol()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    uri(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
+    totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    "totalSupply()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    transfer(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "uri(uint256)"(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
+    "transfer(address,uint256)"(
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    transferFrom(
+      sender: string,
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "transferFrom(address,address,uint256)"(
+      sender: string,
+      recipient: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    unwrap(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "unwrap(uint256)"(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    wrap(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "wrap(uint256)"(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    wrapTo(
+      to: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "wrapTo(address,uint256)"(
+      to: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

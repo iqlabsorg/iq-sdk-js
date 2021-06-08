@@ -19,15 +19,15 @@ import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
-interface IPowerTokenInterface extends ethers.utils.Interface {
+interface ERC20Interface extends ethers.utils.Interface {
   functions: {
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
-    "burnFrom(address,uint256)": FunctionFragment;
     "decimals()": FunctionFragment;
-    "forceTransfer(address,address,uint256)": FunctionFragment;
-    "mint(address,uint256)": FunctionFragment;
+    "decreaseAllowance(address,uint256)": FunctionFragment;
+    "increaseAllowance(address,uint256)": FunctionFragment;
+    "initialize(string,string)": FunctionFragment;
     "name()": FunctionFragment;
     "symbol()": FunctionFragment;
     "totalSupply()": FunctionFragment;
@@ -44,18 +44,18 @@ interface IPowerTokenInterface extends ethers.utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "burnFrom",
-    values: [string, BigNumberish]
-  ): string;
   encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "forceTransfer",
-    values: [string, string, BigNumberish]
+    functionFragment: "decreaseAllowance",
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "mint",
+    functionFragment: "increaseAllowance",
     values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initialize",
+    values: [string, string]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
@@ -75,13 +75,16 @@ interface IPowerTokenInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "burnFrom", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "forceTransfer",
+    functionFragment: "decreaseAllowance",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "increaseAllowance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
   decodeFunctionResult(
@@ -103,7 +106,7 @@ interface IPowerTokenInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
 
-export class IPowerToken extends Contract {
+export class ERC20 extends Contract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -144,7 +147,7 @@ export class IPowerToken extends Contract {
     toBlock?: string | number | undefined
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
-  interface: IPowerTokenInterface;
+  interface: ERC20Interface;
 
   functions: {
     allowance(
@@ -178,45 +181,43 @@ export class IPowerToken extends Contract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    burnFrom(
-      account: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "burnFrom(address,uint256)"(
-      account: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     decimals(overrides?: CallOverrides): Promise<[number]>;
 
     "decimals()"(overrides?: CallOverrides): Promise<[number]>;
 
-    forceTransfer(
-      from: string,
-      to: string,
-      amount: BigNumberish,
+    decreaseAllowance(
+      spender: string,
+      subtractedValue: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "forceTransfer(address,address,uint256)"(
-      from: string,
-      to: string,
-      amount: BigNumberish,
+    "decreaseAllowance(address,uint256)"(
+      spender: string,
+      subtractedValue: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    mint(
-      account: string,
-      amount: BigNumberish,
+    increaseAllowance(
+      spender: string,
+      addedValue: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "mint(address,uint256)"(
-      account: string,
-      amount: BigNumberish,
+    "increaseAllowance(address,uint256)"(
+      spender: string,
+      addedValue: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    initialize(
+      name_: string,
+      symbol_: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "initialize(string,string)"(
+      name_: string,
+      symbol_: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -290,45 +291,43 @@ export class IPowerToken extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  burnFrom(
-    account: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "burnFrom(address,uint256)"(
-    account: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   decimals(overrides?: CallOverrides): Promise<number>;
 
   "decimals()"(overrides?: CallOverrides): Promise<number>;
 
-  forceTransfer(
-    from: string,
-    to: string,
-    amount: BigNumberish,
+  decreaseAllowance(
+    spender: string,
+    subtractedValue: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "forceTransfer(address,address,uint256)"(
-    from: string,
-    to: string,
-    amount: BigNumberish,
+  "decreaseAllowance(address,uint256)"(
+    spender: string,
+    subtractedValue: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  mint(
-    account: string,
-    amount: BigNumberish,
+  increaseAllowance(
+    spender: string,
+    addedValue: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "mint(address,uint256)"(
-    account: string,
-    amount: BigNumberish,
+  "increaseAllowance(address,uint256)"(
+    spender: string,
+    addedValue: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  initialize(
+    name_: string,
+    symbol_: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "initialize(string,string)"(
+    name_: string,
+    symbol_: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -402,45 +401,43 @@ export class IPowerToken extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    burnFrom(
-      account: string,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "burnFrom(address,uint256)"(
-      account: string,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     decimals(overrides?: CallOverrides): Promise<number>;
 
     "decimals()"(overrides?: CallOverrides): Promise<number>;
 
-    forceTransfer(
-      from: string,
-      to: string,
-      amount: BigNumberish,
+    decreaseAllowance(
+      spender: string,
+      subtractedValue: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    "forceTransfer(address,address,uint256)"(
-      from: string,
-      to: string,
-      amount: BigNumberish,
+    "decreaseAllowance(address,uint256)"(
+      spender: string,
+      subtractedValue: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    mint(
-      account: string,
-      amount: BigNumberish,
+    increaseAllowance(
+      spender: string,
+      addedValue: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    "increaseAllowance(address,uint256)"(
+      spender: string,
+      addedValue: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    initialize(
+      name_: string,
+      symbol_: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "mint(address,uint256)"(
-      account: string,
-      amount: BigNumberish,
+    "initialize(string,string)"(
+      name_: string,
+      symbol_: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -535,45 +532,43 @@ export class IPowerToken extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    burnFrom(
-      account: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "burnFrom(address,uint256)"(
-      account: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     decimals(overrides?: CallOverrides): Promise<BigNumber>;
 
     "decimals()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    forceTransfer(
-      from: string,
-      to: string,
-      amount: BigNumberish,
+    decreaseAllowance(
+      spender: string,
+      subtractedValue: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "forceTransfer(address,address,uint256)"(
-      from: string,
-      to: string,
-      amount: BigNumberish,
+    "decreaseAllowance(address,uint256)"(
+      spender: string,
+      subtractedValue: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    mint(
-      account: string,
-      amount: BigNumberish,
+    increaseAllowance(
+      spender: string,
+      addedValue: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "mint(address,uint256)"(
-      account: string,
-      amount: BigNumberish,
+    "increaseAllowance(address,uint256)"(
+      spender: string,
+      addedValue: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    initialize(
+      name_: string,
+      symbol_: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "initialize(string,string)"(
+      name_: string,
+      symbol_: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -651,45 +646,43 @@ export class IPowerToken extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    burnFrom(
-      account: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "burnFrom(address,uint256)"(
-      account: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "decimals()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    forceTransfer(
-      from: string,
-      to: string,
-      amount: BigNumberish,
+    decreaseAllowance(
+      spender: string,
+      subtractedValue: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "forceTransfer(address,address,uint256)"(
-      from: string,
-      to: string,
-      amount: BigNumberish,
+    "decreaseAllowance(address,uint256)"(
+      spender: string,
+      subtractedValue: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    mint(
-      account: string,
-      amount: BigNumberish,
+    increaseAllowance(
+      spender: string,
+      addedValue: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "mint(address,uint256)"(
-      account: string,
-      amount: BigNumberish,
+    "increaseAllowance(address,uint256)"(
+      spender: string,
+      addedValue: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    initialize(
+      name_: string,
+      symbol_: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "initialize(string,string)"(
+      name_: string,
+      symbol_: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
