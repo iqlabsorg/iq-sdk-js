@@ -19,11 +19,11 @@ import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
-interface InterestTokenInterface extends ethers.utils.Interface {
+interface BorrowTokenInterface extends ethers.utils.Interface {
   functions: {
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
-    "burn(uint256)": FunctionFragment;
+    "burn(uint256,address)": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "getEnterprise()": FunctionFragment;
     "getNextTokenId()": FunctionFragment;
@@ -48,7 +48,10 @@ interface InterestTokenInterface extends ethers.utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
-  encodeFunctionData(functionFragment: "burn", values: [BigNumberish]): string;
+  encodeFunctionData(
+    functionFragment: "burn",
+    values: [BigNumberish, string]
+  ): string;
   encodeFunctionData(
     functionFragment: "getApproved",
     values: [BigNumberish]
@@ -174,7 +177,7 @@ interface InterestTokenInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
 
-export class InterestToken extends Contract {
+export class BorrowToken extends Contract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -215,7 +218,7 @@ export class InterestToken extends Contract {
     toBlock?: string | number | undefined
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
-  interface: InterestTokenInterface;
+  interface: BorrowTokenInterface;
 
   functions: {
     approve(
@@ -239,11 +242,13 @@ export class InterestToken extends Contract {
 
     burn(
       tokenId: BigNumberish,
+      burner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "burn(uint256)"(
+    "burn(uint256,address)"(
       tokenId: BigNumberish,
+      burner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -266,8 +271,8 @@ export class InterestToken extends Contract {
     "getNextTokenId()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "initialize(string,string,address)"(
-      name_: string,
-      symbol_: string,
+      name: string,
+      symbol: string,
       enterprise: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -432,11 +437,13 @@ export class InterestToken extends Contract {
 
   burn(
     tokenId: BigNumberish,
+    burner: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "burn(uint256)"(
+  "burn(uint256,address)"(
     tokenId: BigNumberish,
+    burner: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -459,8 +466,8 @@ export class InterestToken extends Contract {
   "getNextTokenId()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   "initialize(string,string,address)"(
-    name_: string,
-    symbol_: string,
+    name: string,
+    symbol: string,
     enterprise: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -617,10 +624,15 @@ export class InterestToken extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    burn(tokenId: BigNumberish, overrides?: CallOverrides): Promise<void>;
-
-    "burn(uint256)"(
+    burn(
       tokenId: BigNumberish,
+      burner: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "burn(uint256,address)"(
+      tokenId: BigNumberish,
+      burner: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -643,8 +655,8 @@ export class InterestToken extends Contract {
     "getNextTokenId()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     "initialize(string,string,address)"(
-      name_: string,
-      symbol_: string,
+      name: string,
+      symbol: string,
       enterprise: string,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -827,11 +839,13 @@ export class InterestToken extends Contract {
 
     burn(
       tokenId: BigNumberish,
+      burner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "burn(uint256)"(
+    "burn(uint256,address)"(
       tokenId: BigNumberish,
+      burner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -854,8 +868,8 @@ export class InterestToken extends Contract {
     "getNextTokenId()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     "initialize(string,string,address)"(
-      name_: string,
-      symbol_: string,
+      name: string,
+      symbol: string,
       enterprise: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -1024,11 +1038,13 @@ export class InterestToken extends Contract {
 
     burn(
       tokenId: BigNumberish,
+      burner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "burn(uint256)"(
+    "burn(uint256,address)"(
       tokenId: BigNumberish,
+      burner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1053,8 +1069,8 @@ export class InterestToken extends Contract {
     ): Promise<PopulatedTransaction>;
 
     "initialize(string,string,address)"(
-      name_: string,
-      symbol_: string,
+      name: string,
+      symbol: string,
       enterprise: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

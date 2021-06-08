@@ -1,25 +1,70 @@
-import { BigNumberish } from 'ethers';
+import { BigNumber, BigNumberish } from 'ethers';
 
-export type EnterpriseData = {
+export type Address = string;
+
+export interface EnterpriseParams {
   name: string;
-  tokenAddress: string;
   baseUri: string;
-};
+  gcFeePercent: BigNumberish;
+  liquidityTokenAddress: Address;
+  converterAddress: Address;
+}
 
-export type ServiceData = {
+export interface EnterpriseData {
+  name: string;
+  baseUri: string;
+  totalShares: BigNumber;
+  interestGapHalvingPeriod: number;
+  borrowerLoanReturnGracePeriod: number;
+  enterpriseLoanCollectGracePeriod: number;
+  gcFeePercent: number;
+  fixedReserve: BigNumber;
+  usedReserve: BigNumber;
+  streamingReserve: BigNumber;
+  streamingReserveTarget: BigNumber;
+  streamingReserveUpdated: number;
+}
+
+export interface ServiceParams {
   name: string;
   symbol: string;
-  halfLife: BigNumberish;
-  factor: BigNumberish;
-  interestRateHalvingPeriod: BigNumberish;
-  allowedLoanDurations: BigNumberish[];
-  allowedRefundCurvatures: BigNumberish[];
-};
+  gapHalvingPeriod: BigNumberish;
+  baseRate: BigNumberish;
+  baseToken: string;
+  serviceFeePercent: BigNumberish;
+  minLoanDuration: BigNumberish;
+  maxLoanDuration: BigNumberish;
+  minGCFee: BigNumberish;
+  allowsPerpetualTokensForever: boolean;
+}
 
-export interface EvmCompatibleBlockchainProvider<TransactionResponse> {
-  deployEnterprise(params: EnterpriseData): Promise<TransactionResponse>;
+export interface ServiceData {
+  address: Address;
+  name: string;
+  symbol: string;
+  baseRate: BigNumber;
+  minGCFee: BigNumber;
+  gapHalvingPeriod: number;
+  index: number;
+  baseToken: Address;
+  minLoanDuration: number;
+  maxLoanDuration: number;
+  serviceFeePercent: number;
+  allowsPerpetual: boolean;
+}
 
-  getEnterpriseData(enterpriseAddress: string): Promise<EnterpriseData>;
+export interface BlockchainProvider<TransactionResponse = Record<string, unknown>> {
+  getNetworkId(): Promise<string>;
 
-  registerService(enterpriseAddress: string, serviceConfig: ServiceData): Promise<TransactionResponse>;
+  deployEnterprise(params: EnterpriseParams): Promise<TransactionResponse>;
+
+  listEnterprises(): Promise<EnterpriseData[]>;
+
+  listEnterpriseServices(enterpriseAddress: Address): Promise<ServiceData[]>;
+
+  getEnterprise(enterpriseAddress: Address): Promise<EnterpriseData>;
+
+  getService(serviceAddress: Address): Promise<ServiceData>;
+
+  registerService(enterpriseAddress: Address, serviceParams: ServiceParams): Promise<TransactionResponse>;
 }

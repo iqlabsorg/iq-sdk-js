@@ -19,27 +19,20 @@ import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
-interface InterestTokenInterface extends ethers.utils.Interface {
+interface ERC721Interface extends ethers.utils.Interface {
   functions: {
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
-    "burn(uint256)": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
-    "getEnterprise()": FunctionFragment;
-    "getNextTokenId()": FunctionFragment;
-    "initialize(string,string,address)": FunctionFragment;
+    "initialize(string,string)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
-    "mint(address)": FunctionFragment;
     "name()": FunctionFragment;
     "ownerOf(uint256)": FunctionFragment;
     "safeTransferFrom(address,address,uint256)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "symbol()": FunctionFragment;
-    "tokenByIndex(uint256)": FunctionFragment;
-    "tokenOfOwnerByIndex(address,uint256)": FunctionFragment;
     "tokenURI(uint256)": FunctionFragment;
-    "totalSupply()": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
   };
 
@@ -48,28 +41,18 @@ interface InterestTokenInterface extends ethers.utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
-  encodeFunctionData(functionFragment: "burn", values: [BigNumberish]): string;
   encodeFunctionData(
     functionFragment: "getApproved",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "getEnterprise",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getNextTokenId",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "initialize",
-    values: [string, string, string]
+    values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "isApprovedForAll",
     values: [string, string]
   ): string;
-  encodeFunctionData(functionFragment: "mint", values: [string]): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "ownerOf",
@@ -89,20 +72,8 @@ interface InterestTokenInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "tokenByIndex",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "tokenOfOwnerByIndex",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "tokenURI",
     values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "totalSupply",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "transferFrom",
@@ -111,17 +82,8 @@ interface InterestTokenInterface extends ethers.utils.Interface {
 
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getApproved",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getEnterprise",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getNextTokenId",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
@@ -129,7 +91,6 @@ interface InterestTokenInterface extends ethers.utils.Interface {
     functionFragment: "isApprovedForAll",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "ownerOf", data: BytesLike): Result;
   decodeFunctionResult(
@@ -145,19 +106,7 @@ interface InterestTokenInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "tokenByIndex",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "tokenOfOwnerByIndex",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "tokenURI", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "totalSupply",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "transferFrom",
     data: BytesLike
@@ -174,7 +123,7 @@ interface InterestTokenInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
 
-export class InterestToken extends Contract {
+export class ERC721 extends Contract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -215,7 +164,7 @@ export class InterestToken extends Contract {
     toBlock?: string | number | undefined
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
-  interface: InterestTokenInterface;
+  interface: ERC721Interface;
 
   functions: {
     approve(
@@ -237,16 +186,6 @@ export class InterestToken extends Contract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    burn(
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "burn(uint256)"(
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     getApproved(
       tokenId: BigNumberish,
       overrides?: CallOverrides
@@ -257,29 +196,15 @@ export class InterestToken extends Contract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    getEnterprise(overrides?: CallOverrides): Promise<[string]>;
-
-    "getEnterprise()"(overrides?: CallOverrides): Promise<[string]>;
-
-    getNextTokenId(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    "getNextTokenId()"(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    "initialize(string,string,address)"(
+    initialize(
       name_: string,
       symbol_: string,
-      enterprise: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "initialize(string,string)"(
       name_: string,
       symbol_: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "initialize(address)"(
-      enterprise: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -294,16 +219,6 @@ export class InterestToken extends Contract {
       operator: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
-
-    mint(
-      to: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "mint(address)"(
-      to: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
@@ -360,28 +275,6 @@ export class InterestToken extends Contract {
 
     "symbol()"(overrides?: CallOverrides): Promise<[string]>;
 
-    tokenByIndex(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    "tokenByIndex(uint256)"(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    tokenOfOwnerByIndex(
-      owner: string,
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    "tokenOfOwnerByIndex(address,uint256)"(
-      owner: string,
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     tokenURI(
       tokenId: BigNumberish,
       overrides?: CallOverrides
@@ -391,10 +284,6 @@ export class InterestToken extends Contract {
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[string]>;
-
-    totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    "totalSupply()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     transferFrom(
       from: string,
@@ -430,16 +319,6 @@ export class InterestToken extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  burn(
-    tokenId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "burn(uint256)"(
-    tokenId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   getApproved(
     tokenId: BigNumberish,
     overrides?: CallOverrides
@@ -450,29 +329,15 @@ export class InterestToken extends Contract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  getEnterprise(overrides?: CallOverrides): Promise<string>;
-
-  "getEnterprise()"(overrides?: CallOverrides): Promise<string>;
-
-  getNextTokenId(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "getNextTokenId()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "initialize(string,string,address)"(
+  initialize(
     name_: string,
     symbol_: string,
-    enterprise: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "initialize(string,string)"(
     name_: string,
     symbol_: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "initialize(address)"(
-    enterprise: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -487,16 +352,6 @@ export class InterestToken extends Contract {
     operator: string,
     overrides?: CallOverrides
   ): Promise<boolean>;
-
-  mint(
-    to: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "mint(address)"(
-    to: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
 
   name(overrides?: CallOverrides): Promise<string>;
 
@@ -550,38 +405,12 @@ export class InterestToken extends Contract {
 
   "symbol()"(overrides?: CallOverrides): Promise<string>;
 
-  tokenByIndex(
-    index: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  "tokenByIndex(uint256)"(
-    index: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  tokenOfOwnerByIndex(
-    owner: string,
-    index: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  "tokenOfOwnerByIndex(address,uint256)"(
-    owner: string,
-    index: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   tokenURI(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
   "tokenURI(uint256)"(
     tokenId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<string>;
-
-  totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   transferFrom(
     from: string,
@@ -617,13 +446,6 @@ export class InterestToken extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    burn(tokenId: BigNumberish, overrides?: CallOverrides): Promise<void>;
-
-    "burn(uint256)"(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     getApproved(
       tokenId: BigNumberish,
       overrides?: CallOverrides
@@ -634,29 +456,15 @@ export class InterestToken extends Contract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    getEnterprise(overrides?: CallOverrides): Promise<string>;
-
-    "getEnterprise()"(overrides?: CallOverrides): Promise<string>;
-
-    getNextTokenId(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "getNextTokenId()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "initialize(string,string,address)"(
+    initialize(
       name_: string,
       symbol_: string,
-      enterprise: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
     "initialize(string,string)"(
       name_: string,
       symbol_: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "initialize(address)"(
-      enterprise: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -671,10 +479,6 @@ export class InterestToken extends Contract {
       operator: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
-
-    mint(to: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    "mint(address)"(to: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<string>;
 
@@ -728,38 +532,12 @@ export class InterestToken extends Contract {
 
     "symbol()"(overrides?: CallOverrides): Promise<string>;
 
-    tokenByIndex(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "tokenByIndex(uint256)"(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    tokenOfOwnerByIndex(
-      owner: string,
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "tokenOfOwnerByIndex(address,uint256)"(
-      owner: string,
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     tokenURI(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
     "tokenURI(uint256)"(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
-
-    totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferFrom(
       from: string,
@@ -825,16 +603,6 @@ export class InterestToken extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    burn(
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "burn(uint256)"(
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     getApproved(
       tokenId: BigNumberish,
       overrides?: CallOverrides
@@ -845,29 +613,15 @@ export class InterestToken extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getEnterprise(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "getEnterprise()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getNextTokenId(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "getNextTokenId()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "initialize(string,string,address)"(
+    initialize(
       name_: string,
       symbol_: string,
-      enterprise: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "initialize(string,string)"(
       name_: string,
       symbol_: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "initialize(address)"(
-      enterprise: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -881,16 +635,6 @@ export class InterestToken extends Contract {
       owner: string,
       operator: string,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    mint(
-      to: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "mint(address)"(
-      to: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
@@ -948,28 +692,6 @@ export class InterestToken extends Contract {
 
     "symbol()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    tokenByIndex(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "tokenByIndex(uint256)"(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    tokenOfOwnerByIndex(
-      owner: string,
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "tokenOfOwnerByIndex(address,uint256)"(
-      owner: string,
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     tokenURI(
       tokenId: BigNumberish,
       overrides?: CallOverrides
@@ -979,10 +701,6 @@ export class InterestToken extends Contract {
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "totalSupply()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferFrom(
       from: string,
@@ -1022,16 +740,6 @@ export class InterestToken extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    burn(
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "burn(uint256)"(
-      tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     getApproved(
       tokenId: BigNumberish,
       overrides?: CallOverrides
@@ -1042,31 +750,15 @@ export class InterestToken extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getEnterprise(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "getEnterprise()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getNextTokenId(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "getNextTokenId()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "initialize(string,string,address)"(
+    initialize(
       name_: string,
       symbol_: string,
-      enterprise: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "initialize(string,string)"(
       name_: string,
       symbol_: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "initialize(address)"(
-      enterprise: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1080,16 +772,6 @@ export class InterestToken extends Contract {
       owner: string,
       operator: string,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    mint(
-      to: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "mint(address)"(
-      to: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1147,28 +829,6 @@ export class InterestToken extends Contract {
 
     "symbol()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    tokenByIndex(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "tokenByIndex(uint256)"(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    tokenOfOwnerByIndex(
-      owner: string,
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "tokenOfOwnerByIndex(address,uint256)"(
-      owner: string,
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     tokenURI(
       tokenId: BigNumberish,
       overrides?: CallOverrides
@@ -1178,10 +838,6 @@ export class InterestToken extends Contract {
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "totalSupply()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     transferFrom(
       from: string,
