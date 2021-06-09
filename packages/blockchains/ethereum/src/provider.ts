@@ -8,9 +8,9 @@ import {
 import {
   Address,
   BlockchainProvider,
-  EnterpriseData,
+  EnterpriseInfo,
   EnterpriseParams,
-  ServiceData,
+  ServiceInfo,
   ServiceParams,
 } from '@iqprotocol/abstract-blockchain';
 
@@ -56,24 +56,24 @@ export class EthereumBlockchainProvider implements BlockchainProvider<ContractTr
     );
   }
 
-  async listEnterprises(): Promise<EnterpriseData[]> {
+  async listEnterprises(): Promise<EnterpriseInfo[]> {
     return Promise.all(
-      [...this.wellKnownEnterprises].map(async enterpriseAddress => this.getEnterpriseData(enterpriseAddress)),
+      [...this.wellKnownEnterprises].map(async enterpriseAddress => this.readEnterpriseInfo(enterpriseAddress)),
     );
   }
 
-  async listEnterpriseServices(enterpriseAddress: Address): Promise<ServiceData[]> {
+  async listEnterpriseServices(enterpriseAddress: Address): Promise<ServiceInfo[]> {
     const enterprise = Enterprise__factory.connect(enterpriseAddress, this.signer);
     const powerTokens = await enterprise.getPowerTokens();
     if (!powerTokens.length) {
       return [];
     }
 
-    return Promise.all(powerTokens.map(async powerTokenAddress => this.getServiceData(powerTokenAddress)));
+    return Promise.all(powerTokens.map(async powerTokenAddress => this.readServiceInfo(powerTokenAddress)));
   }
 
-  async getEnterprise(enterpriseAddress: Address): Promise<EnterpriseData> {
-    return this.getEnterpriseData(enterpriseAddress);
+  async getEnterpriseInfo(enterpriseAddress: Address): Promise<EnterpriseInfo> {
+    return this.readEnterpriseInfo(enterpriseAddress);
   }
 
   async registerService(enterpriseAddress: Address, params: ServiceParams): Promise<ContractTransaction> {
@@ -92,11 +92,11 @@ export class EthereumBlockchainProvider implements BlockchainProvider<ContractTr
     );
   }
 
-  async getService(serviceAddress: Address): Promise<ServiceData> {
-    return this.getServiceData(serviceAddress);
+  async getServiceInfo(serviceAddress: Address): Promise<ServiceInfo> {
+    return this.readServiceInfo(serviceAddress);
   }
 
-  protected async getEnterpriseData(enterpriseAddress: Address): Promise<EnterpriseData> {
+  protected async readEnterpriseInfo(enterpriseAddress: Address): Promise<EnterpriseInfo> {
     const enterprise = Enterprise__factory.connect(enterpriseAddress, this.signer);
     const {
       name,
@@ -114,6 +114,7 @@ export class EthereumBlockchainProvider implements BlockchainProvider<ContractTr
     } = await enterprise.getInfo();
 
     return {
+      address: enterpriseAddress,
       name,
       baseUri,
       totalShares,
@@ -129,7 +130,7 @@ export class EthereumBlockchainProvider implements BlockchainProvider<ContractTr
     };
   }
 
-  protected async getServiceData(powerTokenAddress: Address): Promise<ServiceData> {
+  protected async readServiceInfo(powerTokenAddress: Address): Promise<ServiceInfo> {
     const powerToken = PowerToken__factory.connect(powerTokenAddress, this.signer);
 
     const {
