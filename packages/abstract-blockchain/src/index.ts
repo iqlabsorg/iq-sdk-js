@@ -1,5 +1,7 @@
 import { BigNumber, BigNumberish } from 'ethers';
 
+export { BigNumber, BigNumberish };
+
 export type Address = string;
 
 export interface EnterpriseParams {
@@ -10,7 +12,8 @@ export interface EnterpriseParams {
   converterAddress: Address;
 }
 
-export interface EnterpriseData {
+export interface EnterpriseInfo {
+  address: Address;
   name: string;
   baseUri: string;
   totalShares: BigNumber;
@@ -30,7 +33,7 @@ export interface ServiceParams {
   symbol: string;
   gapHalvingPeriod: BigNumberish;
   baseRate: BigNumberish;
-  baseToken: string;
+  baseToken: Address;
   serviceFeePercent: BigNumberish;
   minLoanDuration: BigNumberish;
   maxLoanDuration: BigNumberish;
@@ -38,7 +41,7 @@ export interface ServiceParams {
   allowsPerpetualTokensForever: boolean;
 }
 
-export interface ServiceData {
+export interface ServiceInfo {
   address: Address;
   name: string;
   symbol: string;
@@ -58,13 +61,13 @@ export interface BlockchainProvider<TransactionResponse = Record<string, unknown
 
   deployEnterprise(params: EnterpriseParams): Promise<TransactionResponse>;
 
-  listEnterprises(): Promise<EnterpriseData[]>;
+  listEnterprises(): Promise<EnterpriseInfo[]>;
 
-  listEnterpriseServices(enterpriseAddress: Address): Promise<ServiceData[]>;
+  listEnterpriseServices(enterpriseAddress: Address): Promise<ServiceInfo[]>;
 
-  getEnterprise(enterpriseAddress: Address): Promise<EnterpriseData>;
+  getEnterpriseInfo(enterpriseAddress: Address): Promise<EnterpriseInfo>;
 
-  getService(serviceAddress: Address): Promise<ServiceData>;
+  getServiceInfo(serviceAddress: Address): Promise<ServiceInfo>;
 
   registerService(enterpriseAddress: Address, serviceParams: ServiceParams): Promise<TransactionResponse>;
 }

@@ -3,7 +3,7 @@ import 'hardhat-deploy-ethers';
 import { EthereumBlockchainProvider } from '../../src';
 import { baseRate, getEnterprise, getPowerToken } from './utils';
 import { DefaultConverter, Enterprise, EnterpriseFactory, ERC20Mock } from '../../types/contracts';
-import { EnterpriseData, EnterpriseParams, ServiceData, ServiceParams } from '@iqprotocol/abstract-blockchain';
+import { EnterpriseInfo, EnterpriseParams, ServiceInfo, ServiceParams } from '@iqprotocol/abstract-blockchain';
 import { BigNumber } from 'ethers';
 
 type Awaited<T> = T extends PromiseLike<infer U> ? Awaited<U> : T;
@@ -78,7 +78,7 @@ describe('EthereumBlockchainProvider', () => {
 
   describe('When enterprise deployed', () => {
     let enterprise: Enterprise;
-    let expectedEnterpriseData: EnterpriseData;
+    let expectedEnterpriseData: EnterpriseInfo;
 
     beforeEach(async () => {
       const tx = await ethereumProvider.deployEnterprise(baseEnterpriseParams);
@@ -88,6 +88,7 @@ describe('EthereumBlockchainProvider', () => {
       ethereumProvider.addWellKnownEnterprise(enterprise.address);
 
       expectedEnterpriseData = {
+        address: enterprise.address,
         name: baseEnterpriseParams.name,
         baseUri: baseEnterpriseParams.baseUri,
         totalShares: BigNumber.from(0),
@@ -115,11 +116,15 @@ describe('EthereumBlockchainProvider', () => {
 
       expect(enterprises).toHaveLength(2);
       expect(enterprises[0]).toMatchObject(expectedEnterpriseData);
-      expect(enterprises[1]).toMatchObject({ ...expectedEnterpriseData, name: anotherEnterpriseParams.name });
+      expect(enterprises[1]).toMatchObject({
+        ...expectedEnterpriseData,
+        name: anotherEnterpriseParams.name,
+        address: anotherEnterprise.address,
+      });
     });
 
     it('retrieves enterprise data', async () => {
-      const data = await ethereumProvider.getEnterprise(enterprise.address);
+      const data = await ethereumProvider.getEnterpriseInfo(enterprise.address);
       expect(data).toMatchObject(expectedEnterpriseData);
     });
 
@@ -130,12 +135,12 @@ describe('EthereumBlockchainProvider', () => {
     });
 
     describe('When enterprise has registered services', () => {
-      let expectedServiceData1: ServiceData;
-      let expectedServiceData2: ServiceData;
+      let expectedServiceData1: ServiceInfo;
+      let expectedServiceData2: ServiceInfo;
 
       beforeEach(async () => {
         const liquidityTokenSymbol = await liquidityToken.symbol();
-        const baseExpectedServiceData: Omit<ServiceData, 'address' | 'name' | 'symbol' | 'index'> = {
+        const baseExpectedServiceData: Omit<ServiceInfo, 'address' | 'name' | 'symbol' | 'index'> = {
           gapHalvingPeriod: GAP_HALVING_PERIOD,
           baseRate: BASE_RATE,
           baseToken: liquidityToken.address,
@@ -188,7 +193,7 @@ describe('EthereumBlockchainProvider', () => {
       });
 
       it('retrieves the service data', async () => {
-        const service = await ethereumProvider.getService(expectedServiceData2.address);
+        const service = await ethereumProvider.getServiceInfo(expectedServiceData2.address);
         expect(service).toMatchObject(expectedServiceData2);
       });
     });
