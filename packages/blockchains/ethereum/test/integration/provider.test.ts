@@ -34,8 +34,11 @@ describe('EthereumBlockchainProvider', () => {
     enterpriseFactory = (await ethers.getContract('EnterpriseFactory')) as EnterpriseFactory;
     liquidityToken = (await ethers.getContract('ERC20Mock')) as ERC20Mock;
     converter = (await ethers.getContract('DefaultConverter')) as DefaultConverter;
-    ethereumProvider = new EthereumBlockchainProvider(deployerSigner, {
-      enterpriseFactory: enterpriseFactory.address,
+    ethereumProvider = new EthereumBlockchainProvider({
+      signer: deployerSigner,
+      contracts: {
+        enterpriseFactory: enterpriseFactory.address,
+      },
     });
 
     baseEnterpriseParams = {

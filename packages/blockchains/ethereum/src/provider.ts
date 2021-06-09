@@ -18,12 +18,17 @@ type DeployedContracts = {
   enterpriseFactory: Address;
 };
 
+export type EthereumBlockchainProviderConfig = {
+  signer: Signer;
+  contracts: DeployedContracts;
+};
+
 export class EthereumBlockchainProvider implements BlockchainProvider<ContractTransaction> {
   private readonly signer: Signer;
   private readonly contracts: DeployedContracts;
   private readonly wellKnownEnterprises = new Set<Address>();
 
-  constructor(signer: Signer, contracts: DeployedContracts) {
+  constructor({ signer, contracts }: EthereumBlockchainProviderConfig) {
     this.signer = signer;
     this.contracts = contracts;
   }
