@@ -1,5 +1,6 @@
-import { Service } from '../src';
+import { AccountID, ChainID } from '@iqprotocol/abstract-blockchain';
 import { mockBlockchainProvider } from './support/mocks';
+import { Service } from '../src';
 
 /**
  * @group unit
@@ -13,7 +14,11 @@ describe('Service', () => {
     service = new Service({ blockchain: mockBlockchainProvider, address: SERVICE_ADDRESS });
   });
 
-  it.todo('returns correct id');
+  it('returns correct ID', async () => {
+    const chainId = new ChainID({ namespace: 'eip155', reference: '1' });
+    mockBlockchainProvider.getChainId.mockResolvedValue(chainId);
+    await expect(service.getId()).resolves.toMatchObject(new AccountID({ chainId, address: SERVICE_ADDRESS }));
+  });
 
   it('retrieves on-chain data via blockchain provider', async () => {
     const mockGetServiceInfo = jest.spyOn(mockBlockchainProvider, 'getServiceInfo');

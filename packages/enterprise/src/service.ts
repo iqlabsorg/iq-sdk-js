@@ -1,4 +1,4 @@
-import { BlockchainProvider, ServiceInfo } from '@iqprotocol/abstract-blockchain';
+import { AccountID, Address, BlockchainProvider, ServiceInfo } from '@iqprotocol/abstract-blockchain';
 
 export interface ServiceConfig {
   blockchain: BlockchainProvider;
@@ -14,7 +14,20 @@ export class Service {
     this.address = address;
   }
 
-  getAddress(): string {
+  attach(address: Address): Service {
+    return new Service({ blockchain: this.blockchain, address });
+  }
+
+  connect(blockchain: BlockchainProvider): Service {
+    return new Service({ blockchain, address: this.address });
+  }
+
+  async getId(): Promise<AccountID> {
+    const chainId = await this.blockchain.getChainId();
+    return new AccountID({ chainId, address: this.address });
+  }
+
+  getAddress(): Address {
     return this.address;
   }
 
