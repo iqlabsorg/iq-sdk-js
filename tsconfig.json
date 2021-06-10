@@ -8,7 +8,7 @@
     "paths": {
       "@iqprotocol/abstract-blockchain": ["packages/abstract-blockchain/src"],
       "@iqprotocol/abstract-storage": ["packages/abstract-storage/src"],
-      "@iqprotocol/ethereum": ["packages/blockchains/ethereum/src"],
+      "@iqprotocol/eip155": ["packages/blockchains/eip155/src"],
       "@iqprotocol/in-memory-storage": ["packages/storages/in-memory/src"],
       "@iqprotocol/postgres-storage": ["packages/storages/postgres/src"],
       "@iqprotocol/energy": ["packages/energy/src"],

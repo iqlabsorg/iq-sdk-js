@@ -1,5 +1,5 @@
 {
-  "name": "@iqprotocol/ethereum",
+  "name": "@iqprotocol/eip155",
   "version": "0.1.0",
   "scripts": {
     "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
@@ -12,7 +12,7 @@
     "typechain:generate": "typechain --target ethers-v5 --outDir types/contracts './node_modules/@iqprotocol/solidity-contracts/artifacts/contracts/**/*.json'"
   },
   "main": "dist/index.js",
-  "module": "dist/ethereum.esm.js",
+  "module": "dist/eip155.esm.js",
   "typings": "dist/index.d.ts",
   "files": [
     "README.md",
