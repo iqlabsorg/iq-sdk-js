@@ -1,6 +1,6 @@
 import { deployments, ethers } from 'hardhat';
 import 'hardhat-deploy-ethers';
-import { EthereumBlockchainProvider } from '../../src';
+import { EIP155BlockchainProvider } from '../../src';
 import { baseRate, getEnterprise, getPowerToken } from './utils';
 import { DefaultConverter, Enterprise, EnterpriseFactory, ERC20Mock } from '../../types/contracts';
 import {
@@ -17,7 +17,7 @@ type Awaited<T> = T extends PromiseLike<infer U> ? Awaited<U> : T;
 /**
  * @group integration
  */
-describe('EthereumBlockchainProvider', () => {
+describe('EIP155BlockchainProvider', () => {
   const ONE_HOUR = 3600;
   const ONE_DAY = 24 * ONE_HOUR;
   const ONE_PERCENT = 100;
@@ -25,7 +25,7 @@ describe('EthereumBlockchainProvider', () => {
   const BASE_RATE = BigNumber.from(baseRate(100n, 86400n, 3n));
   const GAP_HALVING_PERIOD = 86400;
 
-  let ethereumProvider: EthereumBlockchainProvider;
+  let eip155Provider: EIP155BlockchainProvider;
   let deployerSigner: Awaited<ReturnType<typeof ethers.getNamedSigner>>;
   let liquidityToken: ERC20Mock;
   let enterpriseFactory: EnterpriseFactory;
@@ -40,7 +40,7 @@ describe('EthereumBlockchainProvider', () => {
     enterpriseFactory = (await ethers.getContract('EnterpriseFactory')) as EnterpriseFactory;
     liquidityToken = (await ethers.getContract('ERC20Mock')) as ERC20Mock;
     converter = (await ethers.getContract('DefaultConverter')) as DefaultConverter;
-    ethereumProvider = new EthereumBlockchainProvider({
+    eip155Provider = new EIP155BlockchainProvider({
       signer: deployerSigner,
       contracts: {
         enterpriseFactory: enterpriseFactory.address,
@@ -70,16 +70,15 @@ describe('EthereumBlockchainProvider', () => {
   });
 
   it('deploys enterprise', async () => {
-    const tx = await ethereumProvider.deployEnterprise(baseEnterpriseParams);
+    const tx = await eip155Provider.deployEnterprise(baseEnterpriseParams);
 
     const receipt = await tx.wait();
     expect(receipt.status).toBe(1);
   });
 
-  it('works', async () => {
-    const deployerAddress = await deployerSigner.getAddress();
-    const balance = await ethereumProvider.getTokenBalance(liquidityToken.address, deployerAddress);
-    expect(balance).toEqual('1000000000000000000000000000');
+  it('returns correct CAIP-2 chain ID', async () => {
+    const chainId = await eip155Provider.getChainId();
+    expect(chainId.toString()).toEqual(`eip155:${await deployerSigner.getChainId()}`);
   });
 
   describe('When enterprise deployed', () => {
@@ -87,7 +86,7 @@ describe('EthereumBlockchainProvider', () => {
     let expectedEnterpriseData: EnterpriseInfo;
 
     beforeEach(async () => {
-      const tx = await ethereumProvider.deployEnterprise(baseEnterpriseParams);
+      const tx = await eip155Provider.deployEnterprise(baseEnterpriseParams);
 
       const receipt = await tx.wait();
       enterprise = await getEnterprise(enterpriseFactory, receipt.blockNumber);
@@ -110,12 +109,12 @@ describe('EthereumBlockchainProvider', () => {
     });
 
     it('retrieves enterprise data', async () => {
-      const data = await ethereumProvider.getEnterpriseInfo(enterprise.address);
+      const data = await eip155Provider.getEnterpriseInfo(enterprise.address);
       expect(data).toMatchObject(expectedEnterpriseData);
     });
 
     it('registers new services', async () => {
-      const tx = await ethereumProvider.registerService(enterprise.address, baseServiceParams);
+      const tx = await eip155Provider.registerService(enterprise.address, baseServiceParams);
       const receipt = await tx.wait();
       expect(receipt.status).toBe(1);
     });
@@ -143,7 +142,7 @@ describe('EthereumBlockchainProvider', () => {
           name: 'Test Service 1',
           symbol: 'IQPT1',
         };
-        const r1 = await (await ethereumProvider.registerService(enterprise.address, serviceParams1)).wait();
+        const r1 = await (await eip155Provider.registerService(enterprise.address, serviceParams1)).wait();
         const service1Address = (await getPowerToken(enterprise, r1.blockNumber)).address;
         expectedServiceData1 = {
           ...baseExpectedServiceData,
@@ -159,7 +158,7 @@ describe('EthereumBlockchainProvider', () => {
           name: 'Test Service 2',
           symbol: 'IQPT2',
         };
-        const r2 = await (await ethereumProvider.registerService(enterprise.address, serviceParams2)).wait();
+        const r2 = await (await eip155Provider.registerService(enterprise.address, serviceParams2)).wait();
         const service2Address = (await getPowerToken(enterprise, r2.blockNumber)).address;
         expectedServiceData2 = {
           ...baseExpectedServiceData,
@@ -171,7 +170,7 @@ describe('EthereumBlockchainProvider', () => {
       });
 
       it('lists enterprise services', async () => {
-        const services = await ethereumProvider.listEnterpriseServices(enterprise.address);
+        const services = await eip155Provider.listEnterpriseServices(enterprise.address);
         expect(services).toHaveLength(2);
 
         expect(services[0]).toEqual(expectedServiceData1.address);
@@ -179,7 +178,7 @@ describe('EthereumBlockchainProvider', () => {
       });
 
       it('retrieves the service data', async () => {
-        const service = await ethereumProvider.getServiceInfo(expectedServiceData2.address);
+        const service = await eip155Provider.getServiceInfo(expectedServiceData2.address);
         expect(service).toMatchObject(expectedServiceData2);
       });
 
@@ -187,7 +186,7 @@ describe('EthereumBlockchainProvider', () => {
         const accountAddress = await deployerSigner.getAddress();
         const serviceAddress = expectedServiceData1.address;
 
-        const accountState = await ethereumProvider.getAccountState(serviceAddress, accountAddress);
+        const accountState = await eip155Provider.getAccountState(serviceAddress, accountAddress);
         expect(accountState).toMatchObject(<AccountState>{
           serviceAddress,
           accountAddress,

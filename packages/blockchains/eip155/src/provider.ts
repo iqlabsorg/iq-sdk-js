@@ -1,14 +1,10 @@
 import { ContractTransaction, Signer } from 'ethers';
-import {
-  Enterprise__factory,
-  EnterpriseFactory__factory,
-  ERC20__factory,
-  PowerToken__factory,
-} from '../types/contracts';
+import { Enterprise__factory, EnterpriseFactory__factory, PowerToken__factory } from '../types/contracts';
 import {
   AccountState,
   Address,
   BlockchainProvider,
+  ChainID,
   EnterpriseInfo,
   EnterpriseParams,
   ServiceInfo,
@@ -19,27 +15,24 @@ type DeployedContracts = {
   enterpriseFactory: Address;
 };
 
-export type EthereumBlockchainProviderConfig = {
+export type EIP155BlockchainProviderConfig = {
   signer: Signer;
   contracts: DeployedContracts;
 };
 
-export class EthereumBlockchainProvider implements BlockchainProvider<ContractTransaction> {
+export class EIP155BlockchainProvider implements BlockchainProvider<ContractTransaction> {
   private readonly signer: Signer;
   private readonly contracts: DeployedContracts;
 
-  constructor({ signer, contracts }: EthereumBlockchainProviderConfig) {
+  constructor({ signer, contracts }: EIP155BlockchainProviderConfig) {
     this.signer = signer;
     this.contracts = contracts;
   }
 
-  async getNetworkId(): Promise<string> {
-    return (await this.signer.getChainId()).toString();
-  }
-
-  async getTokenBalance(tokenAddress: Address, address: Address): Promise<string> {
-    const token = ERC20__factory.connect(tokenAddress, this.signer);
-    return (await token.balanceOf(address)).toString();
+  // https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md
+  async getChainId(): Promise<ChainID> {
+    const reference = await this.signer.getChainId();
+    return new ChainID({ namespace: 'eip155', reference: reference.toString() });
   }
 
   async deployEnterprise(params: EnterpriseParams): Promise<ContractTransaction> {
