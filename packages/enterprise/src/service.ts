@@ -6,6 +6,7 @@ export interface ServiceConfig {
 }
 
 export class Service {
+  private id?: AccountID;
   private readonly blockchain: BlockchainProvider;
   private readonly address: string;
 
@@ -23,8 +24,12 @@ export class Service {
   }
 
   async getId(): Promise<AccountID> {
-    const chainId = await this.blockchain.getChainId();
-    return new AccountID({ chainId, address: this.address });
+    if (!this.id) {
+      const chainId = await this.blockchain.getChainId();
+      this.id = new AccountID({ chainId, address: this.address });
+    }
+
+    return this.id;
   }
 
   getAddress(): Address {
