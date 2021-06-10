@@ -7,11 +7,14 @@
     "typeRoots": ["./node_modules/@types", "./types"],
     "paths": {
       "@iqprotocol/abstract-blockchain": ["packages/abstract-blockchain/src"],
+      "@iqprotocol/abstract-monitoring": ["packages/abstract-monitoring/src"],
       "@iqprotocol/abstract-storage": ["packages/abstract-storage/src"],
       "@iqprotocol/eip155": ["packages/blockchains/eip155/src"],
+      "@iqprotocol/dvp": ["packages/dvp/src"],
+      "@iqprotocol/energy": ["packages/energy/src"],
+      "@iqprotocol/enterprise": ["packages/enterprise/src"],
       "@iqprotocol/in-memory-storage": ["packages/storages/in-memory/src"],
       "@iqprotocol/postgres-storage": ["packages/storages/postgres/src"],
-      "@iqprotocol/energy": ["packages/energy/src"],
       "$test/*": ["test/*"]
     }
   }
