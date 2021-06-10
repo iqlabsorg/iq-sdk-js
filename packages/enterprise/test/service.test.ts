@@ -1,15 +1,5 @@
 import { Service } from '../src';
-import { BlockchainProvider } from '@iqprotocol/abstract-blockchain';
-
-const mockBlockchainProvider: jest.Mocked<BlockchainProvider> = {
-  getServiceInfo: jest.fn(),
-  getEnterpriseInfo: jest.fn(),
-  getNetworkId: jest.fn(),
-  deployEnterprise: jest.fn(),
-  listEnterprises: jest.fn(),
-  listEnterpriseServices: jest.fn(),
-  registerService: jest.fn(),
-};
+import { mockBlockchainProvider } from './support/mocks';
 
 /**
  * @group unit

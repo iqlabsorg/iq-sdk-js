@@ -1,4 +1,5 @@
 import { Address, BlockchainProvider, EnterpriseInfo } from '@iqprotocol/abstract-blockchain';
+import { Service } from './service';
 
 export interface EnterpriseConfig {
   blockchain: BlockchainProvider;
@@ -22,10 +23,6 @@ export class Enterprise {
     return new Enterprise({ blockchain, address: this.address });
   }
 
-  // getId(): string {
-  //   return '123';
-  // }
-
   getAddress(): Address {
     return this.address;
   }
@@ -34,11 +31,13 @@ export class Enterprise {
     return this.blockchain.getEnterpriseInfo(this.address);
   }
 
-  // listServices(): Service[] {
-  //   return [];
-  // }
-
-  // getService(address): Service {
-  //   return {} as Service;
-  // }
+  async listServices(): Promise<Service[]> {
+    return (await this.blockchain.listEnterpriseServices(this.address)).map(
+      address =>
+        new Service({
+          blockchain: this.blockchain,
+          address,
+        }),
+    );
+  }
 }
