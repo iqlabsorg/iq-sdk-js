@@ -3,7 +3,13 @@ import 'hardhat-deploy-ethers';
 import { EthereumBlockchainProvider } from '../../src';
 import { baseRate, getEnterprise, getPowerToken } from './utils';
 import { DefaultConverter, Enterprise, EnterpriseFactory, ERC20Mock } from '../../types/contracts';
-import { EnterpriseInfo, EnterpriseParams, ServiceInfo, ServiceParams } from '@iqprotocol/abstract-blockchain';
+import {
+  AccountState,
+  EnterpriseInfo,
+  EnterpriseParams,
+  ServiceInfo,
+  ServiceParams,
+} from '@iqprotocol/abstract-blockchain';
 import { BigNumber } from 'ethers';
 
 type Awaited<T> = T extends PromiseLike<infer U> ? Awaited<U> : T;
@@ -195,6 +201,20 @@ describe('EthereumBlockchainProvider', () => {
       it('retrieves the service data', async () => {
         const service = await ethereumProvider.getServiceInfo(expectedServiceData2.address);
         expect(service).toMatchObject(expectedServiceData2);
+      });
+
+      it('retrieves account state for specific service', async () => {
+        const accountAddress = await deployerSigner.getAddress();
+        const serviceAddress = expectedServiceData1.address;
+
+        const accountState = await ethereumProvider.getAccountState(serviceAddress, accountAddress);
+        expect(accountState).toMatchObject(<AccountState>{
+          serviceAddress,
+          accountAddress,
+          balance: BigNumber.from(0),
+          energy: BigNumber.from(0),
+          timestamp: 0,
+        });
       });
     });
   });
