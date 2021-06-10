@@ -56,6 +56,14 @@ export interface ServiceInfo {
   allowsPerpetual: boolean;
 }
 
+export interface AccountState {
+  serviceAddress: Address;
+  accountAddress: Address;
+  balance: BigNumber;
+  energy: BigNumber;
+  timestamp: number;
+}
+
 export interface BlockchainProvider<TransactionResponse = Record<string, unknown>> {
   getNetworkId(): Promise<string>;
 
@@ -68,6 +76,8 @@ export interface BlockchainProvider<TransactionResponse = Record<string, unknown
   getEnterpriseInfo(enterpriseAddress: Address): Promise<EnterpriseInfo>;
 
   getServiceInfo(serviceAddress: Address): Promise<ServiceInfo>;
+
+  getAccountState(serviceAddress: Address, accountAddress: Address): Promise<AccountState>;
 
   registerService(enterpriseAddress: Address, serviceParams: ServiceParams): Promise<TransactionResponse>;
 }

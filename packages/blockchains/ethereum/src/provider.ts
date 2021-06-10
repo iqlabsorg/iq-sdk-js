@@ -6,6 +6,7 @@ import {
   PowerToken__factory,
 } from '../types/contracts';
 import {
+  AccountState,
   Address,
   BlockchainProvider,
   EnterpriseInfo,
@@ -94,6 +95,19 @@ export class EthereumBlockchainProvider implements BlockchainProvider<ContractTr
 
   async getServiceInfo(serviceAddress: Address): Promise<ServiceInfo> {
     return this.readServiceInfo(serviceAddress);
+  }
+
+  async getAccountState(serviceAddress: Address, accountAddress: Address): Promise<AccountState> {
+    const powerToken = PowerToken__factory.connect(serviceAddress, this.signer);
+    const balance = await powerToken.balanceOf(accountAddress);
+    const { energy, timestamp } = await powerToken.getState(accountAddress);
+    return {
+      serviceAddress,
+      accountAddress,
+      balance,
+      energy,
+      timestamp,
+    };
   }
 
   protected async readEnterpriseInfo(enterpriseAddress: Address): Promise<EnterpriseInfo> {
