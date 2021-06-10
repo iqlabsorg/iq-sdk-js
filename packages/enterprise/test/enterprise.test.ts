@@ -1,5 +1,6 @@
-import { Enterprise } from '../src';
+import { AccountID, ChainID } from '@iqprotocol/abstract-blockchain';
 import { mockBlockchainProvider } from './support/mocks';
+import { Enterprise } from '../src';
 
 /**
  * @group unit
@@ -13,7 +14,11 @@ describe('Enterprise', () => {
     enterprise = new Enterprise({ blockchain: mockBlockchainProvider, address: ENTERPRISE_ADDRESS });
   });
 
-  it.todo('returns correct id');
+  it('returns correct ID', async () => {
+    const chainId = new ChainID({ namespace: 'eip155', reference: '1' });
+    mockBlockchainProvider.getChainId.mockResolvedValue(chainId);
+    await expect(enterprise.getId()).resolves.toMatchObject(new AccountID({ chainId, address: ENTERPRISE_ADDRESS }));
+  });
 
   it('retrieves on-chain data via blockchain provider', async () => {
     const mockGetEnterpriseInfo = jest.spyOn(mockBlockchainProvider, 'getEnterpriseInfo');

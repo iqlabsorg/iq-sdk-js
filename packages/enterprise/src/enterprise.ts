@@ -1,4 +1,4 @@
-import { Address, BlockchainProvider, EnterpriseInfo } from '@iqprotocol/abstract-blockchain';
+import { AccountID, Address, BlockchainProvider, EnterpriseInfo } from '@iqprotocol/abstract-blockchain';
 import { Service } from './service';
 
 export interface EnterpriseConfig {
@@ -21,6 +21,11 @@ export class Enterprise {
 
   connect(blockchain: BlockchainProvider): Enterprise {
     return new Enterprise({ blockchain, address: this.address });
+  }
+
+  async getId(): Promise<AccountID> {
+    const chainId = await this.blockchain.getChainId();
+    return new AccountID({ chainId, address: this.address });
   }
 
   getAddress(): Address {
