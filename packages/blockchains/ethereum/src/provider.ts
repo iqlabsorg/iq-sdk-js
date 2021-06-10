@@ -27,15 +27,10 @@ export type EthereumBlockchainProviderConfig = {
 export class EthereumBlockchainProvider implements BlockchainProvider<ContractTransaction> {
   private readonly signer: Signer;
   private readonly contracts: DeployedContracts;
-  private readonly wellKnownEnterprises = new Set<Address>();
 
   constructor({ signer, contracts }: EthereumBlockchainProviderConfig) {
     this.signer = signer;
     this.contracts = contracts;
-  }
-
-  addWellKnownEnterprise(address: Address): void {
-    this.wellKnownEnterprises.add(address);
   }
 
   async getNetworkId(): Promise<string> {
@@ -57,20 +52,9 @@ export class EthereumBlockchainProvider implements BlockchainProvider<ContractTr
     );
   }
 
-  async listEnterprises(): Promise<EnterpriseInfo[]> {
-    return Promise.all(
-      [...this.wellKnownEnterprises].map(async enterpriseAddress => this.readEnterpriseInfo(enterpriseAddress)),
-    );
-  }
-
-  async listEnterpriseServices(enterpriseAddress: Address): Promise<ServiceInfo[]> {
+  async listEnterpriseServices(enterpriseAddress: Address): Promise<Address[]> {
     const enterprise = Enterprise__factory.connect(enterpriseAddress, this.signer);
-    const powerTokens = await enterprise.getPowerTokens();
-    if (!powerTokens.length) {
-      return [];
-    }
-
-    return Promise.all(powerTokens.map(async powerTokenAddress => this.readServiceInfo(powerTokenAddress)));
+    return enterprise.getPowerTokens();
   }
 
   async getEnterpriseInfo(enterpriseAddress: Address): Promise<EnterpriseInfo> {

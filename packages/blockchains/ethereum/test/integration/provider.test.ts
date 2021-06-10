@@ -91,7 +91,6 @@ describe('EthereumBlockchainProvider', () => {
 
       const receipt = await tx.wait();
       enterprise = await getEnterprise(enterpriseFactory, receipt.blockNumber);
-      ethereumProvider.addWellKnownEnterprise(enterprise.address);
 
       expectedEnterpriseData = {
         address: enterprise.address,
@@ -108,25 +107,6 @@ describe('EthereumBlockchainProvider', () => {
         streamingReserveTarget: BigNumber.from(0),
         streamingReserveUpdated: 0,
       };
-    });
-
-    it('lists well known enterprises', async () => {
-      // deploy another enterprise and add it to well-known list
-      const anotherEnterpriseParams = { ...baseEnterpriseParams, name: 'Test Enterprise 2' };
-      const tx = await ethereumProvider.deployEnterprise(anotherEnterpriseParams);
-      const receipt = await tx.wait();
-      const anotherEnterprise = await getEnterprise(enterpriseFactory, receipt.blockNumber);
-      ethereumProvider.addWellKnownEnterprise(anotherEnterprise.address);
-
-      const enterprises = await ethereumProvider.listEnterprises();
-
-      expect(enterprises).toHaveLength(2);
-      expect(enterprises[0]).toMatchObject(expectedEnterpriseData);
-      expect(enterprises[1]).toMatchObject({
-        ...expectedEnterpriseData,
-        name: anotherEnterpriseParams.name,
-        address: anotherEnterprise.address,
-      });
     });
 
     it('retrieves enterprise data', async () => {
@@ -194,8 +174,8 @@ describe('EthereumBlockchainProvider', () => {
         const services = await ethereumProvider.listEnterpriseServices(enterprise.address);
         expect(services).toHaveLength(2);
 
-        expect(services[0]).toMatchObject(expectedServiceData1);
-        expect(services[1]).toMatchObject(expectedServiceData2);
+        expect(services[0]).toEqual(expectedServiceData1.address);
+        expect(services[1]).toEqual(expectedServiceData2.address);
       });
 
       it('retrieves the service data', async () => {
