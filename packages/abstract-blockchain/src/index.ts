@@ -1,7 +1,8 @@
 import { BigNumber, BigNumberish } from 'ethers';
+import { ChainID, AccountID } from 'caip';
 
+export { ChainID, AccountID };
 export { BigNumber, BigNumberish };
-
 export type Address = string;
 
 export interface EnterpriseParams {
@@ -65,7 +66,7 @@ export interface AccountState {
 }
 
 export interface BlockchainProvider<TransactionResponse = Record<string, unknown>> {
-  getNetworkId(): Promise<string>;
+  getChainId(): Promise<ChainID>;
 
   deployEnterprise(params: EnterpriseParams): Promise<TransactionResponse>;
 
