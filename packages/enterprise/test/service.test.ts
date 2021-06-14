@@ -8,21 +8,30 @@ import { Service } from '../src';
 describe('Service', () => {
   const SERVICE_ADDRESS = '0x44AdE077C3D5Aaffc0Ff5fe465B0cfa490915A35';
   let service: Service;
+  const chainId = new ChainID({ namespace: 'eip155', reference: '1' });
+  const serviceAccountId = new AccountID({ chainId, address: SERVICE_ADDRESS });
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockBlockchainProvider.getChainId.mockResolvedValue(chainId);
     service = new Service({ blockchain: mockBlockchainProvider, address: SERVICE_ADDRESS });
   });
 
   it('returns correct ID', async () => {
-    const chainId = new ChainID({ namespace: 'eip155', reference: '1' });
-    mockBlockchainProvider.getChainId.mockResolvedValue(chainId);
-    await expect(service.getId()).resolves.toMatchObject(new AccountID({ chainId, address: SERVICE_ADDRESS }));
+    await expect(service.getId()).resolves.toMatchObject(serviceAccountId);
   });
 
   it('retrieves on-chain data via blockchain provider', async () => {
     const mockGetServiceInfo = jest.spyOn(mockBlockchainProvider, 'getServiceInfo');
     await service.getInfo();
     expect(mockGetServiceInfo).toHaveBeenCalledWith(SERVICE_ADDRESS);
+  });
+
+  it('retrieves on-chain state via blockchain provider', async () => {
+    const address = '0x52De41D6a2104812f84ef596BE15B84d1d846ee5';
+    const accountId = new AccountID({ chainId, address });
+    const mockGetAccountState = jest.spyOn(mockBlockchainProvider, 'getAccountState');
+    await service.getAccountState(accountId);
+    expect(mockGetAccountState).toHaveBeenCalledWith(SERVICE_ADDRESS, address);
   });
 });
