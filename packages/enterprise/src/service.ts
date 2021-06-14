@@ -1,4 +1,4 @@
-import { AccountID, Address, BlockchainProvider, ServiceInfo } from '@iqprotocol/abstract-blockchain';
+import { AccountID, AccountState, Address, BlockchainProvider, ServiceInfo } from '@iqprotocol/abstract-blockchain';
 
 export interface ServiceConfig {
   blockchain: BlockchainProvider;
@@ -40,11 +40,7 @@ export class Service {
     return this.blockchain.getServiceInfo(this.address);
   }
 
-  // todo: this reads on-chain state
-  // getAccountState(user address)
-
-  // connectDVP(DVPConnector): DVPFactory
-  // accept<T>(visitor: (s: Service, blockchain) => T): T {
-  //   return visitor(this, blockchain);
-  // }
+  async getAccountState(accountId: AccountID): Promise<AccountState> {
+    return this.blockchain.getAccountState(this.address, accountId.address);
+  }
 }
