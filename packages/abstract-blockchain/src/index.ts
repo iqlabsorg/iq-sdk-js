@@ -70,9 +70,11 @@ export interface BlockchainProvider<TransactionResponse = Record<string, unknown
 
   deployEnterprise(params: EnterpriseParams): Promise<TransactionResponse>;
 
-  listEnterpriseServices(enterpriseAddress: Address): Promise<Address[]>;
+  getEnterpriseServices(enterpriseAddress: Address): Promise<Address[]>;
 
   getEnterpriseInfo(enterpriseAddress: Address): Promise<EnterpriseInfo>;
+
+  addLiquidity(enterpriseAddress: Address, amount: BigNumberish): Promise<TransactionResponse>;
 
   getServiceInfo(serviceAddress: Address): Promise<ServiceInfo>;
 

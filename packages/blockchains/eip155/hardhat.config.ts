@@ -8,6 +8,7 @@ const config: HardhatUserConfig = {
   },
   namedAccounts: {
     deployer: 0,
+    liquidityProvider: 1,
   },
   external: {
     contracts: [

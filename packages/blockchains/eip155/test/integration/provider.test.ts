@@ -170,7 +170,7 @@ describe('EIP155BlockchainProvider', () => {
       });
 
       it('lists enterprise services', async () => {
-        const services = await eip155Provider.listEnterpriseServices(enterprise.address);
+        const services = await eip155Provider.getEnterpriseServices(enterprise.address);
         expect(services).toHaveLength(2);
 
         expect(services[0]).toEqual(expectedServiceData1.address);
@@ -194,6 +194,31 @@ describe('EIP155BlockchainProvider', () => {
           energy: BigNumber.from(0),
           timestamp: 0,
         });
+      });
+    });
+
+    describe('When called by liquidity provider', () => {
+      let liquidityProvider: Awaited<ReturnType<typeof ethers.getNamedSigner>>;
+
+      beforeEach(async () => {
+        liquidityProvider = await ethers.getNamedSigner('liquidityProvider');
+        // allocate tokens to liquidity provider
+        await liquidityToken.transfer(liquidityProvider.address, 100000);
+        // approve liquidity tokens to enterprise
+        await liquidityToken.connect(liquidityProvider).approve(enterprise.address, 100000);
+
+        eip155Provider = new EIP155BlockchainProvider({
+          signer: liquidityProvider,
+          contracts: {
+            enterpriseFactory: enterpriseFactory.address,
+          },
+        });
+      });
+
+      it('allows to add liquidity', async () => {
+        const tx = await eip155Provider.addLiquidity(enterprise.address, 1000);
+        const receipt = await tx.wait();
+        expect(receipt.status).toBe(1);
       });
     });
   });
