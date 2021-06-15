@@ -1,4 +1,4 @@
-import { AccountID, Address, BlockchainProvider, EnterpriseInfo } from '@iqprotocol/abstract-blockchain';
+import { AccountID, Address, BigNumberish, BlockchainProvider, EnterpriseInfo } from '@iqprotocol/abstract-blockchain';
 import { Service } from './service';
 
 export interface EnterpriseConfig {
@@ -20,8 +20,8 @@ export class Enterprise {
     return new Enterprise({ blockchain: this.blockchain, address });
   }
 
-  connect(blockchain: BlockchainProvider): Enterprise {
-    return new Enterprise({ blockchain, address: this.address });
+  connect(blockchain: BlockchainProvider, address: Address): Enterprise {
+    return new Enterprise({ blockchain, address });
   }
 
   async getId(): Promise<AccountID> {
@@ -41,13 +41,17 @@ export class Enterprise {
     return this.blockchain.getEnterpriseInfo(this.address);
   }
 
-  async listServices(): Promise<Service[]> {
-    return (await this.blockchain.listEnterpriseServices(this.address)).map(
+  async getServices(): Promise<Service[]> {
+    return (await this.blockchain.getEnterpriseServices(this.address)).map(
       address =>
         new Service({
           blockchain: this.blockchain,
           address,
         }),
     );
+  }
+
+  async addLiquidity(amount: BigNumberish): Promise<void> {
+    await this.blockchain.addLiquidity(this.address, amount);
   }
 }

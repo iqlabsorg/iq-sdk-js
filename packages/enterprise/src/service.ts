@@ -19,8 +19,8 @@ export class Service {
     return new Service({ blockchain: this.blockchain, address });
   }
 
-  connect(blockchain: BlockchainProvider): Service {
-    return new Service({ blockchain, address: this.address });
+  connect(blockchain: BlockchainProvider, address: Address): Service {
+    return new Service({ blockchain, address });
   }
 
   async getId(): Promise<AccountID> {
