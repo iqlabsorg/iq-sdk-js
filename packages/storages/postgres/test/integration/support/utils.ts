@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/no-duplicate-string */
 import { createPool, DatabasePoolType, sql } from 'slonik';
 import { PostgresStoreConfig } from '@iqprotocol/postgres-storage';
 
@@ -32,12 +33,41 @@ export const expectCorrectDatabaseStructure = async (
   { accountTable, stateTable }: Required<Pick<PostgresStoreConfig, 'accountTable' | 'stateTable'>>,
 ): Promise<void> => {
   await pool.connect(async connection => {
-    const count = await connection.oneFirst(
+    const tableCount = await connection.oneFirst(
       sql`SELECT count(*) FROM information_schema.tables WHERE table_name IN (${sql.join(
         [accountTable, stateTable],
         sql`, `,
       )});`,
     );
-    expect(count).toBe(2);
+
+    expect(tableCount).toBe(2);
+
+    // verify account table columns
+    const accountTableColumns = await connection.many(
+      sql`SELECT column_name, data_type FROM information_schema.columns WHERE table_name = ${accountTable};`,
+    );
+
+    expect(accountTableColumns).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ column_name: 'id', data_type: 'character varying' }),
+        expect.objectContaining({ column_name: 'data', data_type: 'jsonb' }),
+      ]),
+    );
+
+    // verify state table columns
+    const stateTableColumns = await connection.many(
+      sql`SELECT column_name, data_type FROM information_schema.columns WHERE table_name = ${stateTable};`,
+    );
+
+    expect(stateTableColumns).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ column_name: 'service_id', data_type: 'character varying' }),
+        expect.objectContaining({ column_name: 'account_id', data_type: 'character varying' }),
+        expect.objectContaining({ column_name: 'power', data_type: 'character varying' }),
+        expect.objectContaining({ column_name: 'locked_power', data_type: 'character varying' }),
+        expect.objectContaining({ column_name: 'energy', data_type: 'character varying' }),
+        expect.objectContaining({ column_name: 'energy_changed_at', data_type: 'timestamp without time zone' }),
+      ]),
+    );
   });
 };

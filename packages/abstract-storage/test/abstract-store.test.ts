@@ -11,11 +11,15 @@ class DummyStore extends AbstractStore {
   }
 }
 
+const mockValidateAccount = jest.fn();
 const mockValidateAccountState = jest.fn();
 jest.mock('../src/validator', () => {
   return {
     DefaultValidator: jest.fn().mockImplementation(() => {
-      return { validateAccountState: mockValidateAccountState };
+      return <AccountStateValidator>{
+        validateAccount: mockValidateAccount,
+        validateAccountState: mockValidateAccountState,
+      };
     }),
   };
 });
@@ -36,32 +40,49 @@ describe('AbstractStore', () => {
   const accountState: AccountState = {
     accountId: account.id,
     serviceId: 'test-service',
-    balance: 10n,
+    power: 10n,
+    lockedPower: 0n,
     energy: 5n,
     energyChangedAt: Math.floor(Date.now() / 1000),
   };
 
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe('When validator is not provided', () => {
-    beforeEach(async () => {
-      mockValidateAccountState.mockClear();
+    beforeEach(() => {
       store = new DummyStore();
-      await store.saveAccount(account);
     });
 
-    it('uses default validator to validate state', async () => {
+    it('calls default validator to validate account', async () => {
+      await store.saveAccount(account);
+      expect(mockValidateAccount).toHaveBeenCalledWith(account);
+    });
+
+    it('uses default validator to validate account state', async () => {
       await store.saveAccountState(accountState);
       expect(mockValidateAccountState).toHaveBeenCalledWith(accountState);
     });
   });
 
   describe('When custom validator is provided', () => {
-    const validator = { validateAccountState: () => jest.fn() };
+    const validator: AccountStateValidator = {
+      validateAccount: () => jest.fn(),
+      validateAccountState: () => jest.fn(),
+    };
     beforeEach(async () => {
       store = new DummyStore(validator);
       await store.saveAccount(account);
     });
 
-    it('uses provided validator to validate state', async () => {
+    it('uses custom validator to validate account', async () => {
+      const spy = jest.spyOn(validator, 'validateAccount');
+      await store.saveAccount(account);
+      expect(spy).toHaveBeenCalledWith(account);
+    });
+
+    it('uses custom validator to validate account state', async () => {
       const spy = jest.spyOn(validator, 'validateAccountState');
       await store.saveAccountState(accountState);
       expect(spy).toHaveBeenCalledWith(accountState);

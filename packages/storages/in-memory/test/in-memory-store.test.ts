@@ -1,4 +1,4 @@
-import { Account, AccountState } from '@iqprotocol/abstract-storage';
+import { Account, AccountState, AccountStateValidator } from '@iqprotocol/abstract-storage';
 import { InMemoryStore } from '../src';
 
 /**
@@ -17,7 +17,8 @@ describe('InMemoryStore', () => {
   const accountState: AccountState = {
     accountId: account.id,
     serviceId: 'test-service',
-    balance: 10n,
+    power: 10n,
+    lockedPower: 2n,
     energy: 5n,
     energyChangedAt: Math.floor(Date.now() / 1000),
   };
@@ -71,11 +72,6 @@ describe('InMemoryStore', () => {
       await expect(store.getAccount(account.id)).resolves.toEqual(updatedAccount);
     });
 
-    it('validates account state before insert', async () => {
-      await expect(store.saveAccountState({ ...accountState, balance: -5n })).rejects.toThrow();
-      await expect(store.getAccountState(accountState.accountId, accountState.serviceId)).resolves.toBeNull();
-    });
-
     it('saves account state', async () => {
       await store.saveAccountState(accountState);
       await expect(store.getAccountState(accountState.accountId, accountState.serviceId)).resolves.toEqual(
@@ -90,13 +86,6 @@ describe('InMemoryStore', () => {
     });
 
     it('returns account state', async () => {
-      await expect(store.getAccountState(accountState.accountId, accountState.serviceId)).resolves.toEqual(
-        accountState,
-      );
-    });
-
-    it('validates account state before update', async () => {
-      await expect(store.saveAccountState({ ...accountState, balance: -5n })).rejects.toThrow();
       await expect(store.getAccountState(accountState.accountId, accountState.serviceId)).resolves.toEqual(
         accountState,
       );
@@ -117,13 +106,22 @@ describe('InMemoryStore', () => {
   });
 
   describe('When custom validator is provided', () => {
-    const validator = { validateAccountState: () => jest.fn() };
+    const validator: AccountStateValidator = {
+      validateAccount: () => jest.fn(),
+      validateAccountState: () => jest.fn(),
+    };
     beforeEach(async () => {
       store = new InMemoryStore({ validator });
       await store.saveAccount(account);
     });
 
-    it('uses provided validator to validate state', async () => {
+    it('uses custom validator to validate account', async () => {
+      const spy = jest.spyOn(validator, 'validateAccount');
+      await store.saveAccount(account);
+      expect(spy).toHaveBeenCalledWith(account);
+    });
+
+    it('uses custom validator to validate account state', async () => {
       const spy = jest.spyOn(validator, 'validateAccountState');
       await store.saveAccountState(accountState);
       expect(spy).toHaveBeenCalledWith(accountState);
