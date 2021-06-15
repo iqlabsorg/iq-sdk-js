@@ -24,7 +24,8 @@ describe('PostgresStore', () => {
   const accountState: AccountState = {
     accountId: account.id,
     serviceId: 'test-service',
-    balance: 10n,
+    power: 10n,
+    lockedPower: 2n,
     energy: 5n,
     energyChangedAt: Math.floor(Date.now() / 1000),
   };
@@ -114,7 +115,7 @@ describe('PostgresStore', () => {
     });
 
     it('validates account state before insert', async () => {
-      await expect(store.saveAccountState({ ...accountState, balance: -5n })).rejects.toThrow();
+      await expect(store.saveAccountState({ ...accountState, power: -5n })).rejects.toThrow();
       await expect(store.getAccountState(accountState.accountId, accountState.serviceId)).resolves.toBeNull();
     });
 
@@ -139,7 +140,7 @@ describe('PostgresStore', () => {
     });
 
     it('validates account state before update', async () => {
-      await expect(store.saveAccountState({ ...accountState, balance: -5n })).rejects.toThrow();
+      await expect(store.saveAccountState({ ...accountState, power: -5n })).rejects.toThrow();
       await expect(store.getAccountState(accountState.accountId, accountState.serviceId)).resolves.toEqual(
         accountState,
       );
@@ -148,7 +149,7 @@ describe('PostgresStore', () => {
     it('updates account state', async () => {
       const updatedState = {
         ...accountState,
-        balance: 15n,
+        power: 15n,
         energy: 2n,
         energyChangedAt: Number(Date.now() / 1000),
       };

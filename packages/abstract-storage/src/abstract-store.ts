@@ -13,6 +13,7 @@ export abstract class AbstractStore implements StorageProvider {
   }
 
   async saveAccount(account: Account): Promise<void> {
+    this.validator.validateAccount(account);
     return this._saveAccount(account);
   }
 

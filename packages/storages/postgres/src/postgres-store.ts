@@ -33,7 +33,8 @@ export class PostgresStore extends AbstractStore {
         sql`CREATE TABLE IF NOT EXISTS ${this.stateTableName} (
           service_id varchar NOT NULL,
           account_id varchar NOT NULL REFERENCES ${this.accountTableName} ON UPDATE RESTRICT ON DELETE RESTRICT,
-          balance varchar NOT NULL,
+          power varchar NOT NULL,
+          locked_power varchar NOT NULL,
           energy varchar NOT NULL,
           energy_changed_at timestamp NOT NULL,
           PRIMARY KEY (account_id, service_id)
@@ -65,7 +66,7 @@ export class PostgresStore extends AbstractStore {
   async getAccountState(accountId: string, serviceId: string): Promise<AccountState | null> {
     return this.pool.connect(async connection => {
       const row = await connection.maybeOne(
-        sql`SELECT account_id, service_id, balance, energy, EXTRACT(EPOCH FROM energy_changed_at) as energy_changed_at
+        sql`SELECT account_id, service_id, power, locked_power, energy , EXTRACT(EPOCH FROM energy_changed_at) as energy_changed_at
           FROM ${this.stateTableName}
           WHERE account_id = ${accountId}
           AND service_id = ${serviceId}
@@ -79,7 +80,8 @@ export class PostgresStore extends AbstractStore {
       return {
         serviceId: String(row.service_id),
         accountId: String(row.account_id),
-        balance: BigInt(row.balance),
+        power: BigInt(row.power),
+        lockedPower: BigInt(row.locked_power),
         energy: BigInt(row.energy),
         energyChangedAt: Number(row.energy_changed_at),
       };
@@ -106,7 +108,8 @@ export class PostgresStore extends AbstractStore {
   protected async _saveAccountState({
     accountId,
     serviceId,
-    balance,
+    power,
+    lockedPower,
     energy,
     energyChangedAt,
   }: AccountState): Promise<void> {
@@ -115,19 +118,22 @@ export class PostgresStore extends AbstractStore {
         sql`INSERT INTO ${this.stateTableName} (
             account_id,
             service_id,
-            balance,
+            power,
+            locked_power,
             energy,
             energy_changed_at
           ) VALUES (
             ${accountId},
             ${serviceId},
-            ${balance.toString(10)},
+            ${power.toString(10)},
+            ${lockedPower.toString(10)},
             ${energy.toString(10)},
             to_timestamp(${energyChangedAt})
           )
           ON CONFLICT (account_id, service_id)
           DO UPDATE SET
-            balance = EXCLUDED.balance,
+            power = EXCLUDED.power,
+            locked_power = EXCLUDED.locked_power,
             energy = EXCLUDED.energy,
             energy_changed_at = EXCLUDED.energy_changed_at
         `,
