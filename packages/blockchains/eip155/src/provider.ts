@@ -1,4 +1,4 @@
-import { ContractTransaction, Signer } from 'ethers';
+import { BigNumberish, ContractTransaction, Signer } from 'ethers';
 import { Enterprise__factory, EnterpriseFactory__factory, PowerToken__factory } from '../types/contracts';
 import {
   AccountState,
@@ -45,49 +45,12 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
     );
   }
 
-  async listEnterpriseServices(enterpriseAddress: Address): Promise<Address[]> {
+  async getEnterpriseServices(enterpriseAddress: Address): Promise<Address[]> {
     const enterprise = Enterprise__factory.connect(enterpriseAddress, this.signer);
     return enterprise.getPowerTokens();
   }
 
   async getEnterpriseInfo(enterpriseAddress: Address): Promise<EnterpriseInfo> {
-    return this.readEnterpriseInfo(enterpriseAddress);
-  }
-
-  async registerService(enterpriseAddress: Address, params: ServiceParams): Promise<ContractTransaction> {
-    const enterprise = Enterprise__factory.connect(enterpriseAddress, this.signer);
-    return enterprise.registerService(
-      params.name,
-      params.symbol,
-      params.gapHalvingPeriod,
-      params.baseRate,
-      params.baseToken,
-      params.serviceFeePercent,
-      params.minLoanDuration,
-      params.maxLoanDuration,
-      params.minGCFee,
-      params.allowsPerpetualTokensForever,
-    );
-  }
-
-  async getServiceInfo(serviceAddress: Address): Promise<ServiceInfo> {
-    return this.readServiceInfo(serviceAddress);
-  }
-
-  async getAccountState(serviceAddress: Address, accountAddress: Address): Promise<AccountState> {
-    const powerToken = PowerToken__factory.connect(serviceAddress, this.signer);
-    const balance = await powerToken.balanceOf(accountAddress);
-    const { energy, timestamp } = await powerToken.getState(accountAddress);
-    return {
-      serviceAddress,
-      accountAddress,
-      balance,
-      energy,
-      timestamp,
-    };
-  }
-
-  protected async readEnterpriseInfo(enterpriseAddress: Address): Promise<EnterpriseInfo> {
     const enterprise = Enterprise__factory.connect(enterpriseAddress, this.signer);
     const {
       name,
@@ -121,8 +84,24 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
     };
   }
 
-  protected async readServiceInfo(powerTokenAddress: Address): Promise<ServiceInfo> {
-    const powerToken = PowerToken__factory.connect(powerTokenAddress, this.signer);
+  async registerService(enterpriseAddress: Address, params: ServiceParams): Promise<ContractTransaction> {
+    const enterprise = Enterprise__factory.connect(enterpriseAddress, this.signer);
+    return enterprise.registerService(
+      params.name,
+      params.symbol,
+      params.gapHalvingPeriod,
+      params.baseRate,
+      params.baseToken,
+      params.serviceFeePercent,
+      params.minLoanDuration,
+      params.maxLoanDuration,
+      params.minGCFee,
+      params.allowsPerpetualTokensForever,
+    );
+  }
+
+  async getServiceInfo(serviceAddress: Address): Promise<ServiceInfo> {
+    const powerToken = PowerToken__factory.connect(serviceAddress, this.signer);
 
     const {
       name,
@@ -139,7 +118,7 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
     } = await powerToken.getInfo();
 
     return {
-      address: powerTokenAddress,
+      address: serviceAddress,
       name,
       symbol,
       baseRate,
@@ -152,5 +131,23 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
       serviceFeePercent,
       allowsPerpetual,
     };
+  }
+
+  async getAccountState(serviceAddress: Address, accountAddress: Address): Promise<AccountState> {
+    const powerToken = PowerToken__factory.connect(serviceAddress, this.signer);
+    const balance = await powerToken.balanceOf(accountAddress);
+    const { energy, timestamp } = await powerToken.getState(accountAddress);
+    return {
+      serviceAddress,
+      accountAddress,
+      balance,
+      energy,
+      timestamp,
+    };
+  }
+
+  async addLiquidity(enterpriseAddress: Address, amount: BigNumberish): Promise<ContractTransaction> {
+    const enterprise = Enterprise__factory.connect(enterpriseAddress, this.signer);
+    return enterprise.addLiquidity(amount);
   }
 }
