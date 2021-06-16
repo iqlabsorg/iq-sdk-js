@@ -42,7 +42,7 @@ export class Enterprise {
   }
 
   async getServices(): Promise<Service[]> {
-    return (await this.blockchain.getEnterpriseServices(this.address)).map(
+    return (await this.blockchain.getServices(this.address)).map(
       address =>
         new Service({
           blockchain: this.blockchain,

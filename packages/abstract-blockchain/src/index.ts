@@ -65,12 +65,26 @@ export interface AccountState {
   timestamp: number;
 }
 
+export interface ERC20Metadata {
+  address: Address;
+  name: string;
+  symbol: string;
+  decimals: number;
+}
+
+export interface ERC721Metadata {
+  address: Address;
+  name: string;
+  symbol: string;
+  tokenUri: string;
+}
+
 export interface BlockchainProvider<TransactionResponse = Record<string, unknown>> {
   getChainId(): Promise<ChainID>;
 
   deployEnterprise(params: EnterpriseParams): Promise<TransactionResponse>;
 
-  getEnterpriseServices(enterpriseAddress: Address): Promise<Address[]>;
+  getServices(enterpriseAddress: Address): Promise<Address[]>;
 
   getEnterpriseInfo(enterpriseAddress: Address): Promise<EnterpriseInfo>;
 
@@ -81,4 +95,16 @@ export interface BlockchainProvider<TransactionResponse = Record<string, unknown
   getAccountState(serviceAddress: Address, accountAddress: Address): Promise<AccountState>;
 
   registerService(enterpriseAddress: Address, serviceParams: ServiceParams): Promise<TransactionResponse>;
+
+  setLiquidityAllowance(enterpriseAddress: Address, amount: BigNumberish): Promise<TransactionResponse>;
+
+  getLiquidityAllowance(enterpriseAddress: Address): Promise<BigNumber>;
+
+  getLiquidityTokenAddress(enterpriseAddress: Address): Promise<Address>;
+
+  getLiquidityTokenMetadata(enterpriseAddress: Address): Promise<ERC20Metadata>;
+
+  getERC20Metadata(address: Address): Promise<ERC20Metadata>;
+
+  getERC721Metadata(address: Address, tokenId: BigNumberish): Promise<ERC721Metadata>;
 }
