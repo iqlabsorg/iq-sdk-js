@@ -1,5 +1,6 @@
 import { Enterprise, EnterpriseFactory, PowerToken } from '../../types/contracts';
 import hre from 'hardhat';
+import { ContractReceipt, ContractTransaction } from 'ethers';
 
 export const getEnterprise = async (
   enterpriseFactory: EnterpriseFactory,
@@ -37,3 +38,6 @@ export const baseRate = (
   }
   return (price << 64n) / (tokens * period);
 };
+
+export const wait = async (txPromise: Promise<ContractTransaction>): Promise<ContractReceipt> =>
+  (await txPromise).wait();

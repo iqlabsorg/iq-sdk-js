@@ -18,23 +18,11 @@ import {
   ChainID,
   EnterpriseInfo,
   EnterpriseParams,
+  ERC20Metadata,
+  ERC721Metadata,
   ServiceInfo,
   ServiceParams,
 } from '@iqprotocol/abstract-blockchain';
-
-export interface ERC20Metadata {
-  address: Address;
-  name: string;
-  symbol: string;
-  decimals: number;
-}
-
-export interface ERC721Metadata {
-  address: Address;
-  name: string;
-  symbol: string;
-  tokenUri: string;
-}
 
 type DeployedContracts = {
   enterpriseFactory: Address;
@@ -70,7 +58,7 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
     );
   }
 
-  async getEnterpriseServices(enterpriseAddress: Address): Promise<Address[]> {
+  async getServices(enterpriseAddress: Address): Promise<Address[]> {
     return this.resolveEnterprise(enterpriseAddress).getPowerTokens();
   }
 
@@ -175,14 +163,14 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
     return enterprise.addLiquidity(amount);
   }
 
-  async approveLiquidityToken(enterpriseAddress: Address, amount: BigNumberish): Promise<ContractTransaction> {
+  async setLiquidityAllowance(enterpriseAddress: Address, amount: BigNumberish): Promise<ContractTransaction> {
     const enterprise = this.resolveEnterprise(enterpriseAddress);
     const liquidityTokenAddress = await enterprise.getLiquidityToken();
     const liquidityToken = this.resolveERC20Token(liquidityTokenAddress);
     return liquidityToken.approve(enterprise.address, amount);
   }
 
-  async getLiquidityTokenAllowance(enterpriseAddress: Address): Promise<BigNumber> {
+  async getLiquidityAllowance(enterpriseAddress: Address): Promise<BigNumber> {
     const enterprise = this.resolveEnterprise(enterpriseAddress);
     const liquidityTokenAddress = await enterprise.getLiquidityToken();
     const liquidityToken = this.resolveERC20Token(liquidityTokenAddress);

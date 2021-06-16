@@ -29,7 +29,7 @@ describe('Enterprise', () => {
   it('lists registered services', async () => {
     const addr1 = '0x52De41D6a2104812f84ef596BE15B84d1d846ee5';
     const addr2 = '0x2C368A2E9Bd1bf16eb3DfCd924CA7eF4969CBBD9';
-    mockBlockchainProvider.getEnterpriseServices.mockResolvedValue([addr1, addr2]);
+    mockBlockchainProvider.getServices.mockResolvedValue([addr1, addr2]);
     const services = await enterprise.getServices();
     expect(services).toHaveLength(2);
     expect(services[0].getAddress()).toEqual(addr1);
