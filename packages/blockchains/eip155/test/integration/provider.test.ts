@@ -1,6 +1,6 @@
 import { deployments, ethers } from 'hardhat';
 import 'hardhat-deploy-ethers';
-import { EIP155BlockchainProvider } from '../../src';
+import { EIP155BlockchainProvider, ERC20Metadata } from '../../src';
 import { baseRate, getEnterprise, getPowerToken } from './utils';
 import { DefaultConverter, Enterprise, EnterpriseFactory, ERC20Mock } from '../../types/contracts';
 import {
@@ -119,6 +119,16 @@ describe('EIP155BlockchainProvider', () => {
       expect(receipt.status).toBe(1);
     });
 
+    it('retrieves enterprise liquidity token metadata', async () => {
+      const metadata = await eip155Provider.getLiquidityTokenMetadata(enterprise.address);
+      expect(metadata).toEqual(<ERC20Metadata>{
+        address: liquidityToken.address,
+        name: 'Testing',
+        symbol: 'TST',
+        decimals: 18,
+      });
+    });
+
     describe('When enterprise has registered services', () => {
       let expectedServiceData1: ServiceInfo;
       let expectedServiceData2: ServiceInfo;
@@ -204,8 +214,6 @@ describe('EIP155BlockchainProvider', () => {
         liquidityProvider = await ethers.getNamedSigner('liquidityProvider');
         // allocate tokens to liquidity provider
         await liquidityToken.transfer(liquidityProvider.address, 100000);
-        // approve liquidity tokens to enterprise
-        await liquidityToken.connect(liquidityProvider).approve(enterprise.address, 100000);
 
         eip155Provider = new EIP155BlockchainProvider({
           signer: liquidityProvider,
@@ -215,7 +223,16 @@ describe('EIP155BlockchainProvider', () => {
         });
       });
 
+      it('allows to approve liquidity tokens to enterprise', async () => {
+        const tx = await eip155Provider.approveLiquidityToken(enterprise.address, 1000);
+        await tx.wait();
+        const allowance = await liquidityToken.allowance(liquidityProvider.address, enterprise.address);
+        expect(allowance.toNumber()).toEqual(1000);
+      });
+
       it('allows to add liquidity', async () => {
+        // approve liquidity tokens to enterprise
+        await (await eip155Provider.approveLiquidityToken(enterprise.address, 1000)).wait();
         const tx = await eip155Provider.addLiquidity(enterprise.address, 1000);
         const receipt = await tx.wait();
         expect(receipt.status).toBe(1);
