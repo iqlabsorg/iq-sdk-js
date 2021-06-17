@@ -1,5 +1,5 @@
 import { BigNumber, BigNumberish } from 'ethers';
-import { ChainID, AccountID } from 'caip';
+import { AccountID, ChainID } from 'caip';
 
 export { ChainID, AccountID };
 export { BigNumber, BigNumberish };
@@ -79,6 +79,13 @@ export interface ERC721Metadata {
   tokenUri: string;
 }
 
+export interface LiquidityInfo {
+  tokenId: BigNumber;
+  amount: BigNumber;
+  shares: BigNumber;
+  block: BigNumber;
+}
+
 export interface BlockchainProvider<TransactionResponse = Record<string, unknown>> {
   getChainId(): Promise<ChainID>;
 
@@ -88,7 +95,23 @@ export interface BlockchainProvider<TransactionResponse = Record<string, unknown
 
   getEnterpriseInfo(enterpriseAddress: Address): Promise<EnterpriseInfo>;
 
+  getLiquidityInfo(enterpriseAddress: Address, interestTokenId: BigNumberish): Promise<LiquidityInfo>;
+
   addLiquidity(enterpriseAddress: Address, amount: BigNumberish): Promise<TransactionResponse>;
+
+  removeLiquidity(enterpriseAddress: Address, interestTokenId: BigNumberish): Promise<TransactionResponse>;
+
+  increaseLiquidity(
+    enterpriseAddress: Address,
+    interestTokenId: BigNumberish,
+    amount: BigNumberish,
+  ): Promise<TransactionResponse>;
+
+  decreaseLiquidity(
+    enterpriseAddress: Address,
+    interestTokenId: BigNumberish,
+    amount: BigNumberish,
+  ): Promise<TransactionResponse>;
 
   getServiceInfo(serviceAddress: Address): Promise<ServiceInfo>;
 
@@ -104,7 +127,19 @@ export interface BlockchainProvider<TransactionResponse = Record<string, unknown
 
   getLiquidityTokenMetadata(enterpriseAddress: Address): Promise<ERC20Metadata>;
 
-  getERC20Metadata(address: Address): Promise<ERC20Metadata>;
+  getBorrowTokenAddress(enterpriseAddress: Address): Promise<Address>;
 
-  getERC721Metadata(address: Address, tokenId: BigNumberish): Promise<ERC721Metadata>;
+  getBorrowTokenMetadata(enterpriseAddress: Address, tokenId: BigNumberish): Promise<ERC721Metadata>;
+
+  getInterestTokenAddress(enterpriseAddress: Address): Promise<Address>;
+
+  getInterestTokenMetadata(enterpriseAddress: Address, tokenId: BigNumberish): Promise<ERC721Metadata>;
+
+  getInterestTokenIds(enterpriseAddress: Address): Promise<BigNumber[]>;
+
+  getERC20Metadata(tokenAddress: Address): Promise<ERC20Metadata>;
+
+  getERC721Metadata(tokenAddress: Address, tokenId: BigNumberish): Promise<ERC721Metadata>;
+
+  getTokenBalance(tokenAddress: Address): Promise<BigNumber>;
 }
