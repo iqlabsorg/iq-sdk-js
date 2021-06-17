@@ -1,5 +1,7 @@
 import { BigNumber, BigNumberish, ContractTransaction, Signer } from 'ethers';
 import {
+  BorrowToken,
+  BorrowToken__factory,
   Enterprise,
   Enterprise__factory,
   EnterpriseFactory,
@@ -8,6 +10,8 @@ import {
   ERC20__factory,
   ERC721,
   ERC721__factory,
+  InterestToken,
+  InterestToken__factory,
   PowerToken,
   PowerToken__factory,
 } from '../types/contracts';
@@ -20,6 +24,7 @@ import {
   EnterpriseParams,
   ERC20Metadata,
   ERC721Metadata,
+  LiquidityInfo,
   ServiceInfo,
   ServiceParams,
 } from '@iqprotocol/abstract-blockchain';
@@ -163,6 +168,26 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
     return enterprise.addLiquidity(amount);
   }
 
+  async decreaseLiquidity(
+    enterpriseAddress: Address,
+    interestTokenId: BigNumberish,
+    amount: BigNumberish,
+  ): Promise<ContractTransaction> {
+    return this.resolveEnterprise(enterpriseAddress).decreaseLiquidity(interestTokenId, amount);
+  }
+
+  async increaseLiquidity(
+    enterpriseAddress: Address,
+    interestTokenId: BigNumberish,
+    amount: BigNumberish,
+  ): Promise<ContractTransaction> {
+    return this.resolveEnterprise(enterpriseAddress).increaseLiquidity(interestTokenId, amount);
+  }
+
+  async removeLiquidity(enterpriseAddress: Address, interestTokenId: BigNumberish): Promise<ContractTransaction> {
+    return this.resolveEnterprise(enterpriseAddress).removeLiquidity(interestTokenId);
+  }
+
   async setLiquidityAllowance(enterpriseAddress: Address, amount: BigNumberish): Promise<ContractTransaction> {
     const enterprise = this.resolveEnterprise(enterpriseAddress);
     const liquidityTokenAddress = await enterprise.getLiquidityToken();
@@ -183,22 +208,63 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
   }
 
   async getLiquidityTokenMetadata(enterpriseAddress: Address): Promise<ERC20Metadata> {
-    const tokenAddress = await this.resolveEnterprise(enterpriseAddress).getLiquidityToken();
+    const tokenAddress = await this.getLiquidityTokenAddress(enterpriseAddress);
     return this.getERC20Metadata(tokenAddress);
   }
 
-  async getERC20Metadata(address: Address): Promise<ERC20Metadata> {
-    const token = this.resolveERC20Token(address);
-    const [name, symbol, decimals] = await Promise.all([token.name(), token.symbol(), token.decimals()]);
-
-    return { address, name, symbol, decimals };
+  async getBorrowTokenAddress(enterpriseAddress: Address): Promise<Address> {
+    return this.resolveEnterprise(enterpriseAddress).getBorrowToken();
   }
 
-  async getERC721Metadata(address: Address, tokenId: BigNumberish): Promise<ERC721Metadata> {
-    const token = this.resolveERC721Token(address);
+  async getBorrowTokenMetadata(enterpriseAddress: Address, tokenId: BigNumberish): Promise<ERC721Metadata> {
+    const tokenAddress = await this.getBorrowTokenAddress(enterpriseAddress);
+    return this.getERC721Metadata(tokenAddress, tokenId);
+  }
+
+  async getInterestTokenAddress(enterpriseAddress: Address): Promise<Address> {
+    return this.resolveEnterprise(enterpriseAddress).getInterestToken();
+  }
+
+  async getInterestTokenMetadata(enterpriseAddress: Address, tokenId: BigNumberish): Promise<ERC721Metadata> {
+    const tokenAddress = await this.getInterestTokenAddress(enterpriseAddress);
+    return this.getERC721Metadata(tokenAddress, tokenId);
+  }
+
+  async getInterestTokenIds(enterpriseAddress: Address): Promise<BigNumber[]> {
+    const account = await this.signer.getAddress();
+    const tokenAddress = await this.getInterestTokenAddress(enterpriseAddress);
+    const token = this.resolveInterestToken(tokenAddress);
+    const tokenCount = await token.balanceOf(account);
+
+    const tokenIds: BigNumber[] = [];
+    for (let i = 0; i < tokenCount.toNumber(); i++) {
+      tokenIds.push(await token.tokenOfOwnerByIndex(account, i));
+    }
+
+    return tokenIds;
+  }
+
+  async getLiquidityInfo(enterpriseAddress: Address, interestTokenId: BigNumberish): Promise<LiquidityInfo> {
+    const { amount, shares, block } = await this.resolveEnterprise(enterpriseAddress).getLiquidityInfo(interestTokenId);
+    return { tokenId: BigNumber.from(interestTokenId), amount, shares, block };
+  }
+
+  async getERC20Metadata(tokenAddress: Address): Promise<ERC20Metadata> {
+    const token = this.resolveERC20Token(tokenAddress);
+    const [name, symbol, decimals] = await Promise.all([token.name(), token.symbol(), token.decimals()]);
+
+    return { address: tokenAddress, name, symbol, decimals };
+  }
+
+  async getERC721Metadata(tokenAddress: Address, tokenId: BigNumberish): Promise<ERC721Metadata> {
+    const token = this.resolveERC721Token(tokenAddress);
     const [name, symbol, tokenUri] = await Promise.all([token.name(), token.symbol(), token.tokenURI(tokenId)]);
 
-    return { address, name, symbol, tokenUri };
+    return { address: tokenAddress, name, symbol, tokenUri };
+  }
+
+  async getTokenBalance(tokenAddress: Address): Promise<BigNumber> {
+    return this.resolveERC20Token(tokenAddress).balanceOf(await this.signer.getAddress());
   }
 
   protected resolveEnterpriseFactory(): EnterpriseFactory {
@@ -211,6 +277,14 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
 
   protected resolvePowerToken(serviceAddress: string): PowerToken {
     return PowerToken__factory.connect(serviceAddress, this.signer);
+  }
+
+  protected resolveInterestToken(tokenAddress: string): InterestToken {
+    return InterestToken__factory.connect(tokenAddress, this.signer);
+  }
+
+  protected resolveBorrowToken(tokenAddress: string): BorrowToken {
+    return BorrowToken__factory.connect(tokenAddress, this.signer);
   }
 
   protected resolveERC20Token(tokenAddress: string): ERC20 {

@@ -1,16 +1,18 @@
 import { deployments, ethers } from 'hardhat';
 import 'hardhat-deploy-ethers';
+import { parseEther } from 'ethers/lib/utils';
 import { EIP155BlockchainProvider } from '../../src';
 import { baseRate, getEnterprise, getPowerToken, wait } from './utils';
 import { DefaultConverter, Enterprise, EnterpriseFactory, ERC20Mock } from '../../types/contracts';
 import {
   AccountState,
+  BigNumber,
   EnterpriseInfo,
   EnterpriseParams,
+  ERC20Metadata,
+  LiquidityInfo,
   ServiceInfo,
   ServiceParams,
-  BigNumber,
-  ERC20Metadata,
 } from '@iqprotocol/abstract-blockchain';
 
 type Awaited<T> = T extends PromiseLike<infer U> ? Awaited<U> : T;
@@ -78,6 +80,11 @@ describe('EIP155BlockchainProvider', () => {
   it('returns correct CAIP-2 chain ID', async () => {
     const chainId = await eip155Provider.getChainId();
     expect(chainId.toString()).toEqual(`eip155:${await deployerSigner.getChainId()}`);
+  });
+
+  it('retrieves an arbitrary token balance', async () => {
+    const balance = await eip155Provider.getTokenBalance(liquidityToken.address);
+    expect(balance).toEqual(parseEther('1000000000'));
   });
 
   describe('When enterprise deployed', () => {
@@ -239,12 +246,55 @@ describe('EIP155BlockchainProvider', () => {
 
       describe('When liquidity is added', () => {
         beforeEach(async () => {
-          await wait(eip155Provider.setLiquidityAllowance(enterprise.address, 1000));
+          await wait(eip155Provider.setLiquidityAllowance(enterprise.address, 2000));
           await wait(eip155Provider.addLiquidity(enterprise.address, 1000));
+          await wait(eip155Provider.addLiquidity(enterprise.address, 800));
         });
 
-        it.todo('retrieves a list of interest tokens');
-        it.todo('retrieves loan info by interest token ID');
+        it('retrieves a list of interest tokens', async () => {
+          const interestTokenIds = await eip155Provider.getInterestTokenIds(enterprise.address);
+          expect(interestTokenIds).toHaveLength(2);
+        });
+
+        it('retrieves liquidity info by interest token ID', async () => {
+          const [tokenId] = await eip155Provider.getInterestTokenIds(enterprise.address);
+          const liquidityInfo = await eip155Provider.getLiquidityInfo(enterprise.address, tokenId);
+          expect(liquidityInfo).toMatchObject(<LiquidityInfo>{
+            tokenId,
+            amount: BigNumber.from(1000),
+            shares: BigNumber.from(1000),
+          });
+        });
+
+        it('allows to increase liquidity', async () => {
+          const [tokenId] = await eip155Provider.getInterestTokenIds(enterprise.address);
+          await wait(eip155Provider.increaseLiquidity(enterprise.address, tokenId, 200));
+          const liquidityInfo = await eip155Provider.getLiquidityInfo(enterprise.address, tokenId);
+          expect(liquidityInfo).toMatchObject(<LiquidityInfo>{
+            tokenId,
+            amount: BigNumber.from(1200),
+            shares: BigNumber.from(1200),
+          });
+        });
+
+        it('allows to decrease liquidity', async () => {
+          const [tokenId] = await eip155Provider.getInterestTokenIds(enterprise.address);
+          await wait(eip155Provider.decreaseLiquidity(enterprise.address, tokenId, 500));
+          const liquidityInfo = await eip155Provider.getLiquidityInfo(enterprise.address, tokenId);
+          expect(liquidityInfo).toMatchObject(<LiquidityInfo>{
+            tokenId,
+            amount: BigNumber.from(500),
+            shares: BigNumber.from(500),
+          });
+        });
+
+        it('allows to remove liquidity', async () => {
+          const [tokenId] = await eip155Provider.getInterestTokenIds(enterprise.address);
+          await wait(eip155Provider.removeLiquidity(enterprise.address, tokenId));
+          const interestTokenIds = await eip155Provider.getInterestTokenIds(enterprise.address);
+          expect(interestTokenIds).toHaveLength(1);
+          await expect(eip155Provider.getLiquidityInfo(enterprise.address, tokenId)).rejects.toThrow();
+        });
       });
     });
   });
