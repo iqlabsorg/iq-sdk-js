@@ -1,4 +1,11 @@
-import { AccountID, Address, BigNumberish, BlockchainProvider, EnterpriseInfo } from '@iqprotocol/abstract-blockchain';
+import {
+  AccountID,
+  Address,
+  BigNumber,
+  BigNumberish,
+  BlockchainProvider,
+  EnterpriseInfo,
+} from '@iqprotocol/abstract-blockchain';
 import { Service } from './service';
 
 export interface EnterpriseConfig {
@@ -53,5 +60,25 @@ export class Enterprise {
 
   async addLiquidity(amount: BigNumberish): Promise<void> {
     await this.blockchain.addLiquidity(this.address, amount);
+  }
+
+  async removeLiquidity(interestTokenId: BigNumberish): Promise<void> {
+    await this.blockchain.removeLiquidity(this.address, interestTokenId);
+  }
+
+  async increaseLiquidity(interestTokenId: BigNumberish, amount: BigNumberish): Promise<void> {
+    await this.blockchain.increaseLiquidity(this.address, interestTokenId, amount);
+  }
+
+  async decreaseLiquidity(interestTokenId: BigNumberish, amount: BigNumberish): Promise<void> {
+    await this.blockchain.decreaseLiquidity(this.address, interestTokenId, amount);
+  }
+
+  async setLiquidityAllowance(amount: BigNumberish): Promise<void> {
+    await this.blockchain.setLiquidityAllowance(this.address, amount);
+  }
+
+  async getLiquidityAllowance(): Promise<BigNumber> {
+    return this.blockchain.getLiquidityAllowance(this.address);
   }
 }
