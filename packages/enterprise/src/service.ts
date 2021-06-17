@@ -1,25 +1,25 @@
 import { AccountID, AccountState, Address, BlockchainProvider, ServiceInfo } from '@iqprotocol/abstract-blockchain';
 
-export interface ServiceConfig {
-  blockchain: BlockchainProvider;
+export interface ServiceConfig<Transaction> {
+  blockchain: BlockchainProvider<Transaction>;
   address: string;
 }
 
-export class Service {
+export class Service<Transaction = unknown> {
   private id?: AccountID;
-  private readonly blockchain: BlockchainProvider;
+  private readonly blockchain: BlockchainProvider<Transaction>;
   private readonly address: string;
 
-  constructor({ blockchain, address }: ServiceConfig) {
+  constructor({ blockchain, address }: ServiceConfig<Transaction>) {
     this.blockchain = blockchain;
     this.address = address;
   }
 
-  attach(address: Address): Service {
+  attach(address: Address): Service<Transaction> {
     return new Service({ blockchain: this.blockchain, address });
   }
 
-  connect(blockchain: BlockchainProvider, address: Address): Service {
+  connect<Transaction>(blockchain: BlockchainProvider<Transaction>, address: Address): Service<Transaction> {
     return new Service({ blockchain, address });
   }
 

@@ -8,26 +8,26 @@ import {
 } from '@iqprotocol/abstract-blockchain';
 import { Service } from './service';
 
-export interface EnterpriseConfig {
-  blockchain: BlockchainProvider;
+export interface EnterpriseConfig<Transaction> {
+  blockchain: BlockchainProvider<Transaction>;
   address: Address;
 }
 
-export class Enterprise {
+export class Enterprise<Transaction = unknown> {
   private id?: AccountID;
-  private readonly blockchain: BlockchainProvider;
+  private readonly blockchain: BlockchainProvider<Transaction>;
   private readonly address: Address;
 
-  constructor({ blockchain, address }: EnterpriseConfig) {
+  constructor({ blockchain, address }: EnterpriseConfig<Transaction>) {
     this.blockchain = blockchain;
     this.address = address;
   }
 
-  attach(address: Address): Enterprise {
+  attach(address: Address): Enterprise<Transaction> {
     return new Enterprise({ blockchain: this.blockchain, address });
   }
 
-  connect(blockchain: BlockchainProvider, address: Address): Enterprise {
+  connect<Transaction>(blockchain: BlockchainProvider<Transaction>, address: Address): Enterprise<Transaction> {
     return new Enterprise({ blockchain, address });
   }
 
@@ -48,7 +48,7 @@ export class Enterprise {
     return this.blockchain.getEnterpriseInfo(this.address);
   }
 
-  async getServices(): Promise<Service[]> {
+  async getServices(): Promise<Service<Transaction>[]> {
     return (await this.blockchain.getServices(this.address)).map(
       address =>
         new Service({
@@ -58,24 +58,24 @@ export class Enterprise {
     );
   }
 
-  async addLiquidity(amount: BigNumberish): Promise<void> {
-    await this.blockchain.addLiquidity(this.address, amount);
+  async addLiquidity(amount: BigNumberish): Promise<Transaction> {
+    return this.blockchain.addLiquidity(this.address, amount);
   }
 
-  async removeLiquidity(interestTokenId: BigNumberish): Promise<void> {
-    await this.blockchain.removeLiquidity(this.address, interestTokenId);
+  async removeLiquidity(interestTokenId: BigNumberish): Promise<Transaction> {
+    return this.blockchain.removeLiquidity(this.address, interestTokenId);
   }
 
-  async increaseLiquidity(interestTokenId: BigNumberish, amount: BigNumberish): Promise<void> {
-    await this.blockchain.increaseLiquidity(this.address, interestTokenId, amount);
+  async increaseLiquidity(interestTokenId: BigNumberish, amount: BigNumberish): Promise<Transaction> {
+    return this.blockchain.increaseLiquidity(this.address, interestTokenId, amount);
   }
 
-  async decreaseLiquidity(interestTokenId: BigNumberish, amount: BigNumberish): Promise<void> {
-    await this.blockchain.decreaseLiquidity(this.address, interestTokenId, amount);
+  async decreaseLiquidity(interestTokenId: BigNumberish, amount: BigNumberish): Promise<Transaction> {
+    return this.blockchain.decreaseLiquidity(this.address, interestTokenId, amount);
   }
 
-  async setLiquidityAllowance(amount: BigNumberish): Promise<void> {
-    await this.blockchain.setLiquidityAllowance(this.address, amount);
+  async setLiquidityAllowance(amount: BigNumberish): Promise<Transaction> {
+    return this.blockchain.setLiquidityAllowance(this.address, amount);
   }
 
   async getLiquidityAllowance(): Promise<BigNumber> {
