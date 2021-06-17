@@ -86,10 +86,10 @@ export interface LiquidityInfo {
   block: BigNumber;
 }
 
-export interface BlockchainProvider<TransactionResponse = Record<string, unknown>> {
+export interface BlockchainProvider<Transaction = unknown> {
   getChainId(): Promise<ChainID>;
 
-  deployEnterprise(params: EnterpriseParams): Promise<TransactionResponse>;
+  deployEnterprise(params: EnterpriseParams): Promise<Transaction>;
 
   getServices(enterpriseAddress: Address): Promise<Address[]>;
 
@@ -97,29 +97,29 @@ export interface BlockchainProvider<TransactionResponse = Record<string, unknown
 
   getLiquidityInfo(enterpriseAddress: Address, interestTokenId: BigNumberish): Promise<LiquidityInfo>;
 
-  addLiquidity(enterpriseAddress: Address, amount: BigNumberish): Promise<TransactionResponse>;
+  addLiquidity(enterpriseAddress: Address, amount: BigNumberish): Promise<Transaction>;
 
-  removeLiquidity(enterpriseAddress: Address, interestTokenId: BigNumberish): Promise<TransactionResponse>;
+  removeLiquidity(enterpriseAddress: Address, interestTokenId: BigNumberish): Promise<Transaction>;
 
   increaseLiquidity(
     enterpriseAddress: Address,
     interestTokenId: BigNumberish,
     amount: BigNumberish,
-  ): Promise<TransactionResponse>;
+  ): Promise<Transaction>;
 
   decreaseLiquidity(
     enterpriseAddress: Address,
     interestTokenId: BigNumberish,
     amount: BigNumberish,
-  ): Promise<TransactionResponse>;
+  ): Promise<Transaction>;
 
   getServiceInfo(serviceAddress: Address): Promise<ServiceInfo>;
 
   getAccountState(serviceAddress: Address, accountAddress: Address): Promise<AccountState>;
 
-  registerService(enterpriseAddress: Address, serviceParams: ServiceParams): Promise<TransactionResponse>;
+  registerService(enterpriseAddress: Address, serviceParams: ServiceParams): Promise<Transaction>;
 
-  setLiquidityAllowance(enterpriseAddress: Address, amount: BigNumberish): Promise<TransactionResponse>;
+  setLiquidityAllowance(enterpriseAddress: Address, amount: BigNumberish): Promise<Transaction>;
 
   getLiquidityAllowance(enterpriseAddress: Address): Promise<BigNumber>;
 
