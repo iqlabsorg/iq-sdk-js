@@ -47,9 +47,9 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
     this.contracts = contracts;
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await
-  async connect(signer: Signer): Promise<BlockchainProvider<ContractTransaction, Signer>> {
-    return new EIP155BlockchainProvider({ signer, contracts: this.contracts });
+  async connect(signer: Signer): Promise<EIP155BlockchainProvider> {
+    // this provider does not require asynchronous calls to connect to signer but we keep 'async' for compatibility.
+    return Promise.resolve(new EIP155BlockchainProvider({ signer, contracts: this.contracts }));
   }
 
   // https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md
@@ -166,6 +166,21 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
       energy,
       timestamp,
     };
+  }
+
+  async estimateLoan(
+    enterpriseAddress: Address,
+    serviceAddress: Address,
+    paymentTokenAddress: Address,
+    amount: BigNumberish,
+    duration: BigNumberish,
+  ): Promise<BigNumber> {
+    return this.resolveEnterprise(enterpriseAddress).estimateLoan(
+      serviceAddress,
+      paymentTokenAddress,
+      amount,
+      duration,
+    );
   }
 
   async addLiquidity(enterpriseAddress: Address, amount: BigNumberish): Promise<ContractTransaction> {

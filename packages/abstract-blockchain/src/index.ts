@@ -121,6 +121,14 @@ export interface BlockchainProvider<Transaction = unknown, TransactionSigner = u
 
   registerService(enterpriseAddress: Address, serviceParams: ServiceParams): Promise<Transaction>;
 
+  estimateLoan(
+    enterpriseAddress: Address,
+    serviceAddress: Address,
+    paymentTokenAddress: Address,
+    amount: BigNumberish,
+    duration: BigNumberish,
+  ): Promise<BigNumber>;
+
   setLiquidityAllowance(enterpriseAddress: Address, amount: BigNumberish): Promise<Transaction>;
 
   getLiquidityAllowance(enterpriseAddress: Address, accountAddress?: Address): Promise<BigNumber>;

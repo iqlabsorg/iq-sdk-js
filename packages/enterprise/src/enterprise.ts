@@ -59,6 +59,15 @@ export class Enterprise<Transaction = unknown> {
     );
   }
 
+  async estimateLoan(
+    serviceAddress: Address,
+    paymentTokenAddress: Address,
+    amount: BigNumberish,
+    duration: BigNumberish,
+  ): Promise<BigNumber> {
+    return this.blockchain.estimateLoan(this.address, serviceAddress, paymentTokenAddress, amount, duration);
+  }
+
   async listLiquidityInfo(accountAddress?: Address): Promise<LiquidityInfo[]> {
     const interestTokenIds = await this.blockchain.getInterestTokenIds(this.address, accountAddress);
     return Promise.all(interestTokenIds.map(async tokenId => this.blockchain.getLiquidityInfo(this.address, tokenId)));
