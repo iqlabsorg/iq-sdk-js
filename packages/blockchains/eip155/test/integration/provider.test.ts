@@ -210,6 +210,40 @@ describe('EIP155BlockchainProvider', () => {
       });
     });
 
+    describe('When called by borrower', () => {
+      let borrower: Awaited<ReturnType<typeof ethers.getNamedSigner>>;
+
+      beforeEach(async () => {
+        borrower = await ethers.getNamedSigner('borrower');
+        // allocate tokens to liquidity provider
+        await liquidityToken.transfer(borrower.address, ONE_TOKEN.div(10));
+        // register service to have power token deployed
+        await wait(eip155Provider.registerService(enterprise.address, baseServiceParams));
+        // provide some liquidity to the enterprise
+        await wait(eip155Provider.setLiquidityAllowance(enterprise.address, ONE_TOKEN.mul(10000)));
+        await wait(eip155Provider.addLiquidity(enterprise.address, ONE_TOKEN.mul(10000)));
+
+        // Use borrower account
+        // eslint-disable-next-line require-atomic-updates
+        eip155Provider = await eip155Provider.connect(borrower);
+      });
+
+      it('estimates a loan', async () => {
+        const [serviceAddress] = await eip155Provider.getServices(enterprise.address);
+        const estimate = await eip155Provider.estimateLoan(
+          enterprise.address,
+          serviceAddress,
+          liquidityToken.address,
+          ONE_TOKEN.mul(1000),
+          10 * ONE_DAY,
+        );
+        expect(estimate.toString()).toEqual('330588235294115767777');
+      });
+
+      it.todo('allows to borrow power tokens');
+      it.todo('allows to return a loan');
+    });
+
     describe('When called by liquidity provider', () => {
       let liquidityProvider: Awaited<ReturnType<typeof ethers.getNamedSigner>>;
 
@@ -217,13 +251,8 @@ describe('EIP155BlockchainProvider', () => {
         liquidityProvider = await ethers.getNamedSigner('liquidityProvider');
         // allocate tokens to liquidity provider
         await liquidityToken.transfer(liquidityProvider.address, 100000);
-
-        eip155Provider = new EIP155BlockchainProvider({
-          signer: liquidityProvider,
-          contracts: {
-            enterpriseFactory: enterpriseFactory.address,
-          },
-        });
+        // eslint-disable-next-line require-atomic-updates
+        eip155Provider = await eip155Provider.connect(liquidityProvider);
       });
 
       it('allows to approve liquidity tokens to enterprise', async () => {
