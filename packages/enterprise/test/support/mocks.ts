@@ -1,6 +1,7 @@
 import { BlockchainProvider } from '@iqprotocol/abstract-blockchain';
 
 export const mockBlockchainProvider: jest.Mocked<BlockchainProvider> = {
+  connect: jest.fn(),
   addLiquidity: jest.fn(),
   deployEnterprise: jest.fn(),
   getAccountState: jest.fn(),

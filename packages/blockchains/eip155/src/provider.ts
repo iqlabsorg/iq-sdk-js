@@ -38,13 +38,18 @@ export type EIP155BlockchainProviderConfig = {
   contracts: DeployedContracts;
 };
 
-export class EIP155BlockchainProvider implements BlockchainProvider<ContractTransaction> {
+export class EIP155BlockchainProvider implements BlockchainProvider<ContractTransaction, Signer> {
   private readonly signer: Signer;
   private readonly contracts: DeployedContracts;
 
   constructor({ signer, contracts }: EIP155BlockchainProviderConfig) {
     this.signer = signer;
     this.contracts = contracts;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/require-await
+  async connect(signer: Signer): Promise<BlockchainProvider<ContractTransaction, Signer>> {
+    return new EIP155BlockchainProvider({ signer, contracts: this.contracts });
   }
 
   // https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md

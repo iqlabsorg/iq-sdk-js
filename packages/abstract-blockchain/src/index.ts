@@ -86,7 +86,9 @@ export interface LiquidityInfo {
   block: BigNumber;
 }
 
-export interface BlockchainProvider<Transaction = unknown> {
+export interface BlockchainProvider<Transaction = unknown, TransactionSigner = unknown> {
+  connect(signer: TransactionSigner): Promise<BlockchainProvider<Transaction, TransactionSigner>>;
+
   getChainId(): Promise<ChainID>;
 
   deployEnterprise(params: EnterpriseParams): Promise<Transaction>;
