@@ -123,7 +123,7 @@ export interface BlockchainProvider<Transaction = unknown, TransactionSigner = u
 
   setLiquidityAllowance(enterpriseAddress: Address, amount: BigNumberish): Promise<Transaction>;
 
-  getLiquidityAllowance(enterpriseAddress: Address): Promise<BigNumber>;
+  getLiquidityAllowance(enterpriseAddress: Address, accountAddress?: Address): Promise<BigNumber>;
 
   getLiquidityTokenAddress(enterpriseAddress: Address): Promise<Address>;
 
@@ -137,11 +137,11 @@ export interface BlockchainProvider<Transaction = unknown, TransactionSigner = u
 
   getInterestTokenMetadata(enterpriseAddress: Address, tokenId: BigNumberish): Promise<ERC721Metadata>;
 
-  getInterestTokenIds(enterpriseAddress: Address): Promise<BigNumber[]>;
+  getInterestTokenIds(enterpriseAddress: Address, accountAddress?: Address): Promise<BigNumber[]>;
 
   getERC20Metadata(tokenAddress: Address): Promise<ERC20Metadata>;
 
   getERC721Metadata(tokenAddress: Address, tokenId: BigNumberish): Promise<ERC721Metadata>;
 
-  getTokenBalance(tokenAddress: Address): Promise<BigNumber>;
+  getTokenBalance(tokenAddress: Address, accountAddress?: Address): Promise<BigNumber>;
 }

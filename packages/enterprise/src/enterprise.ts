@@ -5,6 +5,7 @@ import {
   BigNumberish,
   BlockchainProvider,
   EnterpriseInfo,
+  LiquidityInfo,
 } from '@iqprotocol/abstract-blockchain';
 import { Service } from './service';
 
@@ -58,6 +59,15 @@ export class Enterprise<Transaction = unknown> {
     );
   }
 
+  async listLiquidityInfo(accountAddress?: Address): Promise<LiquidityInfo[]> {
+    const interestTokenIds = await this.blockchain.getInterestTokenIds(this.address, accountAddress);
+    return Promise.all(interestTokenIds.map(async tokenId => this.blockchain.getLiquidityInfo(this.address, tokenId)));
+  }
+
+  async getLiquidityInfo(interestTokenId: BigNumberish): Promise<LiquidityInfo> {
+    return this.blockchain.getLiquidityInfo(this.address, interestTokenId);
+  }
+
   async addLiquidity(amount: BigNumberish): Promise<Transaction> {
     return this.blockchain.addLiquidity(this.address, amount);
   }
@@ -78,7 +88,7 @@ export class Enterprise<Transaction = unknown> {
     return this.blockchain.setLiquidityAllowance(this.address, amount);
   }
 
-  async getLiquidityAllowance(): Promise<BigNumber> {
-    return this.blockchain.getLiquidityAllowance(this.address);
+  async getLiquidityAllowance(accountAddress?: Address): Promise<BigNumber> {
+    return this.blockchain.getLiquidityAllowance(this.address, accountAddress);
   }
 }

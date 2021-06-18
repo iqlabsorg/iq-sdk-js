@@ -200,12 +200,12 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
     return liquidityToken.approve(enterprise.address, amount);
   }
 
-  async getLiquidityAllowance(enterpriseAddress: Address): Promise<BigNumber> {
+  async getLiquidityAllowance(enterpriseAddress: Address, accountAddress?: Address): Promise<BigNumber> {
     const enterprise = this.resolveEnterprise(enterpriseAddress);
     const liquidityTokenAddress = await enterprise.getLiquidityToken();
     const liquidityToken = this.resolveERC20Token(liquidityTokenAddress);
-    const signerAddress = await this.signer.getAddress();
-    return liquidityToken.allowance(signerAddress, enterprise.address);
+    const targetAccountAddress = accountAddress ? accountAddress : await this.signer.getAddress();
+    return liquidityToken.allowance(targetAccountAddress, enterprise.address);
   }
 
   async getLiquidityTokenAddress(enterpriseAddress: Address): Promise<Address> {
@@ -235,15 +235,15 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
     return this.getERC721Metadata(tokenAddress, tokenId);
   }
 
-  async getInterestTokenIds(enterpriseAddress: Address): Promise<BigNumber[]> {
-    const account = await this.signer.getAddress();
+  async getInterestTokenIds(enterpriseAddress: Address, accountAddress?: Address): Promise<BigNumber[]> {
+    const targetAccountAddress = accountAddress ? accountAddress : await this.signer.getAddress();
     const tokenAddress = await this.getInterestTokenAddress(enterpriseAddress);
     const token = this.resolveInterestToken(tokenAddress);
-    const tokenCount = await token.balanceOf(account);
+    const tokenCount = await token.balanceOf(targetAccountAddress);
 
     const tokenIds: BigNumber[] = [];
     for (let i = 0; i < tokenCount.toNumber(); i++) {
-      tokenIds.push(await token.tokenOfOwnerByIndex(account, i));
+      tokenIds.push(await token.tokenOfOwnerByIndex(targetAccountAddress, i));
     }
 
     return tokenIds;
@@ -268,8 +268,10 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
     return { address: tokenAddress, name, symbol, tokenUri };
   }
 
-  async getTokenBalance(tokenAddress: Address): Promise<BigNumber> {
-    return this.resolveERC20Token(tokenAddress).balanceOf(await this.signer.getAddress());
+  async getTokenBalance(tokenAddress: Address, accountAddress?: Address): Promise<BigNumber> {
+    return this.resolveERC20Token(tokenAddress).balanceOf(
+      accountAddress ? accountAddress : await this.signer.getAddress(),
+    );
   }
 
   protected resolveEnterpriseFactory(): EnterpriseFactory {
