@@ -28,7 +28,7 @@ describe('EIP155BlockchainProvider', () => {
   const BASE_RATE = BigNumber.from(baseRate(100n, 86400n, 3n));
   const GAP_HALVING_PERIOD = 86400;
 
-  let eip155Provider: EIP155BlockchainProvider;
+  let provider: EIP155BlockchainProvider;
   let deployerSigner: Awaited<ReturnType<typeof ethers.getNamedSigner>>;
   let liquidityToken: ERC20Mock;
   let enterpriseFactory: EnterpriseFactory;
@@ -43,7 +43,7 @@ describe('EIP155BlockchainProvider', () => {
     enterpriseFactory = (await ethers.getContract('EnterpriseFactory')) as EnterpriseFactory;
     liquidityToken = (await ethers.getContract('ERC20Mock')) as ERC20Mock;
     converter = (await ethers.getContract('DefaultConverter')) as DefaultConverter;
-    eip155Provider = new EIP155BlockchainProvider({
+    provider = new EIP155BlockchainProvider({
       signer: deployerSigner,
       contracts: {
         enterpriseFactory: enterpriseFactory.address,
@@ -73,17 +73,17 @@ describe('EIP155BlockchainProvider', () => {
   });
 
   it('deploys enterprise', async () => {
-    const receipt = await wait(eip155Provider.deployEnterprise(baseEnterpriseParams));
+    const receipt = await wait(provider.deployEnterprise(baseEnterpriseParams));
     expect(receipt.status).toBe(1);
   });
 
   it('returns correct CAIP-2 chain ID', async () => {
-    const chainId = await eip155Provider.getChainId();
+    const chainId = await provider.getChainId();
     expect(chainId.toString()).toEqual(`eip155:${await deployerSigner.getChainId()}`);
   });
 
   it('retrieves an arbitrary token balance', async () => {
-    const balance = await eip155Provider.getTokenBalance(liquidityToken.address);
+    const balance = await provider.getTokenBalance(liquidityToken.address);
     expect(balance).toEqual(parseEther('1000000000'));
   });
 
@@ -92,7 +92,7 @@ describe('EIP155BlockchainProvider', () => {
     let expectedEnterpriseData: EnterpriseInfo;
 
     beforeEach(async () => {
-      const receipt = await wait(eip155Provider.deployEnterprise(baseEnterpriseParams));
+      const receipt = await wait(provider.deployEnterprise(baseEnterpriseParams));
       enterprise = await getEnterprise(enterpriseFactory, receipt.blockNumber);
 
       expectedEnterpriseData = {
@@ -113,17 +113,17 @@ describe('EIP155BlockchainProvider', () => {
     });
 
     it('retrieves enterprise data', async () => {
-      const data = await eip155Provider.getEnterpriseInfo(enterprise.address);
+      const data = await provider.getEnterpriseInfo(enterprise.address);
       expect(data).toMatchObject(expectedEnterpriseData);
     });
 
     it('registers new services', async () => {
-      const receipt = await wait(eip155Provider.registerService(enterprise.address, baseServiceParams));
+      const receipt = await wait(provider.registerService(enterprise.address, baseServiceParams));
       expect(receipt.status).toBe(1);
     });
 
     it('retrieves enterprise liquidity token metadata', async () => {
-      const metadata = await eip155Provider.getLiquidityTokenMetadata(enterprise.address);
+      const metadata = await provider.getLiquidityTokenMetadata(enterprise.address);
       expect(metadata).toEqual(<ERC20Metadata>{
         address: liquidityToken.address,
         name: 'Testing',
@@ -155,7 +155,7 @@ describe('EIP155BlockchainProvider', () => {
           name: 'Test Service 1',
           symbol: 'IQPT1',
         };
-        const r1 = await wait(eip155Provider.registerService(enterprise.address, serviceParams1));
+        const r1 = await wait(provider.registerService(enterprise.address, serviceParams1));
         const service1Address = (await getPowerToken(enterprise, r1.blockNumber)).address;
         expectedServiceData1 = {
           ...baseExpectedServiceData,
@@ -171,7 +171,7 @@ describe('EIP155BlockchainProvider', () => {
           name: 'Test Service 2',
           symbol: 'IQPT2',
         };
-        const r2 = await wait(eip155Provider.registerService(enterprise.address, serviceParams2));
+        const r2 = await wait(provider.registerService(enterprise.address, serviceParams2));
         const service2Address = (await getPowerToken(enterprise, r2.blockNumber)).address;
         expectedServiceData2 = {
           ...baseExpectedServiceData,
@@ -183,7 +183,7 @@ describe('EIP155BlockchainProvider', () => {
       });
 
       it('lists enterprise services', async () => {
-        const services = await eip155Provider.getServices(enterprise.address);
+        const services = await provider.getServices(enterprise.address);
         expect(services).toHaveLength(2);
 
         expect(services[0]).toEqual(expectedServiceData1.address);
@@ -191,7 +191,7 @@ describe('EIP155BlockchainProvider', () => {
       });
 
       it('retrieves the service data', async () => {
-        const service = await eip155Provider.getServiceInfo(expectedServiceData2.address);
+        const service = await provider.getServiceInfo(expectedServiceData2.address);
         expect(service).toMatchObject(expectedServiceData2);
       });
 
@@ -199,7 +199,7 @@ describe('EIP155BlockchainProvider', () => {
         const accountAddress = await deployerSigner.getAddress();
         const serviceAddress = expectedServiceData1.address;
 
-        const accountState = await eip155Provider.getAccountState(serviceAddress, accountAddress);
+        const accountState = await provider.getAccountState(serviceAddress, accountAddress);
         expect(accountState).toMatchObject(<AccountState>{
           serviceAddress,
           accountAddress,
@@ -218,19 +218,19 @@ describe('EIP155BlockchainProvider', () => {
         // allocate tokens to liquidity provider
         await liquidityToken.transfer(borrower.address, ONE_TOKEN.div(10));
         // register service to have power token deployed
-        await wait(eip155Provider.registerService(enterprise.address, baseServiceParams));
+        await wait(provider.registerService(enterprise.address, baseServiceParams));
         // provide some liquidity to the enterprise
-        await wait(eip155Provider.setLiquidityAllowance(enterprise.address, ONE_TOKEN.mul(10000)));
-        await wait(eip155Provider.addLiquidity(enterprise.address, ONE_TOKEN.mul(10000)));
+        await wait(provider.setLiquidityAllowance(enterprise.address, ONE_TOKEN.mul(10000)));
+        await wait(provider.addLiquidity(enterprise.address, ONE_TOKEN.mul(10000)));
 
         // Use borrower account
         // eslint-disable-next-line require-atomic-updates
-        eip155Provider = await eip155Provider.connect(borrower);
+        provider = await provider.connect(borrower);
       });
 
       it('estimates a loan', async () => {
-        const [serviceAddress] = await eip155Provider.getServices(enterprise.address);
-        const estimate = await eip155Provider.estimateLoan(
+        const [serviceAddress] = await provider.getServices(enterprise.address);
+        const estimate = await provider.estimateLoan(
           enterprise.address,
           serviceAddress,
           liquidityToken.address,
@@ -252,42 +252,42 @@ describe('EIP155BlockchainProvider', () => {
         // allocate tokens to liquidity provider
         await liquidityToken.transfer(liquidityProvider.address, 100000);
         // eslint-disable-next-line require-atomic-updates
-        eip155Provider = await eip155Provider.connect(liquidityProvider);
+        provider = await provider.connect(liquidityProvider);
       });
 
       it('allows to approve liquidity tokens to enterprise', async () => {
-        await wait(eip155Provider.setLiquidityAllowance(enterprise.address, 1000));
+        await wait(provider.setLiquidityAllowance(enterprise.address, 1000));
         const allowance = await liquidityToken.allowance(liquidityProvider.address, enterprise.address);
         expect(allowance.toNumber()).toEqual(1000);
       });
 
       it('retrieves liquidity token allowance', async () => {
-        await wait(eip155Provider.setLiquidityAllowance(enterprise.address, 1000));
-        const allowance = await eip155Provider.getLiquidityAllowance(enterprise.address);
+        await wait(provider.setLiquidityAllowance(enterprise.address, 1000));
+        const allowance = await provider.getLiquidityAllowance(enterprise.address);
         expect(allowance.toNumber()).toEqual(1000);
       });
 
       it('allows to add liquidity', async () => {
-        await wait(eip155Provider.setLiquidityAllowance(enterprise.address, 1000));
-        const receipt = await wait(eip155Provider.addLiquidity(enterprise.address, 1000));
+        await wait(provider.setLiquidityAllowance(enterprise.address, 1000));
+        const receipt = await wait(provider.addLiquidity(enterprise.address, 1000));
         expect(receipt.status).toBe(1);
       });
 
       describe('When liquidity is added', () => {
         beforeEach(async () => {
-          await wait(eip155Provider.setLiquidityAllowance(enterprise.address, 2000));
-          await wait(eip155Provider.addLiquidity(enterprise.address, 1000));
-          await wait(eip155Provider.addLiquidity(enterprise.address, 800));
+          await wait(provider.setLiquidityAllowance(enterprise.address, 2000));
+          await wait(provider.addLiquidity(enterprise.address, 1000));
+          await wait(provider.addLiquidity(enterprise.address, 800));
         });
 
         it('retrieves a list of interest tokens', async () => {
-          const interestTokenIds = await eip155Provider.getInterestTokenIds(enterprise.address);
+          const interestTokenIds = await provider.getInterestTokenIds(enterprise.address);
           expect(interestTokenIds).toHaveLength(2);
         });
 
         it('retrieves liquidity info by interest token ID', async () => {
-          const [tokenId] = await eip155Provider.getInterestTokenIds(enterprise.address);
-          const liquidityInfo = await eip155Provider.getLiquidityInfo(enterprise.address, tokenId);
+          const [tokenId] = await provider.getInterestTokenIds(enterprise.address);
+          const liquidityInfo = await provider.getLiquidityInfo(enterprise.address, tokenId);
           expect(liquidityInfo).toMatchObject(<LiquidityInfo>{
             tokenId,
             amount: BigNumber.from(1000),
@@ -296,9 +296,9 @@ describe('EIP155BlockchainProvider', () => {
         });
 
         it('allows to increase liquidity', async () => {
-          const [tokenId] = await eip155Provider.getInterestTokenIds(enterprise.address);
-          await wait(eip155Provider.increaseLiquidity(enterprise.address, tokenId, 200));
-          const liquidityInfo = await eip155Provider.getLiquidityInfo(enterprise.address, tokenId);
+          const [tokenId] = await provider.getInterestTokenIds(enterprise.address);
+          await wait(provider.increaseLiquidity(enterprise.address, tokenId, 200));
+          const liquidityInfo = await provider.getLiquidityInfo(enterprise.address, tokenId);
           expect(liquidityInfo).toMatchObject(<LiquidityInfo>{
             tokenId,
             amount: BigNumber.from(1200),
@@ -307,9 +307,9 @@ describe('EIP155BlockchainProvider', () => {
         });
 
         it('allows to decrease liquidity', async () => {
-          const [tokenId] = await eip155Provider.getInterestTokenIds(enterprise.address);
-          await wait(eip155Provider.decreaseLiquidity(enterprise.address, tokenId, 500));
-          const liquidityInfo = await eip155Provider.getLiquidityInfo(enterprise.address, tokenId);
+          const [tokenId] = await provider.getInterestTokenIds(enterprise.address);
+          await wait(provider.decreaseLiquidity(enterprise.address, tokenId, 500));
+          const liquidityInfo = await provider.getLiquidityInfo(enterprise.address, tokenId);
           expect(liquidityInfo).toMatchObject(<LiquidityInfo>{
             tokenId,
             amount: BigNumber.from(500),
@@ -318,11 +318,11 @@ describe('EIP155BlockchainProvider', () => {
         });
 
         it('allows to remove liquidity', async () => {
-          const [tokenId] = await eip155Provider.getInterestTokenIds(enterprise.address);
-          await wait(eip155Provider.removeLiquidity(enterprise.address, tokenId));
-          const interestTokenIds = await eip155Provider.getInterestTokenIds(enterprise.address);
+          const [tokenId] = await provider.getInterestTokenIds(enterprise.address);
+          await wait(provider.removeLiquidity(enterprise.address, tokenId));
+          const interestTokenIds = await provider.getInterestTokenIds(enterprise.address);
           expect(interestTokenIds).toHaveLength(1);
-          await expect(eip155Provider.getLiquidityInfo(enterprise.address, tokenId)).rejects.toThrow();
+          await expect(provider.getLiquidityInfo(enterprise.address, tokenId)).rejects.toThrow();
         });
       });
     });
