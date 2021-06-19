@@ -1,6 +1,6 @@
-import { AccountID, ChainID } from '@iqprotocol/abstract-blockchain';
+import { AccountID, BigNumber, ChainID } from '@iqprotocol/abstract-blockchain';
 import { mockBlockchainProvider } from './support/mocks';
-import { Enterprise } from '../src';
+import { Enterprise, LoanEstimationRequest } from '../src';
 
 /**
  * @group unit
@@ -34,5 +34,34 @@ describe('Enterprise', () => {
     expect(services).toHaveLength(2);
     expect(services[0].getAddress()).toEqual(addr1);
     expect(services[1].getAddress()).toEqual(addr2);
+  });
+
+  it('allows to estimate loan', async () => {
+    const mockEstimation = BigNumber.from(520);
+
+    const serviceAddress = '0x52De41D6a2104812f84ef596BE15B84d1d846ee5';
+    const paymentTokenAddress = '0x2C368A2E9Bd1bf16eb3DfCd924CA7eF4969CBBD9';
+    const amount = 1000;
+    const duration = 86400;
+
+    const loanParams: LoanEstimationRequest = {
+      serviceAddress,
+      paymentTokenAddress,
+      amount,
+      duration,
+    };
+
+    const mockEstimateLoan = jest.spyOn(mockBlockchainProvider, 'estimateLoan');
+    mockEstimateLoan.mockResolvedValueOnce(mockEstimation);
+    const estimate = await enterprise.estimateLoan(loanParams);
+
+    expect(estimate).toEqual(mockEstimation);
+    expect(mockEstimateLoan).toHaveBeenCalledWith(
+      ENTERPRISE_ADDRESS,
+      serviceAddress,
+      paymentTokenAddress,
+      amount,
+      duration,
+    );
   });
 });
