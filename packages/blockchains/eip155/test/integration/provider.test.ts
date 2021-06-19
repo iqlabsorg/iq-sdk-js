@@ -37,7 +37,7 @@ describe('EIP155BlockchainProvider', () => {
   let baseEnterpriseParams: EnterpriseParams;
   let baseServiceParams: ServiceParams;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     await deployments.fixture();
     deployerSigner = await ethers.getNamedSigner('deployer');
     enterpriseFactory = (await ethers.getContract('EnterpriseFactory')) as EnterpriseFactory;
@@ -215,8 +215,9 @@ describe('EIP155BlockchainProvider', () => {
 
       beforeEach(async () => {
         borrower = await ethers.getNamedSigner('borrower');
-        // allocate tokens to liquidity provider
-        await liquidityToken.transfer(borrower.address, ONE_TOKEN.div(10));
+        // allocate tokens to borrower
+        await liquidityToken.transfer(borrower.address, ONE_TOKEN.mul(500));
+
         // register service to have power token deployed
         await wait(provider.registerService(enterprise.address, baseServiceParams));
         // provide some liquidity to the enterprise
@@ -237,10 +238,41 @@ describe('EIP155BlockchainProvider', () => {
           ONE_TOKEN.mul(1000),
           10 * ONE_DAY,
         );
-        expect(estimate.toString()).toEqual('330588235294115767777');
+        expect(estimate.toString()).toEqual('330588235294115767777'); // ~330 tokens
       });
 
-      it.todo('allows to borrow power tokens');
+      it('allows to borrow power tokens', async () => {
+        const [serviceAddress] = await provider.getServices(enterprise.address);
+        const loanAmount = ONE_TOKEN.mul(1000);
+
+        // Estimate the loan
+        const estimate = await provider.estimateLoan(
+          enterprise.address,
+          serviceAddress,
+          liquidityToken.address,
+          loanAmount,
+          10 * ONE_DAY,
+        );
+
+        // Approve payment tokens to enterprise (we pay with liquidity tokens for simplicity)
+        await provider.setLiquidityAllowance(enterprise.address, estimate);
+        const powerTokenBalanceBefore = await provider.getTokenBalance(serviceAddress, borrower.address);
+
+        await wait(
+          provider.borrow(
+            enterprise.address,
+            serviceAddress,
+            liquidityToken.address,
+            loanAmount,
+            10 * ONE_DAY,
+            estimate,
+          ),
+        );
+
+        const powerTokenBalanceAfter = await provider.getTokenBalance(serviceAddress, borrower.address);
+        expect(powerTokenBalanceAfter).toEqual(powerTokenBalanceBefore.add(loanAmount));
+      });
+
       it.todo('allows to return a loan');
     });
 

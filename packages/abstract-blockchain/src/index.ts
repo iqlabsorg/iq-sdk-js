@@ -129,6 +129,15 @@ export interface BlockchainProvider<Transaction = unknown, TransactionSigner = u
     duration: BigNumberish,
   ): Promise<BigNumber>;
 
+  borrow(
+    enterpriseAddress: Address,
+    serviceAddress: Address,
+    paymentTokenAddress: Address,
+    amount: BigNumberish,
+    duration: BigNumberish,
+    maxPayment: BigNumberish,
+  ): Promise<Transaction>;
+
   setLiquidityAllowance(enterpriseAddress: Address, amount: BigNumberish): Promise<Transaction>;
 
   getLiquidityAllowance(enterpriseAddress: Address, accountAddress?: Address): Promise<BigNumber>;

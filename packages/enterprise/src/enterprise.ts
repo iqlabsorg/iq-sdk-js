@@ -9,6 +9,15 @@ import {
 } from '@iqprotocol/abstract-blockchain';
 import { Service } from './service';
 
+export type LoanEstimationRequest = {
+  serviceAddress: Address;
+  paymentTokenAddress: Address;
+  amount: BigNumberish;
+  duration: BigNumberish;
+};
+
+export type BorrowRequest = LoanEstimationRequest & { maxPayment: BigNumberish };
+
 export interface EnterpriseConfig<Transaction> {
   blockchain: BlockchainProvider<Transaction>;
   address: Address;
@@ -59,13 +68,23 @@ export class Enterprise<Transaction = unknown> {
     );
   }
 
-  async estimateLoan(
-    serviceAddress: Address,
-    paymentTokenAddress: Address,
-    amount: BigNumberish,
-    duration: BigNumberish,
-  ): Promise<BigNumber> {
+  async estimateLoan({
+    serviceAddress,
+    paymentTokenAddress,
+    amount,
+    duration,
+  }: LoanEstimationRequest): Promise<BigNumber> {
     return this.blockchain.estimateLoan(this.address, serviceAddress, paymentTokenAddress, amount, duration);
+  }
+
+  async borrow({
+    serviceAddress,
+    paymentTokenAddress,
+    amount,
+    duration,
+    maxPayment,
+  }: BorrowRequest): Promise<Transaction> {
+    return this.blockchain.borrow(this.address, serviceAddress, paymentTokenAddress, amount, duration, maxPayment);
   }
 
   async listLiquidityInfo(accountAddress?: Address): Promise<LiquidityInfo[]> {
