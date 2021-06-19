@@ -29,9 +29,8 @@ describe('Service', () => {
 
   it('retrieves on-chain state via blockchain provider', async () => {
     const address = '0x52De41D6a2104812f84ef596BE15B84d1d846ee5';
-    const accountId = new AccountID({ chainId, address });
     const mockGetAccountState = jest.spyOn(mockBlockchainProvider, 'getAccountState');
-    await service.getAccountState(accountId);
+    await service.getAccountState(address);
     expect(mockGetAccountState).toHaveBeenCalledWith(SERVICE_ADDRESS, address);
   });
 });
