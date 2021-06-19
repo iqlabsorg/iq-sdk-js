@@ -2,7 +2,7 @@ import { deployments, ethers } from 'hardhat';
 import 'hardhat-deploy-ethers';
 import { parseEther } from 'ethers/lib/utils';
 import { EIP155BlockchainProvider } from '../../src';
-import { baseRate, getEnterprise, getPowerToken, wait } from './utils';
+import { baseRate, estimateAndBorrow, getEnterprise, getPowerToken, wait } from './utils';
 import { DefaultConverter, Enterprise, EnterpriseFactory, ERC20Mock } from '../../types/contracts';
 import {
   AccountState,
@@ -11,6 +11,7 @@ import {
   EnterpriseParams,
   ERC20Metadata,
   LiquidityInfo,
+  LoanInfo,
   ServiceInfo,
   ServiceParams,
 } from '@iqprotocol/abstract-blockchain';
@@ -273,7 +274,56 @@ describe('EIP155BlockchainProvider', () => {
         expect(powerTokenBalanceAfter).toEqual(powerTokenBalanceBefore.add(loanAmount));
       });
 
-      it.todo('allows to return a loan');
+      describe('When loans are taken', () => {
+        beforeEach(async () => {
+          const [serviceAddress] = await provider.getServices(enterprise.address);
+
+          await estimateAndBorrow(
+            provider,
+            enterprise.address,
+            serviceAddress,
+            liquidityToken.address,
+            ONE_TOKEN.mul(1000),
+            10 * ONE_DAY,
+          );
+
+          await estimateAndBorrow(
+            provider,
+            enterprise.address,
+            serviceAddress,
+            liquidityToken.address,
+            ONE_TOKEN.mul(500),
+            5 * ONE_DAY,
+          );
+        });
+
+        it('retrieves a list of borrow tokens', async () => {
+          const borrowTokenIds = await provider.getBorrowTokenIds(enterprise.address);
+          expect(borrowTokenIds).toHaveLength(2);
+        });
+
+        it('retrieves loan info by borrow token ID', async () => {
+          const [tokenId] = await provider.getBorrowTokenIds(enterprise.address);
+          const loanInfo = await provider.getLoanInfo(enterprise.address, tokenId);
+
+          expect(loanInfo.tokenId).toEqual(tokenId);
+          expect(Object.keys(loanInfo)).toEqual(
+            expect.arrayContaining(<Array<keyof LoanInfo>>[
+              'tokenId',
+              'amount',
+              'powerTokenIndex',
+              'borrowingTime',
+              'maturityTime',
+              'borrowerReturnGraceTime',
+              'enterpriseCollectGraceTime',
+              'gcFee',
+              'gcFeeTokenIndex',
+            ]),
+          );
+        });
+
+        it.todo('allows to return a loan');
+      });
     });
 
     describe('When called by liquidity provider', () => {
@@ -320,6 +370,9 @@ describe('EIP155BlockchainProvider', () => {
         it('retrieves liquidity info by interest token ID', async () => {
           const [tokenId] = await provider.getInterestTokenIds(enterprise.address);
           const liquidityInfo = await provider.getLiquidityInfo(enterprise.address, tokenId);
+          expect(Object.keys(liquidityInfo)).toEqual(
+            expect.arrayContaining(<Array<keyof LiquidityInfo>>['tokenId', 'amount', 'shares', 'block']),
+          );
           expect(liquidityInfo).toMatchObject(<LiquidityInfo>{
             tokenId,
             amount: BigNumber.from(1000),

@@ -1,6 +1,7 @@
 import { Enterprise, EnterpriseFactory, PowerToken } from '../../types/contracts';
 import hre from 'hardhat';
 import { ContractReceipt, ContractTransaction } from 'ethers';
+import { Address, BlockchainProvider, BigNumberish } from '@iqprotocol/abstract-blockchain';
 
 export const getEnterprise = async (
   enterpriseFactory: EnterpriseFactory,
@@ -41,3 +42,23 @@ export const baseRate = (
 
 export const wait = async (txPromise: Promise<ContractTransaction>): Promise<ContractReceipt> =>
   (await txPromise).wait();
+
+export const estimateAndBorrow = async (
+  provider: BlockchainProvider<ContractTransaction>,
+  enterpriseAddress: Address,
+  serviceAddress: Address,
+  paymentTokenAddress: Address,
+  loanAmount: BigNumberish,
+  duration: BigNumberish,
+): Promise<void> => {
+  const estimate = await provider.estimateLoan(
+    enterpriseAddress,
+    serviceAddress,
+    paymentTokenAddress,
+    loanAmount,
+    duration,
+  );
+
+  await wait(provider.setLiquidityAllowance(enterpriseAddress, estimate));
+  await wait(provider.borrow(enterpriseAddress, serviceAddress, paymentTokenAddress, loanAmount, duration, estimate));
+};

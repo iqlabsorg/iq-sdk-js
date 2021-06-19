@@ -86,6 +86,18 @@ export interface LiquidityInfo {
   block: BigNumber;
 }
 
+export interface LoanInfo {
+  tokenId: BigNumber;
+  amount: BigNumber;
+  powerTokenIndex: number;
+  borrowingTime: number;
+  maturityTime: number;
+  borrowerReturnGraceTime: number;
+  enterpriseCollectGraceTime: number;
+  gcFee: BigNumber;
+  gcFeeTokenIndex: number;
+}
+
 export interface BlockchainProvider<Transaction = unknown, TransactionSigner = unknown> {
   connect(signer: TransactionSigner): Promise<BlockchainProvider<Transaction, TransactionSigner>>;
 
@@ -98,6 +110,8 @@ export interface BlockchainProvider<Transaction = unknown, TransactionSigner = u
   getEnterpriseInfo(enterpriseAddress: Address): Promise<EnterpriseInfo>;
 
   getLiquidityInfo(enterpriseAddress: Address, interestTokenId: BigNumberish): Promise<LiquidityInfo>;
+
+  getLoanInfo(enterpriseAddress: Address, borrowTokenId: BigNumberish): Promise<LoanInfo>;
 
   addLiquidity(enterpriseAddress: Address, amount: BigNumberish): Promise<Transaction>;
 
@@ -155,6 +169,8 @@ export interface BlockchainProvider<Transaction = unknown, TransactionSigner = u
   getInterestTokenMetadata(enterpriseAddress: Address, tokenId: BigNumberish): Promise<ERC721Metadata>;
 
   getInterestTokenIds(enterpriseAddress: Address, accountAddress?: Address): Promise<BigNumber[]>;
+
+  getBorrowTokenIds(enterpriseAddress: Address, accountAddress?: Address): Promise<BigNumber[]>;
 
   getERC20Metadata(tokenAddress: Address): Promise<ERC20Metadata>;
 
