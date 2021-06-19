@@ -6,6 +6,7 @@ import {
   BlockchainProvider,
   EnterpriseInfo,
   LiquidityInfo,
+  LoanInfo,
 } from '@iqprotocol/abstract-blockchain';
 import { Service } from './service';
 
@@ -80,6 +81,15 @@ export class Enterprise<Transaction = unknown> {
     maxPayment,
   }: BorrowRequest): Promise<Transaction> {
     return this.blockchain.borrow(this.address, serviceAddress, paymentTokenAddress, amount, duration, maxPayment);
+  }
+
+  async listLoanInfo(accountAddress?: Address): Promise<LoanInfo[]> {
+    const borrowTokenIds = await this.blockchain.getBorrowTokenIds(this.address, accountAddress);
+    return Promise.all(borrowTokenIds.map(async tokenId => this.blockchain.getLoanInfo(this.address, tokenId)));
+  }
+
+  async getLoanInfo(borrowTokenId: BigNumberish): Promise<LoanInfo> {
+    return this.blockchain.getLoanInfo(this.address, borrowTokenId);
   }
 
   async listLiquidityInfo(accountAddress?: Address): Promise<LiquidityInfo[]> {

@@ -25,6 +25,7 @@ import {
   ERC20Metadata,
   ERC721Metadata,
   LiquidityInfo,
+  LoanInfo,
   ServiceInfo,
   ServiceParams,
 } from '@iqprotocol/abstract-blockchain';
@@ -270,12 +271,12 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
   async getInterestTokenIds(enterpriseAddress: Address, accountAddress?: Address): Promise<BigNumber[]> {
     const targetAccountAddress = accountAddress ? accountAddress : await this.signer.getAddress();
     const tokenAddress = await this.getInterestTokenAddress(enterpriseAddress);
-    const token = this.resolveInterestToken(tokenAddress);
-    const tokenCount = await token.balanceOf(targetAccountAddress);
+    const interestToken = this.resolveInterestToken(tokenAddress);
+    const tokenCount = await interestToken.balanceOf(targetAccountAddress);
 
     const tokenIds: BigNumber[] = [];
     for (let i = 0; i < tokenCount.toNumber(); i++) {
-      tokenIds.push(await token.tokenOfOwnerByIndex(targetAccountAddress, i));
+      tokenIds.push(await interestToken.tokenOfOwnerByIndex(targetAccountAddress, i));
     }
 
     return tokenIds;
@@ -284,6 +285,45 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
   async getLiquidityInfo(enterpriseAddress: Address, interestTokenId: BigNumberish): Promise<LiquidityInfo> {
     const { amount, shares, block } = await this.resolveEnterprise(enterpriseAddress).getLiquidityInfo(interestTokenId);
     return { tokenId: BigNumber.from(interestTokenId), amount, shares, block };
+  }
+
+  async getBorrowTokenIds(enterpriseAddress: Address, accountAddress?: Address): Promise<BigNumber[]> {
+    const targetAccountAddress = accountAddress ? accountAddress : await this.signer.getAddress();
+    const tokenAddress = await this.getBorrowTokenAddress(enterpriseAddress);
+    const borrowToken = this.resolveBorrowToken(tokenAddress);
+    const tokenCount = await borrowToken.balanceOf(targetAccountAddress);
+
+    const tokenIds: BigNumber[] = [];
+    for (let i = 0; i < tokenCount.toNumber(); i++) {
+      tokenIds.push(await borrowToken.tokenOfOwnerByIndex(targetAccountAddress, i));
+    }
+
+    return tokenIds;
+  }
+
+  async getLoanInfo(enterpriseAddress: Address, borrowTokenId: BigNumberish): Promise<LoanInfo> {
+    const {
+      amount,
+      powerTokenIndex,
+      borrowingTime,
+      maturityTime,
+      borrowerReturnGraceTime,
+      enterpriseCollectGraceTime,
+      gcFee,
+      gcFeeTokenIndex,
+    } = await this.resolveEnterprise(enterpriseAddress).getLoanInfo(borrowTokenId);
+
+    return {
+      tokenId: BigNumber.from(borrowTokenId),
+      amount,
+      powerTokenIndex,
+      borrowingTime,
+      maturityTime,
+      borrowerReturnGraceTime,
+      enterpriseCollectGraceTime,
+      gcFee,
+      gcFeeTokenIndex,
+    };
   }
 
   async getERC20Metadata(tokenAddress: Address): Promise<ERC20Metadata> {
