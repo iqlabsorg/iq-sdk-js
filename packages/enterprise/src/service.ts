@@ -35,7 +35,7 @@ export class Service<Transaction = unknown> {
     return this.blockchain.getServiceInfo(this.address);
   }
 
-  async getAccountState(accountId: AccountID): Promise<AccountState> {
-    return this.blockchain.getAccountState(this.address, accountId.address);
+  async getAccountState(accountAddress: Address): Promise<AccountState> {
+    return this.blockchain.getAccountState(this.address, accountAddress);
   }
 }
