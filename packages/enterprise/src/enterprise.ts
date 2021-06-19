@@ -24,7 +24,6 @@ export interface EnterpriseConfig<Transaction> {
 }
 
 export class Enterprise<Transaction = unknown> {
-  private id?: AccountID;
   private readonly blockchain: BlockchainProvider<Transaction>;
   private readonly address: Address;
 
@@ -42,12 +41,8 @@ export class Enterprise<Transaction = unknown> {
   }
 
   async getId(): Promise<AccountID> {
-    if (!this.id) {
-      const chainId = await this.blockchain.getChainId();
-      this.id = new AccountID({ chainId, address: this.address });
-    }
-
-    return this.id;
+    const chainId = await this.blockchain.getChainId();
+    return new AccountID({ chainId, address: this.address });
   }
 
   getAddress(): Address {
