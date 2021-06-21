@@ -21,9 +21,9 @@ describe('Enterprise', () => {
   });
 
   it('retrieves enterprise info', async () => {
-    const mockGetEnterpriseInfo = jest.spyOn(mockBlockchainProvider, 'getEnterpriseInfo');
+    const getEnterpriseInfo = jest.spyOn(mockBlockchainProvider, 'getEnterpriseInfo');
     await enterprise.getInfo();
-    expect(mockGetEnterpriseInfo).toHaveBeenCalledWith(ENTERPRISE_ADDRESS);
+    expect(getEnterpriseInfo).toHaveBeenCalledWith(ENTERPRISE_ADDRESS);
   });
 
   it('lists registered services', async () => {
@@ -51,12 +51,12 @@ describe('Enterprise', () => {
       duration,
     };
 
-    const mockEstimateLoan = jest.spyOn(mockBlockchainProvider, 'estimateLoan');
-    mockEstimateLoan.mockResolvedValueOnce(mockEstimation);
+    const estimateLoan = jest.spyOn(mockBlockchainProvider, 'estimateLoan');
+    estimateLoan.mockResolvedValueOnce(mockEstimation);
     const estimate = await enterprise.estimateLoan(loanParams);
 
     expect(estimate).toEqual(mockEstimation);
-    expect(mockEstimateLoan).toHaveBeenCalledWith(
+    expect(estimateLoan).toHaveBeenCalledWith(
       ENTERPRISE_ADDRESS,
       serviceAddress,
       paymentTokenAddress,
@@ -66,12 +66,19 @@ describe('Enterprise', () => {
   });
 
   it('retrieves accrued interest', async () => {
-    const tokenId = '1';
+    const interestTokenId = '1';
     const mockInterest = BigNumber.from(125);
-    const mockGetAccruedInterest = jest.spyOn(mockBlockchainProvider, 'getAccruedInterest');
-    mockGetAccruedInterest.mockResolvedValueOnce(mockInterest);
-    const interest = await enterprise.getAccruedInterest(tokenId);
-    expect(mockGetAccruedInterest).toHaveBeenCalledWith(ENTERPRISE_ADDRESS, tokenId);
+    const getAccruedInterest = jest.spyOn(mockBlockchainProvider, 'getAccruedInterest');
+    getAccruedInterest.mockResolvedValueOnce(mockInterest);
+    const interest = await enterprise.getAccruedInterest(interestTokenId);
+    expect(getAccruedInterest).toHaveBeenCalledWith(ENTERPRISE_ADDRESS, interestTokenId);
     expect(interest).toEqual(mockInterest);
+  });
+
+  it('allows to return loan', async () => {
+    const borrowTokenId = '1';
+    const returnLoan = jest.spyOn(mockBlockchainProvider, 'returnLoan');
+    await enterprise.returnLoan(borrowTokenId);
+    expect(returnLoan).toHaveBeenCalledWith(ENTERPRISE_ADDRESS, borrowTokenId);
   });
 });

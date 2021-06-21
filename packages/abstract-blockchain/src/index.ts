@@ -131,6 +131,10 @@ export interface BlockchainProvider<Transaction = unknown, TransactionSigner = u
 
   getAccruedInterest(enterpriseAddress: Address, interestTokenId: BigNumberish): Promise<BigNumber>;
 
+  withdrawInterest(enterpriseAddress: Address, interestTokenId: BigNumberish): Promise<Transaction>;
+
+  getAvailableReserve(enterpriseAddress: Address): Promise<BigNumber>;
+
   getServiceInfo(serviceAddress: Address): Promise<ServiceInfo>;
 
   getAccountState(serviceAddress: Address, accountAddress: Address): Promise<AccountState>;
@@ -153,6 +157,8 @@ export interface BlockchainProvider<Transaction = unknown, TransactionSigner = u
     duration: BigNumberish,
     maxPayment: BigNumberish,
   ): Promise<Transaction>;
+
+  returnLoan(enterpriseAddress: Address, borrowTokenId: BigNumberish): Promise<Transaction>;
 
   setLiquidityAllowance(enterpriseAddress: Address, amount: BigNumberish): Promise<Transaction>;
 
