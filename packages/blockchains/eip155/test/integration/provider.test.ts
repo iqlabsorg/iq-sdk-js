@@ -322,6 +322,12 @@ describe('EIP155BlockchainProvider', () => {
           );
         });
 
+        it('retrieves liquidity provider accrued interest', async () => {
+          const [tokenId] = await provider.getInterestTokenIds(enterprise.address, deployerSigner.address);
+          const interest = await provider.getAccruedInterest(enterprise.address, tokenId);
+          expect(interest.toBigInt()).toBeGreaterThan(0n);
+        });
+
         it.todo('allows to return a loan');
       });
     });
