@@ -209,6 +209,10 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
     return this.resolveEnterprise(enterpriseAddress).removeLiquidity(interestTokenId);
   }
 
+  async getAccruedInterest(enterpriseAddress: Address, interestTokenId: BigNumberish): Promise<BigNumber> {
+    return this.resolveEnterprise(enterpriseAddress).getOwedInterest(interestTokenId);
+  }
+
   async borrow(
     enterpriseAddress: Address,
     serviceAddress: Address,

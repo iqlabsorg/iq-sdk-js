@@ -83,6 +83,10 @@ export class Enterprise<Transaction = unknown> {
     return this.blockchain.borrow(this.address, serviceAddress, paymentTokenAddress, amount, duration, maxPayment);
   }
 
+  async getAccruedInterest(interestTokenId: BigNumberish): Promise<BigNumber> {
+    return this.blockchain.getAccruedInterest(this.address, interestTokenId);
+  }
+
   async listLoanInfo(accountAddress?: Address): Promise<LoanInfo[]> {
     const borrowTokenIds = await this.blockchain.getBorrowTokenIds(this.address, accountAddress);
     return Promise.all(borrowTokenIds.map(async tokenId => this.blockchain.getLoanInfo(this.address, tokenId)));

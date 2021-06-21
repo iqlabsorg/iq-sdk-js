@@ -20,7 +20,7 @@ describe('Enterprise', () => {
     await expect(enterprise.getId()).resolves.toMatchObject(new AccountID({ chainId, address: ENTERPRISE_ADDRESS }));
   });
 
-  it('retrieves on-chain data via blockchain provider', async () => {
+  it('retrieves enterprise info', async () => {
     const mockGetEnterpriseInfo = jest.spyOn(mockBlockchainProvider, 'getEnterpriseInfo');
     await enterprise.getInfo();
     expect(mockGetEnterpriseInfo).toHaveBeenCalledWith(ENTERPRISE_ADDRESS);
@@ -63,5 +63,15 @@ describe('Enterprise', () => {
       amount,
       duration,
     );
+  });
+
+  it('retrieves accrued interest', async () => {
+    const tokenId = '1';
+    const mockInterest = BigNumber.from(125);
+    const mockGetAccruedInterest = jest.spyOn(mockBlockchainProvider, 'getAccruedInterest');
+    mockGetAccruedInterest.mockResolvedValueOnce(mockInterest);
+    const interest = await enterprise.getAccruedInterest(tokenId);
+    expect(mockGetAccruedInterest).toHaveBeenCalledWith(ENTERPRISE_ADDRESS, tokenId);
+    expect(interest).toEqual(mockInterest);
   });
 });

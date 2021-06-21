@@ -129,6 +129,8 @@ export interface BlockchainProvider<Transaction = unknown, TransactionSigner = u
     amount: BigNumberish,
   ): Promise<Transaction>;
 
+  getAccruedInterest(enterpriseAddress: Address, interestTokenId: BigNumberish): Promise<BigNumber>;
+
   getServiceInfo(serviceAddress: Address): Promise<ServiceInfo>;
 
   getAccountState(serviceAddress: Address, accountAddress: Address): Promise<AccountState>;
