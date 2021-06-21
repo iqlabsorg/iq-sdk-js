@@ -43,6 +43,17 @@ export const baseRate = (
 export const wait = async (txPromise: Promise<ContractTransaction>): Promise<ContractReceipt> =>
   (await txPromise).wait();
 
+export const mineBlock = async (timestamp = 0): Promise<unknown> =>
+  hre.ethers.provider.send('evm_mine', timestamp > 0 ? [timestamp] : []);
+
+export const latestBlockTimestamp = async (): Promise<number> =>
+  (await hre.ethers.provider.getBlock('latest')).timestamp;
+
+export const waitBlockchainTime = async (seconds: number): Promise<void> => {
+  const time = await latestBlockTimestamp();
+  await mineBlock(time + seconds);
+};
+
 export const estimateAndBorrow = async (
   provider: BlockchainProvider<ContractTransaction>,
   enterpriseAddress: Address,

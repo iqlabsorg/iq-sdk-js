@@ -123,6 +123,10 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
     );
   }
 
+  async getAvailableReserve(enterpriseAddress: Address): Promise<BigNumber> {
+    return this.resolveEnterprise(enterpriseAddress).getAvailableReserve();
+  }
+
   async getServiceInfo(serviceAddress: Address): Promise<ServiceInfo> {
     const powerToken = this.resolvePowerToken(serviceAddress);
 
@@ -213,6 +217,10 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
     return this.resolveEnterprise(enterpriseAddress).getOwedInterest(interestTokenId);
   }
 
+  async withdrawInterest(enterpriseAddress: Address, interestTokenId: BigNumberish): Promise<ContractTransaction> {
+    return this.resolveEnterprise(enterpriseAddress).withdrawInterest(interestTokenId);
+  }
+
   async borrow(
     enterpriseAddress: Address,
     serviceAddress: Address,
@@ -228,6 +236,10 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
       duration,
       maxPayment,
     );
+  }
+
+  async returnLoan(enterpriseAddress: Address, borrowTokenId: BigNumberish): Promise<ContractTransaction> {
+    return this.resolveEnterprise(enterpriseAddress).returnLoan(borrowTokenId);
   }
 
   async setLiquidityAllowance(enterpriseAddress: Address, amount: BigNumberish): Promise<ContractTransaction> {
