@@ -27,12 +27,19 @@ export interface AccountState {
   energyChangedAt: number;
 }
 
+export type AccountStateChangeResult = {
+  successful: boolean;
+  currentState: AccountState;
+};
+
 export interface StorageProvider {
-  saveAccount(account: Account): Promise<void>;
+  saveAccount(account: Account): Promise<Account>;
 
   getAccount(id: string): Promise<Account | null>;
 
-  saveAccountState(accountState: AccountState): Promise<void>;
+  initAccountState(accountState: AccountState): Promise<AccountState>;
+
+  changeAccountState(prevState: AccountState, newState: AccountState): Promise<AccountStateChangeResult>;
 
   getAccountState(accountId: string, serviceId: string): Promise<AccountState | null>;
 }

@@ -1,4 +1,4 @@
-import { Account, AccountState, AccountStateValidator } from '@iqprotocol/abstract-storage';
+import { Account, AccountState, AccountStateChangeResult, AccountStateValidator } from '@iqprotocol/abstract-storage';
 import { InMemoryStore } from '../src';
 
 /**
@@ -37,12 +37,13 @@ describe('InMemoryStore', () => {
     });
 
     it('saves account', async () => {
-      await store.saveAccount(account);
+      const result = await store.saveAccount(account);
+      expect(result).toEqual(account);
       await expect(store.getAccount(account.id)).resolves.toEqual(account);
     });
 
-    it('does not allow to save non-existent account state', async () => {
-      await expect(store.saveAccountState(accountState)).rejects.toThrow();
+    it('does not allow to initialize non-existent account state', async () => {
+      await expect(store.initAccountState(accountState)).rejects.toThrow();
     });
   });
 
@@ -61,7 +62,7 @@ describe('InMemoryStore', () => {
     });
 
     it('updates account data', async () => {
-      const updatedAccount = {
+      const updatedAccount = <Account>{
         ...account,
         data: {
           proof: 'updated-proof',
@@ -72,17 +73,22 @@ describe('InMemoryStore', () => {
       await expect(store.getAccount(account.id)).resolves.toEqual(updatedAccount);
     });
 
-    it('saves account state', async () => {
-      await store.saveAccountState(accountState);
+    it('initializes account state', async () => {
+      const result = await store.initAccountState(accountState);
+      expect(result).toEqual(accountState);
       await expect(store.getAccountState(accountState.accountId, accountState.serviceId)).resolves.toEqual(
         accountState,
       );
     });
   });
 
-  describe('When account state is stored', () => {
+  describe('When account state is initialized', () => {
     beforeEach(() => {
       store = new InMemoryStore({ accounts: [account], states: [accountState] });
+    });
+
+    it('throws error upon subsequent initialization', async () => {
+      await expect(store.initAccountState(accountState)).rejects.toThrow();
     });
 
     it('returns account state', async () => {
@@ -91,16 +97,37 @@ describe('InMemoryStore', () => {
       );
     });
 
-    it('updates account state', async () => {
-      const updatedState = {
+    it('updates account state and returns correct response', async () => {
+      const newState = <AccountState>{
         ...accountState,
-        balance: 15n,
+        power: 15n,
         energy: 2n,
         energyChangedAt: Number(Date.now() / 1000),
       };
-      await store.saveAccountState(updatedState);
+      const stateChangeResult = await store.changeAccountState(accountState, newState);
+      expect(stateChangeResult).toEqual(<AccountStateChangeResult>{
+        successful: true,
+        currentState: newState,
+      });
+      await expect(store.getAccountState(accountState.accountId, accountState.serviceId)).resolves.toEqual(newState);
+    });
+
+    it('does not update state with incorrect previous state and returns correct response', async () => {
+      const incorrectPrevState = <AccountState>{
+        ...accountState,
+        power: 15n,
+      };
+      const newState = {
+        ...accountState,
+        power: 20n,
+      };
+      const stateChangeResult = await store.changeAccountState(incorrectPrevState, newState);
+      expect(stateChangeResult).toEqual(<AccountStateChangeResult>{
+        successful: false,
+        currentState: accountState,
+      });
       await expect(store.getAccountState(accountState.accountId, accountState.serviceId)).resolves.toEqual(
-        updatedState,
+        accountState,
       );
     });
   });
@@ -121,10 +148,18 @@ describe('InMemoryStore', () => {
       expect(spy).toHaveBeenCalledWith(account);
     });
 
-    it('uses custom validator to validate account state', async () => {
+    it('uses custom validator to validate account state upon initialization', async () => {
       const spy = jest.spyOn(validator, 'validateAccountState');
-      await store.saveAccountState(accountState);
+      await store.initAccountState(accountState);
       expect(spy).toHaveBeenCalledWith(accountState);
+    });
+
+    it('uses custom validator to validate account state upon change', async () => {
+      await store.initAccountState(accountState);
+      const newState = { ...accountState, power: 20n };
+      const spy = jest.spyOn(validator, 'validateAccountState');
+      await store.changeAccountState(accountState, newState);
+      expect(spy).toHaveBeenCalledWith(newState);
     });
   });
 });

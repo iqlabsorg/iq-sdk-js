@@ -1,5 +1,13 @@
-import { AbstractStore, Account, AccountData, AccountState, AccountStateValidator } from '@iqprotocol/abstract-storage';
+import {
+  AbstractStore,
+  Account,
+  AccountData,
+  AccountState,
+  AccountStateChangeResult,
+  AccountStateValidator,
+} from '@iqprotocol/abstract-storage';
 import { DatabasePoolType, IdentifierSqlTokenType, sql } from 'slonik';
+import { DatabasePoolConnectionType, QueryMaybeOneFunctionType } from 'slonik/src/types';
 
 export type PostgresStoreConfig = {
   pool: DatabasePoolType;
@@ -18,6 +26,24 @@ export class PostgresStore extends AbstractStore {
     this.pool = pool;
     this.accountTableName = sql.identifier([accountTable ?? 'account']);
     this.stateTableName = sql.identifier([stateTable ?? 'state']);
+  }
+
+  private static rowToAccount(row: Record<string, unknown>): Account {
+    return {
+      id: String(row.id),
+      data: row.data as AccountData,
+    };
+  }
+
+  private static rowToAccountState(row: Record<string, unknown>): AccountState {
+    return {
+      serviceId: String(row.service_id),
+      accountId: String(row.account_id),
+      power: BigInt(row.power),
+      lockedPower: BigInt(row.locked_power),
+      energy: BigInt(row.energy),
+      energyChangedAt: Number(row.energy_changed_at),
+    };
   }
 
   async init(): Promise<void> {
@@ -52,45 +78,20 @@ export class PostgresStore extends AbstractStore {
         `,
       );
 
-      if (row === null) {
-        return null;
-      }
-
-      return {
-        id: String(row.id),
-        data: row.data as AccountData,
-      };
+      return row ? PostgresStore.rowToAccount(row) : null;
     });
   }
 
   async getAccountState(accountId: string, serviceId: string): Promise<AccountState | null> {
     return this.pool.connect(async connection => {
-      const row = await connection.maybeOne(
-        sql`SELECT account_id, service_id, power, locked_power, energy , EXTRACT(EPOCH FROM energy_changed_at) as energy_changed_at
-          FROM ${this.stateTableName}
-          WHERE account_id = ${accountId}
-          AND service_id = ${serviceId}
-        `,
-      );
-
-      if (row === null) {
-        return null;
-      }
-
-      return {
-        serviceId: String(row.service_id),
-        accountId: String(row.account_id),
-        power: BigInt(row.power),
-        lockedPower: BigInt(row.locked_power),
-        energy: BigInt(row.energy),
-        energyChangedAt: Number(row.energy_changed_at),
-      };
+      const row = await this.readAccountStateRecord(connection, accountId, serviceId);
+      return row ? PostgresStore.rowToAccountState(row) : null;
     });
   }
 
-  protected async _saveAccount(account: Account): Promise<void> {
-    await this.pool.connect(async connection => {
-      await connection.query(
+  protected async _saveAccount(account: Account): Promise<Account> {
+    return this.pool.connect(async connection => {
+      const result = await connection.query(
         sql`INSERT INTO ${this.accountTableName} (
             id,
             data
@@ -100,21 +101,24 @@ export class PostgresStore extends AbstractStore {
           )
           ON CONFLICT (id)
           DO UPDATE SET data = EXCLUDED.data
+          RETURNING *
         `,
       );
+
+      return PostgresStore.rowToAccount(result.rows[0]);
     });
   }
 
-  protected async _saveAccountState({
+  protected async _initAccountState({
     accountId,
     serviceId,
     power,
     lockedPower,
     energy,
     energyChangedAt,
-  }: AccountState): Promise<void> {
-    await this.pool.connect(async connection => {
-      await connection.query(
+  }: AccountState): Promise<AccountState> {
+    return this.pool.connect(async connection => {
+      const result = await connection.query(
         sql`INSERT INTO ${this.stateTableName} (
             account_id,
             service_id,
@@ -130,14 +134,61 @@ export class PostgresStore extends AbstractStore {
             ${energy.toString(10)},
             to_timestamp(${energyChangedAt})
           )
-          ON CONFLICT (account_id, service_id)
-          DO UPDATE SET
-            power = EXCLUDED.power,
-            locked_power = EXCLUDED.locked_power,
-            energy = EXCLUDED.energy,
-            energy_changed_at = EXCLUDED.energy_changed_at
+          RETURNING *, EXTRACT(EPOCH FROM energy_changed_at) as energy_changed_at
         `,
       );
+
+      return PostgresStore.rowToAccountState(result.rows[0]);
     });
+  }
+
+  protected async _changeAccountState(
+    prevState: AccountState,
+    newState: Omit<AccountState, 'serviceId' | 'accountId'>,
+  ): Promise<AccountStateChangeResult> {
+    return this.pool.connect(async connection => {
+      const currentState = await this.readAccountStateRecord(connection, prevState.accountId, prevState.serviceId);
+      if (!currentState) {
+        throw new Error('State is not initialized');
+      }
+
+      const result = await connection.query(
+        sql`UPDATE ${this.stateTableName}
+            SET
+              power = ${newState.power.toString(10)},
+              locked_power = ${newState.lockedPower.toString(10)},
+              energy = ${newState.energy.toString(10)},
+              energy_changed_at = to_timestamp(${newState.energyChangedAt})
+          WHERE
+            account_id = ${prevState.accountId}
+            AND service_id = ${prevState.serviceId}
+            AND power = ${prevState.power.toString(10)}
+            AND locked_power = ${prevState.lockedPower.toString(10)}
+            AND energy = ${prevState.energy.toString(10)}
+            AND energy_changed_at = to_timestamp(${prevState.energyChangedAt})
+          RETURNING *, EXTRACT(EPOCH FROM energy_changed_at) as energy_changed_at
+        `,
+      );
+
+      const successful = result.rowCount !== 0;
+      return <AccountStateChangeResult>{
+        successful,
+        currentState: PostgresStore.rowToAccountState(successful ? result.rows[0] : currentState),
+      };
+    });
+  }
+
+  private async readAccountStateRecord(
+    connection: DatabasePoolConnectionType,
+    accountId: string,
+    serviceId: string,
+  ): Promise<ReturnType<QueryMaybeOneFunctionType>> {
+    return connection.maybeOne(
+      sql`SELECT account_id, service_id, power, locked_power, energy , EXTRACT(EPOCH FROM energy_changed_at) as energy_changed_at
+          FROM ${this.stateTableName}
+          WHERE account_id = ${accountId}
+          AND service_id = ${serviceId}
+        `,
+    );
   }
 }
