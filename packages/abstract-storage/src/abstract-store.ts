@@ -1,4 +1,4 @@
-import { Account, AccountState, StorageProvider } from './types';
+import { Account, AccountState, AccountStateChangeResult, StorageProvider } from './types';
 import { AccountStateValidator, DefaultValidator } from './validator';
 
 export type AbstractStoreConfig = {
@@ -12,21 +12,37 @@ export abstract class AbstractStore implements StorageProvider {
     this.validator = config.validator ?? new DefaultValidator();
   }
 
-  async saveAccount(account: Account): Promise<void> {
+  async saveAccount(account: Account): Promise<Account> {
     this.validator.validateAccount(account);
     return this._saveAccount(account);
   }
 
-  async saveAccountState(accountState: AccountState): Promise<void> {
+  async initAccountState(accountState: AccountState): Promise<AccountState> {
     this.validator.validateAccountState(accountState);
-    return this._saveAccountState(accountState);
+    return this._initAccountState(accountState);
+  }
+
+  async changeAccountState(prevState: AccountState, newState: AccountState): Promise<AccountStateChangeResult> {
+    if (prevState.accountId !== newState.accountId) {
+      throw new Error('Account ID mismatch');
+    }
+    if (prevState.serviceId !== newState.serviceId) {
+      throw new Error('Service ID mismatch');
+    }
+    this.validator.validateAccountState(newState);
+    return this._changeAccountState(prevState, newState);
   }
 
   abstract getAccount(id: string): Promise<Account | null>;
 
   abstract getAccountState(accountId: string, serviceId: string): Promise<AccountState | null>;
 
-  protected abstract _saveAccount(account: Account): Promise<void>;
+  protected abstract _saveAccount(account: Account): Promise<Account>;
 
-  protected abstract _saveAccountState(accountState: AccountState): Promise<void>;
+  protected abstract _initAccountState(accountState: AccountState): Promise<AccountState>;
+
+  protected abstract _changeAccountState(
+    prevState: AccountState,
+    newState: AccountState,
+  ): Promise<AccountStateChangeResult>;
 }
