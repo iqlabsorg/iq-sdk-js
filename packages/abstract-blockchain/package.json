@@ -1,6 +1,7 @@
 {
   "name": "@iqprotocol/abstract-blockchain",
   "version": "0.1.0",
+  "license": "UNLICENSED",
   "scripts": {
     "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
     "build": "tsdx build --tsconfig tsconfig.build.json",
@@ -15,7 +16,7 @@
     "dist"
   ],
   "publishConfig": {
-    "access": "public"
+    "access": "restricted"
   },
   "dependencies": {
     "@ethersproject/bignumber": "^5.1.1",
