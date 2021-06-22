@@ -75,6 +75,13 @@ describe('Enterprise', () => {
     expect(interest).toEqual(mockInterest);
   });
 
+  it('allows to withdraw interest', async () => {
+    const interestTokenId = '1';
+    const withdrawInterest = jest.spyOn(mockBlockchainProvider, 'withdrawInterest');
+    await enterprise.withdrawInterest(interestTokenId);
+    expect(withdrawInterest).toHaveBeenCalledWith(ENTERPRISE_ADDRESS, interestTokenId);
+  });
+
   it('allows to return loan', async () => {
     const borrowTokenId = '1';
     const returnLoan = jest.spyOn(mockBlockchainProvider, 'returnLoan');

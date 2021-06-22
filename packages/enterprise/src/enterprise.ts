@@ -87,6 +87,10 @@ export class Enterprise<Transaction = unknown> {
     return this.blockchain.getAccruedInterest(this.address, interestTokenId);
   }
 
+  async withdrawInterest(interestTokenId: BigNumberish): Promise<Transaction> {
+    return this.blockchain.withdrawInterest(this.address, interestTokenId);
+  }
+
   async returnLoan(borrowTokenId: BigNumberish): Promise<Transaction> {
     return this.blockchain.returnLoan(this.address, borrowTokenId);
   }
