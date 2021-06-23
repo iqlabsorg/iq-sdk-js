@@ -9,7 +9,7 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
-  Contract,
+  BaseContract,
   ContractTransaction,
   Overrides,
   CallOverrides,
@@ -46,7 +46,7 @@ interface ExpMathMockInterface extends ethers.utils.Interface {
   events: {};
 }
 
-export class ExpMathMock extends Contract {
+export class ExpMathMock extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -92,17 +92,7 @@ export class ExpMathMock extends Contract {
   functions: {
     gas(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "gas()"(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     halfLife(
-      t0: BigNumberish,
-      c0: BigNumberish,
-      t12: BigNumberish,
-      t: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    "halfLife(uint32,uint112,uint32,uint32)"(
       t0: BigNumberish,
       c0: BigNumberish,
       t12: BigNumberish,
@@ -118,32 +108,12 @@ export class ExpMathMock extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "measure(uint32,uint112,uint32,uint32)"(
-      t0: BigNumberish,
-      c0: BigNumberish,
-      t12: BigNumberish,
-      t: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     result(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    "result()"(overrides?: CallOverrides): Promise<[BigNumber]>;
   };
 
   gas(overrides?: CallOverrides): Promise<BigNumber>;
 
-  "gas()"(overrides?: CallOverrides): Promise<BigNumber>;
-
   halfLife(
-    t0: BigNumberish,
-    c0: BigNumberish,
-    t12: BigNumberish,
-    t: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  "halfLife(uint32,uint112,uint32,uint32)"(
     t0: BigNumberish,
     c0: BigNumberish,
     t12: BigNumberish,
@@ -159,32 +129,12 @@ export class ExpMathMock extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "measure(uint32,uint112,uint32,uint32)"(
-    t0: BigNumberish,
-    c0: BigNumberish,
-    t12: BigNumberish,
-    t: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   result(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "result()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   callStatic: {
     gas(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "gas()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     halfLife(
-      t0: BigNumberish,
-      c0: BigNumberish,
-      t12: BigNumberish,
-      t: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "halfLife(uint32,uint112,uint32,uint32)"(
       t0: BigNumberish,
       c0: BigNumberish,
       t12: BigNumberish,
@@ -200,17 +150,7 @@ export class ExpMathMock extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "measure(uint32,uint112,uint32,uint32)"(
-      t0: BigNumberish,
-      c0: BigNumberish,
-      t12: BigNumberish,
-      t: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     result(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "result()"(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   filters: {};
@@ -218,8 +158,6 @@ export class ExpMathMock extends Contract {
   estimateGas: {
     gas(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "gas()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     halfLife(
       t0: BigNumberish,
       c0: BigNumberish,
@@ -228,23 +166,7 @@ export class ExpMathMock extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "halfLife(uint32,uint112,uint32,uint32)"(
-      t0: BigNumberish,
-      c0: BigNumberish,
-      t12: BigNumberish,
-      t: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     measure(
-      t0: BigNumberish,
-      c0: BigNumberish,
-      t12: BigNumberish,
-      t: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "measure(uint32,uint112,uint32,uint32)"(
       t0: BigNumberish,
       c0: BigNumberish,
       t12: BigNumberish,
@@ -253,14 +175,10 @@ export class ExpMathMock extends Contract {
     ): Promise<BigNumber>;
 
     result(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "result()"(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
     gas(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "gas()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     halfLife(
       t0: BigNumberish,
@@ -270,23 +188,7 @@ export class ExpMathMock extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "halfLife(uint32,uint112,uint32,uint32)"(
-      t0: BigNumberish,
-      c0: BigNumberish,
-      t12: BigNumberish,
-      t: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     measure(
-      t0: BigNumberish,
-      c0: BigNumberish,
-      t12: BigNumberish,
-      t: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "measure(uint32,uint112,uint32,uint32)"(
       t0: BigNumberish,
       c0: BigNumberish,
       t12: BigNumberish,
@@ -295,7 +197,5 @@ export class ExpMathMock extends Contract {
     ): Promise<PopulatedTransaction>;
 
     result(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "result()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

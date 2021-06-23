@@ -9,7 +9,7 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
-  Contract,
+  BaseContract,
   ContractTransaction,
   Overrides,
   CallOverrides,
@@ -83,7 +83,7 @@ interface EnterpriseFactoryInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "EnterpriseDeployed"): EventFragment;
 }
 
-export class EnterpriseFactory extends Contract {
+export class EnterpriseFactory extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -136,52 +136,21 @@ export class EnterpriseFactory extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "deploy(string,address,string,uint16,address)"(
-      name: string,
-      liquidityToken: string,
-      baseUri: string,
-      gcFeePercent: BigNumberish,
-      converter: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     deployService(
-      admin: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "deployService(address)"(
       admin: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     getBorrowTokenImpl(overrides?: CallOverrides): Promise<[string]>;
 
-    "getBorrowTokenImpl()"(overrides?: CallOverrides): Promise<[string]>;
-
     getEnterpriseImpl(overrides?: CallOverrides): Promise<[string]>;
-
-    "getEnterpriseImpl()"(overrides?: CallOverrides): Promise<[string]>;
 
     getInterestTokenImpl(overrides?: CallOverrides): Promise<[string]>;
 
-    "getInterestTokenImpl()"(overrides?: CallOverrides): Promise<[string]>;
-
     getPowerTokenImpl(overrides?: CallOverrides): Promise<[string]>;
-
-    "getPowerTokenImpl()"(overrides?: CallOverrides): Promise<[string]>;
   };
 
   deploy(
-    name: string,
-    liquidityToken: string,
-    baseUri: string,
-    gcFeePercent: BigNumberish,
-    converter: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "deploy(string,address,string,uint16,address)"(
     name: string,
     liquidityToken: string,
     baseUri: string,
@@ -195,26 +164,13 @@ export class EnterpriseFactory extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "deployService(address)"(
-    admin: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   getBorrowTokenImpl(overrides?: CallOverrides): Promise<string>;
-
-  "getBorrowTokenImpl()"(overrides?: CallOverrides): Promise<string>;
 
   getEnterpriseImpl(overrides?: CallOverrides): Promise<string>;
 
-  "getEnterpriseImpl()"(overrides?: CallOverrides): Promise<string>;
-
   getInterestTokenImpl(overrides?: CallOverrides): Promise<string>;
 
-  "getInterestTokenImpl()"(overrides?: CallOverrides): Promise<string>;
-
   getPowerTokenImpl(overrides?: CallOverrides): Promise<string>;
-
-  "getPowerTokenImpl()"(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
     deploy(
@@ -226,46 +182,24 @@ export class EnterpriseFactory extends Contract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    "deploy(string,address,string,uint16,address)"(
-      name: string,
-      liquidityToken: string,
-      baseUri: string,
-      gcFeePercent: BigNumberish,
-      converter: string,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
     deployService(admin: string, overrides?: CallOverrides): Promise<string>;
-
-    "deployService(address)"(
-      admin: string,
-      overrides?: CallOverrides
-    ): Promise<string>;
 
     getBorrowTokenImpl(overrides?: CallOverrides): Promise<string>;
 
-    "getBorrowTokenImpl()"(overrides?: CallOverrides): Promise<string>;
-
     getEnterpriseImpl(overrides?: CallOverrides): Promise<string>;
-
-    "getEnterpriseImpl()"(overrides?: CallOverrides): Promise<string>;
 
     getInterestTokenImpl(overrides?: CallOverrides): Promise<string>;
 
-    "getInterestTokenImpl()"(overrides?: CallOverrides): Promise<string>;
-
     getPowerTokenImpl(overrides?: CallOverrides): Promise<string>;
-
-    "getPowerTokenImpl()"(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
     EnterpriseDeployed(
-      creator: string | null,
-      liquidityToken: string | null,
-      name: null,
-      baseUri: null,
-      deployed: null
+      creator?: string | null,
+      liquidityToken?: string | null,
+      name?: null,
+      baseUri?: null,
+      deployed?: null
     ): TypedEventFilter<
       [string, string, string, string, string],
       {
@@ -288,40 +222,18 @@ export class EnterpriseFactory extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "deploy(string,address,string,uint16,address)"(
-      name: string,
-      liquidityToken: string,
-      baseUri: string,
-      gcFeePercent: BigNumberish,
-      converter: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     deployService(
-      admin: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "deployService(address)"(
       admin: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     getBorrowTokenImpl(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "getBorrowTokenImpl()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     getEnterpriseImpl(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "getEnterpriseImpl()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getInterestTokenImpl(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "getInterestTokenImpl()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     getPowerTokenImpl(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "getPowerTokenImpl()"(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -334,21 +246,7 @@ export class EnterpriseFactory extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "deploy(string,address,string,uint16,address)"(
-      name: string,
-      liquidityToken: string,
-      baseUri: string,
-      gcFeePercent: BigNumberish,
-      converter: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     deployService(
-      admin: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "deployService(address)"(
       admin: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -357,28 +255,12 @@ export class EnterpriseFactory extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "getBorrowTokenImpl()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getEnterpriseImpl(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "getEnterpriseImpl()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     getInterestTokenImpl(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "getInterestTokenImpl()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getPowerTokenImpl(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "getPowerTokenImpl()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
   };
 }

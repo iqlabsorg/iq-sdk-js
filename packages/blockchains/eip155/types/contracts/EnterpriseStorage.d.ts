@@ -9,7 +9,7 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
-  Contract,
+  BaseContract,
   ContractTransaction,
   Overrides,
   CallOverrides,
@@ -428,7 +428,7 @@ interface EnterpriseStorageInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "UsedReserveChanged"): EventFragment;
 }
 
-export class EnterpriseStorage extends Contract {
+export class EnterpriseStorage extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -477,106 +477,38 @@ export class EnterpriseStorage extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "disablePaymentToken(address)"(
-      token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     enablePaymentToken(
-      token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "enablePaymentToken(address)"(
       token: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     getAvailableReserve(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "getAvailableReserve()"(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     getBaseUri(overrides?: CallOverrides): Promise<[string]>;
-
-    "getBaseUri()"(overrides?: CallOverrides): Promise<[string]>;
 
     getBondingCurve(
       overrides?: CallOverrides
     ): Promise<[BigNumber, BigNumber] & { pole: BigNumber; slope: BigNumber }>;
 
-    "getBondingCurve()"(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber] & { pole: BigNumber; slope: BigNumber }>;
-
     getBorrowToken(overrides?: CallOverrides): Promise<[string]>;
-
-    "getBorrowToken()"(overrides?: CallOverrides): Promise<[string]>;
 
     getBorrowerLoanReturnGracePeriod(
       overrides?: CallOverrides
     ): Promise<[number]>;
 
-    "getBorrowerLoanReturnGracePeriod()"(
-      overrides?: CallOverrides
-    ): Promise<[number]>;
-
     getConverter(overrides?: CallOverrides): Promise<[string]>;
 
-    "getConverter()"(overrides?: CallOverrides): Promise<[string]>;
-
     getEnterpriseCollector(overrides?: CallOverrides): Promise<[string]>;
-
-    "getEnterpriseCollector()"(overrides?: CallOverrides): Promise<[string]>;
 
     getEnterpriseLoanCollectGracePeriod(
       overrides?: CallOverrides
     ): Promise<[number]>;
 
-    "getEnterpriseLoanCollectGracePeriod()"(
-      overrides?: CallOverrides
-    ): Promise<[number]>;
-
     getEnterpriseVault(overrides?: CallOverrides): Promise<[string]>;
-
-    "getEnterpriseVault()"(overrides?: CallOverrides): Promise<[string]>;
 
     getGCFeePercent(overrides?: CallOverrides): Promise<[number]>;
 
-    "getGCFeePercent()"(overrides?: CallOverrides): Promise<[number]>;
-
     getInfo(
-      overrides?: CallOverrides
-    ): Promise<
-      [
-        string,
-        string,
-        BigNumber,
-        number,
-        number,
-        number,
-        number,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        number
-      ] & {
-        name: string;
-        baseUri: string;
-        totalShares: BigNumber;
-        interestGapHalvingPeriod: number;
-        borrowerLoanReturnGracePeriod: number;
-        enterpriseLoanCollectGracePeriod: number;
-        gcFeePercent: number;
-        fixedReserve: BigNumber;
-        usedReserve: BigNumber;
-        streamingReserve: BigNumber;
-        streamingReserveTarget: BigNumber;
-        streamingReserveUpdated: number;
-      }
-    >;
-
-    "getInfo()"(
       overrides?: CallOverrides
     ): Promise<
       [
@@ -610,13 +542,7 @@ export class EnterpriseStorage extends Contract {
 
     getInterestGapHalvingPeriod(overrides?: CallOverrides): Promise<[number]>;
 
-    "getInterestGapHalvingPeriod()"(
-      overrides?: CallOverrides
-    ): Promise<[number]>;
-
     getInterestToken(overrides?: CallOverrides): Promise<[string]>;
-
-    "getInterestToken()"(overrides?: CallOverrides): Promise<[string]>;
 
     getLiquidityInfo(
       interestTokenId: BigNumberish,
@@ -631,22 +557,7 @@ export class EnterpriseStorage extends Contract {
       ]
     >;
 
-    "getLiquidityInfo(uint256)"(
-      interestTokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [
-        [BigNumber, BigNumber, BigNumber] & {
-          amount: BigNumber;
-          shares: BigNumber;
-          block: BigNumber;
-        }
-      ]
-    >;
-
     getLiquidityToken(overrides?: CallOverrides): Promise<[string]>;
-
-    "getLiquidityToken()"(overrides?: CallOverrides): Promise<[string]>;
 
     getLoanInfo(
       borrowTokenId: BigNumberish,
@@ -675,48 +586,13 @@ export class EnterpriseStorage extends Contract {
       ]
     >;
 
-    "getLoanInfo(uint256)"(
-      borrowTokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [
-        [
-          BigNumber,
-          number,
-          number,
-          number,
-          number,
-          number,
-          BigNumber,
-          number
-        ] & {
-          amount: BigNumber;
-          powerTokenIndex: number;
-          borrowingTime: number;
-          maturityTime: number;
-          borrowerReturnGraceTime: number;
-          enterpriseCollectGraceTime: number;
-          gcFee: BigNumber;
-          gcFeeTokenIndex: number;
-        }
-      ]
-    >;
-
     getPowerTokens(overrides?: CallOverrides): Promise<[string[]]>;
-
-    "getPowerTokens()"(overrides?: CallOverrides): Promise<[string[]]>;
 
     getProxyAdmin(overrides?: CallOverrides): Promise<[string]>;
 
-    "getProxyAdmin()"(overrides?: CallOverrides): Promise<[string]>;
-
     getReserve(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "getReserve()"(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     getUsedReserve(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    "getUsedReserve()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "initialize(string,string,uint16,address,address,address)"(
       enterpriseName: string,
@@ -740,19 +616,7 @@ export class EnterpriseStorage extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "initializeTokens(address,address,address)"(
-      liquidityToken: string,
-      interestToken: string,
-      borrowToken: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     isRegisteredPowerToken(
-      powerToken: string,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    "isRegisteredPowerToken(address)"(
       powerToken: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
@@ -762,21 +626,9 @@ export class EnterpriseStorage extends Contract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    "isSupportedPaymentToken(address)"(
-      token: string,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
     owner(overrides?: CallOverrides): Promise<[string]>;
 
-    "owner()"(overrides?: CallOverrides): Promise<[string]>;
-
     paymentToken(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    "paymentToken(uint256)"(
       index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[string]>;
@@ -786,17 +638,7 @@ export class EnterpriseStorage extends Contract {
       overrides?: CallOverrides
     ): Promise<[number]>;
 
-    "paymentTokenIndex(address)"(
-      token: string,
-      overrides?: CallOverrides
-    ): Promise<[number]>;
-
     setBaseUri(
-      baseUri: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "setBaseUri(string)"(
       baseUri: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -807,18 +649,7 @@ export class EnterpriseStorage extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "setBondingCurve(uint256,uint256)"(
-      pole: BigNumberish,
-      slope: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     setBorrowerLoanReturnGracePeriod(
-      newPeriod: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "setBorrowerLoanReturnGracePeriod(uint32)"(
       newPeriod: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -828,17 +659,7 @@ export class EnterpriseStorage extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "setConverter(address)"(
-      newConverter: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     setEnterpriseCollector(
-      newCollector: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "setEnterpriseCollector(address)"(
       newCollector: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -848,17 +669,7 @@ export class EnterpriseStorage extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "setEnterpriseLoanCollectGracePeriod(uint32)"(
-      newPeriod: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     setEnterpriseVault(
-      newVault: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "setEnterpriseVault(address)"(
       newVault: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -868,17 +679,7 @@ export class EnterpriseStorage extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "setGcFeePercent(uint16)"(
-      newGcFeePercent: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     setInterestGapHalvingPeriod(
-      interestGapHalvingPeriod: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "setInterestGapHalvingPeriod(uint32)"(
       interestGapHalvingPeriod: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -888,17 +689,7 @@ export class EnterpriseStorage extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "transferOwnership(address)"(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     upgradeBorrowToken(
-      implementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "upgradeBorrowToken(address)"(
       implementation: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -908,28 +699,12 @@ export class EnterpriseStorage extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "upgradeEnterprise(address)"(
-      implementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     upgradeInterestToken(
       implementation: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "upgradeInterestToken(address)"(
-      implementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     upgradePowerToken(
-      powerToken: string,
-      implementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "upgradePowerToken(address,address)"(
       powerToken: string,
       implementation: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -941,70 +716,34 @@ export class EnterpriseStorage extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "disablePaymentToken(address)"(
-    token: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   enablePaymentToken(
-    token: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "enablePaymentToken(address)"(
     token: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   getAvailableReserve(overrides?: CallOverrides): Promise<BigNumber>;
 
-  "getAvailableReserve()"(overrides?: CallOverrides): Promise<BigNumber>;
-
   getBaseUri(overrides?: CallOverrides): Promise<string>;
-
-  "getBaseUri()"(overrides?: CallOverrides): Promise<string>;
 
   getBondingCurve(
     overrides?: CallOverrides
   ): Promise<[BigNumber, BigNumber] & { pole: BigNumber; slope: BigNumber }>;
 
-  "getBondingCurve()"(
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, BigNumber] & { pole: BigNumber; slope: BigNumber }>;
-
   getBorrowToken(overrides?: CallOverrides): Promise<string>;
-
-  "getBorrowToken()"(overrides?: CallOverrides): Promise<string>;
 
   getBorrowerLoanReturnGracePeriod(overrides?: CallOverrides): Promise<number>;
 
-  "getBorrowerLoanReturnGracePeriod()"(
-    overrides?: CallOverrides
-  ): Promise<number>;
-
   getConverter(overrides?: CallOverrides): Promise<string>;
 
-  "getConverter()"(overrides?: CallOverrides): Promise<string>;
-
   getEnterpriseCollector(overrides?: CallOverrides): Promise<string>;
-
-  "getEnterpriseCollector()"(overrides?: CallOverrides): Promise<string>;
 
   getEnterpriseLoanCollectGracePeriod(
     overrides?: CallOverrides
   ): Promise<number>;
 
-  "getEnterpriseLoanCollectGracePeriod()"(
-    overrides?: CallOverrides
-  ): Promise<number>;
-
   getEnterpriseVault(overrides?: CallOverrides): Promise<string>;
 
-  "getEnterpriseVault()"(overrides?: CallOverrides): Promise<string>;
-
   getGCFeePercent(overrides?: CallOverrides): Promise<number>;
-
-  "getGCFeePercent()"(overrides?: CallOverrides): Promise<number>;
 
   getInfo(
     overrides?: CallOverrides
@@ -1038,45 +777,9 @@ export class EnterpriseStorage extends Contract {
     }
   >;
 
-  "getInfo()"(
-    overrides?: CallOverrides
-  ): Promise<
-    [
-      string,
-      string,
-      BigNumber,
-      number,
-      number,
-      number,
-      number,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      number
-    ] & {
-      name: string;
-      baseUri: string;
-      totalShares: BigNumber;
-      interestGapHalvingPeriod: number;
-      borrowerLoanReturnGracePeriod: number;
-      enterpriseLoanCollectGracePeriod: number;
-      gcFeePercent: number;
-      fixedReserve: BigNumber;
-      usedReserve: BigNumber;
-      streamingReserve: BigNumber;
-      streamingReserveTarget: BigNumber;
-      streamingReserveUpdated: number;
-    }
-  >;
-
   getInterestGapHalvingPeriod(overrides?: CallOverrides): Promise<number>;
 
-  "getInterestGapHalvingPeriod()"(overrides?: CallOverrides): Promise<number>;
-
   getInterestToken(overrides?: CallOverrides): Promise<string>;
-
-  "getInterestToken()"(overrides?: CallOverrides): Promise<string>;
 
   getLiquidityInfo(
     interestTokenId: BigNumberish,
@@ -1089,20 +792,7 @@ export class EnterpriseStorage extends Contract {
     }
   >;
 
-  "getLiquidityInfo(uint256)"(
-    interestTokenId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, BigNumber] & {
-      amount: BigNumber;
-      shares: BigNumber;
-      block: BigNumber;
-    }
-  >;
-
   getLiquidityToken(overrides?: CallOverrides): Promise<string>;
-
-  "getLiquidityToken()"(overrides?: CallOverrides): Promise<string>;
 
   getLoanInfo(
     borrowTokenId: BigNumberish,
@@ -1120,37 +810,13 @@ export class EnterpriseStorage extends Contract {
     }
   >;
 
-  "getLoanInfo(uint256)"(
-    borrowTokenId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, number, number, number, number, number, BigNumber, number] & {
-      amount: BigNumber;
-      powerTokenIndex: number;
-      borrowingTime: number;
-      maturityTime: number;
-      borrowerReturnGraceTime: number;
-      enterpriseCollectGraceTime: number;
-      gcFee: BigNumber;
-      gcFeeTokenIndex: number;
-    }
-  >;
-
   getPowerTokens(overrides?: CallOverrides): Promise<string[]>;
-
-  "getPowerTokens()"(overrides?: CallOverrides): Promise<string[]>;
 
   getProxyAdmin(overrides?: CallOverrides): Promise<string>;
 
-  "getProxyAdmin()"(overrides?: CallOverrides): Promise<string>;
-
   getReserve(overrides?: CallOverrides): Promise<BigNumber>;
 
-  "getReserve()"(overrides?: CallOverrides): Promise<BigNumber>;
-
   getUsedReserve(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "getUsedReserve()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   "initialize(string,string,uint16,address,address,address)"(
     enterpriseName: string,
@@ -1174,19 +840,7 @@ export class EnterpriseStorage extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "initializeTokens(address,address,address)"(
-    liquidityToken: string,
-    interestToken: string,
-    borrowToken: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   isRegisteredPowerToken(
-    powerToken: string,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  "isRegisteredPowerToken(address)"(
     powerToken: string,
     overrides?: CallOverrides
   ): Promise<boolean>;
@@ -1196,35 +850,13 @@ export class EnterpriseStorage extends Contract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  "isSupportedPaymentToken(address)"(
-    token: string,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
   owner(overrides?: CallOverrides): Promise<string>;
-
-  "owner()"(overrides?: CallOverrides): Promise<string>;
 
   paymentToken(index: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
-  "paymentToken(uint256)"(
-    index: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
   paymentTokenIndex(token: string, overrides?: CallOverrides): Promise<number>;
 
-  "paymentTokenIndex(address)"(
-    token: string,
-    overrides?: CallOverrides
-  ): Promise<number>;
-
   setBaseUri(
-    baseUri: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "setBaseUri(string)"(
     baseUri: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -1235,18 +867,7 @@ export class EnterpriseStorage extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "setBondingCurve(uint256,uint256)"(
-    pole: BigNumberish,
-    slope: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   setBorrowerLoanReturnGracePeriod(
-    newPeriod: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "setBorrowerLoanReturnGracePeriod(uint32)"(
     newPeriod: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -1256,17 +877,7 @@ export class EnterpriseStorage extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "setConverter(address)"(
-    newConverter: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   setEnterpriseCollector(
-    newCollector: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "setEnterpriseCollector(address)"(
     newCollector: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -1276,17 +887,7 @@ export class EnterpriseStorage extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "setEnterpriseLoanCollectGracePeriod(uint32)"(
-    newPeriod: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   setEnterpriseVault(
-    newVault: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "setEnterpriseVault(address)"(
     newVault: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -1296,17 +897,7 @@ export class EnterpriseStorage extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "setGcFeePercent(uint16)"(
-    newGcFeePercent: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   setInterestGapHalvingPeriod(
-    interestGapHalvingPeriod: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "setInterestGapHalvingPeriod(uint32)"(
     interestGapHalvingPeriod: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -1316,17 +907,7 @@ export class EnterpriseStorage extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "transferOwnership(address)"(
-    newOwner: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   upgradeBorrowToken(
-    implementation: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "upgradeBorrowToken(address)"(
     implementation: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -1336,28 +917,12 @@ export class EnterpriseStorage extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "upgradeEnterprise(address)"(
-    implementation: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   upgradeInterestToken(
     implementation: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "upgradeInterestToken(address)"(
-    implementation: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   upgradePowerToken(
-    powerToken: string,
-    implementation: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "upgradePowerToken(address,address)"(
     powerToken: string,
     implementation: string,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -1369,69 +934,33 @@ export class EnterpriseStorage extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "disablePaymentToken(address)"(
-      token: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     enablePaymentToken(token: string, overrides?: CallOverrides): Promise<void>;
-
-    "enablePaymentToken(address)"(
-      token: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     getAvailableReserve(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "getAvailableReserve()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     getBaseUri(overrides?: CallOverrides): Promise<string>;
-
-    "getBaseUri()"(overrides?: CallOverrides): Promise<string>;
 
     getBondingCurve(
       overrides?: CallOverrides
     ): Promise<[BigNumber, BigNumber] & { pole: BigNumber; slope: BigNumber }>;
 
-    "getBondingCurve()"(
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber] & { pole: BigNumber; slope: BigNumber }>;
-
     getBorrowToken(overrides?: CallOverrides): Promise<string>;
-
-    "getBorrowToken()"(overrides?: CallOverrides): Promise<string>;
 
     getBorrowerLoanReturnGracePeriod(
       overrides?: CallOverrides
     ): Promise<number>;
 
-    "getBorrowerLoanReturnGracePeriod()"(
-      overrides?: CallOverrides
-    ): Promise<number>;
-
     getConverter(overrides?: CallOverrides): Promise<string>;
 
-    "getConverter()"(overrides?: CallOverrides): Promise<string>;
-
     getEnterpriseCollector(overrides?: CallOverrides): Promise<string>;
-
-    "getEnterpriseCollector()"(overrides?: CallOverrides): Promise<string>;
 
     getEnterpriseLoanCollectGracePeriod(
       overrides?: CallOverrides
     ): Promise<number>;
 
-    "getEnterpriseLoanCollectGracePeriod()"(
-      overrides?: CallOverrides
-    ): Promise<number>;
-
     getEnterpriseVault(overrides?: CallOverrides): Promise<string>;
 
-    "getEnterpriseVault()"(overrides?: CallOverrides): Promise<string>;
-
     getGCFeePercent(overrides?: CallOverrides): Promise<number>;
-
-    "getGCFeePercent()"(overrides?: CallOverrides): Promise<number>;
 
     getInfo(
       overrides?: CallOverrides
@@ -1465,45 +994,9 @@ export class EnterpriseStorage extends Contract {
       }
     >;
 
-    "getInfo()"(
-      overrides?: CallOverrides
-    ): Promise<
-      [
-        string,
-        string,
-        BigNumber,
-        number,
-        number,
-        number,
-        number,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        number
-      ] & {
-        name: string;
-        baseUri: string;
-        totalShares: BigNumber;
-        interestGapHalvingPeriod: number;
-        borrowerLoanReturnGracePeriod: number;
-        enterpriseLoanCollectGracePeriod: number;
-        gcFeePercent: number;
-        fixedReserve: BigNumber;
-        usedReserve: BigNumber;
-        streamingReserve: BigNumber;
-        streamingReserveTarget: BigNumber;
-        streamingReserveUpdated: number;
-      }
-    >;
-
     getInterestGapHalvingPeriod(overrides?: CallOverrides): Promise<number>;
 
-    "getInterestGapHalvingPeriod()"(overrides?: CallOverrides): Promise<number>;
-
     getInterestToken(overrides?: CallOverrides): Promise<string>;
-
-    "getInterestToken()"(overrides?: CallOverrides): Promise<string>;
 
     getLiquidityInfo(
       interestTokenId: BigNumberish,
@@ -1516,38 +1009,9 @@ export class EnterpriseStorage extends Contract {
       }
     >;
 
-    "getLiquidityInfo(uint256)"(
-      interestTokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber] & {
-        amount: BigNumber;
-        shares: BigNumber;
-        block: BigNumber;
-      }
-    >;
-
     getLiquidityToken(overrides?: CallOverrides): Promise<string>;
 
-    "getLiquidityToken()"(overrides?: CallOverrides): Promise<string>;
-
     getLoanInfo(
-      borrowTokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, number, number, number, number, number, BigNumber, number] & {
-        amount: BigNumber;
-        powerTokenIndex: number;
-        borrowingTime: number;
-        maturityTime: number;
-        borrowerReturnGraceTime: number;
-        enterpriseCollectGraceTime: number;
-        gcFee: BigNumber;
-        gcFeeTokenIndex: number;
-      }
-    >;
-
-    "getLoanInfo(uint256)"(
       borrowTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
@@ -1565,19 +1029,11 @@ export class EnterpriseStorage extends Contract {
 
     getPowerTokens(overrides?: CallOverrides): Promise<string[]>;
 
-    "getPowerTokens()"(overrides?: CallOverrides): Promise<string[]>;
-
     getProxyAdmin(overrides?: CallOverrides): Promise<string>;
-
-    "getProxyAdmin()"(overrides?: CallOverrides): Promise<string>;
 
     getReserve(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "getReserve()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     getUsedReserve(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "getUsedReserve()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     "initialize(string,string,uint16,address,address,address)"(
       enterpriseName: string,
@@ -1601,19 +1057,7 @@ export class EnterpriseStorage extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "initializeTokens(address,address,address)"(
-      liquidityToken: string,
-      interestToken: string,
-      borrowToken: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     isRegisteredPowerToken(
-      powerToken: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    "isRegisteredPowerToken(address)"(
       powerToken: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
@@ -1623,21 +1067,9 @@ export class EnterpriseStorage extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    "isSupportedPaymentToken(address)"(
-      token: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
     owner(overrides?: CallOverrides): Promise<string>;
 
-    "owner()"(overrides?: CallOverrides): Promise<string>;
-
     paymentToken(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    "paymentToken(uint256)"(
       index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
@@ -1647,25 +1079,9 @@ export class EnterpriseStorage extends Contract {
       overrides?: CallOverrides
     ): Promise<number>;
 
-    "paymentTokenIndex(address)"(
-      token: string,
-      overrides?: CallOverrides
-    ): Promise<number>;
-
     setBaseUri(baseUri: string, overrides?: CallOverrides): Promise<void>;
 
-    "setBaseUri(string)"(
-      baseUri: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     setBondingCurve(
-      pole: BigNumberish,
-      slope: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setBondingCurve(uint256,uint256)"(
       pole: BigNumberish,
       slope: BigNumberish,
       overrides?: CallOverrides
@@ -1676,17 +1092,7 @@ export class EnterpriseStorage extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "setBorrowerLoanReturnGracePeriod(uint32)"(
-      newPeriod: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     setConverter(
-      newConverter: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setConverter(address)"(
       newConverter: string,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1696,17 +1102,7 @@ export class EnterpriseStorage extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "setEnterpriseCollector(address)"(
-      newCollector: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     setEnterpriseLoanCollectGracePeriod(
-      newPeriod: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setEnterpriseLoanCollectGracePeriod(uint32)"(
       newPeriod: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1716,17 +1112,7 @@ export class EnterpriseStorage extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "setEnterpriseVault(address)"(
-      newVault: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     setGcFeePercent(
-      newGcFeePercent: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setGcFeePercent(uint16)"(
       newGcFeePercent: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1736,17 +1122,7 @@ export class EnterpriseStorage extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "setInterestGapHalvingPeriod(uint32)"(
-      interestGapHalvingPeriod: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     transferOwnership(
-      newOwner: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "transferOwnership(address)"(
       newOwner: string,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1756,17 +1132,7 @@ export class EnterpriseStorage extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "upgradeBorrowToken(address)"(
-      implementation: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     upgradeEnterprise(
-      implementation: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "upgradeEnterprise(address)"(
       implementation: string,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1776,18 +1142,7 @@ export class EnterpriseStorage extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "upgradeInterestToken(address)"(
-      implementation: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     upgradePowerToken(
-      powerToken: string,
-      implementation: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "upgradePowerToken(address,address)"(
       powerToken: string,
       implementation: string,
       overrides?: CallOverrides
@@ -1796,81 +1151,81 @@ export class EnterpriseStorage extends Contract {
 
   filters: {
     BaseUriChanged(
-      baseUri: null
+      baseUri?: null
     ): TypedEventFilter<[string], { baseUri: string }>;
 
     BondingChanged(
-      pole: null,
-      slope: null
+      pole?: null,
+      slope?: null
     ): TypedEventFilter<
       [BigNumber, BigNumber],
       { pole: BigNumber; slope: BigNumber }
     >;
 
     BorrowerLoanReturnGracePeriodChanged(
-      period: null
+      period?: null
     ): TypedEventFilter<[number], { period: number }>;
 
     ConverterChanged(
-      converter: null
+      converter?: null
     ): TypedEventFilter<[string], { converter: string }>;
 
     EnterpriseCollectorChanged(
-      collector: null
+      collector?: null
     ): TypedEventFilter<[string], { collector: string }>;
 
     EnterpriseLoanCollectGracePeriodChanged(
-      period: null
+      period?: null
     ): TypedEventFilter<[number], { period: number }>;
 
     EnterpriseShutdown(): TypedEventFilter<[], {}>;
 
     EnterpriseVaultChanged(
-      vault: null
+      vault?: null
     ): TypedEventFilter<[string], { vault: string }>;
 
     FixedReserveChanged(
-      fixedReserve: null
+      fixedReserve?: null
     ): TypedEventFilter<[BigNumber], { fixedReserve: BigNumber }>;
 
     GcFeePercentChanged(
-      percent: null
+      percent?: null
     ): TypedEventFilter<[number], { percent: number }>;
 
     InterestGapHalvingPeriodChanged(
-      period: null
+      period?: null
     ): TypedEventFilter<[number], { period: number }>;
 
     OwnershipTransferred(
-      previousOwner: string | null,
-      newOwner: string | null
+      previousOwner?: string | null,
+      newOwner?: string | null
     ): TypedEventFilter<
       [string, string],
       { previousOwner: string; newOwner: string }
     >;
 
     PaymentTokenChange(
-      paymentToken: null,
-      enabled: null
+      paymentToken?: null,
+      enabled?: null
     ): TypedEventFilter<
       [string, boolean],
       { paymentToken: string; enabled: boolean }
     >;
 
     StreamingReserveChanged(
-      streamingReserve: null,
-      streamingReserveTarget: null
+      streamingReserve?: null,
+      streamingReserveTarget?: null
     ): TypedEventFilter<
       [BigNumber, BigNumber],
       { streamingReserve: BigNumber; streamingReserveTarget: BigNumber }
     >;
 
     TotalSharesChanged(
-      totalShares: null
+      totalShares?: null
     ): TypedEventFilter<[BigNumber], { totalShares: BigNumber }>;
 
     UsedReserveChanged(
-      fixedReserve: null
+      fixedReserve?: null
     ): TypedEventFilter<[BigNumber], { fixedReserve: BigNumber }>;
   };
 
@@ -1880,122 +1235,60 @@ export class EnterpriseStorage extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "disablePaymentToken(address)"(
-      token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     enablePaymentToken(
-      token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "enablePaymentToken(address)"(
       token: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     getAvailableReserve(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "getAvailableReserve()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     getBaseUri(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "getBaseUri()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getBondingCurve(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "getBondingCurve()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     getBorrowToken(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "getBorrowToken()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getBorrowerLoanReturnGracePeriod(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "getBorrowerLoanReturnGracePeriod()"(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getConverter(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "getConverter()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     getEnterpriseCollector(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "getEnterpriseCollector()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getEnterpriseLoanCollectGracePeriod(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "getEnterpriseLoanCollectGracePeriod()"(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getEnterpriseVault(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "getEnterpriseVault()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getGCFeePercent(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "getGCFeePercent()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     getInfo(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "getInfo()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getInterestGapHalvingPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "getInterestGapHalvingPeriod()"(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getInterestToken(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "getInterestToken()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getLiquidityInfo(
       interestTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "getLiquidityInfo(uint256)"(
-      interestTokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getLiquidityToken(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "getLiquidityToken()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getLoanInfo(
       borrowTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "getLoanInfo(uint256)"(
-      borrowTokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getPowerTokens(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "getPowerTokens()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getProxyAdmin(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "getProxyAdmin()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     getReserve(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "getReserve()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     getUsedReserve(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "getUsedReserve()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     "initialize(string,string,uint16,address,address,address)"(
       enterpriseName: string,
@@ -2019,19 +1312,7 @@ export class EnterpriseStorage extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "initializeTokens(address,address,address)"(
-      liquidityToken: string,
-      interestToken: string,
-      borrowToken: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     isRegisteredPowerToken(
-      powerToken: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "isRegisteredPowerToken(address)"(
       powerToken: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -2041,21 +1322,9 @@ export class EnterpriseStorage extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "isSupportedPaymentToken(address)"(
-      token: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "owner()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     paymentToken(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "paymentToken(uint256)"(
       index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -2065,17 +1334,7 @@ export class EnterpriseStorage extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "paymentTokenIndex(address)"(
-      token: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     setBaseUri(
-      baseUri: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "setBaseUri(string)"(
       baseUri: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -2086,18 +1345,7 @@ export class EnterpriseStorage extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "setBondingCurve(uint256,uint256)"(
-      pole: BigNumberish,
-      slope: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     setBorrowerLoanReturnGracePeriod(
-      newPeriod: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "setBorrowerLoanReturnGracePeriod(uint32)"(
       newPeriod: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -2107,17 +1355,7 @@ export class EnterpriseStorage extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "setConverter(address)"(
-      newConverter: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     setEnterpriseCollector(
-      newCollector: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "setEnterpriseCollector(address)"(
       newCollector: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -2127,17 +1365,7 @@ export class EnterpriseStorage extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "setEnterpriseLoanCollectGracePeriod(uint32)"(
-      newPeriod: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     setEnterpriseVault(
-      newVault: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "setEnterpriseVault(address)"(
       newVault: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -2147,17 +1375,7 @@ export class EnterpriseStorage extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "setGcFeePercent(uint16)"(
-      newGcFeePercent: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     setInterestGapHalvingPeriod(
-      interestGapHalvingPeriod: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "setInterestGapHalvingPeriod(uint32)"(
       interestGapHalvingPeriod: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -2167,17 +1385,7 @@ export class EnterpriseStorage extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "transferOwnership(address)"(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     upgradeBorrowToken(
-      implementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "upgradeBorrowToken(address)"(
       implementation: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -2187,28 +1395,12 @@ export class EnterpriseStorage extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "upgradeEnterprise(address)"(
-      implementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     upgradeInterestToken(
       implementation: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "upgradeInterestToken(address)"(
-      implementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     upgradePowerToken(
-      powerToken: string,
-      implementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "upgradePowerToken(address,address)"(
       powerToken: string,
       implementation: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -2221,17 +1413,7 @@ export class EnterpriseStorage extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "disablePaymentToken(address)"(
-      token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     enablePaymentToken(
-      token: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "enablePaymentToken(address)"(
       token: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -2240,43 +1422,19 @@ export class EnterpriseStorage extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "getAvailableReserve()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getBaseUri(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "getBaseUri()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getBondingCurve(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "getBondingCurve()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getBorrowToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "getBorrowToken()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     getBorrowerLoanReturnGracePeriod(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "getBorrowerLoanReturnGracePeriod()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getConverter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "getConverter()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     getEnterpriseCollector(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "getEnterpriseCollector()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2284,87 +1442,39 @@ export class EnterpriseStorage extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "getEnterpriseLoanCollectGracePeriod()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getEnterpriseVault(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "getEnterpriseVault()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getGCFeePercent(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "getGCFeePercent()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getInfo(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "getInfo()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getInterestGapHalvingPeriod(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "getInterestGapHalvingPeriod()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getInterestToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "getInterestToken()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     getLiquidityInfo(
       interestTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "getLiquidityInfo(uint256)"(
-      interestTokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getLiquidityToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "getLiquidityToken()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     getLoanInfo(
       borrowTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "getLoanInfo(uint256)"(
-      borrowTokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getPowerTokens(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "getPowerTokens()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     getProxyAdmin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "getProxyAdmin()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     getReserve(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "getReserve()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     getUsedReserve(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "getUsedReserve()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     "initialize(string,string,uint16,address,address,address)"(
       enterpriseName: string,
@@ -2388,19 +1498,7 @@ export class EnterpriseStorage extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "initializeTokens(address,address,address)"(
-      liquidityToken: string,
-      interestToken: string,
-      borrowToken: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     isRegisteredPowerToken(
-      powerToken: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "isRegisteredPowerToken(address)"(
       powerToken: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -2410,21 +1508,9 @@ export class EnterpriseStorage extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "isSupportedPaymentToken(address)"(
-      token: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "owner()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     paymentToken(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "paymentToken(uint256)"(
       index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -2434,17 +1520,7 @@ export class EnterpriseStorage extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "paymentTokenIndex(address)"(
-      token: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     setBaseUri(
-      baseUri: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "setBaseUri(string)"(
       baseUri: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -2455,18 +1531,7 @@ export class EnterpriseStorage extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "setBondingCurve(uint256,uint256)"(
-      pole: BigNumberish,
-      slope: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     setBorrowerLoanReturnGracePeriod(
-      newPeriod: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "setBorrowerLoanReturnGracePeriod(uint32)"(
       newPeriod: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -2476,17 +1541,7 @@ export class EnterpriseStorage extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "setConverter(address)"(
-      newConverter: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     setEnterpriseCollector(
-      newCollector: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "setEnterpriseCollector(address)"(
       newCollector: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -2496,17 +1551,7 @@ export class EnterpriseStorage extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "setEnterpriseLoanCollectGracePeriod(uint32)"(
-      newPeriod: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     setEnterpriseVault(
-      newVault: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "setEnterpriseVault(address)"(
       newVault: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -2516,17 +1561,7 @@ export class EnterpriseStorage extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "setGcFeePercent(uint16)"(
-      newGcFeePercent: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     setInterestGapHalvingPeriod(
-      interestGapHalvingPeriod: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "setInterestGapHalvingPeriod(uint32)"(
       interestGapHalvingPeriod: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -2536,17 +1571,7 @@ export class EnterpriseStorage extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "transferOwnership(address)"(
-      newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     upgradeBorrowToken(
-      implementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "upgradeBorrowToken(address)"(
       implementation: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -2556,28 +1581,12 @@ export class EnterpriseStorage extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "upgradeEnterprise(address)"(
-      implementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     upgradeInterestToken(
       implementation: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "upgradeInterestToken(address)"(
-      implementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     upgradePowerToken(
-      powerToken: string,
-      implementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "upgradePowerToken(address,address)"(
       powerToken: string,
       implementation: string,
       overrides?: Overrides & { from?: string | Promise<string> }

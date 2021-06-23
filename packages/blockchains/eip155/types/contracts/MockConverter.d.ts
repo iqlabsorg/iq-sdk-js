@@ -9,7 +9,7 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
-  Contract,
+  BaseContract,
   ContractTransaction,
   Overrides,
   CallOverrides,
@@ -49,7 +49,7 @@ interface MockConverterInterface extends ethers.utils.Interface {
   events: {};
 }
 
-export class MockConverter extends Contract {
+export class MockConverter extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -100,13 +100,6 @@ export class MockConverter extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "convert(address,uint256,address)"(
-      source: string,
-      amount: BigNumberish,
-      target: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     estimateConvert(
       source: string,
       amount: BigNumberish,
@@ -114,21 +107,7 @@ export class MockConverter extends Contract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    "estimateConvert(address,uint256,address)"(
-      source: string,
-      amount: BigNumberish,
-      target: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     setRate(
-      source: string,
-      target: string,
-      rate: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "setRate(address,address,uint256)"(
       source: string,
       target: string,
       rate: BigNumberish,
@@ -143,13 +122,6 @@ export class MockConverter extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "convert(address,uint256,address)"(
-    source: string,
-    amount: BigNumberish,
-    target: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   estimateConvert(
     source: string,
     amount: BigNumberish,
@@ -157,21 +129,7 @@ export class MockConverter extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  "estimateConvert(address,uint256,address)"(
-    source: string,
-    amount: BigNumberish,
-    target: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   setRate(
-    source: string,
-    target: string,
-    rate: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "setRate(address,address,uint256)"(
     source: string,
     target: string,
     rate: BigNumberish,
@@ -186,13 +144,6 @@ export class MockConverter extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "convert(address,uint256,address)"(
-      source: string,
-      amount: BigNumberish,
-      target: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     estimateConvert(
       source: string,
       amount: BigNumberish,
@@ -200,21 +151,7 @@ export class MockConverter extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "estimateConvert(address,uint256,address)"(
-      source: string,
-      amount: BigNumberish,
-      target: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     setRate(
-      source: string,
-      target: string,
-      rate: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setRate(address,address,uint256)"(
       source: string,
       target: string,
       rate: BigNumberish,
@@ -232,13 +169,6 @@ export class MockConverter extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "convert(address,uint256,address)"(
-      source: string,
-      amount: BigNumberish,
-      target: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     estimateConvert(
       source: string,
       amount: BigNumberish,
@@ -246,21 +176,7 @@ export class MockConverter extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "estimateConvert(address,uint256,address)"(
-      source: string,
-      amount: BigNumberish,
-      target: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     setRate(
-      source: string,
-      target: string,
-      rate: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "setRate(address,address,uint256)"(
       source: string,
       target: string,
       rate: BigNumberish,
@@ -276,13 +192,6 @@ export class MockConverter extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "convert(address,uint256,address)"(
-      source: string,
-      amount: BigNumberish,
-      target: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     estimateConvert(
       source: string,
       amount: BigNumberish,
@@ -290,21 +199,7 @@ export class MockConverter extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "estimateConvert(address,uint256,address)"(
-      source: string,
-      amount: BigNumberish,
-      target: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     setRate(
-      source: string,
-      target: string,
-      rate: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "setRate(address,address,uint256)"(
       source: string,
       target: string,
       rate: BigNumberish,

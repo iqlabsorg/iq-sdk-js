@@ -9,7 +9,7 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
-  Contract,
+  BaseContract,
   ContractTransaction,
   Overrides,
   CallOverrides,
@@ -187,7 +187,7 @@ interface PowerTokenStorageInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "ServiceFeePercentChanged"): EventFragment;
 }
 
-export class PowerTokenStorage extends Contract {
+export class PowerTokenStorage extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -235,64 +235,27 @@ export class PowerTokenStorage extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "allowPerpetualForever()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     getAllowsPerpetual(overrides?: CallOverrides): Promise<[boolean]>;
-
-    "getAllowsPerpetual()"(overrides?: CallOverrides): Promise<[boolean]>;
 
     getBaseRate(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "getBaseRate()"(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     getBaseToken(overrides?: CallOverrides): Promise<[string]>;
-
-    "getBaseToken()"(overrides?: CallOverrides): Promise<[string]>;
 
     getEnterprise(overrides?: CallOverrides): Promise<[string]>;
 
-    "getEnterprise()"(overrides?: CallOverrides): Promise<[string]>;
-
     getGapHalvingPeriod(overrides?: CallOverrides): Promise<[number]>;
-
-    "getGapHalvingPeriod()"(overrides?: CallOverrides): Promise<[number]>;
 
     getIndex(overrides?: CallOverrides): Promise<[number]>;
 
-    "getIndex()"(overrides?: CallOverrides): Promise<[number]>;
-
     getMaxLoanDuration(overrides?: CallOverrides): Promise<[number]>;
-
-    "getMaxLoanDuration()"(overrides?: CallOverrides): Promise<[number]>;
 
     getMinGCFee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    "getMinGCFee()"(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     getMinLoanDuration(overrides?: CallOverrides): Promise<[number]>;
-
-    "getMinLoanDuration()"(overrides?: CallOverrides): Promise<[number]>;
 
     getServiceFeePercent(overrides?: CallOverrides): Promise<[number]>;
 
-    "getServiceFeePercent()"(overrides?: CallOverrides): Promise<[number]>;
-
     getState(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<
-      [
-        [BigNumber, BigNumber, number] & {
-          lockedBalance: BigNumber;
-          energy: BigNumber;
-          timestamp: number;
-        }
-      ]
-    >;
-
-    "getState(address)"(
       account: string,
       overrides?: CallOverrides
     ): Promise<
@@ -329,19 +292,7 @@ export class PowerTokenStorage extends Contract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    "isAllowedLoanDuration(uint32)"(
-      duration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
     setBaseRate(
-      baseRate: BigNumberish,
-      baseToken: string,
-      minGCFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "setBaseRate(uint112,address,uint96)"(
       baseRate: BigNumberish,
       baseToken: string,
       minGCFee: BigNumberish,
@@ -354,18 +305,7 @@ export class PowerTokenStorage extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "setLoanDurationLimits(uint32,uint32)"(
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     setServiceFeePercent(
-      newServiceFeePercent: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "setServiceFeePercent(uint16)"(
       newServiceFeePercent: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -375,62 +315,27 @@ export class PowerTokenStorage extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "allowPerpetualForever()"(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   getAllowsPerpetual(overrides?: CallOverrides): Promise<boolean>;
-
-  "getAllowsPerpetual()"(overrides?: CallOverrides): Promise<boolean>;
 
   getBaseRate(overrides?: CallOverrides): Promise<BigNumber>;
 
-  "getBaseRate()"(overrides?: CallOverrides): Promise<BigNumber>;
-
   getBaseToken(overrides?: CallOverrides): Promise<string>;
-
-  "getBaseToken()"(overrides?: CallOverrides): Promise<string>;
 
   getEnterprise(overrides?: CallOverrides): Promise<string>;
 
-  "getEnterprise()"(overrides?: CallOverrides): Promise<string>;
-
   getGapHalvingPeriod(overrides?: CallOverrides): Promise<number>;
-
-  "getGapHalvingPeriod()"(overrides?: CallOverrides): Promise<number>;
 
   getIndex(overrides?: CallOverrides): Promise<number>;
 
-  "getIndex()"(overrides?: CallOverrides): Promise<number>;
-
   getMaxLoanDuration(overrides?: CallOverrides): Promise<number>;
-
-  "getMaxLoanDuration()"(overrides?: CallOverrides): Promise<number>;
 
   getMinGCFee(overrides?: CallOverrides): Promise<BigNumber>;
 
-  "getMinGCFee()"(overrides?: CallOverrides): Promise<BigNumber>;
-
   getMinLoanDuration(overrides?: CallOverrides): Promise<number>;
-
-  "getMinLoanDuration()"(overrides?: CallOverrides): Promise<number>;
 
   getServiceFeePercent(overrides?: CallOverrides): Promise<number>;
 
-  "getServiceFeePercent()"(overrides?: CallOverrides): Promise<number>;
-
   getState(
-    account: string,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, number] & {
-      lockedBalance: BigNumber;
-      energy: BigNumber;
-      timestamp: number;
-    }
-  >;
-
-  "getState(address)"(
     account: string,
     overrides?: CallOverrides
   ): Promise<
@@ -465,19 +370,7 @@ export class PowerTokenStorage extends Contract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  "isAllowedLoanDuration(uint32)"(
-    duration: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
   setBaseRate(
-    baseRate: BigNumberish,
-    baseToken: string,
-    minGCFee: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "setBaseRate(uint112,address,uint96)"(
     baseRate: BigNumberish,
     baseToken: string,
     minGCFee: BigNumberish,
@@ -490,18 +383,7 @@ export class PowerTokenStorage extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "setLoanDurationLimits(uint32,uint32)"(
-    minLoanDuration: BigNumberish,
-    maxLoanDuration: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   setServiceFeePercent(
-    newServiceFeePercent: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "setServiceFeePercent(uint16)"(
     newServiceFeePercent: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -509,47 +391,25 @@ export class PowerTokenStorage extends Contract {
   callStatic: {
     allowPerpetualForever(overrides?: CallOverrides): Promise<void>;
 
-    "allowPerpetualForever()"(overrides?: CallOverrides): Promise<void>;
-
     getAllowsPerpetual(overrides?: CallOverrides): Promise<boolean>;
-
-    "getAllowsPerpetual()"(overrides?: CallOverrides): Promise<boolean>;
 
     getBaseRate(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "getBaseRate()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     getBaseToken(overrides?: CallOverrides): Promise<string>;
-
-    "getBaseToken()"(overrides?: CallOverrides): Promise<string>;
 
     getEnterprise(overrides?: CallOverrides): Promise<string>;
 
-    "getEnterprise()"(overrides?: CallOverrides): Promise<string>;
-
     getGapHalvingPeriod(overrides?: CallOverrides): Promise<number>;
-
-    "getGapHalvingPeriod()"(overrides?: CallOverrides): Promise<number>;
 
     getIndex(overrides?: CallOverrides): Promise<number>;
 
-    "getIndex()"(overrides?: CallOverrides): Promise<number>;
-
     getMaxLoanDuration(overrides?: CallOverrides): Promise<number>;
-
-    "getMaxLoanDuration()"(overrides?: CallOverrides): Promise<number>;
 
     getMinGCFee(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "getMinGCFee()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     getMinLoanDuration(overrides?: CallOverrides): Promise<number>;
 
-    "getMinLoanDuration()"(overrides?: CallOverrides): Promise<number>;
-
     getServiceFeePercent(overrides?: CallOverrides): Promise<number>;
-
-    "getServiceFeePercent()"(overrides?: CallOverrides): Promise<number>;
 
     getState(
       account: string,
@@ -562,17 +422,6 @@ export class PowerTokenStorage extends Contract {
       }
     >;
 
-    "getState(address)"(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, number] & {
-        lockedBalance: BigNumber;
-        energy: BigNumber;
-        timestamp: number;
-      }
-    >;
-
     "initialize(address,uint112,uint96,uint32,uint16,address,uint32,uint32,uint16,bool)"(
       enterprise: string,
       baseRate: BigNumberish,
@@ -597,19 +446,7 @@ export class PowerTokenStorage extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    "isAllowedLoanDuration(uint32)"(
-      duration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
     setBaseRate(
-      baseRate: BigNumberish,
-      baseToken: string,
-      minGCFee: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setBaseRate(uint112,address,uint96)"(
       baseRate: BigNumberish,
       baseToken: string,
       minGCFee: BigNumberish,
@@ -622,18 +459,7 @@ export class PowerTokenStorage extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "setLoanDurationLimits(uint32,uint32)"(
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     setServiceFeePercent(
-      newServiceFeePercent: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "setServiceFeePercent(uint16)"(
       newServiceFeePercent: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -641,17 +467,17 @@ export class PowerTokenStorage extends Contract {
 
   filters: {
     BaseRateChanged(
-      baseRate: null,
-      baseToken: null,
-      minGCFee: null
+      baseRate?: null,
+      baseToken?: null,
+      minGCFee?: null
     ): TypedEventFilter<
       [BigNumber, string, BigNumber],
       { baseRate: BigNumber; baseToken: string; minGCFee: BigNumber }
     >;
 
     LoanDurationLimitsChanged(
-      minDuration: null,
-      maxDuration: null
+      minDuration?: null,
+      maxDuration?: null
     ): TypedEventFilter<
       [number, number],
       { minDuration: number; maxDuration: number }
@@ -660,7 +486,7 @@ export class PowerTokenStorage extends Contract {
     PerpetualAllowed(): TypedEventFilter<[], {}>;
 
     ServiceFeePercentChanged(
-      percent: null
+      percent?: null
     ): TypedEventFilter<[number], { percent: number }>;
   };
 
@@ -669,56 +495,27 @@ export class PowerTokenStorage extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "allowPerpetualForever()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     getAllowsPerpetual(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "getAllowsPerpetual()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getBaseRate(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "getBaseRate()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     getBaseToken(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "getBaseToken()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getEnterprise(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "getEnterprise()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     getGapHalvingPeriod(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "getGapHalvingPeriod()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getIndex(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "getIndex()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     getMaxLoanDuration(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "getMaxLoanDuration()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getMinGCFee(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "getMinGCFee()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     getMinLoanDuration(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "getMinLoanDuration()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getServiceFeePercent(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "getServiceFeePercent()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     getState(account: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    "getState(address)"(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     "initialize(address,uint112,uint96,uint32,uint16,address,uint32,uint32,uint16,bool)"(
       enterprise: string,
@@ -744,19 +541,7 @@ export class PowerTokenStorage extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "isAllowedLoanDuration(uint32)"(
-      duration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     setBaseRate(
-      baseRate: BigNumberish,
-      baseToken: string,
-      minGCFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "setBaseRate(uint112,address,uint96)"(
       baseRate: BigNumberish,
       baseToken: string,
       minGCFee: BigNumberish,
@@ -769,18 +554,7 @@ export class PowerTokenStorage extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "setLoanDurationLimits(uint32,uint32)"(
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     setServiceFeePercent(
-      newServiceFeePercent: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "setServiceFeePercent(uint16)"(
       newServiceFeePercent: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -791,59 +565,29 @@ export class PowerTokenStorage extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "allowPerpetualForever()"(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     getAllowsPerpetual(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "getAllowsPerpetual()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getBaseRate(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "getBaseRate()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     getBaseToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "getBaseToken()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     getEnterprise(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "getEnterprise()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getGapHalvingPeriod(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "getGapHalvingPeriod()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getIndex(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "getIndex()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getMaxLoanDuration(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "getMaxLoanDuration()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getMinGCFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "getMinGCFee()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     getMinLoanDuration(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "getMinLoanDuration()"(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -851,16 +595,7 @@ export class PowerTokenStorage extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "getServiceFeePercent()"(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getState(
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "getState(address)"(
       account: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -889,19 +624,7 @@ export class PowerTokenStorage extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "isAllowedLoanDuration(uint32)"(
-      duration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     setBaseRate(
-      baseRate: BigNumberish,
-      baseToken: string,
-      minGCFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "setBaseRate(uint112,address,uint96)"(
       baseRate: BigNumberish,
       baseToken: string,
       minGCFee: BigNumberish,
@@ -914,18 +637,7 @@ export class PowerTokenStorage extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "setLoanDurationLimits(uint32,uint32)"(
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     setServiceFeePercent(
-      newServiceFeePercent: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "setServiceFeePercent(uint16)"(
       newServiceFeePercent: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
