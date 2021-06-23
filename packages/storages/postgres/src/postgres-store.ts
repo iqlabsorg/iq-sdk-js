@@ -39,9 +39,9 @@ export class PostgresStore extends AbstractStore {
     return {
       serviceId: String(row.service_id),
       accountId: String(row.account_id),
-      power: BigInt(row.power),
-      lockedPower: BigInt(row.locked_power),
-      energy: BigInt(row.energy),
+      power: BigInt(row.power as string),
+      lockedPower: BigInt(row.locked_power as string),
+      energy: BigInt(row.energy as string),
       energyChangedAt: Number(row.energy_changed_at),
     };
   }
