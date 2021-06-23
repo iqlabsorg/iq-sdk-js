@@ -27,6 +27,7 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     "disablePaymentToken(address)": FunctionFragment;
     "enablePaymentToken(address)": FunctionFragment;
     "estimateLoan(address,address,uint112,uint32)": FunctionFragment;
+    "getAccruedInterest(uint256)": FunctionFragment;
     "getAvailableReserve()": FunctionFragment;
     "getBaseUri()": FunctionFragment;
     "getBondingCurve()": FunctionFragment;
@@ -43,7 +44,6 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     "getLiquidityInfo(uint256)": FunctionFragment;
     "getLiquidityToken()": FunctionFragment;
     "getLoanInfo(uint256)": FunctionFragment;
-    "getOwedInterest(uint256)": FunctionFragment;
     "getPowerTokens()": FunctionFragment;
     "getProxyAdmin()": FunctionFragment;
     "getReserve()": FunctionFragment;
@@ -104,6 +104,10 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     values: [string, string, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "getAccruedInterest",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getAvailableReserve",
     values?: undefined
   ): string;
@@ -162,10 +166,6 @@ interface EnterpriseInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getLoanInfo",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getOwedInterest",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -328,6 +328,10 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getAccruedInterest",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getAvailableReserve",
     data: BytesLike
   ): Result;
@@ -383,10 +387,6 @@ interface EnterpriseInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getLoanInfo",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getOwedInterest",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -505,14 +505,62 @@ interface EnterpriseInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
-    "Borrowed(address,uint256,uint32,uint32)": EventFragment;
+    "BaseUriChanged(string)": EventFragment;
+    "BondingChanged(uint256,uint256)": EventFragment;
+    "Borrowed(address,uint256)": EventFragment;
+    "BorrowerLoanReturnGracePeriodChanged(uint32)": EventFragment;
+    "ConverterChanged(address)": EventFragment;
+    "EnterpriseCollectorChanged(address)": EventFragment;
+    "EnterpriseLoanCollectGracePeriodChanged(uint32)": EventFragment;
+    "EnterpriseShutdown()": EventFragment;
+    "EnterpriseVaultChanged(address)": EventFragment;
+    "FixedReserveChanged(uint256)": EventFragment;
+    "GcFeePercentChanged(uint16)": EventFragment;
+    "InterestGapHalvingPeriodChanged(uint32)": EventFragment;
+    "InterestWithdrawn(uint256,uint256)": EventFragment;
+    "LiquidityAdded(uint256,uint256)": EventFragment;
+    "LiquidityDecreased(uint256,uint256)": EventFragment;
+    "LiquidityIncreased(uint256,uint256)": EventFragment;
+    "LiquidityRemoved(uint256,uint256)": EventFragment;
+    "LoanReturned(uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
-    "ServiceRegistered(address,uint32,uint112)": EventFragment;
+    "PaymentTokenChange(address,bool)": EventFragment;
+    "ServiceRegistered(address)": EventFragment;
+    "StreamingReserveChanged(uint112,uint112)": EventFragment;
+    "TotalSharesChanged(uint256)": EventFragment;
+    "UsedReserveChanged(uint256)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "BaseUriChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BondingChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Borrowed"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "BorrowerLoanReturnGracePeriodChanged"
+  ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ConverterChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EnterpriseCollectorChanged"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "EnterpriseLoanCollectGracePeriodChanged"
+  ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EnterpriseShutdown"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EnterpriseVaultChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "FixedReserveChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "GcFeePercentChanged"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "InterestGapHalvingPeriodChanged"
+  ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "InterestWithdrawn"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LiquidityAdded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LiquidityDecreased"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LiquidityIncreased"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LiquidityRemoved"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LoanReturned"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PaymentTokenChange"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ServiceRegistered"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "StreamingReserveChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TotalSharesChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "UsedReserveChanged"): EventFragment;
 }
 
 export class Enterprise extends Contract {
@@ -588,13 +636,13 @@ export class Enterprise extends Contract {
     ): Promise<ContractTransaction>;
 
     decreaseLiquidity(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "decreaseLiquidity(uint256,uint256)"(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -632,6 +680,16 @@ export class Enterprise extends Contract {
       paymentToken: string,
       amount: BigNumberish,
       duration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getAccruedInterest(
+      interestTokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    "getAccruedInterest(uint256)"(
+      interestTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -762,7 +820,7 @@ export class Enterprise extends Contract {
     "getInterestToken()"(overrides?: CallOverrides): Promise<[string]>;
 
     getLiquidityInfo(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [
@@ -775,7 +833,7 @@ export class Enterprise extends Contract {
     >;
 
     "getLiquidityInfo(uint256)"(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [
@@ -792,7 +850,7 @@ export class Enterprise extends Contract {
     "getLiquidityToken()"(overrides?: CallOverrides): Promise<[string]>;
 
     getLoanInfo(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [
@@ -819,7 +877,7 @@ export class Enterprise extends Contract {
     >;
 
     "getLoanInfo(uint256)"(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [
@@ -845,16 +903,6 @@ export class Enterprise extends Contract {
       ]
     >;
 
-    getOwedInterest(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    "getOwedInterest(uint256)"(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     getPowerTokens(overrides?: CallOverrides): Promise<[string[]]>;
 
     "getPowerTokens()"(overrides?: CallOverrides): Promise<[string[]]>;
@@ -872,13 +920,13 @@ export class Enterprise extends Contract {
     "getUsedReserve()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     increaseLiquidity(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "increaseLiquidity(uint256,uint256)"(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -935,14 +983,14 @@ export class Enterprise extends Contract {
     loanTransfer(
       from: string,
       to: string,
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "loanTransfer(address,address,uint256)"(
       from: string,
       to: string,
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -971,7 +1019,7 @@ export class Enterprise extends Contract {
     ): Promise<[number]>;
 
     reborrow(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       paymentToken: string,
       duration: BigNumberish,
       maxPayment: BigNumberish,
@@ -979,7 +1027,7 @@ export class Enterprise extends Contract {
     ): Promise<ContractTransaction>;
 
     "reborrow(uint256,address,uint32,uint256)"(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       paymentToken: string,
       duration: BigNumberish,
       maxPayment: BigNumberish,
@@ -1015,22 +1063,22 @@ export class Enterprise extends Contract {
     ): Promise<ContractTransaction>;
 
     removeLiquidity(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "removeLiquidity(uint256)"(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     returnLoan(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "returnLoan(uint256)"(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -1187,12 +1235,12 @@ export class Enterprise extends Contract {
     ): Promise<ContractTransaction>;
 
     withdrawInterest(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "withdrawInterest(uint256)"(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
@@ -1226,13 +1274,13 @@ export class Enterprise extends Contract {
   ): Promise<ContractTransaction>;
 
   decreaseLiquidity(
-    tokenId: BigNumberish,
+    interestTokenId: BigNumberish,
     amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "decreaseLiquidity(uint256,uint256)"(
-    tokenId: BigNumberish,
+    interestTokenId: BigNumberish,
     amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -1270,6 +1318,16 @@ export class Enterprise extends Contract {
     paymentToken: string,
     amount: BigNumberish,
     duration: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getAccruedInterest(
+    interestTokenId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  "getAccruedInterest(uint256)"(
+    interestTokenId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -1396,7 +1454,7 @@ export class Enterprise extends Contract {
   "getInterestToken()"(overrides?: CallOverrides): Promise<string>;
 
   getLiquidityInfo(
-    tokenId: BigNumberish,
+    interestTokenId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
     [BigNumber, BigNumber, BigNumber] & {
@@ -1407,7 +1465,7 @@ export class Enterprise extends Contract {
   >;
 
   "getLiquidityInfo(uint256)"(
-    tokenId: BigNumberish,
+    interestTokenId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
     [BigNumber, BigNumber, BigNumber] & {
@@ -1422,7 +1480,7 @@ export class Enterprise extends Contract {
   "getLiquidityToken()"(overrides?: CallOverrides): Promise<string>;
 
   getLoanInfo(
-    tokenId: BigNumberish,
+    borrowTokenId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
     [BigNumber, number, number, number, number, number, BigNumber, number] & {
@@ -1438,7 +1496,7 @@ export class Enterprise extends Contract {
   >;
 
   "getLoanInfo(uint256)"(
-    tokenId: BigNumberish,
+    borrowTokenId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
     [BigNumber, number, number, number, number, number, BigNumber, number] & {
@@ -1452,16 +1510,6 @@ export class Enterprise extends Contract {
       gcFeeTokenIndex: number;
     }
   >;
-
-  getOwedInterest(
-    tokenId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  "getOwedInterest(uint256)"(
-    tokenId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
 
   getPowerTokens(overrides?: CallOverrides): Promise<string[]>;
 
@@ -1480,13 +1528,13 @@ export class Enterprise extends Contract {
   "getUsedReserve()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   increaseLiquidity(
-    tokenId: BigNumberish,
+    interestTokenId: BigNumberish,
     amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "increaseLiquidity(uint256,uint256)"(
-    tokenId: BigNumberish,
+    interestTokenId: BigNumberish,
     amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -1543,14 +1591,14 @@ export class Enterprise extends Contract {
   loanTransfer(
     from: string,
     to: string,
-    tokenId: BigNumberish,
+    borrowTokenId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "loanTransfer(address,address,uint256)"(
     from: string,
     to: string,
-    tokenId: BigNumberish,
+    borrowTokenId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1573,7 +1621,7 @@ export class Enterprise extends Contract {
   ): Promise<number>;
 
   reborrow(
-    tokenId: BigNumberish,
+    borrowTokenId: BigNumberish,
     paymentToken: string,
     duration: BigNumberish,
     maxPayment: BigNumberish,
@@ -1581,7 +1629,7 @@ export class Enterprise extends Contract {
   ): Promise<ContractTransaction>;
 
   "reborrow(uint256,address,uint32,uint256)"(
-    tokenId: BigNumberish,
+    borrowTokenId: BigNumberish,
     paymentToken: string,
     duration: BigNumberish,
     maxPayment: BigNumberish,
@@ -1617,22 +1665,22 @@ export class Enterprise extends Contract {
   ): Promise<ContractTransaction>;
 
   removeLiquidity(
-    tokenId: BigNumberish,
+    interestTokenId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "removeLiquidity(uint256)"(
-    tokenId: BigNumberish,
+    interestTokenId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   returnLoan(
-    tokenId: BigNumberish,
+    borrowTokenId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "returnLoan(uint256)"(
-    tokenId: BigNumberish,
+    borrowTokenId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1789,12 +1837,12 @@ export class Enterprise extends Contract {
   ): Promise<ContractTransaction>;
 
   withdrawInterest(
-    tokenId: BigNumberish,
+    interestTokenId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "withdrawInterest(uint256)"(
-    tokenId: BigNumberish,
+    interestTokenId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1828,13 +1876,13 @@ export class Enterprise extends Contract {
     ): Promise<void>;
 
     decreaseLiquidity(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     "decreaseLiquidity(uint256,uint256)"(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1869,6 +1917,16 @@ export class Enterprise extends Contract {
       paymentToken: string,
       amount: BigNumberish,
       duration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getAccruedInterest(
+      interestTokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getAccruedInterest(uint256)"(
+      interestTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1997,7 +2055,7 @@ export class Enterprise extends Contract {
     "getInterestToken()"(overrides?: CallOverrides): Promise<string>;
 
     getLiquidityInfo(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber, BigNumber] & {
@@ -2008,7 +2066,7 @@ export class Enterprise extends Contract {
     >;
 
     "getLiquidityInfo(uint256)"(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber, BigNumber] & {
@@ -2023,7 +2081,7 @@ export class Enterprise extends Contract {
     "getLiquidityToken()"(overrides?: CallOverrides): Promise<string>;
 
     getLoanInfo(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, number, number, number, number, number, BigNumber, number] & {
@@ -2039,7 +2097,7 @@ export class Enterprise extends Contract {
     >;
 
     "getLoanInfo(uint256)"(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, number, number, number, number, number, BigNumber, number] & {
@@ -2053,16 +2111,6 @@ export class Enterprise extends Contract {
         gcFeeTokenIndex: number;
       }
     >;
-
-    getOwedInterest(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "getOwedInterest(uint256)"(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     getPowerTokens(overrides?: CallOverrides): Promise<string[]>;
 
@@ -2081,13 +2129,13 @@ export class Enterprise extends Contract {
     "getUsedReserve()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     increaseLiquidity(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     "increaseLiquidity(uint256,uint256)"(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -2144,14 +2192,14 @@ export class Enterprise extends Contract {
     loanTransfer(
       from: string,
       to: string,
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     "loanTransfer(address,address,uint256)"(
       from: string,
       to: string,
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -2180,7 +2228,7 @@ export class Enterprise extends Contract {
     ): Promise<number>;
 
     reborrow(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       paymentToken: string,
       duration: BigNumberish,
       maxPayment: BigNumberish,
@@ -2188,7 +2236,7 @@ export class Enterprise extends Contract {
     ): Promise<void>;
 
     "reborrow(uint256,address,uint32,uint256)"(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       paymentToken: string,
       duration: BigNumberish,
       maxPayment: BigNumberish,
@@ -2224,19 +2272,22 @@ export class Enterprise extends Contract {
     ): Promise<void>;
 
     removeLiquidity(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     "removeLiquidity(uint256)"(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    returnLoan(tokenId: BigNumberish, overrides?: CallOverrides): Promise<void>;
+    returnLoan(
+      borrowTokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     "returnLoan(uint256)"(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -2386,26 +2437,114 @@ export class Enterprise extends Contract {
     ): Promise<void>;
 
     withdrawInterest(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     "withdrawInterest(uint256)"(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
   };
 
   filters: {
+    BaseUriChanged(
+      baseUri: null
+    ): TypedEventFilter<[string], { baseUri: string }>;
+
+    BondingChanged(
+      pole: null,
+      slope: null
+    ): TypedEventFilter<
+      [BigNumber, BigNumber],
+      { pole: BigNumber; slope: BigNumber }
+    >;
+
     Borrowed(
       powerToken: string | null,
-      tokenId: null,
-      from: null,
-      to: null
+      borrowTokenId: BigNumberish | null
     ): TypedEventFilter<
-      [string, BigNumber, number, number],
-      { powerToken: string; tokenId: BigNumber; from: number; to: number }
+      [string, BigNumber],
+      { powerToken: string; borrowTokenId: BigNumber }
     >;
+
+    BorrowerLoanReturnGracePeriodChanged(
+      period: null
+    ): TypedEventFilter<[number], { period: number }>;
+
+    ConverterChanged(
+      converter: null
+    ): TypedEventFilter<[string], { converter: string }>;
+
+    EnterpriseCollectorChanged(
+      collector: null
+    ): TypedEventFilter<[string], { collector: string }>;
+
+    EnterpriseLoanCollectGracePeriodChanged(
+      period: null
+    ): TypedEventFilter<[number], { period: number }>;
+
+    EnterpriseShutdown(): TypedEventFilter<[], {}>;
+
+    EnterpriseVaultChanged(
+      vault: null
+    ): TypedEventFilter<[string], { vault: string }>;
+
+    FixedReserveChanged(
+      fixedReserve: null
+    ): TypedEventFilter<[BigNumber], { fixedReserve: BigNumber }>;
+
+    GcFeePercentChanged(
+      percent: null
+    ): TypedEventFilter<[number], { percent: number }>;
+
+    InterestGapHalvingPeriodChanged(
+      period: null
+    ): TypedEventFilter<[number], { period: number }>;
+
+    InterestWithdrawn(
+      interestTokenId: BigNumberish | null,
+      amount: null
+    ): TypedEventFilter<
+      [BigNumber, BigNumber],
+      { interestTokenId: BigNumber; amount: BigNumber }
+    >;
+
+    LiquidityAdded(
+      interestTokenId: BigNumberish | null,
+      amount: null
+    ): TypedEventFilter<
+      [BigNumber, BigNumber],
+      { interestTokenId: BigNumber; amount: BigNumber }
+    >;
+
+    LiquidityDecreased(
+      interestTokenId: BigNumberish | null,
+      amount: null
+    ): TypedEventFilter<
+      [BigNumber, BigNumber],
+      { interestTokenId: BigNumber; amount: BigNumber }
+    >;
+
+    LiquidityIncreased(
+      interestTokenId: BigNumberish | null,
+      amount: null
+    ): TypedEventFilter<
+      [BigNumber, BigNumber],
+      { interestTokenId: BigNumber; amount: BigNumber }
+    >;
+
+    LiquidityRemoved(
+      interestTokenId: BigNumberish | null,
+      amount: null
+    ): TypedEventFilter<
+      [BigNumber, BigNumber],
+      { interestTokenId: BigNumber; amount: BigNumber }
+    >;
+
+    LoanReturned(
+      borrowTokenId: BigNumberish | null
+    ): TypedEventFilter<[BigNumber], { borrowTokenId: BigNumber }>;
 
     OwnershipTransferred(
       previousOwner: string | null,
@@ -2415,14 +2554,33 @@ export class Enterprise extends Contract {
       { previousOwner: string; newOwner: string }
     >;
 
-    ServiceRegistered(
-      powerToken: string | null,
-      gapHalvingPeriod: null,
-      factor: null
+    PaymentTokenChange(
+      paymentToken: null,
+      enabled: null
     ): TypedEventFilter<
-      [string, number, BigNumber],
-      { powerToken: string; gapHalvingPeriod: number; factor: BigNumber }
+      [string, boolean],
+      { paymentToken: string; enabled: boolean }
     >;
+
+    ServiceRegistered(
+      powerToken: string | null
+    ): TypedEventFilter<[string], { powerToken: string }>;
+
+    StreamingReserveChanged(
+      streamingReserve: null,
+      streamingReserveTarget: null
+    ): TypedEventFilter<
+      [BigNumber, BigNumber],
+      { streamingReserve: BigNumber; streamingReserveTarget: BigNumber }
+    >;
+
+    TotalSharesChanged(
+      totalShares: null
+    ): TypedEventFilter<[BigNumber], { totalShares: BigNumber }>;
+
+    UsedReserveChanged(
+      fixedReserve: null
+    ): TypedEventFilter<[BigNumber], { fixedReserve: BigNumber }>;
   };
 
   estimateGas: {
@@ -2455,13 +2613,13 @@ export class Enterprise extends Contract {
     ): Promise<BigNumber>;
 
     decreaseLiquidity(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "decreaseLiquidity(uint256,uint256)"(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -2499,6 +2657,16 @@ export class Enterprise extends Contract {
       paymentToken: string,
       amount: BigNumberish,
       duration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getAccruedInterest(
+      interestTokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getAccruedInterest(uint256)"(
+      interestTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -2565,12 +2733,12 @@ export class Enterprise extends Contract {
     "getInterestToken()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getLiquidityInfo(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "getLiquidityInfo(uint256)"(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -2579,22 +2747,12 @@ export class Enterprise extends Contract {
     "getLiquidityToken()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getLoanInfo(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "getLoanInfo(uint256)"(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getOwedInterest(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "getOwedInterest(uint256)"(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -2615,13 +2773,13 @@ export class Enterprise extends Contract {
     "getUsedReserve()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     increaseLiquidity(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "increaseLiquidity(uint256,uint256)"(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -2678,14 +2836,14 @@ export class Enterprise extends Contract {
     loanTransfer(
       from: string,
       to: string,
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "loanTransfer(address,address,uint256)"(
       from: string,
       to: string,
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -2714,7 +2872,7 @@ export class Enterprise extends Contract {
     ): Promise<BigNumber>;
 
     reborrow(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       paymentToken: string,
       duration: BigNumberish,
       maxPayment: BigNumberish,
@@ -2722,7 +2880,7 @@ export class Enterprise extends Contract {
     ): Promise<BigNumber>;
 
     "reborrow(uint256,address,uint32,uint256)"(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       paymentToken: string,
       duration: BigNumberish,
       maxPayment: BigNumberish,
@@ -2758,22 +2916,22 @@ export class Enterprise extends Contract {
     ): Promise<BigNumber>;
 
     removeLiquidity(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "removeLiquidity(uint256)"(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     returnLoan(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "returnLoan(uint256)"(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -2930,12 +3088,12 @@ export class Enterprise extends Contract {
     ): Promise<BigNumber>;
 
     withdrawInterest(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "withdrawInterest(uint256)"(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
@@ -2970,13 +3128,13 @@ export class Enterprise extends Contract {
     ): Promise<PopulatedTransaction>;
 
     decreaseLiquidity(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "decreaseLiquidity(uint256,uint256)"(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -3014,6 +3172,16 @@ export class Enterprise extends Contract {
       paymentToken: string,
       amount: BigNumberish,
       duration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getAccruedInterest(
+      interestTokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getAccruedInterest(uint256)"(
+      interestTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -3102,12 +3270,12 @@ export class Enterprise extends Contract {
     ): Promise<PopulatedTransaction>;
 
     getLiquidityInfo(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "getLiquidityInfo(uint256)"(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -3118,22 +3286,12 @@ export class Enterprise extends Contract {
     ): Promise<PopulatedTransaction>;
 
     getLoanInfo(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "getLoanInfo(uint256)"(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getOwedInterest(
-      tokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "getOwedInterest(uint256)"(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -3158,13 +3316,13 @@ export class Enterprise extends Contract {
     ): Promise<PopulatedTransaction>;
 
     increaseLiquidity(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "increaseLiquidity(uint256,uint256)"(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -3221,14 +3379,14 @@ export class Enterprise extends Contract {
     loanTransfer(
       from: string,
       to: string,
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "loanTransfer(address,address,uint256)"(
       from: string,
       to: string,
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -3257,7 +3415,7 @@ export class Enterprise extends Contract {
     ): Promise<PopulatedTransaction>;
 
     reborrow(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       paymentToken: string,
       duration: BigNumberish,
       maxPayment: BigNumberish,
@@ -3265,7 +3423,7 @@ export class Enterprise extends Contract {
     ): Promise<PopulatedTransaction>;
 
     "reborrow(uint256,address,uint32,uint256)"(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       paymentToken: string,
       duration: BigNumberish,
       maxPayment: BigNumberish,
@@ -3301,22 +3459,22 @@ export class Enterprise extends Contract {
     ): Promise<PopulatedTransaction>;
 
     removeLiquidity(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "removeLiquidity(uint256)"(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     returnLoan(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "returnLoan(uint256)"(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -3473,12 +3631,12 @@ export class Enterprise extends Contract {
     ): Promise<PopulatedTransaction>;
 
     withdrawInterest(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "withdrawInterest(uint256)"(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

@@ -386,10 +386,46 @@ interface EnterpriseStorageInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
+    "BaseUriChanged(string)": EventFragment;
+    "BondingChanged(uint256,uint256)": EventFragment;
+    "BorrowerLoanReturnGracePeriodChanged(uint32)": EventFragment;
+    "ConverterChanged(address)": EventFragment;
+    "EnterpriseCollectorChanged(address)": EventFragment;
+    "EnterpriseLoanCollectGracePeriodChanged(uint32)": EventFragment;
+    "EnterpriseShutdown()": EventFragment;
+    "EnterpriseVaultChanged(address)": EventFragment;
+    "FixedReserveChanged(uint256)": EventFragment;
+    "GcFeePercentChanged(uint16)": EventFragment;
+    "InterestGapHalvingPeriodChanged(uint32)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
+    "PaymentTokenChange(address,bool)": EventFragment;
+    "StreamingReserveChanged(uint112,uint112)": EventFragment;
+    "TotalSharesChanged(uint256)": EventFragment;
+    "UsedReserveChanged(uint256)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "BaseUriChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BondingChanged"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "BorrowerLoanReturnGracePeriodChanged"
+  ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ConverterChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EnterpriseCollectorChanged"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "EnterpriseLoanCollectGracePeriodChanged"
+  ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EnterpriseShutdown"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EnterpriseVaultChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "FixedReserveChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "GcFeePercentChanged"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "InterestGapHalvingPeriodChanged"
+  ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PaymentTokenChange"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "StreamingReserveChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TotalSharesChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "UsedReserveChanged"): EventFragment;
 }
 
 export class EnterpriseStorage extends Contract {
@@ -583,7 +619,7 @@ export class EnterpriseStorage extends Contract {
     "getInterestToken()"(overrides?: CallOverrides): Promise<[string]>;
 
     getLiquidityInfo(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [
@@ -596,7 +632,7 @@ export class EnterpriseStorage extends Contract {
     >;
 
     "getLiquidityInfo(uint256)"(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [
@@ -613,7 +649,7 @@ export class EnterpriseStorage extends Contract {
     "getLiquidityToken()"(overrides?: CallOverrides): Promise<[string]>;
 
     getLoanInfo(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [
@@ -640,7 +676,7 @@ export class EnterpriseStorage extends Contract {
     >;
 
     "getLoanInfo(uint256)"(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [
@@ -1043,7 +1079,7 @@ export class EnterpriseStorage extends Contract {
   "getInterestToken()"(overrides?: CallOverrides): Promise<string>;
 
   getLiquidityInfo(
-    tokenId: BigNumberish,
+    interestTokenId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
     [BigNumber, BigNumber, BigNumber] & {
@@ -1054,7 +1090,7 @@ export class EnterpriseStorage extends Contract {
   >;
 
   "getLiquidityInfo(uint256)"(
-    tokenId: BigNumberish,
+    interestTokenId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
     [BigNumber, BigNumber, BigNumber] & {
@@ -1069,7 +1105,7 @@ export class EnterpriseStorage extends Contract {
   "getLiquidityToken()"(overrides?: CallOverrides): Promise<string>;
 
   getLoanInfo(
-    tokenId: BigNumberish,
+    borrowTokenId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
     [BigNumber, number, number, number, number, number, BigNumber, number] & {
@@ -1085,7 +1121,7 @@ export class EnterpriseStorage extends Contract {
   >;
 
   "getLoanInfo(uint256)"(
-    tokenId: BigNumberish,
+    borrowTokenId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
     [BigNumber, number, number, number, number, number, BigNumber, number] & {
@@ -1470,7 +1506,7 @@ export class EnterpriseStorage extends Contract {
     "getInterestToken()"(overrides?: CallOverrides): Promise<string>;
 
     getLiquidityInfo(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber, BigNumber] & {
@@ -1481,7 +1517,7 @@ export class EnterpriseStorage extends Contract {
     >;
 
     "getLiquidityInfo(uint256)"(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber, BigNumber] & {
@@ -1496,7 +1532,7 @@ export class EnterpriseStorage extends Contract {
     "getLiquidityToken()"(overrides?: CallOverrides): Promise<string>;
 
     getLoanInfo(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, number, number, number, number, number, BigNumber, number] & {
@@ -1512,7 +1548,7 @@ export class EnterpriseStorage extends Contract {
     >;
 
     "getLoanInfo(uint256)"(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, number, number, number, number, number, BigNumber, number] & {
@@ -1759,6 +1795,52 @@ export class EnterpriseStorage extends Contract {
   };
 
   filters: {
+    BaseUriChanged(
+      baseUri: null
+    ): TypedEventFilter<[string], { baseUri: string }>;
+
+    BondingChanged(
+      pole: null,
+      slope: null
+    ): TypedEventFilter<
+      [BigNumber, BigNumber],
+      { pole: BigNumber; slope: BigNumber }
+    >;
+
+    BorrowerLoanReturnGracePeriodChanged(
+      period: null
+    ): TypedEventFilter<[number], { period: number }>;
+
+    ConverterChanged(
+      converter: null
+    ): TypedEventFilter<[string], { converter: string }>;
+
+    EnterpriseCollectorChanged(
+      collector: null
+    ): TypedEventFilter<[string], { collector: string }>;
+
+    EnterpriseLoanCollectGracePeriodChanged(
+      period: null
+    ): TypedEventFilter<[number], { period: number }>;
+
+    EnterpriseShutdown(): TypedEventFilter<[], {}>;
+
+    EnterpriseVaultChanged(
+      vault: null
+    ): TypedEventFilter<[string], { vault: string }>;
+
+    FixedReserveChanged(
+      fixedReserve: null
+    ): TypedEventFilter<[BigNumber], { fixedReserve: BigNumber }>;
+
+    GcFeePercentChanged(
+      percent: null
+    ): TypedEventFilter<[number], { percent: number }>;
+
+    InterestGapHalvingPeriodChanged(
+      period: null
+    ): TypedEventFilter<[number], { period: number }>;
+
     OwnershipTransferred(
       previousOwner: string | null,
       newOwner: string | null
@@ -1766,6 +1848,30 @@ export class EnterpriseStorage extends Contract {
       [string, string],
       { previousOwner: string; newOwner: string }
     >;
+
+    PaymentTokenChange(
+      paymentToken: null,
+      enabled: null
+    ): TypedEventFilter<
+      [string, boolean],
+      { paymentToken: string; enabled: boolean }
+    >;
+
+    StreamingReserveChanged(
+      streamingReserve: null,
+      streamingReserveTarget: null
+    ): TypedEventFilter<
+      [BigNumber, BigNumber],
+      { streamingReserve: BigNumber; streamingReserveTarget: BigNumber }
+    >;
+
+    TotalSharesChanged(
+      totalShares: null
+    ): TypedEventFilter<[BigNumber], { totalShares: BigNumber }>;
+
+    UsedReserveChanged(
+      fixedReserve: null
+    ): TypedEventFilter<[BigNumber], { fixedReserve: BigNumber }>;
   };
 
   estimateGas: {
@@ -1852,12 +1958,12 @@ export class EnterpriseStorage extends Contract {
     "getInterestToken()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getLiquidityInfo(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "getLiquidityInfo(uint256)"(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1866,12 +1972,12 @@ export class EnterpriseStorage extends Contract {
     "getLiquidityToken()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getLoanInfo(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "getLoanInfo(uint256)"(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -2215,12 +2321,12 @@ export class EnterpriseStorage extends Contract {
     ): Promise<PopulatedTransaction>;
 
     getLiquidityInfo(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "getLiquidityInfo(uint256)"(
-      tokenId: BigNumberish,
+      interestTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2231,12 +2337,12 @@ export class EnterpriseStorage extends Contract {
     ): Promise<PopulatedTransaction>;
 
     getLoanInfo(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "getLoanInfo(uint256)"(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
