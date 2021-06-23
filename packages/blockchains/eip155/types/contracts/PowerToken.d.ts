@@ -40,20 +40,18 @@ interface PowerTokenInterface extends ethers.utils.Interface {
     "getGapHalvingPeriod()": FunctionFragment;
     "getIndex()": FunctionFragment;
     "getInfo()": FunctionFragment;
-    "getLambda()": FunctionFragment;
     "getMaxLoanDuration()": FunctionFragment;
     "getMinGCFee()": FunctionFragment;
     "getMinLoanDuration()": FunctionFragment;
     "getServiceFeePercent()": FunctionFragment;
     "getState(address)": FunctionFragment;
     "increaseAllowance(address,uint256)": FunctionFragment;
-    "initialize(address,uint112,uint96,uint32,uint16,address,uint32,uint32,uint16,bool)": FunctionFragment;
+    "initialize(string,string,uint8)": FunctionFragment;
     "isAllowedLoanDuration(uint32)": FunctionFragment;
     "mint(address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "notifyNewLoan(uint256)": FunctionFragment;
     "setBaseRate(uint112,address,uint96)": FunctionFragment;
-    "setLambda(uint256)": FunctionFragment;
     "setLoanDurationLimits(uint32,uint32)": FunctionFragment;
     "setServiceFeePercent(uint16)": FunctionFragment;
     "symbol()": FunctionFragment;
@@ -129,7 +127,6 @@ interface PowerTokenInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "getIndex", values?: undefined): string;
   encodeFunctionData(functionFragment: "getInfo", values?: undefined): string;
-  encodeFunctionData(functionFragment: "getLambda", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getMaxLoanDuration",
     values?: undefined
@@ -153,18 +150,7 @@ interface PowerTokenInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values: [
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      boolean
-    ]
+    values: [string, string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "isAllowedLoanDuration",
@@ -182,10 +168,6 @@ interface PowerTokenInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "setBaseRate",
     values: [BigNumberish, string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setLambda",
-    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setLoanDurationLimits",
@@ -270,7 +252,6 @@ interface PowerTokenInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "getIndex", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getInfo", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getLambda", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getMaxLoanDuration",
     data: BytesLike
@@ -307,7 +288,6 @@ interface PowerTokenInterface extends ethers.utils.Interface {
     functionFragment: "setBaseRate",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "setLambda", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setLoanDurationLimits",
     data: BytesLike
@@ -332,10 +312,18 @@ interface PowerTokenInterface extends ethers.utils.Interface {
 
   events: {
     "Approval(address,address,uint256)": EventFragment;
+    "BaseRateChanged(uint112,address,uint96)": EventFragment;
+    "LoanDurationLimitsChanged(uint32,uint32)": EventFragment;
+    "PerpetualAllowed()": EventFragment;
+    "ServiceFeePercentChanged(uint16)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BaseRateChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LoanDurationLimitsChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PerpetualAllowed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ServiceFeePercentChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
 
@@ -610,10 +598,6 @@ export class PowerToken extends Contract {
       }
     >;
 
-    getLambda(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    "getLambda()"(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     getMaxLoanDuration(overrides?: CallOverrides): Promise<[number]>;
 
     "getMaxLoanDuration()"(overrides?: CallOverrides): Promise<[number]>;
@@ -668,6 +652,13 @@ export class PowerToken extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    "initialize(string,string,uint8)"(
+      name_: string,
+      symbol_: string,
+      decimals_: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     "initialize(address,uint112,uint96,uint32,uint16,address,uint32,uint32,uint16,bool)"(
       enterprise: string,
       baseRate: BigNumberish,
@@ -679,12 +670,6 @@ export class PowerToken extends Contract {
       maxLoanDuration: BigNumberish,
       serviceFeePercent: BigNumberish,
       allowsPerpetual: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "initialize(string,string)"(
-      name_: string,
-      symbol_: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -720,12 +705,12 @@ export class PowerToken extends Contract {
     "name()"(overrides?: CallOverrides): Promise<[string]>;
 
     notifyNewLoan(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     "notifyNewLoan(uint256)"(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -740,16 +725,6 @@ export class PowerToken extends Contract {
       baseRate: BigNumberish,
       baseToken: string,
       minGCFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setLambda(
-      lambda: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "setLambda(uint256)"(
-      lambda: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -1069,10 +1044,6 @@ export class PowerToken extends Contract {
     }
   >;
 
-  getLambda(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "getLambda()"(overrides?: CallOverrides): Promise<BigNumber>;
-
   getMaxLoanDuration(overrides?: CallOverrides): Promise<number>;
 
   "getMaxLoanDuration()"(overrides?: CallOverrides): Promise<number>;
@@ -1123,6 +1094,13 @@ export class PowerToken extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  "initialize(string,string,uint8)"(
+    name_: string,
+    symbol_: string,
+    decimals_: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   "initialize(address,uint112,uint96,uint32,uint16,address,uint32,uint32,uint16,bool)"(
     enterprise: string,
     baseRate: BigNumberish,
@@ -1134,12 +1112,6 @@ export class PowerToken extends Contract {
     maxLoanDuration: BigNumberish,
     serviceFeePercent: BigNumberish,
     allowsPerpetual: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "initialize(string,string)"(
-    name_: string,
-    symbol_: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1175,12 +1147,12 @@ export class PowerToken extends Contract {
   "name()"(overrides?: CallOverrides): Promise<string>;
 
   notifyNewLoan(
-    tokenId: BigNumberish,
+    borrowTokenId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   "notifyNewLoan(uint256)"(
-    tokenId: BigNumberish,
+    borrowTokenId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1195,16 +1167,6 @@ export class PowerToken extends Contract {
     baseRate: BigNumberish,
     baseToken: string,
     minGCFee: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setLambda(
-    lambda: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "setLambda(uint256)"(
-    lambda: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1520,10 +1482,6 @@ export class PowerToken extends Contract {
       }
     >;
 
-    getLambda(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "getLambda()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     getMaxLoanDuration(overrides?: CallOverrides): Promise<number>;
 
     "getMaxLoanDuration()"(overrides?: CallOverrides): Promise<number>;
@@ -1574,6 +1532,13 @@ export class PowerToken extends Contract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    "initialize(string,string,uint8)"(
+      name_: string,
+      symbol_: string,
+      decimals_: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     "initialize(address,uint112,uint96,uint32,uint16,address,uint32,uint32,uint16,bool)"(
       enterprise: string,
       baseRate: BigNumberish,
@@ -1585,12 +1550,6 @@ export class PowerToken extends Contract {
       maxLoanDuration: BigNumberish,
       serviceFeePercent: BigNumberish,
       allowsPerpetual: boolean,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    "initialize(string,string)"(
-      name_: string,
-      symbol_: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1626,12 +1585,12 @@ export class PowerToken extends Contract {
     "name()"(overrides?: CallOverrides): Promise<string>;
 
     notifyNewLoan(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     "notifyNewLoan(uint256)"(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1646,13 +1605,6 @@ export class PowerToken extends Contract {
       baseRate: BigNumberish,
       baseToken: string,
       minGCFee: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setLambda(lambda: BigNumberish, overrides?: CallOverrides): Promise<void>;
-
-    "setLambda(uint256)"(
-      lambda: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1748,6 +1700,29 @@ export class PowerToken extends Contract {
       [string, string, BigNumber],
       { owner: string; spender: string; value: BigNumber }
     >;
+
+    BaseRateChanged(
+      baseRate: null,
+      baseToken: null,
+      minGCFee: null
+    ): TypedEventFilter<
+      [BigNumber, string, BigNumber],
+      { baseRate: BigNumber; baseToken: string; minGCFee: BigNumber }
+    >;
+
+    LoanDurationLimitsChanged(
+      minDuration: null,
+      maxDuration: null
+    ): TypedEventFilter<
+      [number, number],
+      { minDuration: number; maxDuration: number }
+    >;
+
+    PerpetualAllowed(): TypedEventFilter<[], {}>;
+
+    ServiceFeePercentChanged(
+      percent: null
+    ): TypedEventFilter<[number], { percent: number }>;
 
     Transfer(
       from: string | null,
@@ -1919,10 +1894,6 @@ export class PowerToken extends Contract {
 
     "getInfo()"(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getLambda(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "getLambda()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     getMaxLoanDuration(overrides?: CallOverrides): Promise<BigNumber>;
 
     "getMaxLoanDuration()"(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1958,6 +1929,13 @@ export class PowerToken extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    "initialize(string,string,uint8)"(
+      name_: string,
+      symbol_: string,
+      decimals_: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     "initialize(address,uint112,uint96,uint32,uint16,address,uint32,uint32,uint16,bool)"(
       enterprise: string,
       baseRate: BigNumberish,
@@ -1969,12 +1947,6 @@ export class PowerToken extends Contract {
       maxLoanDuration: BigNumberish,
       serviceFeePercent: BigNumberish,
       allowsPerpetual: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "initialize(string,string)"(
-      name_: string,
-      symbol_: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -2010,12 +1982,12 @@ export class PowerToken extends Contract {
     "name()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     notifyNewLoan(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     "notifyNewLoan(uint256)"(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -2030,16 +2002,6 @@ export class PowerToken extends Contract {
       baseRate: BigNumberish,
       baseToken: string,
       minGCFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setLambda(
-      lambda: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "setLambda(uint256)"(
-      lambda: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -2303,10 +2265,6 @@ export class PowerToken extends Contract {
 
     "getInfo()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getLambda(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "getLambda()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     getMaxLoanDuration(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -2357,6 +2315,13 @@ export class PowerToken extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    "initialize(string,string,uint8)"(
+      name_: string,
+      symbol_: string,
+      decimals_: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     "initialize(address,uint112,uint96,uint32,uint16,address,uint32,uint32,uint16,bool)"(
       enterprise: string,
       baseRate: BigNumberish,
@@ -2368,12 +2333,6 @@ export class PowerToken extends Contract {
       maxLoanDuration: BigNumberish,
       serviceFeePercent: BigNumberish,
       allowsPerpetual: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "initialize(string,string)"(
-      name_: string,
-      symbol_: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2409,12 +2368,12 @@ export class PowerToken extends Contract {
     "name()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     notifyNewLoan(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     "notifyNewLoan(uint256)"(
-      tokenId: BigNumberish,
+      borrowTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2429,16 +2388,6 @@ export class PowerToken extends Contract {
       baseRate: BigNumberish,
       baseToken: string,
       minGCFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setLambda(
-      lambda: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "setLambda(uint256)"(
-      lambda: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

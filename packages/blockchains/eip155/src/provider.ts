@@ -214,7 +214,7 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
   }
 
   async getAccruedInterest(enterpriseAddress: Address, interestTokenId: BigNumberish): Promise<BigNumber> {
-    return this.resolveEnterprise(enterpriseAddress).getOwedInterest(interestTokenId);
+    return this.resolveEnterprise(enterpriseAddress).getAccruedInterest(interestTokenId);
   }
 
   async withdrawInterest(enterpriseAddress: Address, interestTokenId: BigNumberish): Promise<ContractTransaction> {

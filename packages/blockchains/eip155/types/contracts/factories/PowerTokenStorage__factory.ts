@@ -18,6 +18,69 @@ export class PowerTokenStorage__factory {
 
 const _abi = [
   {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint112",
+        name: "baseRate",
+        type: "uint112",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "baseToken",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint96",
+        name: "minGCFee",
+        type: "uint96",
+      },
+    ],
+    name: "BaseRateChanged",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint32",
+        name: "minDuration",
+        type: "uint32",
+      },
+      {
+        indexed: false,
+        internalType: "uint32",
+        name: "maxDuration",
+        type: "uint32",
+      },
+    ],
+    name: "LoanDurationLimitsChanged",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [],
+    name: "PerpetualAllowed",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint16",
+        name: "percent",
+        type: "uint16",
+      },
+    ],
+    name: "ServiceFeePercentChanged",
+    type: "event",
+  },
+  {
     inputs: [],
     name: "allowPerpetualForever",
     outputs: [],
@@ -97,19 +160,6 @@ const _abi = [
         internalType: "uint16",
         name: "",
         type: "uint16",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "getLambda",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -312,19 +362,6 @@ const _abi = [
       },
     ],
     name: "setBaseRate",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "lambda",
-        type: "uint256",
-      },
-    ],
-    name: "setLambda",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

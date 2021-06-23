@@ -28,7 +28,6 @@ interface PowerTokenStorageInterface extends ethers.utils.Interface {
     "getEnterprise()": FunctionFragment;
     "getGapHalvingPeriod()": FunctionFragment;
     "getIndex()": FunctionFragment;
-    "getLambda()": FunctionFragment;
     "getMaxLoanDuration()": FunctionFragment;
     "getMinGCFee()": FunctionFragment;
     "getMinLoanDuration()": FunctionFragment;
@@ -37,7 +36,6 @@ interface PowerTokenStorageInterface extends ethers.utils.Interface {
     "initialize(address,uint112,uint96,uint32,uint16,address,uint32,uint32,uint16,bool)": FunctionFragment;
     "isAllowedLoanDuration(uint32)": FunctionFragment;
     "setBaseRate(uint112,address,uint96)": FunctionFragment;
-    "setLambda(uint256)": FunctionFragment;
     "setLoanDurationLimits(uint32,uint32)": FunctionFragment;
     "setServiceFeePercent(uint16)": FunctionFragment;
   };
@@ -67,7 +65,6 @@ interface PowerTokenStorageInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "getIndex", values?: undefined): string;
-  encodeFunctionData(functionFragment: "getLambda", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getMaxLoanDuration",
     values?: undefined
@@ -109,10 +106,6 @@ interface PowerTokenStorageInterface extends ethers.utils.Interface {
     values: [BigNumberish, string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "setLambda",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "setLoanDurationLimits",
     values: [BigNumberish, BigNumberish]
   ): string;
@@ -146,7 +139,6 @@ interface PowerTokenStorageInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getIndex", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getLambda", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getMaxLoanDuration",
     data: BytesLike
@@ -173,7 +165,6 @@ interface PowerTokenStorageInterface extends ethers.utils.Interface {
     functionFragment: "setBaseRate",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "setLambda", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setLoanDurationLimits",
     data: BytesLike
@@ -183,7 +174,17 @@ interface PowerTokenStorageInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
 
-  events: {};
+  events: {
+    "BaseRateChanged(uint112,address,uint96)": EventFragment;
+    "LoanDurationLimitsChanged(uint32,uint32)": EventFragment;
+    "PerpetualAllowed()": EventFragment;
+    "ServiceFeePercentChanged(uint16)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "BaseRateChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LoanDurationLimitsChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PerpetualAllowed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ServiceFeePercentChanged"): EventFragment;
 }
 
 export class PowerTokenStorage extends Contract {
@@ -261,10 +262,6 @@ export class PowerTokenStorage extends Contract {
     getIndex(overrides?: CallOverrides): Promise<[number]>;
 
     "getIndex()"(overrides?: CallOverrides): Promise<[number]>;
-
-    getLambda(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    "getLambda()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getMaxLoanDuration(overrides?: CallOverrides): Promise<[number]>;
 
@@ -351,16 +348,6 @@ export class PowerTokenStorage extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setLambda(
-      lambda: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "setLambda(uint256)"(
-      lambda: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     setLoanDurationLimits(
       minLoanDuration: BigNumberish,
       maxLoanDuration: BigNumberish,
@@ -415,10 +402,6 @@ export class PowerTokenStorage extends Contract {
   getIndex(overrides?: CallOverrides): Promise<number>;
 
   "getIndex()"(overrides?: CallOverrides): Promise<number>;
-
-  getLambda(overrides?: CallOverrides): Promise<BigNumber>;
-
-  "getLambda()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   getMaxLoanDuration(overrides?: CallOverrides): Promise<number>;
 
@@ -501,16 +484,6 @@ export class PowerTokenStorage extends Contract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setLambda(
-    lambda: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "setLambda(uint256)"(
-    lambda: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   setLoanDurationLimits(
     minLoanDuration: BigNumberish,
     maxLoanDuration: BigNumberish,
@@ -561,10 +534,6 @@ export class PowerTokenStorage extends Contract {
     getIndex(overrides?: CallOverrides): Promise<number>;
 
     "getIndex()"(overrides?: CallOverrides): Promise<number>;
-
-    getLambda(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "getLambda()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getMaxLoanDuration(overrides?: CallOverrides): Promise<number>;
 
@@ -647,13 +616,6 @@ export class PowerTokenStorage extends Contract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setLambda(lambda: BigNumberish, overrides?: CallOverrides): Promise<void>;
-
-    "setLambda(uint256)"(
-      lambda: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     setLoanDurationLimits(
       minLoanDuration: BigNumberish,
       maxLoanDuration: BigNumberish,
@@ -677,7 +639,30 @@ export class PowerTokenStorage extends Contract {
     ): Promise<void>;
   };
 
-  filters: {};
+  filters: {
+    BaseRateChanged(
+      baseRate: null,
+      baseToken: null,
+      minGCFee: null
+    ): TypedEventFilter<
+      [BigNumber, string, BigNumber],
+      { baseRate: BigNumber; baseToken: string; minGCFee: BigNumber }
+    >;
+
+    LoanDurationLimitsChanged(
+      minDuration: null,
+      maxDuration: null
+    ): TypedEventFilter<
+      [number, number],
+      { minDuration: number; maxDuration: number }
+    >;
+
+    PerpetualAllowed(): TypedEventFilter<[], {}>;
+
+    ServiceFeePercentChanged(
+      percent: null
+    ): TypedEventFilter<[number], { percent: number }>;
+  };
 
   estimateGas: {
     allowPerpetualForever(
@@ -711,10 +696,6 @@ export class PowerTokenStorage extends Contract {
     getIndex(overrides?: CallOverrides): Promise<BigNumber>;
 
     "getIndex()"(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getLambda(overrides?: CallOverrides): Promise<BigNumber>;
-
-    "getLambda()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     getMaxLoanDuration(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -782,16 +763,6 @@ export class PowerTokenStorage extends Contract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setLambda(
-      lambda: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "setLambda(uint256)"(
-      lambda: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     setLoanDurationLimits(
       minLoanDuration: BigNumberish,
       maxLoanDuration: BigNumberish,
@@ -855,10 +826,6 @@ export class PowerTokenStorage extends Contract {
     getIndex(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "getIndex()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getLambda(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    "getLambda()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getMaxLoanDuration(
       overrides?: CallOverrides
@@ -938,16 +905,6 @@ export class PowerTokenStorage extends Contract {
       baseRate: BigNumberish,
       baseToken: string,
       minGCFee: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setLambda(
-      lambda: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "setLambda(uint256)"(
-      lambda: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

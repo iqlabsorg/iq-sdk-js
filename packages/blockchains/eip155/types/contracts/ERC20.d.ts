@@ -27,7 +27,7 @@ interface ERC20Interface extends ethers.utils.Interface {
     "decimals()": FunctionFragment;
     "decreaseAllowance(address,uint256)": FunctionFragment;
     "increaseAllowance(address,uint256)": FunctionFragment;
-    "initialize(string,string)": FunctionFragment;
+    "initialize(string,string,uint8)": FunctionFragment;
     "name()": FunctionFragment;
     "symbol()": FunctionFragment;
     "totalSupply()": FunctionFragment;
@@ -55,7 +55,7 @@ interface ERC20Interface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values: [string, string]
+    values: [string, string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
@@ -212,12 +212,14 @@ export class ERC20 extends Contract {
     initialize(
       name_: string,
       symbol_: string,
+      decimals_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "initialize(string,string)"(
+    "initialize(string,string,uint8)"(
       name_: string,
       symbol_: string,
+      decimals_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -322,12 +324,14 @@ export class ERC20 extends Contract {
   initialize(
     name_: string,
     symbol_: string,
+    decimals_: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "initialize(string,string)"(
+  "initialize(string,string,uint8)"(
     name_: string,
     symbol_: string,
+    decimals_: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -432,12 +436,14 @@ export class ERC20 extends Contract {
     initialize(
       name_: string,
       symbol_: string,
+      decimals_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "initialize(string,string)"(
+    "initialize(string,string,uint8)"(
       name_: string,
       symbol_: string,
+      decimals_: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -563,12 +569,14 @@ export class ERC20 extends Contract {
     initialize(
       name_: string,
       symbol_: string,
+      decimals_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "initialize(string,string)"(
+    "initialize(string,string,uint8)"(
       name_: string,
       symbol_: string,
+      decimals_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -677,12 +685,14 @@ export class ERC20 extends Contract {
     initialize(
       name_: string,
       symbol_: string,
+      decimals_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "initialize(string,string)"(
+    "initialize(string,string,uint8)"(
       name_: string,
       symbol_: string,
+      decimals_: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
