@@ -42,9 +42,9 @@ describe('EIP155BlockchainProvider', () => {
   beforeEach(async () => {
     await deployments.fixture();
     deployerSigner = await ethers.getNamedSigner('deployer');
-    enterpriseFactory = (await ethers.getContract('EnterpriseFactory')) as EnterpriseFactory;
-    liquidityToken = (await ethers.getContract('ERC20Mock')) as ERC20Mock;
-    converter = (await ethers.getContract('DefaultConverter')) as DefaultConverter;
+    enterpriseFactory = await ethers.getContract('EnterpriseFactory');
+    liquidityToken = await ethers.getContract('ERC20Mock');
+    converter = await ethers.getContract('DefaultConverter');
     blockchainProvider = new EIP155BlockchainProvider({
       signer: deployerSigner,
       contracts: {
