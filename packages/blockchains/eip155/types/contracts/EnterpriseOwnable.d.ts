@@ -9,7 +9,7 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
-  Contract,
+  BaseContract,
   ContractTransaction,
   Overrides,
   CallOverrides,
@@ -40,7 +40,7 @@ interface EnterpriseOwnableInterface extends ethers.utils.Interface {
   events: {};
 }
 
-export class EnterpriseOwnable extends Contract {
+export class EnterpriseOwnable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -86,14 +86,7 @@ export class EnterpriseOwnable extends Contract {
   functions: {
     getEnterprise(overrides?: CallOverrides): Promise<[string]>;
 
-    "getEnterprise()"(overrides?: CallOverrides): Promise<[string]>;
-
     initialize(
-      enterprise: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    "initialize(address)"(
       enterprise: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -101,14 +94,7 @@ export class EnterpriseOwnable extends Contract {
 
   getEnterprise(overrides?: CallOverrides): Promise<string>;
 
-  "getEnterprise()"(overrides?: CallOverrides): Promise<string>;
-
   initialize(
-    enterprise: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  "initialize(address)"(
     enterprise: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -116,14 +102,7 @@ export class EnterpriseOwnable extends Contract {
   callStatic: {
     getEnterprise(overrides?: CallOverrides): Promise<string>;
 
-    "getEnterprise()"(overrides?: CallOverrides): Promise<string>;
-
     initialize(enterprise: string, overrides?: CallOverrides): Promise<void>;
-
-    "initialize(address)"(
-      enterprise: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
   };
 
   filters: {};
@@ -131,14 +110,7 @@ export class EnterpriseOwnable extends Contract {
   estimateGas: {
     getEnterprise(overrides?: CallOverrides): Promise<BigNumber>;
 
-    "getEnterprise()"(overrides?: CallOverrides): Promise<BigNumber>;
-
     initialize(
-      enterprise: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    "initialize(address)"(
       enterprise: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -147,14 +119,7 @@ export class EnterpriseOwnable extends Contract {
   populateTransaction: {
     getEnterprise(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    "getEnterprise()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     initialize(
-      enterprise: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    "initialize(address)"(
       enterprise: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

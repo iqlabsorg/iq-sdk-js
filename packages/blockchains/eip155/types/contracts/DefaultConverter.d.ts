@@ -9,7 +9,7 @@ import {
   BigNumber,
   BigNumberish,
   PopulatedTransaction,
-  Contract,
+  BaseContract,
   ContractTransaction,
   CallOverrides,
 } from "ethers";
@@ -42,7 +42,7 @@ interface DefaultConverterInterface extends ethers.utils.Interface {
   events: {};
 }
 
-export class DefaultConverter extends Contract {
+export class DefaultConverter extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -93,21 +93,7 @@ export class DefaultConverter extends Contract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    "convert(address,uint256,address)"(
-      source: string,
-      amount: BigNumberish,
-      target: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     estimateConvert(
-      source: string,
-      amount: BigNumberish,
-      target: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    "estimateConvert(address,uint256,address)"(
       source: string,
       amount: BigNumberish,
       target: string,
@@ -122,21 +108,7 @@ export class DefaultConverter extends Contract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  "convert(address,uint256,address)"(
-    source: string,
-    amount: BigNumberish,
-    target: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   estimateConvert(
-    source: string,
-    amount: BigNumberish,
-    target: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  "estimateConvert(address,uint256,address)"(
     source: string,
     amount: BigNumberish,
     target: string,
@@ -151,21 +123,7 @@ export class DefaultConverter extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "convert(address,uint256,address)"(
-      source: string,
-      amount: BigNumberish,
-      target: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     estimateConvert(
-      source: string,
-      amount: BigNumberish,
-      target: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "estimateConvert(address,uint256,address)"(
       source: string,
       amount: BigNumberish,
       target: string,
@@ -183,21 +141,7 @@ export class DefaultConverter extends Contract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    "convert(address,uint256,address)"(
-      source: string,
-      amount: BigNumberish,
-      target: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     estimateConvert(
-      source: string,
-      amount: BigNumberish,
-      target: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    "estimateConvert(address,uint256,address)"(
       source: string,
       amount: BigNumberish,
       target: string,
@@ -213,21 +157,7 @@ export class DefaultConverter extends Contract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "convert(address,uint256,address)"(
-      source: string,
-      amount: BigNumberish,
-      target: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     estimateConvert(
-      source: string,
-      amount: BigNumberish,
-      target: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    "estimateConvert(address,uint256,address)"(
       source: string,
       amount: BigNumberish,
       target: string,

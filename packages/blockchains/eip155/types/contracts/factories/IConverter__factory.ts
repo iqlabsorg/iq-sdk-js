@@ -2,19 +2,9 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { Contract, Signer } from "ethers";
+import { Contract, Signer, utils } from "ethers";
 import { Provider } from "@ethersproject/providers";
-
-import type { IConverter } from "../IConverter";
-
-export class IConverter__factory {
-  static connect(
-    address: string,
-    signerOrProvider: Signer | Provider
-  ): IConverter {
-    return new Contract(address, _abi, signerOrProvider) as IConverter;
-  }
-}
+import type { IConverter, IConverterInterface } from "../IConverter";
 
 const _abi = [
   {
@@ -76,3 +66,16 @@ const _abi = [
     type: "function",
   },
 ];
+
+export class IConverter__factory {
+  static readonly abi = _abi;
+  static createInterface(): IConverterInterface {
+    return new utils.Interface(_abi) as IConverterInterface;
+  }
+  static connect(
+    address: string,
+    signerOrProvider: Signer | Provider
+  ): IConverter {
+    return new Contract(address, _abi, signerOrProvider) as IConverter;
+  }
+}

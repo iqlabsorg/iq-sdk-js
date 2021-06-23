@@ -21,6 +21,6 @@
   },
   "dependencies": {
     "@iqprotocol/abstract-storage": "0.1.0",
-    "slonik": "^23.6.4"
+    "slonik": "^23.8.0"
   }
 }
