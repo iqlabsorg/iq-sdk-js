@@ -21,7 +21,7 @@ export class InMemoryStore extends AbstractStore {
     super({ validator: config?.validator });
     this.accounts = new Map(config?.accounts?.map(account => [account.id, account]));
     this.states = new Map(
-      config?.states?.map(state => [InMemoryStore.stateKey(state.accountId, state.serviceId), state]),
+      config?.states?.map(state => [InMemoryStore.stateKey(state.serviceId, state.accountId), state]),
     );
   }
 
@@ -34,8 +34,8 @@ export class InMemoryStore extends AbstractStore {
     return JSON.stringify(state, replacer);
   }
 
-  private static stateKey(accountId: string, serviceId: string): string {
-    return `${accountId}:${serviceId}`;
+  private static stateKey(serviceId: string, accountId: string): string {
+    return `${serviceId}:${accountId}`;
   }
 
   async getAccount(id: string): Promise<Account | null> {
@@ -43,7 +43,7 @@ export class InMemoryStore extends AbstractStore {
   }
 
   async getAccountState(serviceId: string, accountId: string): Promise<AccountState | null> {
-    return this.states.get(InMemoryStore.stateKey(accountId, serviceId)) ?? null;
+    return this.states.get(InMemoryStore.stateKey(serviceId, accountId)) ?? null;
   }
 
   protected async _saveAccount(account: Account): Promise<Account> {
@@ -56,7 +56,7 @@ export class InMemoryStore extends AbstractStore {
     if (!this.accounts.has(accountId)) {
       throw new Error('Unknown account');
     }
-    const stateKey = InMemoryStore.stateKey(accountId, serviceId);
+    const stateKey = InMemoryStore.stateKey(serviceId, accountId);
 
     if (this.states.has(stateKey)) {
       throw new Error('Already initialized');
@@ -76,7 +76,7 @@ export class InMemoryStore extends AbstractStore {
       throw new Error('Unknown account');
     }
 
-    const stateKey = InMemoryStore.stateKey(accountId, serviceId);
+    const stateKey = InMemoryStore.stateKey(serviceId, accountId);
     const currentState = this.states.get(stateKey);
     if (!currentState) {
       throw new Error('State is not initialized');
