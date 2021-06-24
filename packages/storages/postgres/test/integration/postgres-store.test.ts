@@ -80,7 +80,7 @@ describe('PostgresStore', () => {
     });
 
     it('does not return account state', async () => {
-      await expect(store.getAccountState(accountState.accountId, accountState.serviceId)).resolves.toBeNull();
+      await expect(store.getAccountState(accountState.serviceId, accountState.accountId)).resolves.toBeNull();
     });
 
     it('saves account', async () => {
@@ -122,7 +122,7 @@ describe('PostgresStore', () => {
       it('initializes account state', async () => {
         const result = await store.initAccountState(accountState);
         expect(result).toEqual(accountState);
-        await expect(store.getAccountState(accountState.accountId, accountState.serviceId)).resolves.toEqual(
+        await expect(store.getAccountState(accountState.serviceId, accountState.accountId)).resolves.toEqual(
           accountState,
         );
       });
@@ -137,7 +137,7 @@ describe('PostgresStore', () => {
         });
 
         it('returns account state', async () => {
-          await expect(store.getAccountState(accountState.accountId, accountState.serviceId)).resolves.toEqual(
+          await expect(store.getAccountState(accountState.serviceId, accountState.accountId)).resolves.toEqual(
             accountState,
           );
         });
@@ -154,7 +154,7 @@ describe('PostgresStore', () => {
             successful: true,
             currentState: newState,
           });
-          await expect(store.getAccountState(accountState.accountId, accountState.serviceId)).resolves.toEqual(
+          await expect(store.getAccountState(accountState.serviceId, accountState.accountId)).resolves.toEqual(
             newState,
           );
         });
@@ -173,7 +173,7 @@ describe('PostgresStore', () => {
             successful: false,
             currentState: accountState,
           });
-          await expect(store.getAccountState(accountState.accountId, accountState.serviceId)).resolves.toEqual(
+          await expect(store.getAccountState(accountState.serviceId, accountState.accountId)).resolves.toEqual(
             accountState,
           );
         });

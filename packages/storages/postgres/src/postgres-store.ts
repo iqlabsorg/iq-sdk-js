@@ -82,7 +82,7 @@ export class PostgresStore extends AbstractStore {
     });
   }
 
-  async getAccountState(accountId: string, serviceId: string): Promise<AccountState | null> {
+  async getAccountState(serviceId: string, accountId: string): Promise<AccountState | null> {
     return this.pool.connect(async connection => {
       const row = await this.readAccountStateRecord(connection, accountId, serviceId);
       return row ? PostgresStore.rowToAccountState(row) : null;

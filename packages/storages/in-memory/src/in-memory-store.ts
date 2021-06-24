@@ -42,7 +42,7 @@ export class InMemoryStore extends AbstractStore {
     return this.accounts.get(id) ?? null;
   }
 
-  async getAccountState(accountId: string, serviceId: string): Promise<AccountState | null> {
+  async getAccountState(serviceId: string, accountId: string): Promise<AccountState | null> {
     return this.states.get(InMemoryStore.stateKey(accountId, serviceId)) ?? null;
   }
 
