@@ -35,7 +35,7 @@ export abstract class AbstractStore implements StorageProvider {
 
   abstract getAccount(id: string): Promise<Account | null>;
 
-  abstract getAccountState(accountId: string, serviceId: string): Promise<AccountState | null>;
+  abstract getAccountState(serviceId: string, accountId: string): Promise<AccountState | null>;
 
   protected abstract _saveAccount(account: Account): Promise<Account>;
 

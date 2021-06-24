@@ -41,5 +41,5 @@ export interface StorageProvider {
 
   changeAccountState(prevState: AccountState, newState: AccountState): Promise<AccountStateChangeResult>;
 
-  getAccountState(accountId: string, serviceId: string): Promise<AccountState | null>;
+  getAccountState(serviceId: string, accountId: string): Promise<AccountState | null>;
 }
