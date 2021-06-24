@@ -63,7 +63,7 @@ export class PostgresStore extends AbstractStore {
           locked_power varchar NOT NULL,
           energy varchar NOT NULL,
           energy_changed_at timestamp NOT NULL,
-          PRIMARY KEY (account_id, service_id)
+          PRIMARY KEY (service_id, account_id)
         )`,
       );
     });
@@ -84,7 +84,7 @@ export class PostgresStore extends AbstractStore {
 
   async getAccountState(serviceId: string, accountId: string): Promise<AccountState | null> {
     return this.pool.connect(async connection => {
-      const row = await this.readAccountStateRecord(connection, accountId, serviceId);
+      const row = await this.readAccountStateRecord(connection, serviceId, accountId);
       return row ? PostgresStore.rowToAccountState(row) : null;
     });
   }
@@ -147,7 +147,7 @@ export class PostgresStore extends AbstractStore {
     newState: Omit<AccountState, 'serviceId' | 'accountId'>,
   ): Promise<AccountStateChangeResult> {
     return this.pool.connect(async connection => {
-      const currentState = await this.readAccountStateRecord(connection, prevState.accountId, prevState.serviceId);
+      const currentState = await this.readAccountStateRecord(connection, prevState.serviceId, prevState.accountId);
       if (!currentState) {
         throw new Error('State is not initialized');
       }
@@ -180,14 +180,14 @@ export class PostgresStore extends AbstractStore {
 
   private async readAccountStateRecord(
     connection: DatabasePoolConnectionType,
-    accountId: string,
     serviceId: string,
+    accountId: string,
   ): Promise<ReturnType<QueryMaybeOneFunctionType>> {
     return connection.maybeOne(
       sql`SELECT account_id, service_id, power, locked_power, energy , EXTRACT(EPOCH FROM energy_changed_at) as energy_changed_at
           FROM ${this.stateTableName}
-          WHERE account_id = ${accountId}
-          AND service_id = ${serviceId}
+          WHERE service_id = ${serviceId}
+            AND account_id = ${accountId}
         `,
     );
   }
