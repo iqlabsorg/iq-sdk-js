@@ -1,6 +1,6 @@
 {
   "name": "@iqprotocol/energy",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "license": "UNLICENSED",
   "scripts": {
     "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
