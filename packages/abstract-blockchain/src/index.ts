@@ -105,13 +105,13 @@ export interface BlockchainProvider<Transaction = unknown, TransactionSigner = u
 
   deployEnterprise(params: EnterpriseParams): Promise<Transaction>;
 
-  getServices(enterpriseAddress: Address): Promise<Address[]>;
+  getERC20Metadata(tokenAddress: Address): Promise<ERC20Metadata>;
 
-  getEnterpriseInfo(enterpriseAddress: Address): Promise<EnterpriseInfo>;
+  getERC721Metadata(tokenAddress: Address, tokenId: BigNumberish): Promise<ERC721Metadata>;
 
-  getLiquidityInfo(enterpriseAddress: Address, interestTokenId: BigNumberish): Promise<LiquidityInfo>;
+  getTokenBalance(tokenAddress: Address, accountAddress?: Address): Promise<BigNumber>;
 
-  getLoanInfo(enterpriseAddress: Address, borrowTokenId: BigNumberish): Promise<LoanInfo>;
+  // Enterprise
 
   addLiquidity(enterpriseAddress: Address, amount: BigNumberish): Promise<Transaction>;
 
@@ -129,25 +129,9 @@ export interface BlockchainProvider<Transaction = unknown, TransactionSigner = u
     amount: BigNumberish,
   ): Promise<Transaction>;
 
-  getAccruedInterest(enterpriseAddress: Address, interestTokenId: BigNumberish): Promise<BigNumber>;
-
   withdrawInterest(enterpriseAddress: Address, interestTokenId: BigNumberish): Promise<Transaction>;
 
-  getAvailableReserve(enterpriseAddress: Address): Promise<BigNumber>;
-
-  getServiceInfo(serviceAddress: Address): Promise<ServiceInfo>;
-
-  getAccountState(serviceAddress: Address, accountAddress: Address): Promise<AccountState>;
-
   registerService(enterpriseAddress: Address, serviceParams: ServiceParams): Promise<Transaction>;
-
-  estimateLoan(
-    enterpriseAddress: Address,
-    serviceAddress: Address,
-    paymentTokenAddress: Address,
-    amount: BigNumberish,
-    duration: BigNumberish,
-  ): Promise<BigNumber>;
 
   borrow(
     enterpriseAddress: Address,
@@ -161,6 +145,42 @@ export interface BlockchainProvider<Transaction = unknown, TransactionSigner = u
   returnLoan(enterpriseAddress: Address, borrowTokenId: BigNumberish): Promise<Transaction>;
 
   setLiquidityAllowance(enterpriseAddress: Address, amount: BigNumberish): Promise<Transaction>;
+
+  isRegisteredService(enterpriseAddress: Address, serviceAddress: Address): Promise<boolean>;
+
+  getProxyAdminAddress(enterpriseAddress: Address): Promise<Address>;
+
+  getEnterpriseCollectorAddress(enterpriseAddress: Address): Promise<Address>;
+
+  getEnterpriseVaultAddress(enterpriseAddress: Address): Promise<Address>;
+
+  getBorrowerLoanReturnGracePeriod(enterpriseAddress: Address): Promise<number>;
+
+  getEnterpriseLoanCollectGracePeriod(enterpriseAddress: Address): Promise<number>;
+
+  getInterestGapHalvingPeriod(enterpriseAddress: Address): Promise<number>;
+
+  getConverterAddress(enterpriseAddress: Address): Promise<Address>;
+
+  getBaseUri(enterpriseAddress: Address): Promise<string>;
+
+  getEnterpriseInfo(enterpriseAddress: Address): Promise<EnterpriseInfo>;
+
+  getServices(enterpriseAddress: Address): Promise<Address[]>;
+
+  getLoanInfo(enterpriseAddress: Address, borrowTokenId: BigNumberish): Promise<LoanInfo>;
+
+  getLiquidityInfo(enterpriseAddress: Address, interestTokenId: BigNumberish): Promise<LiquidityInfo>;
+
+  getReserve(enterpriseAddress: Address): Promise<BigNumber>;
+
+  getUsedReserve(enterpriseAddress: Address): Promise<BigNumber>;
+
+  getAvailableReserve(enterpriseAddress: Address): Promise<BigNumber>;
+
+  getBondingCurve(enterpriseAddress: Address): Promise<{ pole: BigNumber; slope: BigNumber }>;
+
+  getGCFeePercent(enterpriseAddress: Address): Promise<number>;
 
   getLiquidityAllowance(enterpriseAddress: Address, accountAddress?: Address): Promise<BigNumber>;
 
@@ -180,9 +200,18 @@ export interface BlockchainProvider<Transaction = unknown, TransactionSigner = u
 
   getBorrowTokenIds(enterpriseAddress: Address, accountAddress?: Address): Promise<BigNumber[]>;
 
-  getERC20Metadata(tokenAddress: Address): Promise<ERC20Metadata>;
+  getAccruedInterest(enterpriseAddress: Address, interestTokenId: BigNumberish): Promise<BigNumber>;
 
-  getERC721Metadata(tokenAddress: Address, tokenId: BigNumberish): Promise<ERC721Metadata>;
+  estimateLoan(
+    enterpriseAddress: Address,
+    serviceAddress: Address,
+    paymentTokenAddress: Address,
+    amount: BigNumberish,
+    duration: BigNumberish,
+  ): Promise<BigNumber>;
 
-  getTokenBalance(tokenAddress: Address, accountAddress?: Address): Promise<BigNumber>;
+  // Service
+  getServiceInfo(serviceAddress: Address): Promise<ServiceInfo>;
+
+  getAccountState(serviceAddress: Address, accountAddress: Address): Promise<AccountState>;
 }

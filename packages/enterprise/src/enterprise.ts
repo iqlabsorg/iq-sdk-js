@@ -136,4 +136,60 @@ export class Enterprise<Transaction = unknown> {
   async getLiquidityAllowance(accountAddress?: Address): Promise<BigNumber> {
     return this.blockchain.getLiquidityAllowance(this.address, accountAddress);
   }
+
+  async isRegisteredService(serviceAddress: Address): Promise<boolean> {
+    return this.blockchain.isRegisteredService(this.address, serviceAddress);
+  }
+
+  async getProxyAdminAddress(): Promise<Address> {
+    return this.blockchain.getProxyAdminAddress(this.address);
+  }
+
+  async getCollectorAddress(): Promise<Address> {
+    return this.blockchain.getEnterpriseCollectorAddress(this.address);
+  }
+
+  async getVaultAddress(): Promise<Address> {
+    return this.blockchain.getEnterpriseVaultAddress(this.address);
+  }
+
+  async getBorrowerLoanReturnGracePeriod(): Promise<number> {
+    return this.blockchain.getBorrowerLoanReturnGracePeriod(this.address);
+  }
+
+  async getLoanCollectGracePeriod(): Promise<number> {
+    return this.blockchain.getEnterpriseLoanCollectGracePeriod(this.address);
+  }
+
+  async getInterestGapHalvingPeriod(): Promise<number> {
+    return this.blockchain.getInterestGapHalvingPeriod(this.address);
+  }
+
+  async getConverterAddress(): Promise<Address> {
+    return this.blockchain.getConverterAddress(this.address);
+  }
+
+  async getBaseUri(): Promise<string> {
+    return this.blockchain.getBaseUri(this.address);
+  }
+
+  async getReserve(): Promise<BigNumber> {
+    return this.blockchain.getReserve(this.address);
+  }
+
+  async getUsedReserve(): Promise<BigNumber> {
+    return this.blockchain.getUsedReserve(this.address);
+  }
+
+  async getAvailableReserve(): Promise<BigNumber> {
+    return this.blockchain.getAvailableReserve(this.address);
+  }
+
+  async getBondingCurve(): Promise<{ pole: BigNumber; slope: BigNumber }> {
+    return this.blockchain.getBondingCurve(this.address);
+  }
+
+  async getGCFeePercent(): Promise<number> {
+    return this.blockchain.getGCFeePercent(this.address);
+  }
 }
