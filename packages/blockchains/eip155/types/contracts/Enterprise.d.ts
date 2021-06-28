@@ -517,11 +517,7 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     "FixedReserveChanged(uint256)": EventFragment;
     "GcFeePercentChanged(uint16)": EventFragment;
     "InterestGapHalvingPeriodChanged(uint32)": EventFragment;
-    "InterestWithdrawn(uint256,uint256)": EventFragment;
-    "LiquidityAdded(uint256,uint256)": EventFragment;
-    "LiquidityDecreased(uint256,uint256)": EventFragment;
-    "LiquidityIncreased(uint256,uint256)": EventFragment;
-    "LiquidityRemoved(uint256,uint256)": EventFragment;
+    "LiquidityChanged(uint256,uint8,uint256)": EventFragment;
     "LoanReturned(uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "PaymentTokenChange(address,bool)": EventFragment;
@@ -549,11 +545,7 @@ interface EnterpriseInterface extends ethers.utils.Interface {
   getEvent(
     nameOrSignatureOrTopic: "InterestGapHalvingPeriodChanged"
   ): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "InterestWithdrawn"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "LiquidityAdded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "LiquidityDecreased"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "LiquidityIncreased"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "LiquidityRemoved"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LiquidityChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LoanReturned"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PaymentTokenChange"): EventFragment;
@@ -1598,44 +1590,13 @@ export class Enterprise extends BaseContract {
       period?: null
     ): TypedEventFilter<[number], { period: number }>;
 
-    InterestWithdrawn(
+    LiquidityChanged(
       interestTokenId?: BigNumberish | null,
+      changeType?: BigNumberish | null,
       amount?: null
     ): TypedEventFilter<
-      [BigNumber, BigNumber],
-      { interestTokenId: BigNumber; amount: BigNumber }
-    >;
-
-    LiquidityAdded(
-      interestTokenId?: BigNumberish | null,
-      amount?: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber],
-      { interestTokenId: BigNumber; amount: BigNumber }
-    >;
-
-    LiquidityDecreased(
-      interestTokenId?: BigNumberish | null,
-      amount?: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber],
-      { interestTokenId: BigNumber; amount: BigNumber }
-    >;
-
-    LiquidityIncreased(
-      interestTokenId?: BigNumberish | null,
-      amount?: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber],
-      { interestTokenId: BigNumber; amount: BigNumber }
-    >;
-
-    LiquidityRemoved(
-      interestTokenId?: BigNumberish | null,
-      amount?: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber],
-      { interestTokenId: BigNumber; amount: BigNumber }
+      [BigNumber, number, BigNumber],
+      { interestTokenId: BigNumber; changeType: number; amount: BigNumber }
     >;
 
     LoanReturned(

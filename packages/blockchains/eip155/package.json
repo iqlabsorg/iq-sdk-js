@@ -7,8 +7,8 @@
     "build": "tsdx build --tsconfig tsconfig.build.json",
     "test": "tsdx test --group=unit",
     "test:integration": "tsdx test --group=integration",
-    "prepublish": "yarn build",
-    "postinstall": "run-s typechain:clean typechain:generate",
+    "prepublish": "run-s typechain build",
+    "typechain": "run-s typechain:clean typechain:generate",
     "typechain:clean": "rimraf types/contracts",
     "typechain:generate": "typechain --target ethers-v5 --out-dir types/contracts './node_modules/@iqprotocol/solidity-contracts/artifacts/contracts/**/*.json'"
   },
@@ -28,7 +28,7 @@
     "ethers": "^5.3.1"
   },
   "devDependencies": {
-    "@iqprotocol/solidity-contracts": "https://github.com/iqalliance/iq-smart-contracts#73473ac4b8ec0eda00dde38306bfc6696d501262",
+    "@iqprotocol/solidity-contracts": "https://github.com/iqalliance/iq-smart-contracts#4c986c6",
     "@typechain/ethers-v5": "^7.0.1",
     "hardhat": "^2.4.1",
     "hardhat-deploy": "^0.8.8",
