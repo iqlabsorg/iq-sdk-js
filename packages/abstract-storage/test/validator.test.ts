@@ -32,7 +32,7 @@ describe('DefaultValidator', () => {
       power: 10n,
       lockedPower: 2n,
       energy: 5n,
-      energyChangedAt: Math.floor(Date.now() / 1000),
+      energyCalculatedAt: Math.floor(Date.now() / 1000),
     };
 
     test.each(<Array<keyof AccountState>>[
@@ -41,7 +41,7 @@ describe('DefaultValidator', () => {
       'power',
       'lockedPower',
       'energy',
-      'energyChangedAt',
+      'energyCalculatedAt',
     ])('throws error when the "%s" is missing', prop => {
       expect(() => validator.validateAccountState({ ...accountState, [prop]: undefined })).toThrowError(
         `Empty ${prop}`,
@@ -53,8 +53,8 @@ describe('DefaultValidator', () => {
     });
 
     it('throws an error when the energyChangedAt is negative', () => {
-      expect(() => validator.validateAccountState({ ...accountState, energyChangedAt: -1 })).toThrowError(
-        'Negative energyChangedAt',
+      expect(() => validator.validateAccountState({ ...accountState, energyCalculatedAt: -1 })).toThrowError(
+        'Negative energyCalculatedAt',
       );
     });
   });

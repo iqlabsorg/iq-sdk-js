@@ -41,7 +41,7 @@ describe('AbstractStore', () => {
     power: 10n,
     lockedPower: 0n,
     energy: 5n,
-    energyChangedAt: Math.floor(Date.now() / 1000),
+    energyCalculatedAt: Math.floor(Date.now() / 1000),
   };
 
   beforeEach(() => {

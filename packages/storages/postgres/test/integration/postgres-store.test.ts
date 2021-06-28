@@ -27,7 +27,7 @@ describe('PostgresStore', () => {
     power: 10n,
     lockedPower: 2n,
     energy: 5n,
-    energyChangedAt: Math.floor(Date.now() / 1000),
+    energyCalculatedAt: Math.floor(Date.now() / 1000),
   };
 
   // see: https://github.com/testcontainers/testcontainers-node#docker-compose
@@ -147,7 +147,7 @@ describe('PostgresStore', () => {
             ...accountState,
             power: 15n,
             energy: 2n,
-            energyChangedAt: Number(Date.now() / 1000),
+            energyCalculatedAt: Number(Date.now() / 1000),
           };
           const stateChangeResult = await store.changeAccountState(accountState, newState);
           expect(stateChangeResult).toEqual(<AccountStateChangeResult>{

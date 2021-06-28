@@ -22,7 +22,7 @@ export class DefaultValidator implements AccountStateValidator {
       'power',
       'lockedPower',
       'energy',
-      'energyChangedAt',
+      'energyCalculatedAt',
     ];
 
     requiredProperties.forEach(propName => {
@@ -35,8 +35,8 @@ export class DefaultValidator implements AccountStateValidator {
       throw new Error('Negative power');
     }
 
-    if (accountState.energyChangedAt < 0) {
-      throw new Error('Negative energyChangedAt');
+    if (accountState.energyCalculatedAt < 0) {
+      throw new Error('Negative energyCalculatedAt');
     }
   }
 }
