@@ -35,6 +35,10 @@ export class DefaultValidator implements AccountStateValidator {
       throw new Error('Negative power');
     }
 
+    if (accountState.lockedPower < 0) {
+      throw new Error('Negative locked power');
+    }
+
     if (accountState.energyCalculatedAt < 0) {
       throw new Error('Negative energyCalculatedAt');
     }

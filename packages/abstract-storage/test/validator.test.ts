@@ -52,6 +52,12 @@ describe('DefaultValidator', () => {
       expect(() => validator.validateAccountState({ ...accountState, power: -5n })).toThrowError('Negative power');
     });
 
+    it('throws an error when the locked power is negative', () => {
+      expect(() => validator.validateAccountState({ ...accountState, lockedPower: -5n })).toThrowError(
+        'Negative locked power',
+      );
+    });
+
     it('throws an error when the energyChangedAt is negative', () => {
       expect(() => validator.validateAccountState({ ...accountState, energyCalculatedAt: -1 })).toThrowError(
         'Negative energyCalculatedAt',
