@@ -66,7 +66,7 @@ export const expectCorrectDatabaseStructure = async (
         expect.objectContaining({ column_name: 'power', data_type: 'character varying' }),
         expect.objectContaining({ column_name: 'locked_power', data_type: 'character varying' }),
         expect.objectContaining({ column_name: 'energy', data_type: 'character varying' }),
-        expect.objectContaining({ column_name: 'energy_changed_at', data_type: 'timestamp without time zone' }),
+        expect.objectContaining({ column_name: 'energy_calculated_at', data_type: 'timestamp without time zone' }),
       ]),
     );
   });

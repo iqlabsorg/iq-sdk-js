@@ -24,7 +24,7 @@ export interface AccountState {
   power: bigint;
   lockedPower: bigint;
   energy: bigint;
-  energyChangedAt: number;
+  energyCalculatedAt: number;
 }
 
 export type AccountStateChangeResult = {
