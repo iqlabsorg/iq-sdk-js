@@ -24,7 +24,6 @@
   },
   "dependencies": {
     "@iqprotocol/abstract-blockchain": "^0.3.0",
-    "eth-sig-util": "^3.0.1",
     "ethers": "^5.3.1"
   },
   "devDependencies": {
