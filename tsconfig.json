@@ -6,14 +6,14 @@
     "baseUrl": ".",
     "typeRoots": ["./node_modules/@types", "./types"],
     "paths": {
-      "@iqprotocol/abstract-blockchain": ["packages/abstract-blockchain/src"],
-      "@iqprotocol/abstract-storage": ["packages/abstract-storage/src"],
-      "@iqprotocol/account": ["packages/account/src"],
-      "@iqprotocol/eip155": ["packages/blockchains/eip155/src"],
-      "@iqprotocol/energy": ["packages/energy/src"],
-      "@iqprotocol/enterprise": ["packages/enterprise/src"],
-      "@iqprotocol/in-memory-storage": ["packages/storages/in-memory/src"],
-      "@iqprotocol/postgres-storage": ["packages/storages/postgres/src"],
+      "@iqprotocol/abstract-blockchain/*": ["packages/abstract-blockchain/*"],
+      "@iqprotocol/abstract-storage/*": ["packages/abstract-storage/*"],
+      "@iqprotocol/account/*": ["packages/account/*"],
+      "@iqprotocol/eip155/*": ["packages/blockchains/eip155/*"],
+      "@iqprotocol/energy/*": ["packages/energy/*"],
+      "@iqprotocol/enterprise/*": ["packages/enterprise/*"],
+      "@iqprotocol/in-memory-storage/*": ["packages/storages/in-memory/*"],
+      "@iqprotocol/postgres-storage/*": ["packages/storages/postgres/*"],
       "$test/*": ["test/*"]
     }
   }
