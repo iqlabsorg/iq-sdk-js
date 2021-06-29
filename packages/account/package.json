@@ -1,0 +1,25 @@
+{
+  "name": "@iqprotocol/account",
+  "version": "0.1.0",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
+    "build": "tsdx build --tsconfig tsconfig.build.json",
+    "test": "tsdx test --group=unit",
+    "prepublish": "npm run build"
+  },
+  "main": "dist/index.js",
+  "module": "dist/account.esm.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "README.md",
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "dependencies": {
+    "@iqprotocol/abstract-storage": "^0.3.0",
+    "@iqprotocol/abstract-blockchain": "^0.3.0"
+  }
+}
