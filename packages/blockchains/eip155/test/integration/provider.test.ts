@@ -102,7 +102,7 @@ describe('EIP155BlockchainProvider', () => {
         name: baseEnterpriseParams.name,
         baseUri: baseEnterpriseParams.baseUri,
         totalShares: BigNumber.from(0),
-        interestGapHalvingPeriod: 4 * ONE_HOUR,
+        interestGapHalvingPeriod: 7 * ONE_DAY,
         borrowerLoanReturnGracePeriod: 12 * ONE_HOUR,
         enterpriseLoanCollectGracePeriod: ONE_DAY,
         gcFeePercent: 2 * ONE_PERCENT,
@@ -317,7 +317,8 @@ describe('EIP155BlockchainProvider', () => {
                 ONE_TOKEN.mul(1000),
                 10 * ONE_DAY,
               );
-              expect(estimate).toEqual(BigNumber.from('446760563380279107897')); // ~446 tokens
+
+              expect(estimate).toEqual(BigNumber.from('435295774647884690054')); // ~435 tokens
             });
 
             it('allows to borrow power tokens', async () => {
