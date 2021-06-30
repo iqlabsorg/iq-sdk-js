@@ -1365,9 +1365,9 @@
   resolved "https://registry.yarnpkg.com/@iqprotocol/abstract-storage/-/abstract-storage-0.3.0.tgz#0809be5e0e4f29a28b83835f47e01ad39650541d"
   integrity sha512-UXrns30E34YZcYCuhavOS6a1fGh6H/X1T3bfldWX+hPw+jd+r7nx/6BdDd1aLIB5Ij+zTIBCeHoWYuFKNA4VIA==
 
-"@iqprotocol/solidity-contracts@https://github.com/iqalliance/iq-smart-contracts#4c986c6":
+"@iqprotocol/solidity-contracts@https://github.com/iqalliance/iq-smart-contracts#c7365e64":
   version "0.1.0"
-  resolved "https://github.com/iqalliance/iq-smart-contracts#4c986c688bf806dfd526633437e988e4b044f79e"
+  resolved "https://github.com/iqalliance/iq-smart-contracts#c7365e6400402560c8b6be3c983f36b597a7ceb0"
 
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.1.0"
