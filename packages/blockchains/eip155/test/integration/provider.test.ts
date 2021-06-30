@@ -119,11 +119,6 @@ describe('EIP155BlockchainProvider', () => {
       expect(data).toMatchObject(expectedEnterpriseData);
     });
 
-    it('registers new services', async () => {
-      const receipt = await wait(blockchainProvider.registerService(enterprise.address, baseServiceParams));
-      expect(receipt.status).toBe(1);
-    });
-
     it('retrieves enterprise liquidity token metadata', async () => {
       const metadata = await blockchainProvider.getLiquidityTokenMetadata(enterprise.address);
       expect(metadata).toEqual(<ERC20Metadata>{
@@ -132,6 +127,67 @@ describe('EIP155BlockchainProvider', () => {
         symbol: 'TST',
         decimals: 18,
       });
+    });
+
+    it('registers new services', async () => {
+      const receipt = await wait(blockchainProvider.registerService(enterprise.address, baseServiceParams));
+      expect(receipt.status).toBe(1);
+    });
+
+    it('allows to set a collector address', async () => {
+      const collector = '0x17CdaD42F88fcecF77F53467B3c15613e8063adD';
+      await wait(blockchainProvider.setEnterpriseCollectorAddress(enterprise.address, collector));
+      await expect(blockchainProvider.getEnterpriseCollectorAddress(enterprise.address)).resolves.toEqual(collector);
+    });
+
+    it('allows to set an enterprise vault address', async () => {
+      const vault = '0x1E60bE47921E15FBc9e9246daC71F771d4b78a6c';
+      await wait(blockchainProvider.setEnterpriseVaultAddress(enterprise.address, vault));
+      await expect(blockchainProvider.getEnterpriseVaultAddress(enterprise.address)).resolves.toEqual(vault);
+    });
+
+    it('allows to set a converter address', async () => {
+      const converter = '0x312D566FABE323BA574fFf724d29c08F46b746b0';
+      await wait(blockchainProvider.setConverterAddress(enterprise.address, converter));
+      await expect(blockchainProvider.getConverterAddress(enterprise.address)).resolves.toEqual(converter);
+    });
+
+    it('allows to set a bonding curve', async () => {
+      await wait(blockchainProvider.setBondingCurve(enterprise.address, 10, 5));
+      await expect(blockchainProvider.getBondingCurve(enterprise.address)).resolves.toEqual({
+        pole: BigNumber.from(10),
+        slope: BigNumber.from(5),
+      });
+    });
+
+    it('allows to set a borrower return grace period', async () => {
+      const period = 3 * ONE_HOUR;
+      await wait(blockchainProvider.setBorrowerLoanReturnGracePeriod(enterprise.address, period));
+      await expect(blockchainProvider.getBorrowerLoanReturnGracePeriod(enterprise.address)).resolves.toEqual(period);
+    });
+
+    it('allows to set a collector grace period', async () => {
+      const period = 14 * ONE_HOUR;
+      await wait(blockchainProvider.setEnterpriseLoanCollectGracePeriod(enterprise.address, period));
+      await expect(blockchainProvider.getEnterpriseLoanCollectGracePeriod(enterprise.address)).resolves.toEqual(period);
+    });
+
+    it('allows to set enterprise base URI', async () => {
+      const uri = 'https://iq.space';
+      await wait(blockchainProvider.setBaseUri(enterprise.address, uri));
+      await expect(blockchainProvider.getBaseUri(enterprise.address)).resolves.toEqual(uri);
+    });
+
+    it('allows to set interest gap halving period', async () => {
+      const period = 6 * ONE_HOUR;
+      await wait(blockchainProvider.setInterestGapHalvingPeriod(enterprise.address, period));
+      await expect(blockchainProvider.getInterestGapHalvingPeriod(enterprise.address)).resolves.toEqual(period);
+    });
+
+    it('allows to set GC fee percent', async () => {
+      const percent = 200; // 2%
+      await wait(blockchainProvider.setGcFeePercent(enterprise.address, percent));
+      await expect(blockchainProvider.getGCFeePercent(enterprise.address)).resolves.toEqual(percent);
     });
 
     describe('When enterprise has registered services', () => {

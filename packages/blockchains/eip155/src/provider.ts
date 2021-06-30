@@ -168,13 +168,6 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
     return this.resolveEnterprise(enterpriseAddress).decreaseLiquidity(interestTokenId, amount);
   }
 
-  async setLiquidityAllowance(enterpriseAddress: Address, amount: BigNumberish): Promise<ContractTransaction> {
-    const enterprise = this.resolveEnterprise(enterpriseAddress);
-    const liquidityTokenAddress = await enterprise.getLiquidityToken();
-    const liquidityToken = this.resolveERC20Token(liquidityTokenAddress);
-    return liquidityToken.approve(enterprise.address, amount);
-  }
-
   async withdrawInterest(enterpriseAddress: Address, interestTokenId: BigNumberish): Promise<ContractTransaction> {
     return this.resolveEnterprise(enterpriseAddress).withdrawInterest(interestTokenId);
   }
@@ -198,6 +191,59 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
 
   async returnLoan(enterpriseAddress: Address, borrowTokenId: BigNumberish): Promise<ContractTransaction> {
     return this.resolveEnterprise(enterpriseAddress).returnLoan(borrowTokenId);
+  }
+
+  async setLiquidityAllowance(enterpriseAddress: Address, amount: BigNumberish): Promise<ContractTransaction> {
+    const enterprise = this.resolveEnterprise(enterpriseAddress);
+    const liquidityTokenAddress = await enterprise.getLiquidityToken();
+    const liquidityToken = this.resolveERC20Token(liquidityTokenAddress);
+    return liquidityToken.approve(enterprise.address, amount);
+  }
+
+  async setBaseUri(enterpriseAddress: Address, baseUri: string): Promise<ContractTransaction> {
+    return this.resolveEnterprise(enterpriseAddress).setBaseUri(baseUri);
+  }
+
+  async setBondingCurve(
+    enterpriseAddress: Address,
+    pole: BigNumberish,
+    slope: BigNumberish,
+  ): Promise<ContractTransaction> {
+    return this.resolveEnterprise(enterpriseAddress).setBondingCurve(pole, slope);
+  }
+
+  async setBorrowerLoanReturnGracePeriod(enterpriseAddress: Address, period: number): Promise<ContractTransaction> {
+    return this.resolveEnterprise(enterpriseAddress).setBorrowerLoanReturnGracePeriod(period);
+  }
+
+  async setConverterAddress(enterpriseAddress: Address, converterAddress: Address): Promise<ContractTransaction> {
+    return this.resolveEnterprise(enterpriseAddress).setConverter(converterAddress);
+  }
+
+  async setEnterpriseCollectorAddress(
+    enterpriseAddress: Address,
+    collectorAddress: Address,
+  ): Promise<ContractTransaction> {
+    return this.resolveEnterprise(enterpriseAddress).setEnterpriseCollector(collectorAddress);
+  }
+
+  async setEnterpriseLoanCollectGracePeriod(enterpriseAddress: Address, period: number): Promise<ContractTransaction> {
+    return this.resolveEnterprise(enterpriseAddress).setEnterpriseLoanCollectGracePeriod(period);
+  }
+
+  async setEnterpriseVaultAddress(enterpriseAddress: Address, vaultAddress: Address): Promise<ContractTransaction> {
+    return this.resolveEnterprise(enterpriseAddress).setEnterpriseVault(vaultAddress);
+  }
+
+  async setGcFeePercent(enterpriseAddress: Address, gcFeePercent: number): Promise<ContractTransaction> {
+    return this.resolveEnterprise(enterpriseAddress).setGcFeePercent(gcFeePercent);
+  }
+
+  async setInterestGapHalvingPeriod(
+    enterpriseAddress: Address,
+    interestGapHalvingPeriod: number,
+  ): Promise<ContractTransaction> {
+    return this.resolveEnterprise(enterpriseAddress).setInterestGapHalvingPeriod(interestGapHalvingPeriod);
   }
 
   async getReserve(enterpriseAddress: Address): Promise<BigNumber> {

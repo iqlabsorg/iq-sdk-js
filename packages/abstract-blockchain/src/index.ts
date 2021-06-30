@@ -144,6 +144,24 @@ export interface BlockchainProvider<Transaction = unknown, TransactionSigner = u
 
   returnLoan(enterpriseAddress: Address, borrowTokenId: BigNumberish): Promise<Transaction>;
 
+  setEnterpriseCollectorAddress(enterpriseAddress: Address, collectorAddress: Address): Promise<Transaction>;
+
+  setEnterpriseVaultAddress(enterpriseAddress: Address, vaultAddress: Address): Promise<Transaction>;
+
+  setConverterAddress(enterpriseAddress: Address, converterAddress: Address): Promise<Transaction>;
+
+  setBondingCurve(enterpriseAddress: Address, pole: BigNumberish, slope: BigNumberish): Promise<Transaction>;
+
+  setBorrowerLoanReturnGracePeriod(enterpriseAddress: Address, period: number): Promise<Transaction>;
+
+  setEnterpriseLoanCollectGracePeriod(enterpriseAddress: Address, period: number): Promise<Transaction>;
+
+  setBaseUri(enterpriseAddress: Address, baseUri: string): Promise<Transaction>;
+
+  setInterestGapHalvingPeriod(enterpriseAddress: Address, interestGapHalvingPeriod: number): Promise<Transaction>;
+
+  setGcFeePercent(enterpriseAddress: Address, gcFeePercent: number): Promise<Transaction>;
+
   setLiquidityAllowance(enterpriseAddress: Address, amount: BigNumberish): Promise<Transaction>;
 
   isRegisteredService(enterpriseAddress: Address, serviceAddress: Address): Promise<boolean>;
