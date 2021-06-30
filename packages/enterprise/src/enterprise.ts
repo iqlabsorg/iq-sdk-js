@@ -192,4 +192,40 @@ export class Enterprise<Transaction = unknown> {
   async getGCFeePercent(): Promise<number> {
     return this.blockchain.getGCFeePercent(this.address);
   }
+
+  async setCollectorAddress(collectorAddress: Address): Promise<Transaction> {
+    return this.blockchain.setEnterpriseCollectorAddress(this.address, collectorAddress);
+  }
+
+  async setVaultAddress(vaultAddress: Address): Promise<Transaction> {
+    return this.blockchain.setEnterpriseVaultAddress(this.address, vaultAddress);
+  }
+
+  async setConverterAddress(converterAddress: Address): Promise<Transaction> {
+    return this.blockchain.setConverterAddress(this.address, converterAddress);
+  }
+
+  async setBondingCurve(pole: BigNumberish, slope: BigNumberish): Promise<Transaction> {
+    return this.blockchain.setBondingCurve(this.address, pole, slope);
+  }
+
+  async setBorrowerLoanReturnGracePeriod(period: number): Promise<Transaction> {
+    return this.blockchain.setBorrowerLoanReturnGracePeriod(this.address, period);
+  }
+
+  async setLoanCollectGracePeriod(period: number): Promise<Transaction> {
+    return this.blockchain.setEnterpriseLoanCollectGracePeriod(this.address, period);
+  }
+
+  async setBaseUri(baseUri: string): Promise<Transaction> {
+    return this.blockchain.setBaseUri(this.address, baseUri);
+  }
+
+  async setInterestGapHalvingPeriod(interestGapHalvingPeriod: number): Promise<Transaction> {
+    return this.blockchain.setInterestGapHalvingPeriod(this.address, interestGapHalvingPeriod);
+  }
+
+  async setGcFeePercent(gcFeePercent: number): Promise<Transaction> {
+    return this.blockchain.setGcFeePercent(this.address, gcFeePercent);
+  }
 }
