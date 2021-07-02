@@ -6,6 +6,7 @@ import { baseRate, estimateAndBorrow, getEnterprise, getPowerToken, wait, waitBl
 import { DefaultConverter, Enterprise, EnterpriseFactory, ERC20Mock } from '../../types/contracts';
 import {
   AccountState,
+  Address,
   BigNumber,
   EnterpriseInfo,
   EnterpriseParams,
@@ -191,8 +192,9 @@ describe('EIP155BlockchainProvider', () => {
     });
 
     describe('When enterprise has registered services', () => {
+      let service1Address: Address;
+      let service2Address: Address;
       let expectedServiceData1: ServiceInfo;
-      let expectedServiceData2: ServiceInfo;
 
       beforeEach(async () => {
         const liquidityTokenSymbol = await liquidityToken.symbol();
@@ -214,7 +216,7 @@ describe('EIP155BlockchainProvider', () => {
           symbol: 'IQPT1',
         };
         const r1 = await wait(blockchainProvider.registerService(enterprise.address, serviceParams1));
-        const service1Address = (await getPowerToken(enterprise, r1.blockNumber)).address;
+        service1Address = (await getPowerToken(enterprise, r1.blockNumber)).address;
         expectedServiceData1 = {
           ...baseExpectedServiceData,
           address: service1Address,
@@ -230,32 +232,25 @@ describe('EIP155BlockchainProvider', () => {
           symbol: 'IQPT2',
         };
         const r2 = await wait(blockchainProvider.registerService(enterprise.address, serviceParams2));
-        const service2Address = (await getPowerToken(enterprise, r2.blockNumber)).address;
-        expectedServiceData2 = {
-          ...baseExpectedServiceData,
-          address: service2Address,
-          name: serviceParams2.name,
-          symbol: `${liquidityTokenSymbol} ${serviceParams2.symbol}`,
-          index: 1,
-        };
+        service2Address = (await getPowerToken(enterprise, r2.blockNumber)).address;
       });
 
       it('lists enterprise services', async () => {
         const services = await blockchainProvider.getServices(enterprise.address);
         expect(services).toHaveLength(2);
 
-        expect(services[0]).toEqual(expectedServiceData1.address);
-        expect(services[1]).toEqual(expectedServiceData2.address);
+        expect(services[0]).toEqual(service1Address);
+        expect(services[1]).toEqual(service2Address);
       });
 
       it('retrieves the service data', async () => {
-        const service = await blockchainProvider.getServiceInfo(expectedServiceData2.address);
-        expect(service).toMatchObject(expectedServiceData2);
+        const service = await blockchainProvider.getServiceInfo(service1Address);
+        expect(service).toMatchObject(expectedServiceData1);
       });
 
       it('retrieves account state for specific service', async () => {
         const accountAddress = await deployerSigner.getAddress();
-        const serviceAddress = expectedServiceData1.address;
+        const serviceAddress = service1Address;
 
         const accountState = await blockchainProvider.getAccountState(serviceAddress, accountAddress);
         expect(accountState).toMatchObject(<AccountState>{
@@ -265,6 +260,52 @@ describe('EIP155BlockchainProvider', () => {
           energy: BigNumber.from(0),
           timestamp: 0,
         });
+      });
+
+      it('retrieves the service gap halving period', async () => {
+        await expect(blockchainProvider.getGapHalvingPeriod(service1Address)).resolves.toEqual(
+          expectedServiceData1.gapHalvingPeriod,
+        );
+      });
+
+      it('retrieves the service index', async () => {
+        await expect(blockchainProvider.getServiceIndex(service1Address)).resolves.toEqual(expectedServiceData1.index);
+      });
+
+      it('retrieves the service fee percent', async () => {
+        await expect(blockchainProvider.getServiceFeePercent(service1Address)).resolves.toEqual(
+          expectedServiceData1.serviceFeePercent,
+        );
+      });
+
+      it('retrieves the service perpetual token flag', async () => {
+        await expect(blockchainProvider.getAllowsPerpetual(service1Address)).resolves.toEqual(
+          expectedServiceData1.allowsPerpetual,
+        );
+      });
+
+      it('allows to set service base rate', async () => {
+        const baseRate = BigNumber.from(10);
+        const baseToken = '0xBC7024d93ae7db4a60E0720c09127A49477aea80';
+        const minGCFee = BigNumber.from(2);
+        await wait(blockchainProvider.setBaseRate(service1Address, baseRate, baseToken, minGCFee));
+        await expect(blockchainProvider.getBaseRate(service1Address)).resolves.toEqual(baseRate);
+        await expect(blockchainProvider.getBaseTokenAddress(service1Address)).resolves.toEqual(baseToken);
+        await expect(blockchainProvider.getMinGCFee(service1Address)).resolves.toEqual(minGCFee);
+      });
+
+      it('allows to set service fee percent', async () => {
+        const feePercent = ONE_PERCENT * 12;
+        await wait(blockchainProvider.setServiceFeePercent(service1Address, feePercent));
+        await expect(blockchainProvider.getServiceFeePercent(service1Address)).resolves.toEqual(feePercent);
+      });
+
+      it('allows to set service loan duration limits', async () => {
+        const minLoanDuration = 8 * ONE_HOUR;
+        const maxLoanDuration = 10 * ONE_DAY;
+        await wait(blockchainProvider.setLoanDurationLimits(service1Address, minLoanDuration, maxLoanDuration));
+        await expect(blockchainProvider.getMinLoanDuration(service1Address)).resolves.toEqual(minLoanDuration);
+        await expect(blockchainProvider.getMaxLoanDuration(service1Address)).resolves.toEqual(maxLoanDuration);
       });
 
       describe('When there is a liquidity provider', () => {

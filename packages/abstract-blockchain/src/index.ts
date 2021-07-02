@@ -229,7 +229,41 @@ export interface BlockchainProvider<Transaction = unknown, TransactionSigner = u
   ): Promise<BigNumber>;
 
   // Service
+
+  setBaseRate(
+    serviceAddress: Address,
+    baseRate: BigNumberish,
+    baseToken: string,
+    minGCFee: BigNumberish,
+  ): Promise<Transaction>;
+
+  setServiceFeePercent(serviceAddress: Address, feePercent: BigNumberish): Promise<Transaction>;
+
+  setLoanDurationLimits(
+    serviceAddress: Address,
+    minLoanDuration: BigNumberish,
+    maxLoanDuration: BigNumberish,
+  ): Promise<Transaction>;
+
   getServiceInfo(serviceAddress: Address): Promise<ServiceInfo>;
 
   getAccountState(serviceAddress: Address, accountAddress: Address): Promise<AccountState>;
+
+  getBaseRate(serviceAddress: Address): Promise<BigNumber>;
+
+  getMinGCFee(serviceAddress: Address): Promise<BigNumber>;
+
+  getGapHalvingPeriod(serviceAddress: Address): Promise<number>;
+
+  getServiceIndex(serviceAddress: Address): Promise<number>;
+
+  getBaseTokenAddress(serviceAddress: Address): Promise<Address>;
+
+  getMinLoanDuration(serviceAddress: Address): Promise<number>;
+
+  getMaxLoanDuration(serviceAddress: Address): Promise<number>;
+
+  getServiceFeePercent(serviceAddress: Address): Promise<number>;
+
+  getAllowsPerpetual(serviceAddress: Address): Promise<boolean>;
 }
