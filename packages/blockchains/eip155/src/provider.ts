@@ -415,6 +415,27 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
     return this.resolveEnterprise(enterpriseAddress).getProxyAdmin();
   }
 
+  async setBaseRate(
+    serviceAddress: Address,
+    baseRate: BigNumberish,
+    baseToken: Address,
+    minGCFee: BigNumberish,
+  ): Promise<ContractTransaction> {
+    return this.resolvePowerToken(serviceAddress).setBaseRate(baseRate, baseToken, minGCFee);
+  }
+
+  async setLoanDurationLimits(
+    serviceAddress: Address,
+    minLoanDuration: BigNumberish,
+    maxLoanDuration: BigNumberish,
+  ): Promise<ContractTransaction> {
+    return this.resolvePowerToken(serviceAddress).setLoanDurationLimits(minLoanDuration, maxLoanDuration);
+  }
+
+  async setServiceFeePercent(serviceAddress: Address, feePercent: BigNumberish): Promise<ContractTransaction> {
+    return this.resolvePowerToken(serviceAddress).setServiceFeePercent(feePercent);
+  }
+
   async getServiceInfo(serviceAddress: Address): Promise<ServiceInfo> {
     const powerToken = this.resolvePowerToken(serviceAddress);
 
@@ -459,6 +480,42 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
       energy,
       timestamp,
     };
+  }
+
+  async getAllowsPerpetual(serviceAddress: Address): Promise<boolean> {
+    return this.resolvePowerToken(serviceAddress).getAllowsPerpetual();
+  }
+
+  async getBaseRate(serviceAddress: Address): Promise<BigNumber> {
+    return this.resolvePowerToken(serviceAddress).getBaseRate();
+  }
+
+  async getBaseTokenAddress(serviceAddress: Address): Promise<Address> {
+    return this.resolvePowerToken(serviceAddress).getBaseToken();
+  }
+
+  async getGapHalvingPeriod(serviceAddress: Address): Promise<number> {
+    return this.resolvePowerToken(serviceAddress).getGapHalvingPeriod();
+  }
+
+  async getMaxLoanDuration(serviceAddress: Address): Promise<number> {
+    return this.resolvePowerToken(serviceAddress).getMaxLoanDuration();
+  }
+
+  async getMinGCFee(serviceAddress: Address): Promise<BigNumber> {
+    return this.resolvePowerToken(serviceAddress).getMinGCFee();
+  }
+
+  async getMinLoanDuration(serviceAddress: Address): Promise<number> {
+    return this.resolvePowerToken(serviceAddress).getMinLoanDuration();
+  }
+
+  async getServiceFeePercent(serviceAddress: Address): Promise<number> {
+    return this.resolvePowerToken(serviceAddress).getServiceFeePercent();
+  }
+
+  async getServiceIndex(serviceAddress: Address): Promise<number> {
+    return this.resolvePowerToken(serviceAddress).getIndex();
   }
 
   protected resolveEnterpriseFactory(): EnterpriseFactory {
