@@ -1,4 +1,4 @@
-import { BigNumber, BigNumberish } from 'ethers';
+import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
 import { AccountID, ChainID } from 'caip';
 
 export { ChainID, AccountID };
