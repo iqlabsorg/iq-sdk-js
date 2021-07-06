@@ -1,6 +1,6 @@
 {
   "name": "@iqprotocol/enterprise",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "license": "UNLICENSED",
   "scripts": {
     "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
@@ -19,6 +19,6 @@
     "access": "restricted"
   },
   "dependencies": {
-    "@iqprotocol/abstract-blockchain": "^0.4.0"
+    "@iqprotocol/abstract-blockchain": "^0.5.0"
   }
 }
