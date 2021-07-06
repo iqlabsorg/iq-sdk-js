@@ -24,13 +24,13 @@
   },
   "dependencies": {
     "@iqprotocol/abstract-blockchain": "^0.4.0",
-    "ethers": "^5.4.0"
+    "ethers": "5.3.1"
   },
   "devDependencies": {
     "@iqprotocol/solidity-contracts": "https://github.com/iqalliance/iq-smart-contracts#c7365e64",
     "@typechain/ethers-v5": "^7.0.1",
     "hardhat": "^2.4.1",
-    "hardhat-deploy": "^0.8.8",
+    "hardhat-deploy": "^0.8.9",
     "hardhat-deploy-ethers": "^0.3.0-beta.10",
     "typechain": "^5.1.1"
   }
