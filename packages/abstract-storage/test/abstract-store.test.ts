@@ -31,7 +31,7 @@ describe('AbstractStore', () => {
   const account: Account = {
     id: 'test-id',
     data: {
-      proof: 'test-proof',
+      proof: { v: '1', sig: 'signature' },
     },
   };
 
