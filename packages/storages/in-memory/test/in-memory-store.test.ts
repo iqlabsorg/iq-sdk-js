@@ -10,7 +10,7 @@ describe('InMemoryStore', () => {
   const account: Account = {
     id: 'test-id',
     data: {
-      proof: 'test-proof',
+      proof: { v: '1', sig: 'signature' },
     },
   };
 
@@ -65,7 +65,7 @@ describe('InMemoryStore', () => {
       const updatedAccount = <Account>{
         ...account,
         data: {
-          proof: 'updated-proof',
+          proof: { v: '2', sig: 'new-signature' },
           newKey: { list: ['a', 'b'], number: 42 },
         },
       };

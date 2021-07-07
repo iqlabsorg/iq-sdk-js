@@ -3,9 +3,11 @@ export interface Account {
   data: AccountData;
 }
 
+export type AccountOwnershipProof = { v: string; sig: string };
+
 export type AccountData = Serializable & {
-  proof?: string;
-  authorizedKeys?: string[]; // todo: consider explicit JWK compatible type
+  proof: AccountOwnershipProof;
+  // authorizedKeys?: string[]; // todo: consider JWK compatible type
 };
 
 type Serializable =
