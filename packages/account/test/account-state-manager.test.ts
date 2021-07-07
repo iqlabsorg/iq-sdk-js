@@ -36,6 +36,7 @@ describe('AccountStateManager', () => {
     serviceId: serviceId.toString(),
     power: 10n,
     lockedPower: 0n,
+    energyCap: 5n,
     energy: 5n,
     energyCalculatedAt: timestamp,
   };

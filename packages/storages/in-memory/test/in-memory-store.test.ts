@@ -19,6 +19,7 @@ describe('InMemoryStore', () => {
     serviceId: 'test-service',
     power: 10n,
     lockedPower: 2n,
+    energyCap: 5n,
     energy: 5n,
     energyCalculatedAt: Math.floor(Date.now() / 1000),
   };

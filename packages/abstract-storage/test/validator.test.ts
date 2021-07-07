@@ -31,6 +31,7 @@ describe('DefaultValidator', () => {
       serviceId: 'test-service',
       power: 10n,
       lockedPower: 2n,
+      energyCap: 5n,
       energy: 5n,
       energyCalculatedAt: Math.floor(Date.now() / 1000),
     };
@@ -58,10 +59,20 @@ describe('DefaultValidator', () => {
       );
     });
 
-    it('throws an error when the energyChangedAt is negative', () => {
+    it('throws an error when the energyCalculatedAt is negative', () => {
       expect(() => validator.validateAccountState({ ...accountState, energyCalculatedAt: -1 })).toThrowError(
-        'Negative energyCalculatedAt',
+        'Negative energy calculation time',
       );
+    });
+
+    it('throws an error when the energyCap is negative', () => {
+      expect(() => validator.validateAccountState({ ...accountState, energyCap: -1n })).toThrowError(
+        'Negative energy cap',
+      );
+    });
+
+    it('throws an error when the energy surpasses max cap', () => {
+      expect(() => validator.validateAccountState({ ...accountState, energyCap: 3n })).toThrowError('Energy above cap');
     });
   });
 });

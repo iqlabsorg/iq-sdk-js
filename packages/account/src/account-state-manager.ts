@@ -22,6 +22,7 @@ export class AccountStateManager {
     accountId,
     power,
     lockedPower,
+    energyCap,
     energy,
     energyCalculatedAt,
   }: Omit<AccountState, 'serviceId' | 'accountId'> & {
@@ -34,6 +35,7 @@ export class AccountStateManager {
       accountId: accountId.toString(),
       power,
       lockedPower,
+      energyCap,
       energy,
       energyCalculatedAt,
     });
@@ -48,6 +50,7 @@ export class AccountStateManager {
         accountId,
         power: balance.toBigInt(),
         lockedPower: 0n,
+        energyCap: energy.toBigInt(),
         energy: energy.toBigInt(),
         energyCalculatedAt: timestamp,
       });

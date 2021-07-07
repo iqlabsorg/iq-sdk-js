@@ -26,6 +26,7 @@ describe('PostgresStore', () => {
     serviceId: 'test-service',
     power: 10n,
     lockedPower: 2n,
+    energyCap: 8n,
     energy: 5n,
     energyCalculatedAt: Math.floor(Date.now() / 1000),
   };
