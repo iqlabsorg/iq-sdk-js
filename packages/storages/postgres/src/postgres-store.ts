@@ -41,6 +41,7 @@ export class PostgresStore extends AbstractStore {
       accountId: String(row.account_id),
       power: BigInt(row.power as string),
       lockedPower: BigInt(row.locked_power as string),
+      energyCap: BigInt(row.energy_cap as string),
       energy: BigInt(row.energy as string),
       energyCalculatedAt: Number(row.energy_calculated_at),
     };
@@ -61,6 +62,7 @@ export class PostgresStore extends AbstractStore {
           account_id varchar NOT NULL REFERENCES ${this.accountTableName} ON UPDATE RESTRICT ON DELETE RESTRICT,
           power varchar NOT NULL,
           locked_power varchar NOT NULL,
+          energy_cap varchar NOT NULL,
           energy varchar NOT NULL,
           energy_calculated_at timestamp NOT NULL,
           PRIMARY KEY (service_id, account_id)
@@ -114,6 +116,7 @@ export class PostgresStore extends AbstractStore {
     serviceId,
     power,
     lockedPower,
+    energyCap,
     energy,
     energyCalculatedAt,
   }: AccountState): Promise<AccountState> {
@@ -124,6 +127,7 @@ export class PostgresStore extends AbstractStore {
             service_id,
             power,
             locked_power,
+            energy_cap,
             energy,
             energy_calculated_at
           ) VALUES (
@@ -131,6 +135,7 @@ export class PostgresStore extends AbstractStore {
             ${serviceId},
             ${power.toString(10)},
             ${lockedPower.toString(10)},
+            ${energyCap.toString(10)},
             ${energy.toString(10)},
             to_timestamp(${energyCalculatedAt})
           )
@@ -164,6 +169,7 @@ export class PostgresStore extends AbstractStore {
             AND service_id = ${prevState.serviceId}
             AND power = ${prevState.power.toString(10)}
             AND locked_power = ${prevState.lockedPower.toString(10)}
+            AND energy_cap = ${prevState.energyCap.toString(10)}
             AND energy = ${prevState.energy.toString(10)}
             AND energy_calculated_at = to_timestamp(${prevState.energyCalculatedAt})
           RETURNING *, EXTRACT(EPOCH FROM energy_calculated_at) as energy_calculated_at
@@ -184,7 +190,7 @@ export class PostgresStore extends AbstractStore {
     accountId: string,
   ): Promise<ReturnType<QueryMaybeOneFunctionType>> {
     return connection.maybeOne(
-      sql`SELECT account_id, service_id, power, locked_power, energy , EXTRACT(EPOCH FROM energy_calculated_at) as energy_calculated_at
+      sql`SELECT account_id, service_id, power, locked_power, energy_cap, energy, EXTRACT(EPOCH FROM energy_calculated_at) as energy_calculated_at
           FROM ${this.stateTableName}
           WHERE service_id = ${serviceId}
             AND account_id = ${accountId}

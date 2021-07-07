@@ -25,6 +25,7 @@ export interface AccountState {
   accountId: string;
   power: bigint;
   lockedPower: bigint;
+  energyCap: bigint;
   energy: bigint;
   energyCalculatedAt: number;
 }

@@ -40,6 +40,7 @@ describe('AbstractStore', () => {
     serviceId: 'test-service',
     power: 10n,
     lockedPower: 0n,
+    energyCap: 5n,
     energy: 5n,
     energyCalculatedAt: Math.floor(Date.now() / 1000),
   };

@@ -21,6 +21,7 @@ export class DefaultValidator implements AccountStateValidator {
       'accountId',
       'power',
       'lockedPower',
+      'energyCap',
       'energy',
       'energyCalculatedAt',
     ];
@@ -39,8 +40,16 @@ export class DefaultValidator implements AccountStateValidator {
       throw new Error('Negative locked power');
     }
 
+    if (accountState.energyCap < 0) {
+      throw new Error('Negative energy cap');
+    }
+
+    if (accountState.energy > accountState.energyCap) {
+      throw new Error('Energy above cap');
+    }
+
     if (accountState.energyCalculatedAt < 0) {
-      throw new Error('Negative energyCalculatedAt');
+      throw new Error('Negative energy calculation time');
     }
   }
 }
