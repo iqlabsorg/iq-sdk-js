@@ -28,7 +28,7 @@ describe('AccountStateManager', () => {
   const account: Account = {
     id: accountId.toString(),
     data: {
-      proof: 'test-proof',
+      proof: { v: '1', sig: 'signature' },
     },
   };
   const accountState: AccountState = {
