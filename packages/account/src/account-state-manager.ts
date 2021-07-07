@@ -118,6 +118,7 @@ export class AccountStateManager {
     const currentState = await this.getInitializedAccountState(serviceId, accountId);
     const newState = <AccountState>{
       ...currentState,
+      energyCap: currentState.energyCap - energy,
       energy: currentState.energy - energy,
       energyCalculatedAt: Math.floor(timestamp.getTime() / 1000),
     };
