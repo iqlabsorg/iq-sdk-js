@@ -67,6 +67,6 @@ export const estimateAndBorrow = async (
     duration,
   );
 
-  await wait(provider.setLiquidityAllowance(enterpriseAddress, estimate));
+  await wait(provider.approveLiquidityTokensToEnterprise(enterpriseAddress, estimate));
   await wait(provider.borrow(enterpriseAddress, serviceAddress, paymentTokenAddress, loanAmount, duration, estimate));
 };
