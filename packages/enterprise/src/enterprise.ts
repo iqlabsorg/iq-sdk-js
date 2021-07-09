@@ -130,11 +130,11 @@ export class Enterprise<Transaction = unknown> {
   }
 
   async setLiquidityAllowance(amount: BigNumberish): Promise<Transaction> {
-    return this.blockchain.setLiquidityAllowance(this.address, amount);
+    return this.blockchain.approveLiquidityTokensToEnterprise(this.address, amount);
   }
 
   async getLiquidityAllowance(accountAddress?: Address): Promise<BigNumber> {
-    return this.blockchain.getLiquidityAllowance(this.address, accountAddress);
+    return this.blockchain.getLiquidityTokenEnterpriseAllowance(this.address, accountAddress);
   }
 
   async isRegisteredService(serviceAddress: Address): Promise<boolean> {

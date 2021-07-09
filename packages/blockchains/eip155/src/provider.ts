@@ -75,9 +75,8 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
   }
 
   async getTokenBalance(tokenAddress: Address, accountAddress?: Address): Promise<BigNumber> {
-    return this.resolveERC20Token(tokenAddress).balanceOf(
-      accountAddress ? accountAddress : await this.signer.getAddress(),
-    );
+    const targetAccountAddress = await this.withFallbackToSignerAddress(accountAddress);
+    return this.resolveERC20Token(tokenAddress).balanceOf(targetAccountAddress);
   }
 
   async deployEnterprise(params: EnterpriseParams): Promise<ContractTransaction> {
@@ -194,11 +193,13 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
     return this.resolveEnterprise(enterpriseAddress).returnLoan(borrowTokenId);
   }
 
-  async setLiquidityAllowance(enterpriseAddress: Address, amount: BigNumberish): Promise<ContractTransaction> {
+  async approveLiquidityTokensToEnterprise(
+    enterpriseAddress: Address,
+    amount: BigNumberish,
+  ): Promise<ContractTransaction> {
     const enterprise = this.resolveEnterprise(enterpriseAddress);
     const liquidityTokenAddress = await enterprise.getLiquidityToken();
-    const liquidityToken = this.resolveERC20Token(liquidityTokenAddress);
-    return liquidityToken.approve(enterprise.address, amount);
+    return this.resolveERC20Token(liquidityTokenAddress).approve(enterprise.address, amount);
   }
 
   async setBaseUri(enterpriseAddress: Address, baseUri: string): Promise<ContractTransaction> {
@@ -278,12 +279,11 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
     return this.resolveEnterprise(enterpriseAddress).getAccruedInterest(interestTokenId);
   }
 
-  async getLiquidityAllowance(enterpriseAddress: Address, accountAddress?: Address): Promise<BigNumber> {
+  async getLiquidityTokenEnterpriseAllowance(enterpriseAddress: Address, accountAddress?: Address): Promise<BigNumber> {
     const enterprise = this.resolveEnterprise(enterpriseAddress);
     const liquidityTokenAddress = await enterprise.getLiquidityToken();
-    const liquidityToken = this.resolveERC20Token(liquidityTokenAddress);
-    const targetAccountAddress = accountAddress ? accountAddress : await this.signer.getAddress();
-    return liquidityToken.allowance(targetAccountAddress, enterprise.address);
+    const targetAccountAddress = await this.withFallbackToSignerAddress(accountAddress);
+    return this.resolveERC20Token(liquidityTokenAddress).allowance(targetAccountAddress, enterprise.address);
   }
 
   async getLiquidityTokenAddress(enterpriseAddress: Address): Promise<Address> {
@@ -314,7 +314,7 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
   }
 
   async getInterestTokenIds(enterpriseAddress: Address, accountAddress?: Address): Promise<BigNumber[]> {
-    const targetAccountAddress = accountAddress ? accountAddress : await this.signer.getAddress();
+    const targetAccountAddress = await this.withFallbackToSignerAddress(accountAddress);
     const tokenAddress = await this.getInterestTokenAddress(enterpriseAddress);
     const interestToken = this.resolveInterestToken(tokenAddress);
     const tokenCount = await interestToken.balanceOf(targetAccountAddress);
@@ -333,7 +333,7 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
   }
 
   async getBorrowTokenIds(enterpriseAddress: Address, accountAddress?: Address): Promise<BigNumber[]> {
-    const targetAccountAddress = accountAddress ? accountAddress : await this.signer.getAddress();
+    const targetAccountAddress = await this.withFallbackToSignerAddress(accountAddress);
     const tokenAddress = await this.getBorrowTokenAddress(enterpriseAddress);
     const borrowToken = this.resolveBorrowToken(tokenAddress);
     const tokenCount = await borrowToken.balanceOf(targetAccountAddress);
@@ -416,6 +416,24 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
     return this.resolveEnterprise(enterpriseAddress).getProxyAdmin();
   }
 
+  async approveLiquidityTokensToService(serviceAddress: Address, amount: BigNumberish): Promise<ContractTransaction> {
+    const enterpriseAddress = await this.resolvePowerToken(serviceAddress).getEnterprise();
+    const liquidityTokenAddress = await this.resolveEnterprise(enterpriseAddress).getLiquidityToken();
+    return this.resolveERC20Token(liquidityTokenAddress).approve(serviceAddress, amount);
+  }
+
+  async wrap(serviceAddress: Address, amount: BigNumberish): Promise<ContractTransaction> {
+    return this.resolvePowerToken(serviceAddress).wrap(amount);
+  }
+
+  async wrapTo(serviceAddress: Address, accountAddress: Address, amount: BigNumberish): Promise<ContractTransaction> {
+    return this.resolvePowerToken(serviceAddress).wrapTo(accountAddress, amount);
+  }
+
+  async unwrap(serviceAddress: Address, amount: BigNumberish): Promise<ContractTransaction> {
+    return this.resolvePowerToken(serviceAddress).unwrap(amount);
+  }
+
   async setBaseRate(
     serviceAddress: Address,
     baseRate: BigNumberish,
@@ -470,13 +488,14 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
     };
   }
 
-  async getAccountState(serviceAddress: Address, accountAddress: Address): Promise<AccountState> {
+  async getAccountState(serviceAddress: Address, accountAddress?: Address): Promise<AccountState> {
+    const targetAccountAddress = await this.withFallbackToSignerAddress(accountAddress);
     const powerToken = this.resolvePowerToken(serviceAddress);
-    const balance = await powerToken.balanceOf(accountAddress);
-    const { energy, timestamp } = await powerToken.getState(accountAddress);
+    const balance = await powerToken.balanceOf(targetAccountAddress);
+    const { energy, timestamp } = await powerToken.getState(targetAccountAddress);
     return {
       serviceAddress,
-      accountAddress,
+      accountAddress: targetAccountAddress,
       balance,
       energy,
       timestamp,
@@ -519,6 +538,46 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
     return this.resolvePowerToken(serviceAddress).getIndex();
   }
 
+  async getLiquidityTokenServiceAllowance(serviceAddress: Address, accountAddress?: Address): Promise<BigNumber> {
+    const enterpriseAddress = await this.resolvePowerToken(serviceAddress).getEnterprise();
+    const liquidityTokenAddress = await this.resolveEnterprise(enterpriseAddress).getLiquidityToken();
+    const targetAccountAddress = await this.withFallbackToSignerAddress(accountAddress);
+    return this.resolveERC20Token(liquidityTokenAddress).allowance(targetAccountAddress, serviceAddress);
+  }
+
+  async getPowerTokenAvailableBalance(serviceAddress: Address, accountAddress?: Address): Promise<BigNumber> {
+    const targetAccountAddress = await this.withFallbackToSignerAddress(accountAddress);
+    return this.resolvePowerToken(serviceAddress).availableBalanceOf(targetAccountAddress);
+  }
+
+  async getPowerTokenBalance(serviceAddress: Address, accountAddress?: Address): Promise<BigNumber> {
+    const targetAccountAddress = await this.withFallbackToSignerAddress(accountAddress);
+    return this.resolvePowerToken(serviceAddress).balanceOf(targetAccountAddress);
+  }
+
+  async getEnergyAt(serviceAddress: Address, timestamp: number, accountAddress?: Address): Promise<BigNumber> {
+    const targetAccountAddress = await this.withFallbackToSignerAddress(accountAddress);
+    return this.resolvePowerToken(serviceAddress).energyAt(targetAccountAddress, timestamp);
+  }
+
+  async estimateLoanDetailed(
+    serviceAddress: Address,
+    paymentTokenAddress: Address,
+    amount: BigNumberish,
+    duration: BigNumberish,
+  ): Promise<{
+    interest: BigNumber;
+    serviceFee: BigNumber;
+    gcFee: BigNumber;
+  }> {
+    const { interest, serviceFee, gcFee } = await this.resolvePowerToken(serviceAddress).estimateLoanDetailed(
+      paymentTokenAddress,
+      amount,
+      duration,
+    );
+    return { interest, serviceFee, gcFee };
+  }
+
   protected resolveEnterpriseFactory(): EnterpriseFactory {
     return EnterpriseFactory__factory.connect(this.contracts.enterpriseFactory, this.signer);
   }
@@ -545,5 +604,9 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
 
   protected resolveERC721Token(tokenAddress: string): ERC721 {
     return ERC721__factory.connect(tokenAddress, this.signer);
+  }
+
+  protected async withFallbackToSignerAddress(accountAddress?: Address): Promise<Address> {
+    return accountAddress ? accountAddress : this.signer.getAddress();
   }
 }

@@ -83,6 +83,14 @@ export class Service<Transaction = unknown> {
     return this.blockchain.getAllowsPerpetual(this.address);
   }
 
+  async getLiquidityAllowance(accountAddress?: Address): Promise<BigNumber> {
+    return this.blockchain.getLiquidityTokenServiceAllowance(this.address, accountAddress);
+  }
+
+  async setLiquidityAllowance(amount: BigNumberish): Promise<Transaction> {
+    return this.blockchain.approveLiquidityTokensToService(this.address, amount);
+  }
+
   async setBaseRate(baseRate: BigNumberish, baseToken: Address, minGCFee: BigNumberish): Promise<Transaction> {
     return this.blockchain.setBaseRate(this.address, baseRate, baseToken, minGCFee);
   }
@@ -93,5 +101,41 @@ export class Service<Transaction = unknown> {
 
   async setServiceFeePercent(feePercent: BigNumberish): Promise<Transaction> {
     return this.blockchain.setServiceFeePercent(this.address, feePercent);
+  }
+
+  async wrap(amount: BigNumberish): Promise<Transaction> {
+    return this.blockchain.wrap(this.address, amount);
+  }
+
+  async wrapTo(accountAddress: Address, amount: BigNumberish): Promise<Transaction> {
+    return this.blockchain.wrapTo(this.address, accountAddress, amount);
+  }
+
+  async unwrap(amount: BigNumberish): Promise<Transaction> {
+    return this.blockchain.unwrap(this.address, amount);
+  }
+
+  async getAvailableBalance(accountAddress?: Address): Promise<BigNumber> {
+    return this.blockchain.getPowerTokenAvailableBalance(this.address, accountAddress);
+  }
+
+  async getBalance(accountAddress?: Address): Promise<BigNumber> {
+    return this.blockchain.getPowerTokenBalance(this.address, accountAddress);
+  }
+
+  async getEnergyAt(timestamp: number, accountAddress?: Address): Promise<BigNumber> {
+    return this.blockchain.getEnergyAt(this.address, timestamp, accountAddress);
+  }
+
+  async estimateLoanDetailed(
+    paymentTokenAddress: Address,
+    amount: BigNumberish,
+    duration: BigNumberish,
+  ): Promise<{
+    interest: BigNumber;
+    serviceFee: BigNumber;
+    gcFee: BigNumber;
+  }> {
+    return this.blockchain.estimateLoanDetailed(this.address, paymentTokenAddress, amount, duration);
   }
 }

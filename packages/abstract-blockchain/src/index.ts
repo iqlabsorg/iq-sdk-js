@@ -162,7 +162,7 @@ export interface BlockchainProvider<Transaction = unknown, TransactionSigner = u
 
   setGcFeePercent(enterpriseAddress: Address, gcFeePercent: number): Promise<Transaction>;
 
-  setLiquidityAllowance(enterpriseAddress: Address, amount: BigNumberish): Promise<Transaction>;
+  approveLiquidityTokensToEnterprise(enterpriseAddress: Address, amount: BigNumberish): Promise<Transaction>;
 
   isRegisteredService(enterpriseAddress: Address, serviceAddress: Address): Promise<boolean>;
 
@@ -200,7 +200,7 @@ export interface BlockchainProvider<Transaction = unknown, TransactionSigner = u
 
   getGCFeePercent(enterpriseAddress: Address): Promise<number>;
 
-  getLiquidityAllowance(enterpriseAddress: Address, accountAddress?: Address): Promise<BigNumber>;
+  getLiquidityTokenEnterpriseAllowance(enterpriseAddress: Address, accountAddress?: Address): Promise<BigNumber>;
 
   getLiquidityTokenAddress(enterpriseAddress: Address): Promise<Address>;
 
@@ -229,6 +229,14 @@ export interface BlockchainProvider<Transaction = unknown, TransactionSigner = u
   ): Promise<BigNumber>;
 
   // Service
+
+  approveLiquidityTokensToService(serviceAddress: Address, amount: BigNumberish): Promise<Transaction>;
+
+  wrap(serviceAddress: Address, amount: BigNumberish): Promise<Transaction>;
+
+  wrapTo(serviceAddress: Address, accountAddress: Address, amount: BigNumberish): Promise<Transaction>;
+
+  unwrap(serviceAddress: Address, amount: BigNumberish): Promise<Transaction>;
 
   setBaseRate(
     serviceAddress: Address,
@@ -266,4 +274,23 @@ export interface BlockchainProvider<Transaction = unknown, TransactionSigner = u
   getServiceFeePercent(serviceAddress: Address): Promise<number>;
 
   getAllowsPerpetual(serviceAddress: Address): Promise<boolean>;
+
+  getLiquidityTokenServiceAllowance(serviceAddress: Address, accountAddress?: Address): Promise<BigNumber>;
+
+  getPowerTokenAvailableBalance(serviceAddress: Address, accountAddress?: Address): Promise<BigNumber>;
+
+  getPowerTokenBalance(serviceAddress: Address, accountAddress?: Address): Promise<BigNumber>;
+
+  getEnergyAt(serviceAddress: Address, timestamp: number, accountAddress?: Address): Promise<BigNumber>;
+
+  estimateLoanDetailed(
+    serviceAddress: Address,
+    paymentTokenAddress: Address,
+    amount: BigNumberish,
+    duration: BigNumberish,
+  ): Promise<{
+    interest: BigNumber;
+    serviceFee: BigNumber;
+    gcFee: BigNumber;
+  }>;
 }
