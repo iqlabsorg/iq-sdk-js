@@ -7,8 +7,9 @@
     "build": "tsdx build --tsconfig tsconfig.build.json",
     "test": "tsdx test --group=unit",
     "test:integration": "tsdx test --group=integration",
-    "prepublish": "run-s typechain build",
+    "prepublish": "run-s typechain build typechain:types-to-dist",
     "typechain": "run-s typechain:clean typechain:generate",
+    "typechain:types-to-dist": "cp src/contracts/*.d.ts dist/contracts",
     "typechain:clean": "rimraf src/contracts",
     "typechain:generate": "typechain --target ethers-v5 --out-dir src/contracts './node_modules/@iqprotocol/solidity-contracts/artifacts/contracts/**/*.json'"
   },
