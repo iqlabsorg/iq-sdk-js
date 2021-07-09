@@ -14,7 +14,8 @@ import {
   InterestToken__factory,
   PowerToken,
   PowerToken__factory,
-} from '../types/contracts';
+} from './contracts';
+
 import {
   AccountState,
   Address,
