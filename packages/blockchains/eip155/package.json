@@ -9,8 +9,8 @@
     "test:integration": "tsdx test --group=integration",
     "prepublish": "run-s typechain build",
     "typechain": "run-s typechain:clean typechain:generate",
-    "typechain:clean": "rimraf types/contracts",
-    "typechain:generate": "typechain --target ethers-v5 --out-dir types/contracts './node_modules/@iqprotocol/solidity-contracts/artifacts/contracts/**/*.json'"
+    "typechain:clean": "rimraf src/contracts",
+    "typechain:generate": "typechain --target ethers-v5 --out-dir src/contracts './node_modules/@iqprotocol/solidity-contracts/artifacts/contracts/**/*.json'"
   },
   "main": "dist/index.js",
   "module": "dist/eip155.esm.js",

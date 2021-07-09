@@ -1,4 +1,4 @@
-import { Enterprise, EnterpriseFactory, PowerToken } from '../../types/contracts';
+import { Enterprise, EnterpriseFactory, PowerToken } from '../../src/contracts';
 import hre from 'hardhat';
 import { ContractReceipt, ContractTransaction } from 'ethers';
 import { Address, BlockchainProvider, BigNumberish } from '@iqprotocol/abstract-blockchain';

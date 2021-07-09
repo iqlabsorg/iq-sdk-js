@@ -3,7 +3,7 @@ import 'hardhat-deploy-ethers';
 import { formatUnits, parseEther } from 'ethers/lib/utils';
 import { EIP155BlockchainProvider } from '../../src';
 import { baseRate, estimateAndBorrow, getEnterprise, getPowerToken, wait, waitBlockchainTime } from './utils';
-import { DefaultConverter, Enterprise, EnterpriseFactory, ERC20Mock } from '../../types/contracts';
+import { DefaultConverter, Enterprise, EnterpriseFactory, ERC20Mock } from '../../src/contracts';
 import {
   AccountState,
   Address,
