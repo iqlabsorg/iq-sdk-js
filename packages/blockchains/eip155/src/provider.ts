@@ -16,6 +16,7 @@ import {
   PowerToken__factory,
 } from './contracts';
 
+import { pick } from './utils';
 import {
   AccountState,
   Address,
@@ -95,36 +96,22 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
 
   async getEnterpriseInfo(enterpriseAddress: Address): Promise<EnterpriseInfo> {
     const enterprise = this.resolveEnterprise(enterpriseAddress);
-    const {
-      name,
-      baseUri,
-      totalShares,
-      interestGapHalvingPeriod,
-      borrowerLoanReturnGracePeriod,
-      enterpriseLoanCollectGracePeriod,
-      gcFeePercent,
-      fixedReserve,
-      usedReserve,
-      streamingReserve,
-      streamingReserveTarget,
-      streamingReserveUpdated,
-    } = await enterprise.getInfo();
+    const info = pick(await enterprise.getInfo(), [
+      'name',
+      'baseUri',
+      'totalShares',
+      'interestGapHalvingPeriod',
+      'borrowerLoanReturnGracePeriod',
+      'enterpriseLoanCollectGracePeriod',
+      'gcFeePercent',
+      'fixedReserve',
+      'usedReserve',
+      'streamingReserve',
+      'streamingReserveTarget',
+      'streamingReserveUpdated',
+    ]);
 
-    return {
-      address: enterpriseAddress,
-      name,
-      baseUri,
-      totalShares,
-      interestGapHalvingPeriod,
-      borrowerLoanReturnGracePeriod,
-      enterpriseLoanCollectGracePeriod,
-      gcFeePercent,
-      fixedReserve,
-      usedReserve,
-      streamingReserve,
-      streamingReserveTarget,
-      streamingReserveUpdated,
-    };
+    return { address: enterpriseAddress, ...info };
   }
 
   async registerService(enterpriseAddress: Address, params: ServiceParams): Promise<ContractTransaction> {
@@ -328,8 +315,13 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
   }
 
   async getLiquidityInfo(enterpriseAddress: Address, interestTokenId: BigNumberish): Promise<LiquidityInfo> {
-    const { amount, shares, block } = await this.resolveEnterprise(enterpriseAddress).getLiquidityInfo(interestTokenId);
-    return { tokenId: BigNumber.from(interestTokenId), amount, shares, block };
+    const info = pick(await this.resolveEnterprise(enterpriseAddress).getLiquidityInfo(interestTokenId), [
+      'amount',
+      'shares',
+      'block',
+    ]);
+
+    return { tokenId: BigNumber.from(interestTokenId), ...info };
   }
 
   async getBorrowTokenIds(enterpriseAddress: Address, accountAddress?: Address): Promise<BigNumber[]> {
@@ -347,28 +339,18 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
   }
 
   async getLoanInfo(enterpriseAddress: Address, borrowTokenId: BigNumberish): Promise<LoanInfo> {
-    const {
-      amount,
-      powerTokenIndex,
-      borrowingTime,
-      maturityTime,
-      borrowerReturnGraceTime,
-      enterpriseCollectGraceTime,
-      gcFee,
-      gcFeeTokenIndex,
-    } = await this.resolveEnterprise(enterpriseAddress).getLoanInfo(borrowTokenId);
+    const info = pick(await this.resolveEnterprise(enterpriseAddress).getLoanInfo(borrowTokenId), [
+      'amount',
+      'powerTokenIndex',
+      'borrowingTime',
+      'maturityTime',
+      'borrowerReturnGraceTime',
+      'enterpriseCollectGraceTime',
+      'gcFee',
+      'gcFeeTokenIndex',
+    ]);
 
-    return {
-      tokenId: BigNumber.from(borrowTokenId),
-      amount,
-      powerTokenIndex,
-      borrowingTime,
-      maturityTime,
-      borrowerReturnGraceTime,
-      enterpriseCollectGraceTime,
-      gcFee,
-      gcFeeTokenIndex,
-    };
+    return { tokenId: BigNumber.from(borrowTokenId), ...info };
   }
 
   async isRegisteredService(enterpriseAddress: Address, serviceAddress: Address): Promise<boolean> {
@@ -380,8 +362,7 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
   }
 
   async getBondingCurve(enterpriseAddress: Address): Promise<{ pole: BigNumber; slope: BigNumber }> {
-    const { pole, slope } = await this.resolveEnterprise(enterpriseAddress).getBondingCurve();
-    return { pole, slope };
+    return pick(await this.resolveEnterprise(enterpriseAddress).getBondingCurve(), ['pole', 'slope']);
   }
 
   async getBorrowerLoanReturnGracePeriod(enterpriseAddress: Address): Promise<number> {
@@ -457,35 +438,21 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
 
   async getServiceInfo(serviceAddress: Address): Promise<ServiceInfo> {
     const powerToken = this.resolvePowerToken(serviceAddress);
+    const info = pick(await powerToken.getInfo(), [
+      'name',
+      'symbol',
+      'baseRate',
+      'minGCFee',
+      'gapHalvingPeriod',
+      'index',
+      'baseToken',
+      'minLoanDuration',
+      'maxLoanDuration',
+      'serviceFeePercent',
+      'allowsPerpetual',
+    ]);
 
-    const {
-      name,
-      symbol,
-      baseRate,
-      minGCFee,
-      gapHalvingPeriod,
-      index,
-      baseToken,
-      minLoanDuration,
-      maxLoanDuration,
-      serviceFeePercent,
-      allowsPerpetual,
-    } = await powerToken.getInfo();
-
-    return {
-      address: serviceAddress,
-      name,
-      symbol,
-      baseRate,
-      minGCFee,
-      gapHalvingPeriod,
-      index,
-      baseToken,
-      minLoanDuration,
-      maxLoanDuration,
-      serviceFeePercent,
-      allowsPerpetual,
-    };
+    return { address: serviceAddress, ...info };
   }
 
   async getAccountState(serviceAddress: Address, accountAddress?: Address): Promise<AccountState> {
@@ -570,12 +537,10 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
     serviceFee: BigNumber;
     gcFee: BigNumber;
   }> {
-    const { interest, serviceFee, gcFee } = await this.resolvePowerToken(serviceAddress).estimateLoanDetailed(
-      paymentTokenAddress,
-      amount,
-      duration,
+    return pick(
+      await this.resolvePowerToken(serviceAddress).estimateLoanDetailed(paymentTokenAddress, amount, duration),
+      ['interest', 'serviceFee', 'gcFee'],
     );
-    return { interest, serviceFee, gcFee };
   }
 
   protected resolveEnterpriseFactory(): EnterpriseFactory {
