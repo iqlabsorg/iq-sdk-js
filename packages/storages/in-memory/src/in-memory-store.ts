@@ -13,21 +13,24 @@ export type InMemoryStoreConfig = Partial<{
   validator: AccountStateValidator;
 }>;
 
+type AccountId = string;
+
 export class InMemoryStore extends AbstractStore {
-  private readonly accounts = new Map<string, Account>();
-  private readonly states = new Map<string, Map<string, AccountState>>();
+  private readonly accounts = new Map<AccountId, Account>();
+  private readonly states = new Map<AccountId, Map<string, AccountState>>();
 
   constructor(config?: InMemoryStoreConfig) {
     super({ validator: config?.validator });
 
     for (const account of config?.accounts ?? []) {
       this.accounts.set(account.id, account);
-      const accountStateMap = new Map(
-        config?.states
-          ?.filter((state: AccountState) => state.accountId === account.id)
-          .map(state => [state.serviceId, state]) ?? [],
-      );
-      this.states.set(account.id, accountStateMap);
+      const stateMap = new Map<AccountId, AccountState>();
+      for (const state of config?.states ?? []) {
+        if (state.accountId === account.id) {
+          stateMap.set(state.serviceId, state);
+        }
+      }
+      this.states.set(account.id, stateMap);
     }
   }
 
@@ -54,11 +57,7 @@ export class InMemoryStore extends AbstractStore {
   }
 
   async deleteAccountState(serviceId: string, accountId: string): Promise<boolean> {
-    const state = this.states.get(accountId);
-    if (!state?.has(serviceId)) {
-      return false;
-    }
-    return state.delete(serviceId);
+    return this.states.get(accountId)?.delete(serviceId) ?? false;
   }
 
   protected async _saveAccount(account: Account): Promise<Account> {
@@ -72,11 +71,10 @@ export class InMemoryStore extends AbstractStore {
       throw new Error('Unknown account');
     }
 
-    const state = this.states.get(accountId);
-    if (state?.has(serviceId)) {
+    if (this.states.get(accountId)?.has(serviceId)) {
       throw new Error('Already initialized');
     }
-    state?.set(serviceId, accountState);
+    this.states.set(accountId, new Map([[serviceId, accountState]]));
 
     return accountState;
   }
