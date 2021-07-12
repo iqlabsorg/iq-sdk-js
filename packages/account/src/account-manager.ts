@@ -30,6 +30,10 @@ export class AccountManager {
     return this.store.getAccount(accountId.toString());
   }
 
+  async deleteAccount(accountId: AccountID): Promise<boolean> {
+    return this.store.deleteAccount(accountId.toString());
+  }
+
   async createAccount(accountId: AccountID, data: AccountData): Promise<Account> {
     const existingAccount = await this.getAccount(accountId);
     if (existingAccount) {

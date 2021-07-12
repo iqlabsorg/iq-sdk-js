@@ -171,6 +171,12 @@ describe('AccountStateManager', () => {
             currentState: { ...initialState, lockedPower: initialState.lockedPower - 3n },
           });
         });
+
+        it('allows to delete account state for specific service', async () => {
+          await expect(accountStateManager.deleteAccountState(serviceId, accountId)).resolves.toEqual(true);
+          await expect(accountStateManager.getAccountState(serviceId, accountId)).resolves.toBeNull();
+          await expect(accountStateManager.deleteAccountState(serviceId, accountId)).resolves.toEqual(false);
+        });
       });
     });
   });
