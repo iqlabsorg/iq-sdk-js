@@ -143,6 +143,7 @@ describe('PostgresStore', () => {
       it('deletes the account ', async () => {
         await expect(store.deleteAccount(account.id)).resolves.toBe(true);
         await expect(store.getAccount(account.id)).resolves.toBeNull();
+        await expect(store.deleteAccount(account.id)).resolves.toBe(false);
       });
 
       describe('When account state is initialized', () => {
@@ -199,11 +200,13 @@ describe('PostgresStore', () => {
         it('deletes the account state', async () => {
           await expect(store.deleteAccountState(accountState.serviceId, accountState.accountId)).resolves.toBe(true);
           await expect(store.getAccountState(accountState.serviceId, accountState.accountId)).resolves.toBeNull();
+          await expect(store.deleteAccountState(accountState.serviceId, accountState.accountId)).resolves.toBe(false);
         });
 
         it('deletes the account state when account is deleted', async () => {
           await expect(store.deleteAccount(accountState.accountId)).resolves.toBe(true);
           await expect(store.getAccountState(accountState.serviceId, accountState.accountId)).resolves.toBeNull();
+          await expect(store.deleteAccount(accountState.accountId)).resolves.toBe(false);
         });
       });
     });
