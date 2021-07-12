@@ -38,6 +38,8 @@ export type AccountStateChangeResult = {
 export interface StorageProvider {
   saveAccount(account: Account): Promise<Account>;
 
+  deleteAccount(id: string): Promise<boolean>;
+
   getAccount(id: string): Promise<Account | null>;
 
   initAccountState(accountState: AccountState): Promise<AccountState>;
@@ -45,4 +47,6 @@ export interface StorageProvider {
   changeAccountState(prevState: AccountState, newState: AccountState): Promise<AccountStateChangeResult>;
 
   getAccountState(serviceId: string, accountId: string): Promise<AccountState | null>;
+
+  deleteAccountState(serviceId: string, accountId: string): Promise<boolean>;
 }

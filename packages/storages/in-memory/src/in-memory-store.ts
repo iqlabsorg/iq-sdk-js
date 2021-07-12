@@ -14,15 +14,21 @@ export type InMemoryStoreConfig = Partial<{
 }>;
 
 export class InMemoryStore extends AbstractStore {
-  private readonly accounts: Map<string, Account>;
-  private readonly states: Map<string, AccountState>;
+  private readonly accounts = new Map<string, Account>();
+  private readonly states = new Map<string, Map<string, AccountState>>();
 
   constructor(config?: InMemoryStoreConfig) {
     super({ validator: config?.validator });
-    this.accounts = new Map(config?.accounts?.map(account => [account.id, account]));
-    this.states = new Map(
-      config?.states?.map(state => [InMemoryStore.stateKey(state.serviceId, state.accountId), state]),
-    );
+
+    for (const account of config?.accounts ?? []) {
+      this.accounts.set(account.id, account);
+      const accountStateMap = new Map(
+        config?.states
+          ?.filter((state: AccountState) => state.accountId === account.id)
+          .map(state => [state.serviceId, state]) ?? [],
+      );
+      this.states.set(account.id, accountStateMap);
+    }
   }
 
   private static serializeState(state: AccountState): string {
@@ -34,16 +40,25 @@ export class InMemoryStore extends AbstractStore {
     return JSON.stringify(state, replacer);
   }
 
-  private static stateKey(serviceId: string, accountId: string): string {
-    return `${serviceId}:${accountId}`;
-  }
-
   async getAccount(id: string): Promise<Account | null> {
     return this.accounts.get(id) ?? null;
   }
 
+  async deleteAccount(id: string): Promise<boolean> {
+    this.states.delete(id);
+    return this.accounts.delete(id);
+  }
+
   async getAccountState(serviceId: string, accountId: string): Promise<AccountState | null> {
-    return this.states.get(InMemoryStore.stateKey(serviceId, accountId)) ?? null;
+    return this.states.get(accountId)?.get(serviceId) ?? null;
+  }
+
+  async deleteAccountState(serviceId: string, accountId: string): Promise<boolean> {
+    const state = this.states.get(accountId);
+    if (!state?.has(serviceId)) {
+      return false;
+    }
+    return state.delete(serviceId);
   }
 
   protected async _saveAccount(account: Account): Promise<Account> {
@@ -56,13 +71,12 @@ export class InMemoryStore extends AbstractStore {
     if (!this.accounts.has(accountId)) {
       throw new Error('Unknown account');
     }
-    const stateKey = InMemoryStore.stateKey(serviceId, accountId);
 
-    if (this.states.has(stateKey)) {
+    const state = this.states.get(accountId);
+    if (state?.has(serviceId)) {
       throw new Error('Already initialized');
     }
-
-    this.states.set(stateKey, accountState);
+    state?.set(serviceId, accountState);
 
     return accountState;
   }
@@ -76,8 +90,7 @@ export class InMemoryStore extends AbstractStore {
       throw new Error('Unknown account');
     }
 
-    const stateKey = InMemoryStore.stateKey(serviceId, accountId);
-    const currentState = this.states.get(stateKey);
+    const currentState = this.states.get(accountId)?.get(serviceId);
     if (!currentState) {
       throw new Error('State is not initialized');
     }
@@ -88,7 +101,8 @@ export class InMemoryStore extends AbstractStore {
         currentState,
       };
     }
-    this.states.set(stateKey, newState);
+    this.states.get(accountId)?.set(serviceId, newState);
+
     return {
       successful: true,
       currentState: newState,
