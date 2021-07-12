@@ -24,6 +24,10 @@ describe('InMemoryStore', () => {
     energyCalculatedAt: Math.floor(Date.now() / 1000),
   };
 
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe('When the store is empty', () => {
     beforeEach(() => {
       store = new InMemoryStore();
@@ -33,8 +37,16 @@ describe('InMemoryStore', () => {
       await expect(store.getAccount(account.id)).resolves.toBeNull();
     });
 
+    it('returns false upon account deletion', async () => {
+      await expect(store.deleteAccount(account.id)).resolves.toBe(false);
+    });
+
     it('does not return account state', async () => {
       await expect(store.getAccountState(accountState.serviceId, accountState.accountId)).resolves.toBeNull();
+    });
+
+    it('returns false upon account state deletion', async () => {
+      await expect(store.deleteAccountState(accountState.serviceId, accountState.accountId)).resolves.toBe(false);
     });
 
     it('saves account', async () => {
@@ -81,55 +93,70 @@ describe('InMemoryStore', () => {
         accountState,
       );
     });
-  });
 
-  describe('When account state is initialized', () => {
-    beforeEach(() => {
-      store = new InMemoryStore({ accounts: [account], states: [accountState] });
+    it('deletes the account ', async () => {
+      await expect(store.deleteAccount(account.id)).resolves.toBe(true);
+      await expect(store.getAccount(account.id)).resolves.toBeNull();
     });
 
-    it('throws error upon subsequent initialization', async () => {
-      await expect(store.initAccountState(accountState)).rejects.toThrow();
-    });
-
-    it('returns account state', async () => {
-      await expect(store.getAccountState(accountState.serviceId, accountState.accountId)).resolves.toEqual(
-        accountState,
-      );
-    });
-
-    it('updates account state and returns correct response', async () => {
-      const newState = <AccountState>{
-        ...accountState,
-        power: 15n,
-        energy: 2n,
-        energyCalculatedAt: Number(Date.now() / 1000),
-      };
-      const stateChangeResult = await store.changeAccountState(accountState, newState);
-      expect(stateChangeResult).toEqual(<AccountStateChangeResult>{
-        successful: true,
-        currentState: newState,
+    describe('When account state is initialized', () => {
+      beforeEach(() => {
+        store = new InMemoryStore({ accounts: [account], states: [accountState] });
       });
-      await expect(store.getAccountState(accountState.serviceId, accountState.accountId)).resolves.toEqual(newState);
-    });
 
-    it('does not update state with incorrect previous state and returns correct response', async () => {
-      const incorrectPrevState = <AccountState>{
-        ...accountState,
-        power: 15n,
-      };
-      const newState = {
-        ...accountState,
-        power: 20n,
-      };
-      const stateChangeResult = await store.changeAccountState(incorrectPrevState, newState);
-      expect(stateChangeResult).toEqual(<AccountStateChangeResult>{
-        successful: false,
-        currentState: accountState,
+      it('throws error upon subsequent initialization', async () => {
+        await expect(store.initAccountState(accountState)).rejects.toThrow();
       });
-      await expect(store.getAccountState(accountState.serviceId, accountState.accountId)).resolves.toEqual(
-        accountState,
-      );
+
+      it('returns account state', async () => {
+        await expect(store.getAccountState(accountState.serviceId, accountState.accountId)).resolves.toEqual(
+          accountState,
+        );
+      });
+
+      it('updates account state and returns correct response', async () => {
+        const newState = <AccountState>{
+          ...accountState,
+          power: 15n,
+          energy: 2n,
+          energyCalculatedAt: Number(Date.now() / 1000),
+        };
+        const stateChangeResult = await store.changeAccountState(accountState, newState);
+        expect(stateChangeResult).toEqual(<AccountStateChangeResult>{
+          successful: true,
+          currentState: newState,
+        });
+        await expect(store.getAccountState(accountState.serviceId, accountState.accountId)).resolves.toEqual(newState);
+      });
+
+      it('does not update state with incorrect previous state and returns correct response', async () => {
+        const incorrectPrevState = <AccountState>{
+          ...accountState,
+          power: 15n,
+        };
+        const newState = {
+          ...accountState,
+          power: 20n,
+        };
+        const stateChangeResult = await store.changeAccountState(incorrectPrevState, newState);
+        expect(stateChangeResult).toEqual(<AccountStateChangeResult>{
+          successful: false,
+          currentState: accountState,
+        });
+        await expect(store.getAccountState(accountState.serviceId, accountState.accountId)).resolves.toEqual(
+          accountState,
+        );
+      });
+
+      it('deletes the account state', async () => {
+        await expect(store.deleteAccountState(accountState.serviceId, accountState.accountId)).resolves.toBe(true);
+        await expect(store.getAccountState(accountState.serviceId, accountState.accountId)).resolves.toBeNull();
+      });
+
+      it('deletes the account state when account is deleted', async () => {
+        await expect(store.deleteAccount(accountState.accountId)).resolves.toBe(true);
+        await expect(store.getAccountState(accountState.serviceId, accountState.accountId)).resolves.toBeNull();
+      });
     });
   });
 
@@ -156,7 +183,7 @@ describe('InMemoryStore', () => {
     });
 
     it('uses custom validator to validate account state upon change', async () => {
-      await store.initAccountState(accountState);
+      store = new InMemoryStore({ validator, accounts: [account], states: [accountState] });
       const newState = { ...accountState, power: 20n };
       const spy = jest.spyOn(validator, 'validateAccountState');
       await store.changeAccountState(accountState, newState);

@@ -55,6 +55,10 @@ describe('PostgresStore', () => {
     await environment.down();
   });
 
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe('When the store is not initialized', () => {
     it('initializes correct database structure with default table names', async () => {
       await store.init();
@@ -80,8 +84,16 @@ describe('PostgresStore', () => {
       await expect(store.getAccount(account.id)).resolves.toBeNull();
     });
 
+    it('returns false upon account deletion', async () => {
+      await expect(store.deleteAccount(account.id)).resolves.toBe(false);
+    });
+
     it('does not return account state', async () => {
       await expect(store.getAccountState(accountState.serviceId, accountState.accountId)).resolves.toBeNull();
+    });
+
+    it('returns false upon account state deletion', async () => {
+      await expect(store.deleteAccountState(accountState.serviceId, accountState.accountId)).resolves.toBe(false);
     });
 
     it('saves account', async () => {
@@ -126,6 +138,11 @@ describe('PostgresStore', () => {
         await expect(store.getAccountState(accountState.serviceId, accountState.accountId)).resolves.toEqual(
           accountState,
         );
+      });
+
+      it('deletes the account ', async () => {
+        await expect(store.deleteAccount(account.id)).resolves.toBe(true);
+        await expect(store.getAccount(account.id)).resolves.toBeNull();
       });
 
       describe('When account state is initialized', () => {
@@ -178,6 +195,16 @@ describe('PostgresStore', () => {
             accountState,
           );
         });
+
+        it('deletes the account state', async () => {
+          await expect(store.deleteAccountState(accountState.serviceId, accountState.accountId)).resolves.toBe(true);
+          await expect(store.getAccountState(accountState.serviceId, accountState.accountId)).resolves.toBeNull();
+        });
+
+        it('deletes the account state when account is deleted', async () => {
+          await expect(store.deleteAccount(accountState.accountId)).resolves.toBe(true);
+          await expect(store.getAccountState(accountState.serviceId, accountState.accountId)).resolves.toBeNull();
+        });
       });
     });
 
@@ -208,6 +235,7 @@ describe('PostgresStore', () => {
         const newState = { ...accountState, power: 20n };
         const spy = jest.spyOn(validator, 'validateAccountState');
         await store.changeAccountState(accountState, newState);
+        expect(spy).toHaveBeenCalledTimes(2);
         expect(spy).toHaveBeenCalledWith(newState);
       });
     });

@@ -84,10 +84,32 @@ export class PostgresStore extends AbstractStore {
     });
   }
 
+  async deleteAccount(id: string): Promise<boolean> {
+    return this.pool.connect(async connection => {
+      return connection.transaction(async () => {
+        await connection.query(sql`DELETE FROM ${this.stateTableName} WHERE account_id = ${id}`);
+        const { rowCount } = await connection.query(sql`DELETE FROM ${this.accountTableName} WHERE id = ${id}`);
+        return rowCount > 0;
+      });
+    });
+  }
+
   async getAccountState(serviceId: string, accountId: string): Promise<AccountState | null> {
     return this.pool.connect(async connection => {
       const row = await this.readAccountStateRecord(connection, serviceId, accountId);
       return row ? PostgresStore.rowToAccountState(row) : null;
+    });
+  }
+
+  async deleteAccountState(serviceId: string, accountId: string): Promise<boolean> {
+    return this.pool.connect(async connection => {
+      const { rowCount } = await connection.query(
+        sql`DELETE FROM ${this.stateTableName}
+          WHERE service_id = ${serviceId}
+            AND account_id = ${accountId}
+        `,
+      );
+      return rowCount > 0;
     });
   }
 

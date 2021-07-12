@@ -35,7 +35,11 @@ export abstract class AbstractStore implements StorageProvider {
 
   abstract getAccount(id: string): Promise<Account | null>;
 
+  abstract deleteAccount(id: string): Promise<boolean>;
+
   abstract getAccountState(serviceId: string, accountId: string): Promise<AccountState | null>;
+
+  abstract deleteAccountState(serviceId: string, accountId: string): Promise<boolean>;
 
   protected abstract _saveAccount(account: Account): Promise<Account>;
 

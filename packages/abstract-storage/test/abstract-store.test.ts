@@ -2,7 +2,9 @@ import { AbstractStore, Account, AccountState, AccountStateValidator, StoragePro
 
 class DummyStore extends AbstractStore {
   public getAccount = jest.fn();
+  public deleteAccount = jest.fn();
   public getAccountState = jest.fn();
+  public deleteAccountState = jest.fn();
   protected _saveAccount = jest.fn();
   protected _initAccountState = jest.fn();
   protected _changeAccountState = jest.fn();
