@@ -28,12 +28,12 @@ describe('AccountManager', () => {
     accountManager = new AccountManager({ store });
   });
 
-  describe('When account is not registered', () => {
+  describe('When account does not exist', () => {
     it('returns null upon account data request', async () => {
       await expect(accountManager.getAccount(accountId)).resolves.toBeNull();
     });
 
-    it('create new account', async () => {
+    it('allows to create new account', async () => {
       await expect(accountManager.createAccount(accountId, account.data)).resolves.toEqual(account);
       await expect(store.getAccount(accountId.toString())).resolves.toEqual(account);
     });
@@ -58,6 +58,17 @@ describe('AccountManager', () => {
       expect(
         AccountOwnershipVerifier.verifyAccountOwnershipClaimSignature(accountId, claim, account.data.proof.sig),
       ).toBeTruthy();
+    });
+  });
+  describe('When account exists', () => {
+    beforeEach(async () => {
+      await accountManager.createAccount(accountId, account.data);
+    });
+
+    it('allows to delete account', async () => {
+      await expect(accountManager.deleteAccount(accountId)).resolves.toEqual(true);
+      await expect(store.getAccount(accountId.toString())).resolves.toBeNull();
+      await expect(accountManager.deleteAccount(accountId)).resolves.toEqual(false);
     });
   });
 });

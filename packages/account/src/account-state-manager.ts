@@ -67,6 +67,10 @@ export class AccountStateManager {
     return this.store.getAccountState(serviceId.toString(), accountId.toString());
   }
 
+  async deleteAccountState(serviceId: AccountID, accountId: AccountID): Promise<boolean> {
+    return this.store.deleteAccountState(serviceId.toString(), accountId.toString());
+  }
+
   async getInitializedAccountState(serviceId: AccountID, accountId: AccountID): Promise<AccountState> {
     this.validateSameChain(serviceId, accountId);
     const currentState = await this.getAccountState(serviceId, accountId);
