@@ -1,6 +1,6 @@
 {
   "name": "@iqprotocol/in-memory-storage",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "license": "UNLICENSED",
   "scripts": {
     "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
@@ -19,6 +19,6 @@
     "access": "restricted"
   },
   "dependencies": {
-    "@iqprotocol/abstract-storage": "^0.6.0"
+    "@iqprotocol/abstract-storage": "^0.7.0"
   }
 }
