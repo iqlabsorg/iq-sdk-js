@@ -1,6 +1,6 @@
 {
   "name": "@iqprotocol/account",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "license": "UNLICENSED",
   "scripts": {
     "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
