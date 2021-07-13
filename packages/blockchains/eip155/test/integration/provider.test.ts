@@ -1,6 +1,6 @@
 import { deployments, ethers } from 'hardhat';
 import 'hardhat-deploy-ethers';
-import { formatUnits, parseEther } from 'ethers/lib/utils';
+import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import { EIP155BlockchainProvider } from '../../src';
 import { baseRate, estimateAndBorrow, getEnterprise, getPowerToken, wait, waitBlockchainTime } from './utils';
 import { DefaultConverter, Enterprise, EnterpriseFactory, ERC20Mock } from '../../src/contracts';
@@ -86,8 +86,16 @@ describe('EIP155BlockchainProvider', () => {
   });
 
   it('retrieves an arbitrary token balance', async () => {
-    const balance = await blockchainProvider.getTokenBalance(liquidityToken.address);
-    expect(balance).toEqual(parseEther('1000000000'));
+    // fallback to signer address
+    let balance = await blockchainProvider.getTokenBalance(liquidityToken.address);
+    expect(balance).toEqual(parseUnits('1000000000'));
+
+    // use arbitrary address
+    balance = await blockchainProvider.getTokenBalance(
+      liquidityToken.address,
+      '0x17CdaD42F88fcecF77F53467B3c15613e8063adD',
+    );
+    expect(balance).toEqual(BigNumber.from(0));
   });
 
   describe('When enterprise deployed', () => {
@@ -249,17 +257,23 @@ describe('EIP155BlockchainProvider', () => {
       });
 
       it('retrieves account state for specific service', async () => {
-        const accountAddress = deployerSigner.address;
+        const accountAddress = '0x6F5E1207671091337abA2F2cda040EB16E757092';
         const serviceAddress = service1Address;
 
-        const accountState = await blockchainProvider.getAccountState(serviceAddress, accountAddress);
-        expect(accountState).toMatchObject(<AccountState>{
+        const expectedState = <AccountState>{
           serviceAddress,
           accountAddress,
           balance: BigNumber.from(0),
           energy: BigNumber.from(0),
           timestamp: 0,
-        });
+        };
+
+        let accountState = await blockchainProvider.getAccountState(serviceAddress, accountAddress);
+        expect(accountState).toMatchObject(expectedState);
+
+        // check fallback to signer address
+        accountState = await blockchainProvider.getAccountState(serviceAddress);
+        expect(accountState).toMatchObject({ ...expectedState, accountAddress: deployerSigner.address });
       });
 
       it('retrieves the service gap halving period', async () => {
