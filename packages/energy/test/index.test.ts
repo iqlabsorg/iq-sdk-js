@@ -1,4 +1,4 @@
-import { Energy } from '../src';
+import { calculateEnergyCap, halfLife } from '../src';
 
 /**
  * @group unit
@@ -22,15 +22,15 @@ describe('Energy', () => {
       'returns $expected with initialValue = $initialValue, halfLifePeriod = $halfLifePeriod, t0 = $t0, t1 = $t1',
       ({ initialValue, halfLifePeriod, t0, t1, expected }) => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        expect(Energy.halfLife({ initialValue, halfLifePeriod, t0, t1 })).toEqual(expected);
+        expect(halfLife({ initialValue, halvingPeriod: halfLifePeriod, t0, t1 })).toEqual(expected);
       },
     );
 
     it('throws when period is negative', () => {
       expect(() =>
-        Energy.halfLife({
+        halfLife({
           initialValue: 1000,
-          halfLifePeriod: 50,
+          halvingPeriod: 50,
           t0: 50,
           t1: 20,
         }),
@@ -38,7 +38,7 @@ describe('Energy', () => {
     });
   });
 
-  describe('calculateEnergy', () => {
+  describe('energy cap', () => {
     test.each`
       balance | prevEnergy | halfLifePeriod             | t0   | t1     | expected
       ${100}  | ${0}       | ${50}                      | ${0} | ${0}   | ${0}
@@ -56,16 +56,16 @@ describe('Energy', () => {
       'returns $expected with balance = $balance, prevEnergy = $prevEnergy, halfLifePeriod = $halfLifePeriod, t0 = $t0, t1 = $t1',
       ({ balance, prevEnergy, halfLifePeriod, t0, t1, expected }) => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        expect(Energy.calculateEnergy({ balance, prevEnergy, halfLifePeriod, t0, t1 })).toEqual(expected);
+        expect(calculateEnergyCap({ balance, prevEnergy, halvingPeriod: halfLifePeriod, t0, t1 })).toEqual(expected);
       },
     );
 
     it('throws when the balance is negative', () => {
       expect(() =>
-        Energy.calculateEnergy({
+        calculateEnergyCap({
           balance: -1,
           prevEnergy: 0,
-          halfLifePeriod: 50,
+          halvingPeriod: 50,
           t0: 50,
           t1: 20,
         }),
