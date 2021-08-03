@@ -1,15 +1,13 @@
 import { AccountState, AccountStateChangeResult, StorageProvider } from '@iqprotocol/abstract-storage';
-import { AccountID, BlockchainProvider, AccountState as OnChainAccountState } from '@iqprotocol/abstract-blockchain';
-
-export type OnChainAccountStateReader = Pick<BlockchainProvider, 'getAccountState'>;
+import { AccountID, AccountState as OnChainAccountState, BlockchainProvider } from '@iqprotocol/abstract-blockchain';
 
 export interface AccountStateManagerConfig {
-  blockchain: OnChainAccountStateReader;
+  blockchain: BlockchainProvider;
   store: StorageProvider;
 }
 
 export class AccountStateManager {
-  private readonly blockchain: OnChainAccountStateReader;
+  private readonly blockchain: BlockchainProvider;
   private readonly store: StorageProvider;
 
   constructor({ blockchain, store }: AccountStateManagerConfig) {
@@ -20,6 +18,7 @@ export class AccountStateManager {
   async initAccountState({
     serviceId,
     accountId,
+    gapHalvingPeriod,
     power,
     lockedPower,
     energyCap,
@@ -33,6 +32,7 @@ export class AccountStateManager {
     return this.store.initAccountState({
       serviceId: serviceId.toString(),
       accountId: accountId.toString(),
+      gapHalvingPeriod,
       power,
       lockedPower,
       energyCap,
@@ -45,9 +45,12 @@ export class AccountStateManager {
     this.validateSameChain(serviceId, accountId);
     try {
       const { balance, energy, timestamp } = await this.getBlockchainAccountState(serviceId, accountId);
+      const { gapHalvingPeriod } = await this.blockchain.getServiceInfo(serviceId.address);
+
       return await this.initAccountState({
         serviceId,
         accountId,
+        gapHalvingPeriod,
         power: balance.toBigInt(),
         lockedPower: 0n,
         energyCap: energy.toBigInt(),

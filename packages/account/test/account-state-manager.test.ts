@@ -1,7 +1,14 @@
 import { InMemoryStore } from '@iqprotocol/in-memory-storage';
 import { Account, AccountState, AccountStateChangeResult } from '@iqprotocol/abstract-storage';
-import { AccountStateManager, OnChainAccountStateReader } from '../src';
-import { AccountID, AccountState as OnChainAccountState, BigNumber, ChainID } from '@iqprotocol/abstract-blockchain';
+import { AccountStateManager } from '../src';
+import {
+  AccountID,
+  AccountState as OnChainAccountState,
+  BigNumber,
+  ChainID,
+  ServiceInfo,
+} from '@iqprotocol/abstract-blockchain';
+import { EIP155BlockchainProvider, VoidSigner } from '@iqprotocol/eip155';
 
 /**
  * @group unit
@@ -19,9 +26,21 @@ describe('AccountStateManager', () => {
     timestamp,
   };
 
-  const onChainAccountStateReader: OnChainAccountStateReader = {
-    getAccountState: jest.fn().mockResolvedValue(onChainAccountState),
+  const onChainServiceInfo: ServiceInfo = {
+    address: serviceAddress,
+    name: 'Test Service',
+    symbol: 'TST',
+    baseRate: BigNumber.from(1),
+    minGCFee: BigNumber.from(1),
+    gapHalvingPeriod: 86400,
+    index: 0,
+    baseToken: '0x6238F38c32fd76E3189D1EAd943B8342Ff33055D',
+    minLoanDuration: 3600,
+    maxLoanDuration: 864000,
+    serviceFeePercent: 5000,
+    allowsPerpetual: false,
   };
+
   const chainId = new ChainID({ namespace: 'eip155', reference: '1' });
   const serviceId = new AccountID({ chainId, address: serviceAddress });
   const accountId = new AccountID({ chainId, address: accountAddress });
@@ -34,6 +53,7 @@ describe('AccountStateManager', () => {
   const accountState: AccountState = {
     accountId: account.id,
     serviceId: serviceId.toString(),
+    gapHalvingPeriod: onChainServiceInfo.gapHalvingPeriod,
     power: 10n,
     lockedPower: 0n,
     energyCap: 5n,
@@ -46,9 +66,18 @@ describe('AccountStateManager', () => {
 
   beforeEach(() => {
     store = new InMemoryStore();
+
+    const blockchainProvider = new EIP155BlockchainProvider({
+      signer: new VoidSigner('0x4429CeB244B101926b3780c6ee906139c0f0eEf1'), // random address
+      contracts: { enterpriseFactory: '0x07de68388196AEA77fF462177AF205CfcE15E74f' }, // random address
+    });
+
+    jest.spyOn(blockchainProvider, 'getAccountState').mockResolvedValue(onChainAccountState);
+    jest.spyOn(blockchainProvider, 'getServiceInfo').mockResolvedValue(onChainServiceInfo);
+
     accountStateManager = new AccountStateManager({
       store,
-      blockchain: onChainAccountStateReader,
+      blockchain: blockchainProvider,
     });
   });
 

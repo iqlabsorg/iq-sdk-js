@@ -17,6 +17,7 @@ describe('InMemoryStore', () => {
   const accountState: AccountState = {
     accountId: account.id,
     serviceId: 'test-service',
+    gapHalvingPeriod: 86400,
     power: 10n,
     lockedPower: 2n,
     energyCap: 5n,
