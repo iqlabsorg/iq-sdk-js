@@ -14,17 +14,17 @@ export function halfLife(params: { initialValue: number; halvingPeriod: number; 
 }
 
 export function calculateEnergyCap(params: {
-  balance: number;
-  prevEnergy: number;
+  power: number;
+  prevEnergyCap: number;
   halvingPeriod: number;
   t0: number;
   t1: number;
 }): number {
-  const { balance, prevEnergy, halvingPeriod, t0, t1 } = params;
+  const { power, prevEnergyCap, halvingPeriod, t0, t1 } = params;
 
-  if (balance < 0) {
-    throw new Error('Invalid balance');
+  if (power < 0) {
+    throw new Error('Negative power');
   }
 
-  return balance + halfLife({ initialValue: prevEnergy - balance, halvingPeriod, t0, t1 });
+  return power + halfLife({ initialValue: prevEnergyCap - power, halvingPeriod, t0, t1 });
 }
