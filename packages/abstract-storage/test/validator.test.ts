@@ -29,6 +29,7 @@ describe('DefaultValidator', () => {
     const accountState: AccountState = {
       accountId: 'account-id',
       serviceId: 'test-service',
+      gapHalvingPeriod: 86400,
       power: 10n,
       lockedPower: 2n,
       energyCap: 5n,
@@ -51,6 +52,15 @@ describe('DefaultValidator', () => {
 
     it('throws an error when the power is negative', () => {
       expect(() => validator.validateAccountState({ ...accountState, power: -5n })).toThrowError('Negative power');
+    });
+
+    it('throws an error when the gap halving period is not positive', () => {
+      expect(() => validator.validateAccountState({ ...accountState, gapHalvingPeriod: 0 })).toThrowError(
+        'Invalid gap halving period',
+      );
+      expect(() => validator.validateAccountState({ ...accountState, gapHalvingPeriod: -1 })).toThrowError(
+        'Invalid gap halving period',
+      );
     });
 
     it('throws an error when the locked power is negative', () => {
