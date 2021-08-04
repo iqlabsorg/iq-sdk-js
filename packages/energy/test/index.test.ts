@@ -1,3 +1,4 @@
+/* eslint-disable no-extra-parens */
 import { calculateEnergyCap, halfLife } from '../src';
 
 /**
@@ -7,53 +8,50 @@ describe('Energy Utils', () => {
   describe('halfLife', () => {
     // Algo: c0 * 0.5 ** ((t - t0) / t12)
     test.each`
-      initialValue                     | halfLifePeriod | t0     | t1            | expected
-      ${100}                           | ${50}          | ${0}   | ${25}         | ${70.71067811865476}
-      ${1000}                          | ${20}          | ${100} | ${100}        | ${1000}
-      ${1000}                          | ${20}          | ${100} | ${120}        | ${500}
-      ${1000}                          | ${20}          | ${100} | ${140}        | ${250}
-      ${1000}                          | ${20}          | ${100} | ${110}        | ${707.1067811865476}
-      ${1997.25}                       | ${20}          | ${100} | ${110}        | ${1412.2690187248322}
-      ${1997.25}                       | ${2373046875}  | ${0}   | ${2373046874} | ${998.6250002916901}
-      ${199700000001.25}               | ${2373046875}  | ${0}   | ${2373046874} | ${99850000029.79036}
-      ${4503599627370449.333}          | ${2373046875}  | ${0}   | ${2373046874} | ${2251799814342956.5}
-      ${Number.MAX_SAFE_INTEGER / 2.0} | ${2373046875}  | ${0}   | ${2373046874} | ${2251799814342979.5}
+      initialValue                           | halvingPeriod | t0     | t1            | expected
+      ${1152921504606846976000n}             | ${20}         | ${100} | ${120}        | ${576460752303423488000n}
+      ${1152921504606846976000n}             | ${20}         | ${100} | ${140}        | ${288230376151711744000n}
+      ${1152921504606846976000n}             | ${20}         | ${100} | ${110}        | ${815238614083298888273n}
+      ${2302672475076025122816n}             | ${20}         | ${100} | ${110}        | ${1628235321977868704599n}
+      ${2302672475076025122816n}             | ${2373046875} | ${0}   | ${2373046874} | ${1151336237874308264392n}
+      ${5192296858534774017680532110835712n} | ${2373046875} | ${0}   | ${2373046874} | ${2596148430025700290926036596036491n}
+      ${5192296858534827052069744025796608n} | ${2373046875} | ${0}   | ${2373046874} | ${2596148430025726808120650298968105n}
     `(
-      'returns $expected when: initialValue = $initialValue, halfLifePeriod = $halfLifePeriod, t0 = $t0, t1 = $t1',
-      ({ initialValue, halfLifePeriod, t0, t1, expected }) => {
+      'correct when: initialValue = $initialValue, halfLifePeriod = $halvingPeriod, t0 = $t0, t1 = $t1',
+      ({ initialValue, halvingPeriod, t0, t1, expected }) => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        expect(halfLife({ initialValue, halvingPeriod: halfLifePeriod, t0, t1 })).toEqual(expected);
+        expect(halfLife({ initialValue, halvingPeriod, t0, t1 })).toEqual(expected);
       },
     );
 
     it('throws when period is negative', () => {
       expect(() =>
         halfLife({
-          initialValue: 1000,
+          initialValue: 1000n,
           halvingPeriod: 50,
           t0: 50,
           t1: 20,
         }),
-      ).toThrowError('Invalid period');
+      ).toThrowError('Negative period');
     });
   });
 
   describe('energy cap', () => {
     test.each`
-      power  | prevEnergyCap | halvingPeriod              | t0   | t1     | expected
-      ${100} | ${0}          | ${50}                      | ${0} | ${0}   | ${0}
-      ${100} | ${0}          | ${50}                      | ${0} | ${25}  | ${29.289321881345245}
-      ${100} | ${0}          | ${50}                      | ${0} | ${50}  | ${50}
-      ${100} | ${10}         | ${50}                      | ${0} | ${50}  | ${55}
-      ${100} | ${0}          | ${50}                      | ${0} | ${100} | ${75}
-      ${100} | ${0}          | ${50}                      | ${0} | ${150} | ${87.5}
-      ${100} | ${0}          | ${50}                      | ${0} | ${200} | ${93.75}
-      ${100} | ${200}        | ${50}                      | ${0} | ${25}  | ${170.71067811865476}
-      ${100} | ${200}        | ${50}                      | ${0} | ${50}  | ${150}
-      ${100} | ${200}        | ${50}                      | ${0} | ${100} | ${125}
-      ${1}   | ${0}          | ${Number.MAX_SAFE_INTEGER} | ${0} | ${1}   | ${1.1102230246251565e-16}
+      power   | prevEnergyCap | halvingPeriod              | t0   | t1     | expected
+      ${100n} | ${0n}         | ${50}                      | ${0} | ${0}   | ${0n}
+      ${100n} | ${0n}         | ${50}                      | ${0} | ${25}  | ${29n}
+      ${100n} | ${0n}         | ${50}                      | ${0} | ${50}  | ${50n}
+      ${100n} | ${10n}        | ${50}                      | ${0} | ${50}  | ${55n}
+      ${100n} | ${0n}         | ${50}                      | ${0} | ${100} | ${75n}
+      ${100n} | ${0n}         | ${50}                      | ${0} | ${150} | ${88n}
+      ${100n} | ${0n}         | ${50}                      | ${0} | ${200} | ${94n}
+      ${100n} | ${200n}       | ${50}                      | ${0} | ${25}  | ${171n}
+      ${100n} | ${200n}       | ${50}                      | ${0} | ${50}  | ${150n}
+      ${100n} | ${200n}       | ${50}                      | ${0} | ${100} | ${125n}
+      ${1n}   | ${0n}         | ${Number.MAX_SAFE_INTEGER} | ${0} | ${1}   | ${0n}
     `(
-      'returns $expected when: power = $power, prevEnergyCap = $prevEnergyCap, halvingPeriod = $halvingPeriod, t0 = $t0, t1 = $t1',
+      'correct when: power = $power, prevEnergyCap = $prevEnergyCap, halvingPeriod = $halvingPeriod, t0 = $t0, t1 = $t1',
       ({ power, prevEnergyCap, halvingPeriod, t0, t1, expected }) => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         expect(calculateEnergyCap({ power, prevEnergyCap, halvingPeriod, t0, t1 })).toEqual(expected);
@@ -63,8 +61,8 @@ describe('Energy Utils', () => {
     it('throws when the balance is negative', () => {
       expect(() =>
         calculateEnergyCap({
-          power: -1,
-          prevEnergyCap: 0,
+          power: -1n,
+          prevEnergyCap: 0n,
           halvingPeriod: 50,
           t0: 50,
           t1: 20,
