@@ -1,11 +1,10 @@
 /* eslint-disable func-style,prettier/prettier */
-import { strict as assert } from 'assert';
-
 const ONE = 1n << 144n;
 const LOG_ONE_HALF = 15457698658747239244624307340191628289589491n; // log(0.5) * 2 ** 144
-const MAX_SAFE_UINT112 = 2n ** 112n - 1n;
+const MAX_SAFE_UINT112 = 5192296858534827628530496329220095n // 2 ** 112 - 1;
 
 export function halfLife(params: { initialValue: bigint; gapHalvingPeriod: number; t0: number; t1: number }): bigint {
+
   const { gapHalvingPeriod, t0, t1 } = params;
   let { initialValue } = params;
 
@@ -46,9 +45,7 @@ export function halfLife(params: { initialValue: bigint; gapHalvingPeriod: numbe
     i += ONE;
   }
 
-  assert(sum <= MAX_SAFE_UINT112)
-
-  return sum;
+  return BigInt.asUintN(112, sum);
 }
 
 export function calculateEnergyCap(params: {
