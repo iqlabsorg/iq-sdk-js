@@ -5,8 +5,8 @@ const ONE = 1n << 144n;
 const LOG_ONE_HALF = 15457698658747239244624307340191628289589491n; // log(0.5) * 2 ** 144
 const MAX_SAFE_UINT112 = 2n ** 112n - 1n;
 
-export function halfLife(params: { initialValue: bigint; halvingPeriod: number; t0: number; t1: number }): bigint {
-  const { halvingPeriod, t0, t1 } = params;
+export function halfLife(params: { initialValue: bigint; gapHalvingPeriod: number; t0: number; t1: number }): bigint {
+  const { gapHalvingPeriod, t0, t1 } = params;
   let { initialValue } = params;
 
   if (initialValue < 0) {
@@ -26,13 +26,13 @@ export function halfLife(params: { initialValue: bigint; halvingPeriod: number; 
     return initialValue;
   }
 
-  initialValue >>= BigInt(period) / BigInt(halvingPeriod);
+  initialValue >>= BigInt(period) / BigInt(gapHalvingPeriod);
   if (initialValue === 0n) {
     return initialValue;
   }
 
-  period %= halvingPeriod;
-  const x = BigInt(LOG_ONE_HALF) * BigInt(period) / BigInt(halvingPeriod);
+  period %= gapHalvingPeriod;
+  const x = BigInt(LOG_ONE_HALF) * BigInt(period) / BigInt(gapHalvingPeriod);
   let z = BigInt(initialValue);
   let i = ONE;
   let sum = 0n;
@@ -54,17 +54,17 @@ export function halfLife(params: { initialValue: bigint; halvingPeriod: number; 
 export function calculateEnergyCap(params: {
   power: bigint;
   prevEnergyCap: bigint;
-  halvingPeriod: number;
+  gapHalvingPeriod: number;
   t0: number;
   t1: number;
 }): bigint {
-  const { power, prevEnergyCap, halvingPeriod, t0, t1 } = params;
+  const { power, prevEnergyCap, gapHalvingPeriod, t0, t1 } = params;
   if (power < 0) {
     throw new Error('Negative power');
   }
 
   if (power > prevEnergyCap) {
-    return power - halfLife({ initialValue: power - prevEnergyCap, halvingPeriod, t0, t1 });
+    return power - halfLife({ initialValue: power - prevEnergyCap, gapHalvingPeriod, t0, t1 });
   }
-  return power + halfLife({ initialValue: prevEnergyCap - power, halvingPeriod, t0, t1 });
+  return power + halfLife({ initialValue: prevEnergyCap - power, gapHalvingPeriod, t0, t1 });
 }
