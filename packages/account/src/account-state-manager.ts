@@ -1,5 +1,6 @@
 import { AccountState, AccountStateChangeResult, StorageProvider } from '@iqprotocol/abstract-storage';
 import { AccountID, AccountState as OnChainAccountState, BlockchainProvider } from '@iqprotocol/abstract-blockchain';
+import { calculateEnergyCap } from '@iqprotocol/energy';
 
 export interface AccountStateManagerConfig {
   blockchain: BlockchainProvider;
@@ -86,7 +87,7 @@ export class AccountStateManager {
     power: bigint,
     timestamp: Date,
   ): Promise<AccountStateChangeResult> {
-    return this.changePower(serviceId, accountId, power, timestamp);
+    return this.changeState(serviceId, accountId, 'power', power, timestamp);
   }
 
   async decreasePower(
@@ -95,7 +96,7 @@ export class AccountStateManager {
     power: bigint,
     timestamp: Date,
   ): Promise<AccountStateChangeResult> {
-    return this.changePower(serviceId, accountId, -power, timestamp);
+    return this.changeState(serviceId, accountId, 'power', -power, timestamp);
   }
 
   async lockPower(
@@ -104,7 +105,7 @@ export class AccountStateManager {
     power: bigint,
     timestamp: Date,
   ): Promise<AccountStateChangeResult> {
-    return this.changeLockedPower(serviceId, accountId, power, timestamp);
+    return this.changeState(serviceId, accountId, 'lockedPower', power, timestamp);
   }
 
   async unlockPower(
@@ -113,7 +114,7 @@ export class AccountStateManager {
     power: bigint,
     timestamp: Date,
   ): Promise<AccountStateChangeResult> {
-    return this.changeLockedPower(serviceId, accountId, -power, timestamp);
+    return this.changeState(serviceId, accountId, 'lockedPower', -power, timestamp);
   }
 
   async spendEnergy(
@@ -122,44 +123,71 @@ export class AccountStateManager {
     energy: bigint,
     timestamp: Date,
   ): Promise<AccountStateChangeResult> {
-    const currentState = await this.getInitializedAccountState(serviceId, accountId);
-    const newState = <AccountState>{
-      ...currentState,
-      energyCap: currentState.energyCap - energy,
-      energy: currentState.energy - energy,
-      energyCalculatedAt: Math.floor(timestamp.getTime() / 1000),
-    };
-    return this.store.changeAccountState(currentState, newState);
+    return this.changeState(serviceId, accountId, 'energy', -energy, timestamp);
   }
 
-  protected async changeLockedPower(
-    serviceId: AccountID,
-    accountId: AccountID,
-    lockedPowerDelta: bigint,
-    timestamp: Date,
-  ): Promise<AccountStateChangeResult> {
-    const currentState = await this.getInitializedAccountState(serviceId, accountId);
-    const newState = <AccountState>{
-      ...currentState,
-      lockedPower: currentState.lockedPower + lockedPowerDelta,
-      energyCalculatedAt: Math.floor(timestamp.getTime() / 1000),
-    };
-    return this.store.changeAccountState(currentState, newState);
+  protected calculateEnergy(params: {
+    power: bigint;
+    prevEnergy: bigint;
+    gapHalvingPeriod: number;
+    t0: number;
+    t1: number;
+  }): bigint {
+    const { power, prevEnergy, gapHalvingPeriod, t0, t1 } = params;
+    return prevEnergy + BigInt(power * (BigInt(t1) - BigInt(t0))) / BigInt(gapHalvingPeriod * 4);
   }
 
-  protected async changePower(
+  protected async changeState(
     serviceId: AccountID,
     accountId: AccountID,
-    powerDelta: bigint,
+    key: 'power' | 'lockedPower' | 'energy',
+    delta: bigint,
     timestamp: Date,
   ): Promise<AccountStateChangeResult> {
-    const currentState = await this.getInitializedAccountState(serviceId, accountId);
-    const newState = <AccountState>{
-      ...currentState,
-      power: currentState.power + powerDelta,
-      energyCalculatedAt: Math.floor(timestamp.getTime() / 1000),
+    const state = await this.getInitializedAccountState(serviceId, accountId);
+    let { power, lockedPower } = state;
+    let availablePower = power - lockedPower;
+
+    if (key === 'power') {
+      power += delta;
+      availablePower += delta;
+    } else if (key === 'lockedPower') {
+      lockedPower += delta;
+      availablePower -= delta;
+    }
+
+    // Re-calculate energy
+    const stateChangeTime = Math.floor(timestamp.getTime() / 1000);
+    const energyCalculationParams = {
+      power: availablePower,
+      gapHalvingPeriod: state.gapHalvingPeriod,
+      t0: state.energyCalculatedAt,
+      t1: stateChangeTime,
     };
-    return this.store.changeAccountState(currentState, newState);
+    const energyCap = calculateEnergyCap({ prevEnergyCap: state.energyCap, ...energyCalculationParams });
+    const linearEnergy = this.calculateEnergy({ prevEnergy: state.energy, ...energyCalculationParams });
+    let energy = linearEnergy < energyCap ? linearEnergy : energyCap; // min(linearEnergy, energyCap)
+
+    if (key === 'energy') {
+      if (delta > 0) {
+        throw new Error('Positive energy delta is not allowed');
+      }
+      energy += delta;
+    }
+
+    // Prepare new state
+    const newState: AccountState = {
+      power,
+      lockedPower,
+      energyCap,
+      energy,
+      energyCalculatedAt: stateChangeTime,
+      serviceId: state.serviceId,
+      accountId: state.accountId,
+      gapHalvingPeriod: state.gapHalvingPeriod,
+    };
+
+    return this.store.changeAccountState(state, newState);
   }
 
   protected validateSameChain(id1: AccountID, id2: AccountID): void {

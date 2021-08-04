@@ -21,8 +21,8 @@ describe('AccountStateManager', () => {
   const onChainAccountState = <OnChainAccountState>{
     serviceAddress,
     accountAddress,
-    balance: BigNumber.from(10),
-    energy: BigNumber.from(5),
+    balance: BigNumber.from(1000),
+    energy: BigNumber.from(500),
     timestamp,
   };
 
@@ -32,7 +32,7 @@ describe('AccountStateManager', () => {
     symbol: 'TST',
     baseRate: BigNumber.from(1),
     minGCFee: BigNumber.from(1),
-    gapHalvingPeriod: 86400,
+    gapHalvingPeriod: 3600,
     index: 0,
     baseToken: '0x6238F38c32fd76E3189D1EAd943B8342Ff33055D',
     minLoanDuration: 3600,
@@ -54,10 +54,10 @@ describe('AccountStateManager', () => {
     accountId: account.id,
     serviceId: serviceId.toString(),
     gapHalvingPeriod: onChainServiceInfo.gapHalvingPeriod,
-    power: 10n,
+    power: 1000n,
     lockedPower: 0n,
-    energyCap: 5n,
-    energy: 5n,
+    energyCap: 500n,
+    energy: 500n,
     energyCalculatedAt: timestamp,
   };
 
@@ -125,26 +125,41 @@ describe('AccountStateManager', () => {
       });
 
       it('increases power based on blockchain data', async () => {
-        const result = await accountStateManager.increasePower(serviceId, accountId, 3n, now);
+        const delta = 300n;
+        const result = await accountStateManager.increasePower(serviceId, accountId, delta, now);
         expect(result).toEqual(<AccountStateChangeResult>{
           successful: true,
-          currentState: { ...accountState, power: accountState.power + 3n },
+          currentState: { ...accountState, power: accountState.power + delta },
         });
       });
 
       it('decreases power based on blockchain data', async () => {
-        const result = await accountStateManager.decreasePower(serviceId, accountId, 3n, now);
+        const delta = 300n;
+        const result = await accountStateManager.decreasePower(serviceId, accountId, delta, now);
         expect(result).toEqual(<AccountStateChangeResult>{
           successful: true,
-          currentState: { ...accountState, power: accountState.power - 3n },
+          currentState: { ...accountState, power: accountState.power - delta },
         });
       });
 
       it('locks power based on blockchain data', async () => {
-        const result = await accountStateManager.lockPower(serviceId, accountId, 3n, now);
+        const delta = 300n;
+        const result = await accountStateManager.lockPower(serviceId, accountId, delta, now);
         expect(result).toEqual(<AccountStateChangeResult>{
           successful: true,
-          currentState: { ...accountState, lockedPower: accountState.lockedPower + 3n },
+          currentState: { ...accountState, lockedPower: accountState.lockedPower + delta },
+        });
+      });
+
+      it('spends energy based on blockchain data', async () => {
+        const result = await accountStateManager.spendEnergy(serviceId, accountId, 255n, now);
+        expect(result).toEqual(<AccountStateChangeResult>{
+          successful: true,
+          currentState: {
+            ...accountState,
+            energy: 245n,
+            energyCap: 500n,
+          },
         });
       });
 
@@ -154,8 +169,10 @@ describe('AccountStateManager', () => {
 
       describe('When account state is initialized', () => {
         let initialState: AccountState;
+        const changeTimestamp = timestamp + onChainServiceInfo.gapHalvingPeriod;
+        const changeDate = new Date(changeTimestamp * 1000);
         beforeEach(async () => {
-          initialState = { ...accountState, power: 15n, lockedPower: 7n };
+          initialState = { ...accountState, power: 1500n, lockedPower: 700n };
           await store.initAccountState(initialState);
         });
 
@@ -170,34 +187,75 @@ describe('AccountStateManager', () => {
         });
 
         it('increases power based on stored data', async () => {
-          const result = await accountStateManager.increasePower(serviceId, accountId, 3n, now);
+          const delta = 300n;
+          const result = await accountStateManager.increasePower(serviceId, accountId, delta, changeDate);
           expect(result).toEqual(<AccountStateChangeResult>{
             successful: true,
-            currentState: { ...initialState, power: initialState.power + 3n },
+            currentState: {
+              ...initialState,
+              power: initialState.power + delta,
+              energy: 775n,
+              energyCap: 800n,
+              energyCalculatedAt: changeTimestamp,
+            },
           });
         });
 
         it('decreases power based on stored data', async () => {
-          const result = await accountStateManager.decreasePower(serviceId, accountId, 3n, now);
+          const delta = 300n;
+          const result = await accountStateManager.decreasePower(serviceId, accountId, delta, changeDate);
           expect(result).toEqual(<AccountStateChangeResult>{
             successful: true,
-            currentState: { ...initialState, power: initialState.power - 3n },
+            currentState: {
+              ...initialState,
+              power: initialState.power - delta,
+              energy: 500n,
+              energyCap: 500n,
+              energyCalculatedAt: changeTimestamp,
+            },
           });
         });
 
         it('locks power based on stored data', async () => {
-          const result = await accountStateManager.lockPower(serviceId, accountId, 3n, now);
+          const delta = 500n;
+          const result = await accountStateManager.lockPower(serviceId, accountId, delta, changeDate);
           expect(result).toEqual(<AccountStateChangeResult>{
             successful: true,
-            currentState: { ...initialState, lockedPower: initialState.lockedPower + 3n },
+            currentState: {
+              ...initialState,
+              lockedPower: initialState.lockedPower + delta,
+              energy: 400n,
+              energyCap: 400n,
+              energyCalculatedAt: changeTimestamp,
+            },
           });
         });
 
         it('unlocks power based on stored data', async () => {
-          const result = await accountStateManager.unlockPower(serviceId, accountId, 3n, now);
+          const delta = 650n;
+          const result = await accountStateManager.unlockPower(serviceId, accountId, delta, changeDate);
           expect(result).toEqual(<AccountStateChangeResult>{
             successful: true,
-            currentState: { ...initialState, lockedPower: initialState.lockedPower - 3n },
+            currentState: {
+              ...initialState,
+              energy: 862n,
+              energyCap: 975n,
+              lockedPower: initialState.lockedPower - delta,
+              energyCalculatedAt: changeTimestamp,
+            },
+          });
+        });
+
+        it('spends energy based on stored data', async () => {
+          const result = await accountStateManager.spendEnergy(serviceId, accountId, 255n, changeDate);
+          expect(result).toEqual(<AccountStateChangeResult>{
+            successful: true,
+            currentState: {
+              ...initialState,
+              energy: 395n,
+              energyCap: 650n,
+              energyCalculatedAt: changeTimestamp,
+            },
           });
         });
 
