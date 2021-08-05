@@ -1,6 +1,6 @@
 import { AccountState, AccountStateChangeResult, StorageProvider } from '@iqprotocol/abstract-storage';
 import { AccountID, AccountState as OnChainAccountState, BlockchainProvider } from '@iqprotocol/abstract-blockchain';
-import { calculateEnergyCap } from '@iqprotocol/energy';
+import { calculateEffectiveEnergy } from '@iqprotocol/energy';
 
 export interface AccountStateManagerConfig {
   blockchain: BlockchainProvider;
@@ -126,17 +126,6 @@ export class AccountStateManager {
     return this.changeState(serviceId, accountId, 'energy', -energy, timestamp);
   }
 
-  protected calculateEnergy(params: {
-    power: bigint;
-    prevEnergy: bigint;
-    gapHalvingPeriod: number;
-    t0: number;
-    t1: number;
-  }): bigint {
-    const { power, prevEnergy, gapHalvingPeriod, t0, t1 } = params;
-    return prevEnergy + BigInt(power * (BigInt(t1) - BigInt(t0))) / BigInt(gapHalvingPeriod * 4);
-  }
-
   protected async changeState(
     serviceId: AccountID,
     accountId: AccountID,
@@ -158,29 +147,29 @@ export class AccountStateManager {
 
     // Re-calculate energy
     const stateChangeTime = Math.floor(timestamp.getTime() / 1000);
-    const energyCalculationParams = {
+    const effective = calculateEffectiveEnergy({
+      energy: state.energy,
+      energyCap: state.energyCap,
       power: availablePower,
       gapHalvingPeriod: state.gapHalvingPeriod,
       t0: state.energyCalculatedAt,
       t1: stateChangeTime,
-    };
-    const energyCap = calculateEnergyCap({ prevEnergyCap: state.energyCap, ...energyCalculationParams });
-    const linearEnergy = this.calculateEnergy({ prevEnergy: state.energy, ...energyCalculationParams });
-    let energy = linearEnergy < energyCap ? linearEnergy : energyCap; // min(linearEnergy, energyCap)
+    });
 
     if (key === 'energy') {
       if (delta > 0) {
+        // Energy cannot be increased directly
         throw new Error('Positive energy delta is not allowed');
       }
-      energy += delta;
+      effective.energy += delta;
     }
 
     // Prepare new state
     const newState: AccountState = {
       power,
       lockedPower,
-      energyCap,
-      energy,
+      energyCap: effective.energyCap,
+      energy: effective.energy,
       energyCalculatedAt: stateChangeTime,
       serviceId: state.serviceId,
       accountId: state.accountId,
