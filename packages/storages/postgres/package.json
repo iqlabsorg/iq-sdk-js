@@ -1,6 +1,6 @@
 {
   "name": "@iqprotocol/postgres-storage",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "license": "UNLICENSED",
   "scripts": {
     "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
@@ -20,7 +20,7 @@
     "access": "restricted"
   },
   "dependencies": {
-    "@iqprotocol/abstract-storage": "^0.7.0",
+    "@iqprotocol/abstract-storage": "^0.8.0",
     "slonik": "^23.8.0"
   }
 }
