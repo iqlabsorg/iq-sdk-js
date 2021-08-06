@@ -1,4 +1,20 @@
 # @iqprotocol/energy
+This package is part of [IQ Protocol JS SDK.](https://github.com/iqalliance/iq-sdk-js)
 
+The package provided various utility functions for *energy* calculation.
 
+## Installation  
+```bash
+yarn add @iqprotocol/energy
+```
 
+## Energy & Power
+
+In IQ protocol *Power* is the reinterpreted pTokens balance that is responsible for *Energy* generation. Simply `1 pToken = 1 Unit of Power`.
+Whereas the Energy is a spendable asset that is generated over time by the Power. 
+
+**Linear Energy** the actual energy value at the specific time. As the name implies, it changes linearly over time. 
+
+**Energy Cap** is the potential maximum possible energy value at specific time. It corresponds to the IQ protocol *Proof Of Hold*. 
+
+**Effective Energy** is the current available energy. It is the lowest value between the current linear energy value and energy cap.   
