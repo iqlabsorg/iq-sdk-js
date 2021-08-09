@@ -1,6 +1,6 @@
 {
   "name": "@iqprotocol/account",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "license": "UNLICENSED",
   "scripts": {
     "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
@@ -21,7 +21,7 @@
   "dependencies": {
     "@iqprotocol/abstract-blockchain": "^0.8.0",
     "@iqprotocol/abstract-storage": "^0.8.0",
-    "@iqprotocol/energy": "^0.5.0",
+    "@iqprotocol/energy": "^0.5.1",
     "eth-sig-util": "^3.0.1"
   },
   "devDependencies": {
