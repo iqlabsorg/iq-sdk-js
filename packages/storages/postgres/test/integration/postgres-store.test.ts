@@ -2,15 +2,15 @@ import * as path from 'path';
 import { Account, AccountState, AccountStateChangeResult, AccountStateValidator } from '@iqprotocol/abstract-storage';
 import { PostgresStore } from '../../src';
 import { createPool, DatabasePoolType } from 'slonik';
-import { ensureDatabase, expectCorrectDatabaseStructure, truncateTables } from './support/utils';
+import { ensureEmptyDatabase, ensureSchema, expectCorrectDatabaseStructure, truncateTables } from './support/utils';
 import { DockerComposeEnvironment, StartedDockerComposeEnvironment } from 'testcontainers';
 
 /**
  * @group integration
  */
 describe('PostgresStore', () => {
-  const CONNECTION_URI = 'postgresql://postgres@localhost:5432';
-  const TEST_DATABASE_NAME = 'iqprotocol-testing';
+  const connectionUri = 'postgresql://postgres@localhost:5432';
+  const dbName = 'iqprotocol-testing';
   const accountTable = 'account';
   const stateTable = 'state';
 
@@ -39,12 +39,12 @@ describe('PostgresStore', () => {
 
   beforeAll(async () => {
     environment = await new DockerComposeEnvironment(path.resolve(__dirname, 'support'), 'docker-compose.yml')
-      .withEnv('POSTGRES_DB', TEST_DATABASE_NAME)
+      .withEnv('POSTGRES_DB', dbName)
       .up();
 
-    await ensureDatabase(CONNECTION_URI, TEST_DATABASE_NAME);
+    await ensureEmptyDatabase(connectionUri, dbName);
 
-    pool = createPool(`${CONNECTION_URI}/${TEST_DATABASE_NAME}`, {
+    pool = createPool(`${connectionUri}/${dbName}`, {
       maximumPoolSize: 1,
     });
 
@@ -63,7 +63,7 @@ describe('PostgresStore', () => {
   describe('When the store is not initialized', () => {
     it('initializes correct database structure with default table names', async () => {
       await store.init();
-      await expectCorrectDatabaseStructure(pool, { accountTable, stateTable });
+      await expectCorrectDatabaseStructure(pool, { accountTable, stateTable, dbSchema: 'public' });
     });
 
     it('initializes correct database structure with custom table names', async () => {
@@ -71,7 +71,15 @@ describe('PostgresStore', () => {
       const stateTable = 'custom-state-table';
       const store = new PostgresStore({ pool, accountTable, stateTable });
       await store.init();
-      await expectCorrectDatabaseStructure(pool, { accountTable, stateTable });
+      await expectCorrectDatabaseStructure(pool, { accountTable, stateTable, dbSchema: 'public' });
+    });
+
+    it('initializes correct database structure using custom schema', async () => {
+      const dbSchema = 'iq';
+      await ensureSchema(pool, dbSchema);
+      const store = new PostgresStore({ pool, dbSchema });
+      await store.init();
+      await expectCorrectDatabaseStructure(pool, { accountTable, stateTable, dbSchema });
     });
   });
 
@@ -218,7 +226,7 @@ describe('PostgresStore', () => {
         validateAccountState: () => jest.fn(),
       };
       beforeEach(async () => {
-        store = new PostgresStore({ pool, accountTable, stateTable, validator });
+        store = new PostgresStore({ pool, validator });
         await store.saveAccount(account);
       });
 

@@ -2,7 +2,7 @@
 import { createPool, DatabasePoolType, sql } from 'slonik';
 import { PostgresStoreConfig } from '@iqprotocol/postgres-storage';
 
-export const ensureDatabase = async (connectionUri: string, databaseName: string): Promise<void> => {
+export const ensureEmptyDatabase = async (connectionUri: string, databaseName: string): Promise<void> => {
   const pool = createPool(connectionUri, {
     maximumPoolSize: 1,
   });
@@ -20,21 +20,31 @@ export const ensureDatabase = async (connectionUri: string, databaseName: string
   await pool.end();
 };
 
-export const truncateTables = async (pool: DatabasePoolType, tables: string[]): Promise<void> => {
+export const ensureSchema = async (pool: DatabasePoolType, dbSchema: string): Promise<void> => {
+  await pool.connect(async connection => {
+    await connection.query(sql`CREATE SCHEMA IF NOT EXISTS ${sql.identifier([dbSchema])}`);
+  });
+};
+
+export const truncateTables = async (pool: DatabasePoolType, tables: string[], dbSchema = 'public'): Promise<void> => {
   await pool.transaction(async connection => {
     for (const tableName of tables) {
-      await connection.query(sql`TRUNCATE TABLE ${sql.identifier([tableName])} CASCADE;`);
+      await connection.query(sql`TRUNCATE TABLE ${sql.identifier([dbSchema, tableName])} CASCADE;`);
     }
   });
 };
 
 export const expectCorrectDatabaseStructure = async (
   pool: DatabasePoolType,
-  { accountTable, stateTable }: Required<Pick<PostgresStoreConfig, 'accountTable' | 'stateTable'>>,
+  {
+    accountTable,
+    stateTable,
+    dbSchema,
+  }: Required<Pick<PostgresStoreConfig, 'accountTable' | 'stateTable' | 'dbSchema'>>,
 ): Promise<void> => {
   await pool.connect(async connection => {
     const tableCount = await connection.oneFirst(
-      sql`SELECT count(*) FROM information_schema.tables WHERE table_name IN (${sql.join(
+      sql`SELECT count(*) FROM information_schema.tables WHERE table_schema = ${dbSchema} AND table_name IN (${sql.join(
         [accountTable, stateTable],
         sql`, `,
       )});`,
@@ -44,7 +54,7 @@ export const expectCorrectDatabaseStructure = async (
 
     // verify account table columns
     const accountTableColumns = await connection.many(
-      sql`SELECT column_name, data_type FROM information_schema.columns WHERE table_name = ${accountTable};`,
+      sql`SELECT column_name, data_type FROM information_schema.columns WHERE table_schema = ${dbSchema} AND table_name = ${accountTable};`,
     );
 
     expect(accountTableColumns).toEqual(
@@ -56,7 +66,7 @@ export const expectCorrectDatabaseStructure = async (
 
     // verify state table columns
     const stateTableColumns = await connection.many(
-      sql`SELECT column_name, data_type FROM information_schema.columns WHERE table_name = ${stateTable};`,
+      sql`SELECT column_name, data_type FROM information_schema.columns WHERE table_schema = ${dbSchema} AND table_name = ${stateTable};`,
     );
 
     expect(stateTableColumns).toEqual(
