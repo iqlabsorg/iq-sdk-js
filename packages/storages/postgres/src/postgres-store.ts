@@ -9,8 +9,13 @@ import {
 import { DatabasePoolType, IdentifierSqlTokenType, sql } from 'slonik';
 import { DatabasePoolConnectionType, QueryMaybeOneFunctionType } from 'slonik/src/types';
 
+const DEFAULT_SCHEMA = 'public';
+const DEFAULT_ACCOUNT_TABLE_NAME = 'account';
+const DEFAULT_STATE_TABLE_NAME = 'state';
+
 export type PostgresStoreConfig = {
   pool: DatabasePoolType;
+  dbSchema?: string;
   accountTable?: string;
   stateTable?: string;
   validator?: AccountStateValidator;
@@ -21,11 +26,21 @@ export class PostgresStore extends AbstractStore {
   private readonly accountTableName: IdentifierSqlTokenType;
   private readonly stateTableName: IdentifierSqlTokenType;
 
-  constructor({ pool, validator, accountTable, stateTable }: PostgresStoreConfig) {
+  constructor({ pool, validator, accountTable, stateTable, dbSchema }: PostgresStoreConfig) {
     super({ validator });
     this.pool = pool;
-    this.accountTableName = sql.identifier([accountTable ?? 'account']);
-    this.stateTableName = sql.identifier([stateTable ?? 'state']);
+
+    // eslint-disable-next-line prettier/prettier
+    this.accountTableName = sql.identifier([
+      dbSchema ?? DEFAULT_SCHEMA,
+      accountTable ?? DEFAULT_ACCOUNT_TABLE_NAME
+    ]);
+
+    // eslint-disable-next-line prettier/prettier
+    this.stateTableName = sql.identifier([
+      dbSchema ?? DEFAULT_SCHEMA,
+      stateTable ?? DEFAULT_STATE_TABLE_NAME
+    ]);
   }
 
   private static rowToAccount(row: Record<string, unknown>): Account {
