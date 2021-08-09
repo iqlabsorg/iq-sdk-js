@@ -1,4 +1,4 @@
-# @iqprotocol/energy
+# Energy Utils
 This package is part of [IQ Protocol JS SDK.](https://github.com/iqalliance/iq-sdk-js)
 
 The package provided various utility functions for *energy* calculation.

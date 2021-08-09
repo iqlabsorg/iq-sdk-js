@@ -1,4 +1,4 @@
-# @iqprotocol/account
+# Account State Management
 This package is part of [IQ Protocol JS SDK.](https://github.com/iqalliance/iq-sdk-js)
 
 This is high level package which provides tools for IQ Protocol off-chain account state management.
