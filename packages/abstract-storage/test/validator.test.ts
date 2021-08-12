@@ -1,4 +1,5 @@
 import { Account, AccountState, DefaultValidator } from '../src';
+import { AccountStateError } from '../src/errors';
 
 /**
  * @group unit
@@ -46,43 +47,41 @@ describe('DefaultValidator', () => {
       'energyCalculatedAt',
     ])('throws error when the "%s" is missing', prop => {
       expect(() => validator.validateAccountState({ ...accountState, [prop]: undefined })).toThrowError(
-        `Empty ${prop}`,
+        new AccountStateError(`Empty ${prop}`),
       );
     });
 
     it('throws an error when the power is negative', () => {
-      expect(() => validator.validateAccountState({ ...accountState, power: -5n })).toThrowError('Negative power');
+      expect(() => validator.validateAccountState({ ...accountState, power: -5n })).toThrowError(
+        new AccountStateError('Negative power'),
+      );
     });
 
     it('throws an error when the gap halving period is not positive', () => {
       expect(() => validator.validateAccountState({ ...accountState, gapHalvingPeriod: 0 })).toThrowError(
-        'Invalid gap halving period',
+        new AccountStateError('Invalid gap halving period'),
       );
       expect(() => validator.validateAccountState({ ...accountState, gapHalvingPeriod: -1 })).toThrowError(
-        'Invalid gap halving period',
+        new AccountStateError('Invalid gap halving period'),
       );
     });
 
     it('throws an error when the locked power is negative', () => {
       expect(() => validator.validateAccountState({ ...accountState, lockedPower: -5n })).toThrowError(
-        'Negative locked power',
+        new AccountStateError('Negative locked power'),
       );
     });
 
-    it('throws an error when the energyCalculatedAt is negative', () => {
+    it.only('throws an error when the energyCalculatedAt is negative', () => {
       expect(() => validator.validateAccountState({ ...accountState, energyCalculatedAt: -1 })).toThrowError(
-        'Negative energy calculation time',
-      );
-    });
-
-    it('throws an error when the energyCap is negative', () => {
-      expect(() => validator.validateAccountState({ ...accountState, energyCap: -1n })).toThrowError(
-        'Negative energy cap',
+        new AccountStateError('Negative energy calculation time'),
       );
     });
 
     it('throws an error when the energy surpasses max cap', () => {
-      expect(() => validator.validateAccountState({ ...accountState, energyCap: 3n })).toThrowError('Energy above cap');
+      expect(() => validator.validateAccountState({ ...accountState, energyCap: 3n })).toThrowError(
+        new AccountStateError('Energy above cap'),
+      );
     });
   });
 });

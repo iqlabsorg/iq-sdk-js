@@ -1,4 +1,5 @@
 import { Account, AccountState } from './types';
+import { AccountStateError } from './errors';
 
 const isEmpty = (value: unknown): boolean =>
   typeof value === 'undefined' || value === null || !String(value).trim().length;
@@ -29,32 +30,28 @@ export class DefaultValidator implements AccountStateValidator {
 
     requiredProperties.forEach(propName => {
       if (isEmpty(accountState[propName])) {
-        throw new Error(`Empty ${propName}`);
+        throw new AccountStateError(`Empty ${propName}`);
       }
     });
 
     if (accountState.power < 0) {
-      throw new Error('Negative power');
+      throw new AccountStateError('Negative power');
     }
 
     if (accountState.gapHalvingPeriod <= 0) {
-      throw new Error('Invalid gap halving period');
+      throw new AccountStateError('Invalid gap halving period');
     }
 
     if (accountState.lockedPower < 0) {
-      throw new Error('Negative locked power');
-    }
-
-    if (accountState.energyCap < 0) {
-      throw new Error('Negative energy cap');
+      throw new AccountStateError('Negative locked power');
     }
 
     if (accountState.energy > accountState.energyCap) {
-      throw new Error('Energy above cap');
+      throw new AccountStateError('Energy above cap');
     }
 
     if (accountState.energyCalculatedAt < 0) {
-      throw new Error('Negative energy calculation time');
+      throw new AccountStateError('Negative energy calculation time');
     }
   }
 }
