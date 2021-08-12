@@ -1,6 +1,6 @@
 {
   "name": "@iqprotocol/eip155",
-  "version": "0.12.0",
+  "version": "0.12.1",
   "license": "UNLICENSED",
   "scripts": {
     "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
