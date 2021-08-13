@@ -1,3 +1,4 @@
 module.exports = {
-    runner: "groups"
+  runner: "groups",
+  testTimeout: 10000
 };
