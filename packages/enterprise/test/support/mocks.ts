@@ -5,7 +5,6 @@ export const mockBlockchainProvider: jest.Mocked<BlockchainProvider> = {
   approveLiquidityTokensToEnterprise: jest.fn(),
   approveLiquidityTokensToService: jest.fn(),
   borrow: jest.fn(),
-  connect: jest.fn(),
   decreaseLiquidity: jest.fn(),
   deployEnterprise: jest.fn(),
   estimateLoan: jest.fn(),

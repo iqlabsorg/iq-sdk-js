@@ -69,7 +69,6 @@ describe('AccountStateManager', () => {
 
     const blockchainProvider = new EIP155BlockchainProvider({
       signer: new VoidSigner('0x4429CeB244B101926b3780c6ee906139c0f0eEf1'), // random address
-      contracts: { enterpriseFactory: '0x07de68388196AEA77fF462177AF205CfcE15E74f' }, // random address
     });
 
     jest.spyOn(blockchainProvider, 'getAccountState').mockResolvedValue(onChainAccountState);

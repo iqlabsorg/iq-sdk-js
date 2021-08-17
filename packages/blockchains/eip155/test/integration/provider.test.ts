@@ -48,9 +48,6 @@ describe('EIP155BlockchainProvider', () => {
     converter = await ethers.getContract('DefaultConverter');
     blockchainProvider = new EIP155BlockchainProvider({
       signer: deployerSigner,
-      contracts: {
-        enterpriseFactory: enterpriseFactory.address,
-      },
     });
 
     baseEnterpriseParams = {
@@ -76,7 +73,7 @@ describe('EIP155BlockchainProvider', () => {
   });
 
   it('deploys enterprise', async () => {
-    const receipt = await wait(blockchainProvider.deployEnterprise(baseEnterpriseParams));
+    const receipt = await wait(blockchainProvider.deployEnterprise(enterpriseFactory.address, baseEnterpriseParams));
     expect(receipt.status).toBe(1);
   });
 
@@ -103,7 +100,7 @@ describe('EIP155BlockchainProvider', () => {
     let expectedEnterpriseData: EnterpriseInfo;
 
     beforeEach(async () => {
-      const receipt = await wait(blockchainProvider.deployEnterprise(baseEnterpriseParams));
+      const receipt = await wait(blockchainProvider.deployEnterprise(enterpriseFactory.address, baseEnterpriseParams));
       enterprise = await getEnterprise(enterpriseFactory, receipt.blockNumber);
 
       expectedEnterpriseData = {
@@ -408,8 +405,7 @@ describe('EIP155BlockchainProvider', () => {
           liquidityProvider = await ethers.getNamedSigner('liquidityProvider');
           // allocate tokens to liquidity provider
           await liquidityToken.transfer(liquidityProvider.address, ONE_TOKEN.mul(10000));
-          // eslint-disable-next-line require-atomic-updates
-          lpBlockchainProvider = await blockchainProvider.connect(liquidityProvider);
+          lpBlockchainProvider = new EIP155BlockchainProvider({ signer: liquidityProvider });
         });
 
         it('allows to approve liquidity tokens to enterprise', async () => {
@@ -496,7 +492,7 @@ describe('EIP155BlockchainProvider', () => {
               // allocate tokens to borrower, so that he is able to loan fee
               await liquidityToken.transfer(borrower.address, ONE_TOKEN.mul(500));
               // Create borrower blockchain provider
-              borrowerBlockchainProvider = await blockchainProvider.connect(borrower);
+              borrowerBlockchainProvider = new EIP155BlockchainProvider({ signer: borrower });
             });
 
             it('allows to estimates a loan via enterprise', async () => {
