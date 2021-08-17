@@ -1,0 +1,24 @@
+{
+  "name": "@iqprotocol/discovery",
+  "version": "0.1.0",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
+    "build": "tsdx build --tsconfig tsconfig.build.json",
+    "test": "tsdx test --group=unit",
+    "prepublish": "yarn build"
+  },
+  "main": "dist/index.js",
+  "module": "dist/discovery.esm.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "README.md",
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "dependencies": {
+    "caip": "^0.9.2"
+  }
+}

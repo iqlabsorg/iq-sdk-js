@@ -9,6 +9,7 @@
       "@iqprotocol/abstract-blockchain": ["packages/abstract-blockchain/src"],
       "@iqprotocol/abstract-storage": ["packages/abstract-storage/src"],
       "@iqprotocol/account": ["packages/account/src"],
+      "@iqprotocol/discovery": ["packages/discovery/src"],
       "@iqprotocol/eip155": ["packages/blockchains/eip155/src"],
       "@iqprotocol/energy": ["packages/energy/src"],
       "@iqprotocol/enterprise": ["packages/enterprise/src"],
