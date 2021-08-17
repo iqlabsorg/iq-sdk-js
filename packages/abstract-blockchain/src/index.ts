@@ -98,12 +98,10 @@ export interface LoanInfo {
   gcFeeTokenIndex: number;
 }
 
-export interface BlockchainProvider<Transaction = unknown, TransactionSigner = unknown> {
-  connect(signer: TransactionSigner): Promise<BlockchainProvider<Transaction, TransactionSigner>>;
-
+export interface BlockchainProvider<Transaction = unknown> {
   getChainId(): Promise<ChainID>;
 
-  deployEnterprise(params: EnterpriseParams): Promise<Transaction>;
+  deployEnterprise(enterpriseFactoryAddress: Address, params: EnterpriseParams): Promise<Transaction>;
 
   getERC20Metadata(tokenAddress: Address): Promise<ERC20Metadata>;
 

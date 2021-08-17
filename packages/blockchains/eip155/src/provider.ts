@@ -32,27 +32,15 @@ import {
   ServiceParams,
 } from '@iqprotocol/abstract-blockchain';
 
-type DeployedContracts = {
-  enterpriseFactory: Address;
-};
-
 export type EIP155BlockchainProviderConfig = {
   signer: Signer;
-  contracts: DeployedContracts;
 };
 
-export class EIP155BlockchainProvider implements BlockchainProvider<ContractTransaction, Signer> {
+export class EIP155BlockchainProvider implements BlockchainProvider<ContractTransaction> {
   private readonly signer: Signer;
-  private readonly contracts: DeployedContracts;
 
-  constructor({ signer, contracts }: EIP155BlockchainProviderConfig) {
+  constructor({ signer }: EIP155BlockchainProviderConfig) {
     this.signer = signer;
-    this.contracts = contracts;
-  }
-
-  async connect(signer: Signer): Promise<EIP155BlockchainProvider> {
-    // this provider does not require asynchronous calls to connect to signer but we keep 'async' for compatibility.
-    return Promise.resolve(new EIP155BlockchainProvider({ signer, contracts: this.contracts }));
   }
 
   // https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md
@@ -80,8 +68,8 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
     return this.resolveERC20Token(tokenAddress).balanceOf(targetAccountAddress);
   }
 
-  async deployEnterprise(params: EnterpriseParams): Promise<ContractTransaction> {
-    return this.resolveEnterpriseFactory().deploy(
+  async deployEnterprise(enterpriseFactoryAddress: string, params: EnterpriseParams): Promise<ContractTransaction> {
+    return this.resolveEnterpriseFactory(enterpriseFactoryAddress).deploy(
       params.name,
       params.liquidityTokenAddress,
       params.baseUri,
@@ -543,8 +531,8 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
     );
   }
 
-  protected resolveEnterpriseFactory(): EnterpriseFactory {
-    return EnterpriseFactory__factory.connect(this.contracts.enterpriseFactory, this.signer);
+  protected resolveEnterpriseFactory(enterpriseFactoryAddress: string): EnterpriseFactory {
+    return EnterpriseFactory__factory.connect(enterpriseFactoryAddress, this.signer);
   }
 
   protected resolveEnterprise(enterpriseAddress: string): Enterprise {
