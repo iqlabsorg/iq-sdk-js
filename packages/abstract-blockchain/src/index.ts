@@ -1,7 +1,7 @@
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
-import { AccountID, ChainID } from 'caip';
+import { AccountId, ChainId } from 'caip';
 
-export { ChainID, AccountID };
+export { ChainId, AccountId };
 export { BigNumber, BigNumberish };
 export type Address = string;
 
@@ -99,7 +99,7 @@ export interface LoanInfo {
 }
 
 export interface BlockchainProvider<Transaction = unknown> {
-  getChainId(): Promise<ChainID>;
+  getChainId(): Promise<ChainId>;
 
   deployEnterprise(enterpriseFactoryAddress: Address, params: EnterpriseParams): Promise<Transaction>;
 

@@ -1,4 +1,4 @@
-import { AccountID } from '@iqprotocol/abstract-blockchain';
+import { AccountId } from '@iqprotocol/abstract-blockchain';
 import { recoverTypedSignature_v4, TypedMessage } from 'eth-sig-util';
 
 interface MessageTypeProperty {
@@ -12,7 +12,7 @@ export interface MessageTypes {
 }
 
 export class AccountOwnershipVerifier {
-  static generateAccountOwnershipClaim(accountId: AccountID, version = '1'): TypedMessage<MessageTypes> {
+  static generateAccountOwnershipClaim(accountId: AccountId, version = '1'): TypedMessage<MessageTypes> {
     const { chainId, address } = accountId;
     if (chainId.namespace !== 'eip155') {
       throw new Error('Account chain ID namespace is not "eip155"');
@@ -50,7 +50,7 @@ export class AccountOwnershipVerifier {
   }
 
   static verifyAccountOwnershipClaimSignature(
-    accountId: AccountID,
+    accountId: AccountId,
     claim: TypedMessage<MessageTypes>,
     signature: string,
   ): boolean {

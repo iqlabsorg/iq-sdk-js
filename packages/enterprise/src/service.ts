@@ -1,5 +1,5 @@
 import {
-  AccountID,
+  AccountId,
   AccountState,
   Address,
   BigNumber,
@@ -30,9 +30,9 @@ export class Service<Transaction = unknown> {
     return new Service({ blockchain, address });
   }
 
-  async getId(): Promise<AccountID> {
+  async getId(): Promise<AccountId> {
     const chainId = await this.blockchain.getChainId();
-    return new AccountID({ chainId, address: this.address });
+    return new AccountId({ chainId, address: this.address });
   }
 
   getAddress(): Address {

@@ -4,7 +4,7 @@
 import { chains } from '../src/chains';
 import { deployments } from '../src/deployments';
 import { getBlockchainInfo, getContractAddress, getContractAddresses } from '@iqprotocol/discovery';
-import { ChainID } from 'caip';
+import { ChainId } from 'caip';
 import { IQContractName } from '../src/types';
 
 const DEPLOYED_CHAINS = ['eip155:56', 'eip155:97'];
@@ -24,9 +24,9 @@ describe('Discovery Utils', () => {
 
   describe('Blockchain info', () => {
     it('returns info for known chain', () => {
-      expect(getBlockchainInfo(new ChainID('eip155:xx'))).toBeNull();
+      expect(getBlockchainInfo(new ChainId('eip155:xx'))).toBeNull();
       DEPLOYED_CHAINS.forEach(chainId => {
-        expect(getBlockchainInfo(new ChainID(chainId))).toEqual(chains[chainId]);
+        expect(getBlockchainInfo(new ChainId(chainId))).toEqual(chains[chainId]);
       });
     });
   });
@@ -40,16 +40,16 @@ describe('Discovery Utils', () => {
     });
 
     it('returns the list for contract addresses for known chain', () => {
-      expect(getContractAddresses(new ChainID('eip155:xx'))).toBeNull();
+      expect(getContractAddresses(new ChainId('eip155:xx'))).toBeNull();
       DEPLOYED_CHAINS.forEach(chainId => {
-        expect(getContractAddresses(new ChainID(chainId))).toEqual(deployments[chainId]);
+        expect(getContractAddresses(new ChainId(chainId))).toEqual(deployments[chainId]);
       });
     });
 
     it('returns contract address for known chain by contract name', () => {
       DEPLOYED_CHAINS.forEach(chainId => {
         Object.values(IQContractName).forEach(contractName => {
-          expect(getContractAddress(new ChainID(chainId), contractName)).toEqual(deployments[chainId][contractName]);
+          expect(getContractAddress(new ChainId(chainId), contractName)).toEqual(deployments[chainId][contractName]);
         });
       });
     });

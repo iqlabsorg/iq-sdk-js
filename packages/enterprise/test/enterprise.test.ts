@@ -1,4 +1,4 @@
-import { AccountID, BigNumber, ChainID } from '@iqprotocol/abstract-blockchain';
+import { AccountId, BigNumber, ChainId } from '@iqprotocol/abstract-blockchain';
 import { mockBlockchainProvider } from './support/mocks';
 import { Enterprise, LoanEstimationRequest } from '../src';
 
@@ -15,9 +15,9 @@ describe('Enterprise', () => {
   });
 
   it('returns correct ID', async () => {
-    const chainId = new ChainID({ namespace: 'eip155', reference: '1' });
+    const chainId = new ChainId({ namespace: 'eip155', reference: '1' });
     mockBlockchainProvider.getChainId.mockResolvedValue(chainId);
-    await expect(enterprise.getId()).resolves.toMatchObject(new AccountID({ chainId, address: ENTERPRISE_ADDRESS }));
+    await expect(enterprise.getId()).resolves.toMatchObject(new AccountId({ chainId, address: ENTERPRISE_ADDRESS }));
   });
 
   it('retrieves enterprise info', async () => {

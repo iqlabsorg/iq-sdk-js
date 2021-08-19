@@ -2,10 +2,10 @@ import { InMemoryStore } from '@iqprotocol/in-memory-storage';
 import { Account, AccountState, AccountStateChangeResult } from '@iqprotocol/abstract-storage';
 import { AccountStateManager } from '../src';
 import {
-  AccountID,
+  AccountId,
   AccountState as OnChainAccountState,
   BigNumber,
-  ChainID,
+  ChainId,
   ServiceInfo,
 } from '@iqprotocol/abstract-blockchain';
 import { EIP155BlockchainProvider, VoidSigner } from '@iqprotocol/eip155';
@@ -41,9 +41,9 @@ describe('AccountStateManager', () => {
     allowsPerpetual: false,
   };
 
-  const chainId = new ChainID({ namespace: 'eip155', reference: '1' });
-  const serviceId = new AccountID({ chainId, address: serviceAddress });
-  const accountId = new AccountID({ chainId, address: accountAddress });
+  const chainId = new ChainId({ namespace: 'eip155', reference: '1' });
+  const serviceId = new AccountId({ chainId, address: serviceAddress });
+  const accountId = new AccountId({ chainId, address: accountAddress });
   const account: Account = {
     id: accountId.toString(),
     data: {
