@@ -22,7 +22,8 @@ module.exports = {
   },
   ignorePatterns: [
     '.eslintrc.js',
-    'jest.config.js'
+    'jest.config.js',
+    'tsdx.config.js'
   ],
   rules: {
     '@typescript-eslint/member-ordering': 'error',
