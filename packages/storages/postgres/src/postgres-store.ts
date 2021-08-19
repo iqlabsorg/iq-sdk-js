@@ -7,7 +7,7 @@ import {
   AccountStateValidator,
 } from '@iqprotocol/abstract-storage';
 import { DatabasePoolType, IdentifierSqlTokenType, sql } from 'slonik';
-import { DatabasePoolConnectionType, QueryMaybeOneFunctionType } from 'slonik/src/types';
+import { DatabasePoolConnectionType } from 'slonik/src/types';
 
 const DEFAULT_SCHEMA = 'public';
 const DEFAULT_ACCOUNT_TABLE_NAME = 'account';
@@ -231,7 +231,7 @@ export class PostgresStore extends AbstractStore {
     connection: DatabasePoolConnectionType,
     serviceId: string,
     accountId: string,
-  ): Promise<ReturnType<QueryMaybeOneFunctionType>> {
+  ): Promise<Record<string, unknown> | null> {
     return connection.maybeOne(
       sql`SELECT
             account_id,
