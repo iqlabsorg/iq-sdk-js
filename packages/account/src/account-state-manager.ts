@@ -1,5 +1,5 @@
 import { AccountState, AccountStateChangeResult, StorageProvider } from '@iqprotocol/abstract-storage';
-import { AccountID, AccountState as OnChainAccountState, BlockchainProvider } from '@iqprotocol/abstract-blockchain';
+import { AccountId, AccountState as OnChainAccountState, BlockchainProvider } from '@iqprotocol/abstract-blockchain';
 import { calculateEffectiveEnergy } from '@iqprotocol/energy';
 
 export interface AccountStateManagerConfig {
@@ -26,8 +26,8 @@ export class AccountStateManager {
     energy,
     energyCalculatedAt,
   }: Omit<AccountState, 'serviceId' | 'accountId'> & {
-    serviceId: AccountID;
-    accountId: AccountID;
+    serviceId: AccountId;
+    accountId: AccountId;
   }): Promise<AccountState> {
     this.validateSameChain(serviceId, accountId);
     return this.store.initAccountState({
@@ -42,7 +42,7 @@ export class AccountStateManager {
     });
   }
 
-  async initAccountStateFromBlockchain(serviceId: AccountID, accountId: AccountID): Promise<AccountState> {
+  async initAccountStateFromBlockchain(serviceId: AccountId, accountId: AccountId): Promise<AccountState> {
     this.validateSameChain(serviceId, accountId);
     try {
       const { balance, energy, timestamp } = await this.getBlockchainAccountState(serviceId, accountId);
@@ -63,27 +63,27 @@ export class AccountStateManager {
     }
   }
 
-  async getBlockchainAccountState(serviceId: AccountID, accountId: AccountID): Promise<OnChainAccountState> {
+  async getBlockchainAccountState(serviceId: AccountId, accountId: AccountId): Promise<OnChainAccountState> {
     return this.blockchain.getAccountState(serviceId.address, accountId.address);
   }
 
-  async getAccountState(serviceId: AccountID, accountId: AccountID): Promise<AccountState | null> {
+  async getAccountState(serviceId: AccountId, accountId: AccountId): Promise<AccountState | null> {
     return this.store.getAccountState(serviceId.toString(), accountId.toString());
   }
 
-  async deleteAccountState(serviceId: AccountID, accountId: AccountID): Promise<boolean> {
+  async deleteAccountState(serviceId: AccountId, accountId: AccountId): Promise<boolean> {
     return this.store.deleteAccountState(serviceId.toString(), accountId.toString());
   }
 
-  async getInitializedAccountState(serviceId: AccountID, accountId: AccountID): Promise<AccountState> {
+  async getInitializedAccountState(serviceId: AccountId, accountId: AccountId): Promise<AccountState> {
     this.validateSameChain(serviceId, accountId);
     const currentState = await this.getAccountState(serviceId, accountId);
     return currentState ? currentState : this.initAccountStateFromBlockchain(serviceId, accountId);
   }
 
   async increasePower(
-    serviceId: AccountID,
-    accountId: AccountID,
+    serviceId: AccountId,
+    accountId: AccountId,
     power: bigint,
     timestamp: Date,
   ): Promise<AccountStateChangeResult> {
@@ -91,8 +91,8 @@ export class AccountStateManager {
   }
 
   async decreasePower(
-    serviceId: AccountID,
-    accountId: AccountID,
+    serviceId: AccountId,
+    accountId: AccountId,
     power: bigint,
     timestamp: Date,
   ): Promise<AccountStateChangeResult> {
@@ -100,8 +100,8 @@ export class AccountStateManager {
   }
 
   async lockPower(
-    serviceId: AccountID,
-    accountId: AccountID,
+    serviceId: AccountId,
+    accountId: AccountId,
     power: bigint,
     timestamp: Date,
   ): Promise<AccountStateChangeResult> {
@@ -109,8 +109,8 @@ export class AccountStateManager {
   }
 
   async unlockPower(
-    serviceId: AccountID,
-    accountId: AccountID,
+    serviceId: AccountId,
+    accountId: AccountId,
     power: bigint,
     timestamp: Date,
   ): Promise<AccountStateChangeResult> {
@@ -118,8 +118,8 @@ export class AccountStateManager {
   }
 
   async spendEnergy(
-    serviceId: AccountID,
-    accountId: AccountID,
+    serviceId: AccountId,
+    accountId: AccountId,
     energy: bigint,
     timestamp: Date,
   ): Promise<AccountStateChangeResult> {
@@ -127,8 +127,8 @@ export class AccountStateManager {
   }
 
   protected async changeState(
-    serviceId: AccountID,
-    accountId: AccountID,
+    serviceId: AccountId,
+    accountId: AccountId,
     key: 'power' | 'lockedPower' | 'energy',
     delta: bigint,
     timestamp: Date,
@@ -179,7 +179,7 @@ export class AccountStateManager {
     return this.store.changeAccountState(state, newState);
   }
 
-  protected validateSameChain(id1: AccountID, id2: AccountID): void {
+  protected validateSameChain(id1: AccountId, id2: AccountId): void {
     if (id1.chainId.toString() !== id2.chainId.toString()) {
       throw new Error('Chain ID mismatch');
     }

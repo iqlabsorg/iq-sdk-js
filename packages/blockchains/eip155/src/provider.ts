@@ -21,7 +21,7 @@ import {
   AccountState,
   Address,
   BlockchainProvider,
-  ChainID,
+  ChainId,
   EnterpriseInfo,
   EnterpriseParams,
   ERC20Metadata,
@@ -44,9 +44,9 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
   }
 
   // https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md
-  async getChainId(): Promise<ChainID> {
+  async getChainId(): Promise<ChainId> {
     const reference = await this.signer.getChainId();
-    return new ChainID({ namespace: 'eip155', reference: reference.toString() });
+    return new ChainId({ namespace: 'eip155', reference: reference.toString() });
   }
 
   async getERC20Metadata(tokenAddress: Address): Promise<ERC20Metadata> {

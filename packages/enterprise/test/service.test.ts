@@ -1,4 +1,4 @@
-import { AccountID, ChainID } from '@iqprotocol/abstract-blockchain';
+import { AccountId, ChainId } from '@iqprotocol/abstract-blockchain';
 import { mockBlockchainProvider } from './support/mocks';
 import { Service } from '../src';
 
@@ -8,8 +8,8 @@ import { Service } from '../src';
 describe('Service', () => {
   const SERVICE_ADDRESS = '0x44AdE077C3D5Aaffc0Ff5fe465B0cfa490915A35';
   let service: Service;
-  const chainId = new ChainID({ namespace: 'eip155', reference: '1' });
-  const serviceAccountId = new AccountID({ chainId, address: SERVICE_ADDRESS });
+  const chainId = new ChainId({ namespace: 'eip155', reference: '1' });
+  const serviceAccountId = new AccountId({ chainId, address: SERVICE_ADDRESS });
 
   beforeEach(() => {
     jest.clearAllMocks();

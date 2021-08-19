@@ -1,5 +1,5 @@
 import { Account, AccountData, AccountOwnershipProof, StorageProvider } from '@iqprotocol/abstract-storage';
-import { AccountID } from '@iqprotocol/abstract-blockchain';
+import { AccountId } from '@iqprotocol/abstract-blockchain';
 import { AccountOwnershipVerifier } from './account-ownership-verifier';
 
 export interface AccountManagerConfig {
@@ -17,7 +17,7 @@ export class AccountManager {
     this.store = store;
   }
 
-  async register(accountId: AccountID, { proof }: AccountRegistrationParams): Promise<Account> {
+  async register(accountId: AccountId, { proof }: AccountRegistrationParams): Promise<Account> {
     const ownershipClaim = AccountOwnershipVerifier.generateAccountOwnershipClaim(accountId, proof.v);
     if (!AccountOwnershipVerifier.verifyAccountOwnershipClaimSignature(accountId, ownershipClaim, proof.sig)) {
       throw new Error('Account ownership verification failed');
@@ -26,15 +26,15 @@ export class AccountManager {
     return this.createAccount(accountId, { proof });
   }
 
-  async getAccount(accountId: AccountID): Promise<Account | null> {
+  async getAccount(accountId: AccountId): Promise<Account | null> {
     return this.store.getAccount(accountId.toString());
   }
 
-  async deleteAccount(accountId: AccountID): Promise<boolean> {
+  async deleteAccount(accountId: AccountId): Promise<boolean> {
     return this.store.deleteAccount(accountId.toString());
   }
 
-  async createAccount(accountId: AccountID, data: AccountData): Promise<Account> {
+  async createAccount(accountId: AccountId, data: AccountData): Promise<Account> {
     const existingAccount = await this.getAccount(accountId);
     if (existingAccount) {
       throw new Error('Account already exists');

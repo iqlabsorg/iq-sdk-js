@@ -35,8 +35,8 @@ export type ChainExplorer = {
 
 // CAIP-2 blockchain ID
 // see: https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md
-type ChainID = string;
+type ChainId = string;
 
 export type IQContractAddresses = Record<IQContractName, string>;
-export type IQChains = Record<ChainID, ChainInfo>;
-export type IQContractDeployments = Record<ChainID, IQContractAddresses>;
+export type IQChains = Record<ChainId, ChainInfo>;
+export type IQContractDeployments = Record<ChainId, IQContractAddresses>;
