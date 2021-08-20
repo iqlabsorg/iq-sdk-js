@@ -1,6 +1,6 @@
 {
   "name": "@iqprotocol/eip155",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "license": "UNLICENSED",
   "scripts": {
     "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
@@ -24,16 +24,16 @@
     "access": "restricted"
   },
   "dependencies": {
-    "@iqprotocol/abstract-blockchain": "^0.9.0",
-    "@ethersproject/abstract-signer": "^5.4.1"
+    "@ethersproject/abstract-signer": "^5.4.1",
+    "@iqprotocol/abstract-blockchain": "^0.10.0"
   },
   "devDependencies": {
     "@iqprotocol/solidity-contracts": "https://github.com/iqalliance/iq-smart-contracts#c7365e64",
     "@typechain/ethers-v5": "^7.0.1",
+    "ethers": "^5.4.5",
     "hardhat": "^2.6.1",
     "hardhat-deploy": "^0.8.11",
     "hardhat-deploy-ethers": "^0.3.0-beta.10",
-    "typechain": "^5.1.2",
-    "ethers": "^5.4.5"
+    "typechain": "^5.1.2"
   }
 }
