@@ -1037,7 +1037,7 @@
     "@ethersproject/transactions" "^5.4.0"
     "@ethersproject/web" "^5.4.0"
 
-"@ethersproject/abstract-signer@5.4.1", "@ethersproject/abstract-signer@^5.3.0", "@ethersproject/abstract-signer@^5.4.0", "@ethersproject/abstract-signer@^5.4.1":
+"@ethersproject/abstract-signer@5.4.1", "@ethersproject/abstract-signer@^5.3.0", "@ethersproject/abstract-signer@^5.4.0":
   version "5.4.1"
   resolved "https://registry.yarnpkg.com/@ethersproject/abstract-signer/-/abstract-signer-5.4.1.tgz#e4e9abcf4dd4f1ba0db7dff9746a5f78f355ea81"
   integrity sha512-SkkFL5HVq1k4/25dM+NWP9MILgohJCgGv5xT5AcRruGz4ILpfHeBtO/y6j+Z3UN/PAjDeb4P7E51Yh8wcGNLGA==
@@ -1367,9 +1367,9 @@
   resolved "https://registry.yarnpkg.com/@hutson/parse-repository-url/-/parse-repository-url-3.0.2.tgz#98c23c950a3d9b6c8f0daed06da6c3af06981340"
   integrity sha512-H9XAx3hc0BQHY6l+IFSWHDySypcXsvsuLhgYLUGywmJ5pswRVQJUHpOsobnLYp2ZUaUlKiKDrgWWhosOwAEM8Q==
 
-"@iqprotocol/solidity-contracts@https://github.com/iqalliance/iq-smart-contracts#c7365e64":
-  version "0.1.0"
-  resolved "https://github.com/iqalliance/iq-smart-contracts#c7365e6400402560c8b6be3c983f36b597a7ceb0"
+"@iqprotocol/solidity-contracts@https://github.com/iqalliance/iq-smart-contracts#0e3fa63cc7cbafe43b40cf575c9906aa31da7954":
+  version "0.2.0"
+  resolved "https://github.com/iqalliance/iq-smart-contracts#0e3fa63cc7cbafe43b40cf575c9906aa31da7954"
 
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.1.0"
@@ -2725,9 +2725,9 @@
   integrity sha512-jhuKLIRrhvCPLqwPcx6INqmKeiA5EWrsCOPhrlFSrbrmU4ZMPjj5Ul/oLCMDO98XRUIwVm78xICz4EPCektzeQ==
 
 "@types/node@*":
-  version "16.6.2"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.6.2.tgz#331b7b9f8621c638284787c5559423822fdffc50"
-  integrity sha512-LSw8TZt12ZudbpHc6EkIyDM3nHVWKYrAvGy6EAJfNfjusbwnThqjqxUKKRwuV3iWYeW/LYMzNgaq3MaLffQ2xA==
+  version "16.7.0"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.7.0.tgz#f0374c4e89d1fc1ef705caad3021ba34c1a9294c"
+  integrity sha512-e66BrnjWQ3BRBZ2+iA5e85fcH9GLNe4S0n1H0T3OalK2sXg5XWEFTO4xvmGrYQ3edy+q6fdOh5t0/HOY8OAqBg==
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.1"
@@ -3598,7 +3598,7 @@ bn.js@^5.1.2:
   resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-5.2.0.tgz#358860674396c6997771a9d051fcc1b57d4ae002"
   integrity sha512-D7iWRBvnZE8ecXiLj/9wbxH7Tk79fAh8IHaTNq1RWRixsS02W+5qS+iE9yq6RYl0asXx5tw0bLhmT5pIfbSquw==
 
-boolean@^3.0.2:
+boolean@^3.0.2, boolean@^3.1.4:
   version "3.1.4"
   resolved "https://registry.yarnpkg.com/boolean/-/boolean-3.1.4.tgz#f51a2fb5838a99e06f9b6ec1edb674de67026435"
   integrity sha512-3hx0kwU3uzG6ReQ3pnaFQPSktpBw6RHN3/ivDKEuU8g1XSfafowyvDnadjv1xp8IZqhtSukxlwv9bF6FhX8m0w==
@@ -5515,12 +5515,12 @@ fast-levenshtein@^2.0.6, fast-levenshtein@~2.0.6:
   resolved "https://registry.yarnpkg.com/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz#3d8a5c66883a16a30ca8643e851f19baa7797917"
   integrity sha1-PYpcZog6FqMMqGQ+hR8Zuqd5eRc=
 
-fast-printf@1.6.6, fast-printf@^1.6.4:
-  version "1.6.6"
-  resolved "https://registry.yarnpkg.com/fast-printf/-/fast-printf-1.6.6.tgz#7e9af8dabedf7a0b9760feae4d10b651d0d6a03b"
-  integrity sha512-Uz/uW6R1Fd8YqCGeoQosRIfB4dBbr8uMbFVdEci2AyXYcfucFqhpSMAGs8skRRdZd+MGCDBu48+B8Zmu7Pta5A==
+fast-printf@^1.6.4:
+  version "1.6.9"
+  resolved "https://registry.yarnpkg.com/fast-printf/-/fast-printf-1.6.9.tgz#212f56570d2dc8ccdd057ee93d50dd414d07d676"
+  integrity sha512-FChq8hbz65WMj4rstcQsFB0O7Cy++nmbNfLYnD9cYv2cRn8EG6k/MGn9kO/tjO66t09DLDugj3yL+V2o6Qftrg==
   dependencies:
-    boolean "^3.0.2"
+    boolean "^3.1.4"
 
 fastq@^1.6.0:
   version "1.12.0"
@@ -7500,12 +7500,13 @@ jsprim@^1.2.2:
     object.assign "^4.1.2"
 
 keccak@^3.0.0:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/keccak/-/keccak-3.0.1.tgz#ae30a0e94dbe43414f741375cff6d64c8bea0bff"
-  integrity sha512-epq90L9jlFWCW7+pQa6JOnKn2Xgl2mtI664seYR6MHskvI9agt7AnDqmAlp9TqU4/caMYbA08Hi5DMZAl5zdkA==
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/keccak/-/keccak-3.0.2.tgz#4c2c6e8c54e04f2670ee49fa734eb9da152206e0"
+  integrity sha512-PyKKjkH53wDMLGrvmRGSNWgmSxZOUqbnXwKL9tmgbFYA1iAYqW21kfR7mZXV0MlESiefxQQE9X9fTa3X+2MPDQ==
   dependencies:
     node-addon-api "^2.0.0"
     node-gyp-build "^4.2.0"
+    readable-stream "^3.6.0"
 
 kind-of@^3.0.2, kind-of@^3.0.3, kind-of@^3.2.0:
   version "3.2.2"

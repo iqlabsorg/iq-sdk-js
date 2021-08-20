@@ -45,8 +45,5 @@
   },
   "lint-staged": {
     "packages/**/*.ts": "yarn lint:fix"
-  },
-  "resolutions": {
-    "fast-printf": "1.6.6"
   }
 }
