@@ -1,4 +1,4 @@
-/* eslint-disable sonarjs/no-duplicate-string */
+/* eslint-disable sonarjs/no-duplicate-string,sonarjs/no-nested-template-literals */
 import { createPool, DatabasePoolType, sql } from 'slonik';
 import { PostgresStoreConfig } from '@iqprotocol/postgres-storage';
 

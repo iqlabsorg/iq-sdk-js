@@ -1,4 +1,3 @@
-import { BigNumber, BigNumberish, ContractTransaction, Signer } from 'ethers';
 import {
   BorrowToken,
   BorrowToken__factory,
@@ -30,7 +29,12 @@ import {
   LoanInfo,
   ServiceInfo,
   ServiceParams,
+  BigNumber,
+  BigNumberish,
 } from '@iqprotocol/abstract-blockchain';
+
+import { ContractTransaction } from '@ethersproject/contracts';
+import { Signer } from '@ethersproject/abstract-signer';
 
 export type EIP155BlockchainProviderConfig = {
   signer: Signer;
