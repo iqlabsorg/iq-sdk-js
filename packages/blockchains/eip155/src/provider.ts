@@ -33,8 +33,7 @@ import {
   BigNumberish,
 } from '@iqprotocol/abstract-blockchain';
 
-import { ContractTransaction } from '@ethersproject/contracts';
-import { Signer } from '@ethersproject/abstract-signer';
+import { ContractTransaction, Signer } from 'ethers';
 
 export type EIP155BlockchainProviderConfig = {
   signer: Signer;

@@ -1,6 +1,5 @@
 import { InMemoryStore } from '@iqprotocol/in-memory-storage';
 import { Account, AccountState, AccountStateChangeResult } from '@iqprotocol/abstract-storage';
-import { AccountStateManager } from '../src';
 import {
   AccountId,
   AccountState as OnChainAccountState,
@@ -8,7 +7,9 @@ import {
   ChainId,
   ServiceInfo,
 } from '@iqprotocol/abstract-blockchain';
-import { EIP155BlockchainProvider, VoidSigner } from '@iqprotocol/eip155';
+import { EIP155BlockchainProvider } from '@iqprotocol/eip155';
+import { VoidSigner } from '@ethersproject/abstract-signer';
+import { AccountStateManager } from '../src';
 
 /**
  * @group unit
