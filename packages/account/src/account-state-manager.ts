@@ -135,14 +135,14 @@ export class AccountStateManager {
   ): Promise<AccountStateChangeResult> {
     const state = await this.getInitializedAccountState(serviceId, accountId);
     let { power, lockedPower } = state;
-    let availablePower = power - lockedPower;
+    let effectivePower = power - lockedPower;
 
     if (key === 'power') {
       power += delta;
-      availablePower += delta;
+      effectivePower += delta;
     } else if (key === 'lockedPower') {
       lockedPower += delta;
-      availablePower -= delta;
+      effectivePower -= delta;
     }
 
     // Re-calculate energy
@@ -150,7 +150,7 @@ export class AccountStateManager {
     const effective = calculateEffectiveEnergy({
       energy: state.energy,
       energyCap: state.energyCap,
-      power: availablePower,
+      power: effectivePower,
       gapHalvingPeriod: state.gapHalvingPeriod,
       t0: state.energyCalculatedAt,
       t1: stateChangeTime,
