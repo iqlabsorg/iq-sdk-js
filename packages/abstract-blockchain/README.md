@@ -6,8 +6,19 @@ The interface implementation will cover all the necessary functions to work with
 An example of such implementation can be [EIP155BlockchainProvider](https://github.com/iqalliance/iq-sdk-js/tree/main/packages/blockchains/eip155)
 provided as a part of IQ Protocol JS SDK.
 
+Use this package when you want to implement a new blockchain provider.
+
 ## Installation  
 ```bash
 yarn add @iqprotocol/abstract-blockchain
 ```
 
+## Usage
+```ts
+import { BlockchainProvider } from '@iqprotocol/abstract-blockchain';
+
+class CustomBlockchainProvider implements BlockchainProvider {
+ // ...
+}
+
+```

@@ -8,6 +8,22 @@ The package provided various utility functions for *energy* calculation.
 yarn add @iqprotocol/energy
 ```
 
+## Usage
+```ts
+import { calculateEnergyCap } from '@iqprotocol/energy';
+
+const params = {
+  power: 100n,
+  initialValue: 50n, // power at t0
+  gapHalvingPeriod: 86400,
+  t0: 1629906900,
+  t1: 1629906900 + 86400
+};
+
+const energyCap = calculateEnergyCap(params); // 75n 
+
+```
+
 ## Energy & Power
 
 In IQ protocol *Power* is the reinterpreted pTokens balance that is responsible for *Energy* generation. Simply `1 pToken = 1 Unit of Power`.
