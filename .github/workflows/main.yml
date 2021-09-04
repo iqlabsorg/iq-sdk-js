@@ -10,28 +10,25 @@ on:
 
 jobs:
   build:
-    name: Build, lint, and test on Node ${{ matrix.node }} and ${{ matrix.os }}
+    name: Build & test (node ${{ matrix.node }}, ${{ matrix.os }})
 
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node: ['16.x']
-        os: [ubuntu-latest]
+        node: [ '14', '16' ]
+        os: [ ubuntu-latest ]
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
 
-      - name: Use Node ${{ matrix.node }}
-        uses: actions/setup-node@v1
+      - name: Setup node
+        uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node }}
 
       - name: Install deps and build (with cache)
         uses: bahmutov/npm-install@v1
-
-      - name: Lint
-        run: yarn lint
 
       - name: Unit tests
         run: yarn test

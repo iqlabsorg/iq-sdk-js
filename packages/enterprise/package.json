@@ -1,15 +1,15 @@
 {
   "name": "@iqprotocol/enterprise",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "license": "UNLICENSED",
   "scripts": {
-    "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
-    "build": "tsdx build --tsconfig tsconfig.build.json",
-    "test": "tsdx test --group=unit",
+    "start": "rollup -cw",
+    "build": "rollup -c",
+    "test": "jest --group=unit",
     "prepublish": "npm run build"
   },
   "main": "dist/index.js",
-  "module": "dist/enterprise.esm.js",
+  "module": "dist/index.esm.js",
   "typings": "dist/index.d.ts",
   "files": [
     "README.md",

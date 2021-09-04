@@ -3,13 +3,13 @@
   "version": "0.10.0",
   "license": "UNLICENSED",
   "scripts": {
-    "start": "tsdx watch --tsconfig tsconfig.build.json --verbose --noClean",
-    "build": "tsdx build --tsconfig tsconfig.build.json",
-    "test": "tsdx test --group=unit",
-    "prepublish": "npm run build"
+    "start": "rollup -cw",
+    "build": "rollup -c",
+    "test": "jest --group=unit",
+    "prepublish": "yarn build"
   },
   "main": "dist/index.js",
-  "module": "dist/abstract-storage.esm.js",
+  "module": "dist/index.esm.js",
   "typings": "dist/index.d.ts",
   "files": [
     "README.md",

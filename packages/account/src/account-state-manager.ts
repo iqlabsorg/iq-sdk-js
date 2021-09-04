@@ -59,6 +59,7 @@ export class AccountStateManager {
         energyCalculatedAt: timestamp,
       });
     } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       throw new Error(`Failed to initialize account state. ${e}`);
     }
   }

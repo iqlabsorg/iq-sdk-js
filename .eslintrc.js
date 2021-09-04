@@ -1,30 +1,27 @@
 module.exports = {
+  root: true,
   parser: '@typescript-eslint/parser',
   parserOptions: {
     project: 'tsconfig.json',
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint/eslint-plugin'],
+  plugins: [
+    '@typescript-eslint/eslint-plugin'
+  ],
   extends: [
     "eslint:recommended",
-    'plugin:@typescript-eslint/recommended',
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
     'plugin:@typescript-eslint/recommended-requiring-type-checking',
     'plugin:sonarjs/recommended',
-    'plugin:import/errors',
-    'plugin:import/warnings',
+    'plugin:import/recommended',
     'plugin:import/typescript',
-    'plugin:prettier/recommended',
+    'plugin:prettier/recommended'
   ],
-  root: true,
   env: {
     node: true,
     jest: true,
   },
-  ignorePatterns: [
-    '.eslintrc.js',
-    'jest.config.js',
-    'tsdx.config.js'
-  ],
   rules: {
     '@typescript-eslint/member-ordering': 'error',
     '@typescript-eslint/naming-convention': [
