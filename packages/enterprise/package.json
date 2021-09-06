@@ -1,6 +1,6 @@
 {
   "name": "@iqprotocol/enterprise",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "license": "UNLICENSED",
   "scripts": {
     "start": "rollup -cw",
@@ -19,6 +19,6 @@
     "access": "restricted"
   },
   "dependencies": {
-    "@iqprotocol/abstract-blockchain": "^0.10.0"
+    "@iqprotocol/abstract-blockchain": "^0.10.1"
   }
 }
