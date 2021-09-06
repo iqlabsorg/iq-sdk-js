@@ -1,6 +1,6 @@
 {
   "name": "@iqprotocol/in-memory-storage",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "license": "UNLICENSED",
   "scripts": {
     "start": "rollup -cw",
@@ -19,6 +19,6 @@
     "access": "restricted"
   },
   "dependencies": {
-    "@iqprotocol/abstract-storage": "^0.10.0"
+    "@iqprotocol/abstract-storage": "^0.10.1"
   }
 }
