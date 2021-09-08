@@ -18,7 +18,7 @@ describe('Service', () => {
   });
 
   it('returns correct ID', async () => {
-    await expect(service.getId()).resolves.toMatchObject(serviceAccountId);
+    await expect(service.getId()).resolves.toStrictEqual(serviceAccountId);
   });
 
   it('retrieves on-chain data via blockchain provider', async () => {
