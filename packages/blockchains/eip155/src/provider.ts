@@ -450,11 +450,12 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
     const targetAccountAddress = await this.withFallbackToSignerAddress(accountAddress);
     const powerToken = this.resolvePowerToken(serviceAddress);
     const balance = await powerToken.balanceOf(targetAccountAddress);
-    const { energy, timestamp } = await powerToken.getState(targetAccountAddress);
+    const { energy, timestamp, lockedBalance } = await powerToken.getState(targetAccountAddress);
     return {
       serviceAddress,
       accountAddress: targetAccountAddress,
       balance,
+      lockedBalance,
       energy,
       timestamp,
     };

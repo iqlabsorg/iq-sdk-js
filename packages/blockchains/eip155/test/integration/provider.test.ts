@@ -122,7 +122,7 @@ describe('EIP155BlockchainProvider', () => {
 
     it('retrieves enterprise data', async () => {
       const data = await blockchainProvider.getEnterpriseInfo(enterprise.address);
-      expect(data).toMatchObject(expectedEnterpriseData);
+      expect(data).toStrictEqual(expectedEnterpriseData);
     });
 
     it('retrieves enterprise liquidity token metadata', async () => {
@@ -250,27 +250,28 @@ describe('EIP155BlockchainProvider', () => {
 
       it('retrieves the service data', async () => {
         const service = await blockchainProvider.getServiceInfo(service1Address);
-        expect(service).toMatchObject(expectedServiceData1);
+        expect(service).toStrictEqual(expectedServiceData1);
       });
 
       it('retrieves account state for specific service', async () => {
         const accountAddress = '0x6F5E1207671091337abA2F2cda040EB16E757092';
         const serviceAddress = service1Address;
 
-        const expectedState = <AccountState>{
+        const expectedState: AccountState = {
           serviceAddress,
           accountAddress,
           balance: BigNumber.from(0),
+          lockedBalance: BigNumber.from(0),
           energy: BigNumber.from(0),
           timestamp: 0,
         };
 
         let accountState = await blockchainProvider.getAccountState(serviceAddress, accountAddress);
-        expect(accountState).toMatchObject(expectedState);
+        expect(accountState).toStrictEqual(expectedState);
 
         // check fallback to signer address
         accountState = await blockchainProvider.getAccountState(serviceAddress);
-        expect(accountState).toMatchObject({ ...expectedState, accountAddress: deployerSigner.address });
+        expect(accountState).toStrictEqual({ ...expectedState, accountAddress: deployerSigner.address });
       });
 
       it('retrieves the service gap halving period', async () => {
