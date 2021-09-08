@@ -61,6 +61,7 @@ export interface AccountState {
   serviceAddress: Address;
   accountAddress: Address;
   balance: BigNumber;
+  lockedBalance: BigNumber;
   energy: BigNumber;
   timestamp: number;
 }
