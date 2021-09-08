@@ -17,7 +17,7 @@ describe('Enterprise', () => {
   it('returns correct ID', async () => {
     const chainId = new ChainId({ namespace: 'eip155', reference: '1' });
     mockBlockchainProvider.getChainId.mockResolvedValue(chainId);
-    await expect(enterprise.getId()).resolves.toMatchObject(new AccountId({ chainId, address: ENTERPRISE_ADDRESS }));
+    await expect(enterprise.getId()).resolves.toStrictEqual(new AccountId({ chainId, address: ENTERPRISE_ADDRESS }));
   });
 
   it('retrieves enterprise info', async () => {

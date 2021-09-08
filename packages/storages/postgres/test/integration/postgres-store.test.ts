@@ -107,7 +107,7 @@ describe('PostgresStore', () => {
 
     it('saves account', async () => {
       const result = await store.saveAccount(account);
-      expect(result).toMatchObject(account);
+      expect(result).toStrictEqual(account);
       await expect(store.getAccount(account.id)).resolves.toEqual(account);
     });
 
