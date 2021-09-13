@@ -1,6 +1,6 @@
 {
   "name": "@iqprotocol/abstract-blockchain",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "license": "UNLICENSED",
   "scripts": {
     "start": "rollup -cw",

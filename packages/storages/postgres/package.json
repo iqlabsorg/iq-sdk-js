@@ -1,6 +1,6 @@
 {
   "name": "@iqprotocol/postgres-storage",
-  "version": "0.11.2",
+  "version": "0.11.3",
   "license": "UNLICENSED",
   "scripts": {
     "start": "rollup -cw",
@@ -24,7 +24,7 @@
     "@types/pg": "^8.6.1"
   },
   "dependencies": {
-    "@iqprotocol/abstract-storage": "^0.10.1",
+    "@iqprotocol/abstract-storage": "^0.10.2",
     "slonik": "^24.0.0"
   }
 }

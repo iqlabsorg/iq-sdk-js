@@ -1,6 +1,6 @@
 {
   "name": "@iqprotocol/eip155",
-  "version": "0.15.6",
+  "version": "0.15.7",
   "license": "UNLICENSED",
   "scripts": {
     "start": "rollup -cw",
@@ -24,7 +24,7 @@
     "access": "restricted"
   },
   "dependencies": {
-    "@iqprotocol/abstract-blockchain": "^0.10.1"
+    "@iqprotocol/abstract-blockchain": "^0.10.2"
   },
   "devDependencies": {
     "@iqprotocol/solidity-contracts": "https://github.com/iqalliance/iq-smart-contracts#0e3fa63cc7cbafe43b40cf575c9906aa31da7954",
