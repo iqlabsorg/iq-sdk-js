@@ -39,6 +39,7 @@
     "testcontainers": "^7.20.0",
     "ts-jest": "^27.0.5",
     "ts-node": "^10.2.1",
+    "typedoc": "^0.22.3",
     "typescript": "^4.4.2"
   },
   "scripts": {
@@ -49,7 +50,10 @@
     "lint:fix": "yarn lint --fix",
     "build": "lerna run build",
     "prepublish": "lerna run prepublish",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "docs": "run-s docs:clean docs:generate",
+    "docs:generate": "typedoc --options typedoc.js --entryPointStrategy packages . --out docs && touch docs/.nojekyll",
+    "docs:clean": "rimraf docs"
   },
   "lint-staged": {
     "packages/**/*.ts": "yarn lint:fix"
