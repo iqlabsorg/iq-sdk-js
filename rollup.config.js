@@ -1,9 +1,14 @@
-import path from "path";
 import pkg from '@iqprotocol/eip155/package.json';
 import ts from "rollup-plugin-ts";
 import del from 'rollup-plugin-delete';
+import { builtinModules } from "module";
 
-const external = (id) => !id.startsWith('.') && !path.isAbsolute(id);
+const external = [
+  ...builtinModules,
+  ...Object.keys(pkg.dependencies ?? {}),
+  ...Object.keys(pkg.devDependencies ?? {}),
+  ...Object.keys(pkg.peerDependencies ?? {})
+];
 
 const input = "src/index.ts";
 const plugins = [
@@ -17,9 +22,13 @@ const plugins = [
         if (kind === 'declaration') {
           return pkg.typings;
         }
+        if (kind === 'declarationMap') {
+          return `${pkg.typings}.map`;
+        }
       }
     }
-  })
+  }),
+
 ];
 
 export default {
@@ -28,10 +37,12 @@ export default {
     {
       file: pkg.module,
       format: "esm",
+      sourcemap: true,
     },
     {
       file: pkg.main,
       format: "cjs",
+      sourcemap: true,
     }
   ],
   plugins,
