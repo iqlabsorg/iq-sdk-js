@@ -1,6 +1,6 @@
 {
   "name": "@iqprotocol/discovery",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "license": "UNLICENSED",
   "scripts": {
     "start": "rollup -cw",

@@ -1,6 +1,6 @@
 {
   "name": "@iqprotocol/account",
-  "version": "0.12.2",
+  "version": "0.12.3",
   "license": "UNLICENSED",
   "scripts": {
     "start": "rollup -cw",
@@ -20,12 +20,12 @@
     "access": "restricted"
   },
   "dependencies": {
-    "@iqprotocol/abstract-blockchain": "^0.10.1",
-    "@iqprotocol/abstract-storage": "^0.10.1",
-    "@iqprotocol/energy": "^0.6.1",
+    "@iqprotocol/abstract-blockchain": "^0.10.2",
+    "@iqprotocol/abstract-storage": "^0.10.2",
+    "@iqprotocol/energy": "^0.6.2",
     "eth-sig-util": "^3.0.1"
   },
   "devDependencies": {
-    "@iqprotocol/eip155": "^0.15.6"
+    "@iqprotocol/eip155": "^0.15.7"
   }
 }
