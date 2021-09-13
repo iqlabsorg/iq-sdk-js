@@ -327,6 +327,36 @@ interface PowerTokenInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
 
+export type ApprovalEvent = TypedEvent<
+  [string, string, BigNumber] & {
+    owner: string;
+    spender: string;
+    value: BigNumber;
+  }
+>;
+
+export type BaseRateChangedEvent = TypedEvent<
+  [BigNumber, string, BigNumber] & {
+    baseRate: BigNumber;
+    baseToken: string;
+    minGCFee: BigNumber;
+  }
+>;
+
+export type LoanDurationLimitsChangedEvent = TypedEvent<
+  [number, number] & { minDuration: number; maxDuration: number }
+>;
+
+export type PerpetualAllowedEvent = TypedEvent<[] & {}>;
+
+export type ServiceFeePercentChangedEvent = TypedEvent<
+  [number] & { percent: number }
+>;
+
+export type TransferEvent = TypedEvent<
+  [string, string, BigNumber] & { from: string; to: string; value: BigNumber }
+>;
+
 export class PowerToken extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
@@ -1065,6 +1095,15 @@ export class PowerToken extends BaseContract {
   };
 
   filters: {
+    "Approval(address,address,uint256)"(
+      owner?: string | null,
+      spender?: string | null,
+      value?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { owner: string; spender: string; value: BigNumber }
+    >;
+
     Approval(
       owner?: string | null,
       spender?: string | null,
@@ -1072,6 +1111,15 @@ export class PowerToken extends BaseContract {
     ): TypedEventFilter<
       [string, string, BigNumber],
       { owner: string; spender: string; value: BigNumber }
+    >;
+
+    "BaseRateChanged(uint112,address,uint96)"(
+      baseRate?: null,
+      baseToken?: null,
+      minGCFee?: null
+    ): TypedEventFilter<
+      [BigNumber, string, BigNumber],
+      { baseRate: BigNumber; baseToken: string; minGCFee: BigNumber }
     >;
 
     BaseRateChanged(
@@ -1083,6 +1131,14 @@ export class PowerToken extends BaseContract {
       { baseRate: BigNumber; baseToken: string; minGCFee: BigNumber }
     >;
 
+    "LoanDurationLimitsChanged(uint32,uint32)"(
+      minDuration?: null,
+      maxDuration?: null
+    ): TypedEventFilter<
+      [number, number],
+      { minDuration: number; maxDuration: number }
+    >;
+
     LoanDurationLimitsChanged(
       minDuration?: null,
       maxDuration?: null
@@ -1091,11 +1147,26 @@ export class PowerToken extends BaseContract {
       { minDuration: number; maxDuration: number }
     >;
 
+    "PerpetualAllowed()"(): TypedEventFilter<[], {}>;
+
     PerpetualAllowed(): TypedEventFilter<[], {}>;
+
+    "ServiceFeePercentChanged(uint16)"(
+      percent?: null
+    ): TypedEventFilter<[number], { percent: number }>;
 
     ServiceFeePercentChanged(
       percent?: null
     ): TypedEventFilter<[number], { percent: number }>;
+
+    "Transfer(address,address,uint256)"(
+      from?: string | null,
+      to?: string | null,
+      value?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { from: string; to: string; value: BigNumber }
+    >;
 
     Transfer(
       from?: string | null,
