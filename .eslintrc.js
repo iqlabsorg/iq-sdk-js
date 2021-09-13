@@ -73,6 +73,7 @@ module.exports = {
     // eslint:recommended additional rules & best practices
     'no-extra-parens': 'error',
     'no-template-curly-in-string': 'error',
+    'no-unsafe-optional-chaining': 'error',
     'require-atomic-updates': 'error',
     'consistent-return': 'error',
     'curly': 'error',
