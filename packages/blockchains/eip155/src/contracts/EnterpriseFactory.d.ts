@@ -83,6 +83,16 @@ interface EnterpriseFactoryInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "EnterpriseDeployed"): EventFragment;
 }
 
+export type EnterpriseDeployedEvent = TypedEvent<
+  [string, string, string, string, string] & {
+    creator: string;
+    liquidityToken: string;
+    name: string;
+    baseUri: string;
+    deployed: string;
+  }
+>;
+
 export class EnterpriseFactory extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
@@ -194,6 +204,23 @@ export class EnterpriseFactory extends BaseContract {
   };
 
   filters: {
+    "EnterpriseDeployed(address,address,string,string,address)"(
+      creator?: string | null,
+      liquidityToken?: string | null,
+      name?: null,
+      baseUri?: null,
+      deployed?: null
+    ): TypedEventFilter<
+      [string, string, string, string, string],
+      {
+        creator: string;
+        liquidityToken: string;
+        name: string;
+        baseUri: string;
+        deployed: string;
+      }
+    >;
+
     EnterpriseDeployed(
       creator?: string | null,
       liquidityToken?: string | null,

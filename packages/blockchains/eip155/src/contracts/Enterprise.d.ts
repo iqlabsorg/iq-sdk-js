@@ -555,6 +555,89 @@ interface EnterpriseInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "UsedReserveChanged"): EventFragment;
 }
 
+export type BaseUriChangedEvent = TypedEvent<[string] & { baseUri: string }>;
+
+export type BondingChangedEvent = TypedEvent<
+  [BigNumber, BigNumber] & { pole: BigNumber; slope: BigNumber }
+>;
+
+export type BorrowedEvent = TypedEvent<
+  [string, BigNumber] & { powerToken: string; borrowTokenId: BigNumber }
+>;
+
+export type BorrowerLoanReturnGracePeriodChangedEvent = TypedEvent<
+  [number] & { period: number }
+>;
+
+export type ConverterChangedEvent = TypedEvent<
+  [string] & { converter: string }
+>;
+
+export type EnterpriseCollectorChangedEvent = TypedEvent<
+  [string] & { collector: string }
+>;
+
+export type EnterpriseLoanCollectGracePeriodChangedEvent = TypedEvent<
+  [number] & { period: number }
+>;
+
+export type EnterpriseShutdownEvent = TypedEvent<[] & {}>;
+
+export type EnterpriseVaultChangedEvent = TypedEvent<
+  [string] & { vault: string }
+>;
+
+export type FixedReserveChangedEvent = TypedEvent<
+  [BigNumber] & { fixedReserve: BigNumber }
+>;
+
+export type GcFeePercentChangedEvent = TypedEvent<
+  [number] & { percent: number }
+>;
+
+export type InterestGapHalvingPeriodChangedEvent = TypedEvent<
+  [number] & { period: number }
+>;
+
+export type LiquidityChangedEvent = TypedEvent<
+  [BigNumber, number, BigNumber] & {
+    interestTokenId: BigNumber;
+    changeType: number;
+    amount: BigNumber;
+  }
+>;
+
+export type LoanReturnedEvent = TypedEvent<
+  [BigNumber] & { borrowTokenId: BigNumber }
+>;
+
+export type OwnershipTransferredEvent = TypedEvent<
+  [string, string] & { previousOwner: string; newOwner: string }
+>;
+
+export type PaymentTokenChangeEvent = TypedEvent<
+  [string, boolean] & { paymentToken: string; enabled: boolean }
+>;
+
+export type ServiceRegisteredEvent = TypedEvent<
+  [string] & { powerToken: string }
+>;
+
+export type StreamingReserveChangedEvent = TypedEvent<
+  [BigNumber, BigNumber] & {
+    streamingReserve: BigNumber;
+    streamingReserveTarget: BigNumber;
+  }
+>;
+
+export type TotalSharesChangedEvent = TypedEvent<
+  [BigNumber] & { totalShares: BigNumber }
+>;
+
+export type UsedReserveChangedEvent = TypedEvent<
+  [BigNumber] & { fixedReserve: BigNumber }
+>;
+
 export class Enterprise extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
@@ -1536,9 +1619,21 @@ export class Enterprise extends BaseContract {
   };
 
   filters: {
+    "BaseUriChanged(string)"(
+      baseUri?: null
+    ): TypedEventFilter<[string], { baseUri: string }>;
+
     BaseUriChanged(
       baseUri?: null
     ): TypedEventFilter<[string], { baseUri: string }>;
+
+    "BondingChanged(uint256,uint256)"(
+      pole?: null,
+      slope?: null
+    ): TypedEventFilter<
+      [BigNumber, BigNumber],
+      { pole: BigNumber; slope: BigNumber }
+    >;
 
     BondingChanged(
       pole?: null,
@@ -1546,6 +1641,14 @@ export class Enterprise extends BaseContract {
     ): TypedEventFilter<
       [BigNumber, BigNumber],
       { pole: BigNumber; slope: BigNumber }
+    >;
+
+    "Borrowed(address,uint256)"(
+      powerToken?: string | null,
+      borrowTokenId?: BigNumberish | null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { powerToken: string; borrowTokenId: BigNumber }
     >;
 
     Borrowed(
@@ -1556,39 +1659,82 @@ export class Enterprise extends BaseContract {
       { powerToken: string; borrowTokenId: BigNumber }
     >;
 
+    "BorrowerLoanReturnGracePeriodChanged(uint32)"(
+      period?: null
+    ): TypedEventFilter<[number], { period: number }>;
+
     BorrowerLoanReturnGracePeriodChanged(
       period?: null
     ): TypedEventFilter<[number], { period: number }>;
+
+    "ConverterChanged(address)"(
+      converter?: null
+    ): TypedEventFilter<[string], { converter: string }>;
 
     ConverterChanged(
       converter?: null
     ): TypedEventFilter<[string], { converter: string }>;
 
+    "EnterpriseCollectorChanged(address)"(
+      collector?: null
+    ): TypedEventFilter<[string], { collector: string }>;
+
     EnterpriseCollectorChanged(
       collector?: null
     ): TypedEventFilter<[string], { collector: string }>;
+
+    "EnterpriseLoanCollectGracePeriodChanged(uint32)"(
+      period?: null
+    ): TypedEventFilter<[number], { period: number }>;
 
     EnterpriseLoanCollectGracePeriodChanged(
       period?: null
     ): TypedEventFilter<[number], { period: number }>;
 
+    "EnterpriseShutdown()"(): TypedEventFilter<[], {}>;
+
     EnterpriseShutdown(): TypedEventFilter<[], {}>;
+
+    "EnterpriseVaultChanged(address)"(
+      vault?: null
+    ): TypedEventFilter<[string], { vault: string }>;
 
     EnterpriseVaultChanged(
       vault?: null
     ): TypedEventFilter<[string], { vault: string }>;
 
+    "FixedReserveChanged(uint256)"(
+      fixedReserve?: null
+    ): TypedEventFilter<[BigNumber], { fixedReserve: BigNumber }>;
+
     FixedReserveChanged(
       fixedReserve?: null
     ): TypedEventFilter<[BigNumber], { fixedReserve: BigNumber }>;
+
+    "GcFeePercentChanged(uint16)"(
+      percent?: null
+    ): TypedEventFilter<[number], { percent: number }>;
 
     GcFeePercentChanged(
       percent?: null
     ): TypedEventFilter<[number], { percent: number }>;
 
+    "InterestGapHalvingPeriodChanged(uint32)"(
+      period?: null
+    ): TypedEventFilter<[number], { period: number }>;
+
     InterestGapHalvingPeriodChanged(
       period?: null
     ): TypedEventFilter<[number], { period: number }>;
+
+    "LiquidityChanged(uint256,uint8,uint256)"(
+      interestTokenId?: BigNumberish | null,
+      changeType?: BigNumberish | null,
+      amount?: null
+    ): TypedEventFilter<
+      [BigNumber, number, BigNumber],
+      { interestTokenId: BigNumber; changeType: number; amount: BigNumber }
+    >;
 
     LiquidityChanged(
       interestTokenId?: BigNumberish | null,
@@ -1599,9 +1745,21 @@ export class Enterprise extends BaseContract {
       { interestTokenId: BigNumber; changeType: number; amount: BigNumber }
     >;
 
+    "LoanReturned(uint256)"(
+      borrowTokenId?: BigNumberish | null
+    ): TypedEventFilter<[BigNumber], { borrowTokenId: BigNumber }>;
+
     LoanReturned(
       borrowTokenId?: BigNumberish | null
     ): TypedEventFilter<[BigNumber], { borrowTokenId: BigNumber }>;
+
+    "OwnershipTransferred(address,address)"(
+      previousOwner?: string | null,
+      newOwner?: string | null
+    ): TypedEventFilter<
+      [string, string],
+      { previousOwner: string; newOwner: string }
+    >;
 
     OwnershipTransferred(
       previousOwner?: string | null,
@@ -1609,6 +1767,14 @@ export class Enterprise extends BaseContract {
     ): TypedEventFilter<
       [string, string],
       { previousOwner: string; newOwner: string }
+    >;
+
+    "PaymentTokenChange(address,bool)"(
+      paymentToken?: null,
+      enabled?: null
+    ): TypedEventFilter<
+      [string, boolean],
+      { paymentToken: string; enabled: boolean }
     >;
 
     PaymentTokenChange(
@@ -1619,9 +1785,21 @@ export class Enterprise extends BaseContract {
       { paymentToken: string; enabled: boolean }
     >;
 
+    "ServiceRegistered(address)"(
+      powerToken?: string | null
+    ): TypedEventFilter<[string], { powerToken: string }>;
+
     ServiceRegistered(
       powerToken?: string | null
     ): TypedEventFilter<[string], { powerToken: string }>;
+
+    "StreamingReserveChanged(uint112,uint112)"(
+      streamingReserve?: null,
+      streamingReserveTarget?: null
+    ): TypedEventFilter<
+      [BigNumber, BigNumber],
+      { streamingReserve: BigNumber; streamingReserveTarget: BigNumber }
+    >;
 
     StreamingReserveChanged(
       streamingReserve?: null,
@@ -1631,9 +1809,17 @@ export class Enterprise extends BaseContract {
       { streamingReserve: BigNumber; streamingReserveTarget: BigNumber }
     >;
 
+    "TotalSharesChanged(uint256)"(
+      totalShares?: null
+    ): TypedEventFilter<[BigNumber], { totalShares: BigNumber }>;
+
     TotalSharesChanged(
       totalShares?: null
     ): TypedEventFilter<[BigNumber], { totalShares: BigNumber }>;
+
+    "UsedReserveChanged(uint256)"(
+      fixedReserve?: null
+    ): TypedEventFilter<[BigNumber], { fixedReserve: BigNumber }>;
 
     UsedReserveChanged(
       fixedReserve?: null

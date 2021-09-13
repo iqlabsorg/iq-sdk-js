@@ -187,6 +187,24 @@ interface PowerTokenStorageInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "ServiceFeePercentChanged"): EventFragment;
 }
 
+export type BaseRateChangedEvent = TypedEvent<
+  [BigNumber, string, BigNumber] & {
+    baseRate: BigNumber;
+    baseToken: string;
+    minGCFee: BigNumber;
+  }
+>;
+
+export type LoanDurationLimitsChangedEvent = TypedEvent<
+  [number, number] & { minDuration: number; maxDuration: number }
+>;
+
+export type PerpetualAllowedEvent = TypedEvent<[] & {}>;
+
+export type ServiceFeePercentChangedEvent = TypedEvent<
+  [number] & { percent: number }
+>;
+
 export class PowerTokenStorage extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
@@ -466,6 +484,15 @@ export class PowerTokenStorage extends BaseContract {
   };
 
   filters: {
+    "BaseRateChanged(uint112,address,uint96)"(
+      baseRate?: null,
+      baseToken?: null,
+      minGCFee?: null
+    ): TypedEventFilter<
+      [BigNumber, string, BigNumber],
+      { baseRate: BigNumber; baseToken: string; minGCFee: BigNumber }
+    >;
+
     BaseRateChanged(
       baseRate?: null,
       baseToken?: null,
@@ -473,6 +500,14 @@ export class PowerTokenStorage extends BaseContract {
     ): TypedEventFilter<
       [BigNumber, string, BigNumber],
       { baseRate: BigNumber; baseToken: string; minGCFee: BigNumber }
+    >;
+
+    "LoanDurationLimitsChanged(uint32,uint32)"(
+      minDuration?: null,
+      maxDuration?: null
+    ): TypedEventFilter<
+      [number, number],
+      { minDuration: number; maxDuration: number }
     >;
 
     LoanDurationLimitsChanged(
@@ -483,7 +518,13 @@ export class PowerTokenStorage extends BaseContract {
       { minDuration: number; maxDuration: number }
     >;
 
+    "PerpetualAllowed()"(): TypedEventFilter<[], {}>;
+
     PerpetualAllowed(): TypedEventFilter<[], {}>;
+
+    "ServiceFeePercentChanged(uint16)"(
+      percent?: null
+    ): TypedEventFilter<[number], { percent: number }>;
 
     ServiceFeePercentChanged(
       percent?: null
