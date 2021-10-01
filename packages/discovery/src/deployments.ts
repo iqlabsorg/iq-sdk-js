@@ -13,10 +13,10 @@ export const deployments: IQContractDeployments = {
   },
   // Binance Smart Chain Testnet
   'eip155:97': {
-    [IQContractName.BorrowToken]: '0xA6ab266C94eFC97E73931f9311E7D9dC7b51B98D',
+    [IQContractName.BorrowToken]: '0xABd16E0e00d638Ef5C83ec7cB1cb496d3Ce2320b',
     [IQContractName.DefaultConverter]: '0x59F089539CC0d7680f1b859c187b7161e4F9421d',
-    [IQContractName.Enterprise]: '0xeC7f68F53cC0bc70166225572AdFfcf9D7e3452e',
-    [IQContractName.EnterpriseFactory]: '0x9Ec118bC7d6b257c398c1801c000C4cBf7EC1E7d',
+    [IQContractName.Enterprise]: '0xf35Fdbd5A67AD512FC89d96eD2436E62E7f06cB0',
+    [IQContractName.EnterpriseFactory]: '0x647aa4979815aA3C60F6225c439dc96008DCB1E1',
     [IQContractName.InterestToken]: '0x1c2E6f4CFFCD6D048407d1e2200Ea56FDB8eFbDB',
     [IQContractName.PowerToken]: '0x5960828e2AB55beEC2BAb3C11CB1E87790c3d3bb',
   },
