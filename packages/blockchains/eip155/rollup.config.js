@@ -1,7 +1,9 @@
-import baseConfig from '../../../rollup.config';
+import { buildConfig, buildPluginsSection } from '../../../rollup.config';
+import pkg from './package.json';
 import copy from 'rollup-plugin-copy'
 
-baseConfig.plugins.push(
+const plugins = buildPluginsSection(pkg);
+plugins.push(
   copy({
     targets: [
       // copy typechain declarations files
@@ -10,4 +12,4 @@ baseConfig.plugins.push(
   })
 );
 
-export default baseConfig;
+export default buildConfig({ pkg, plugins });

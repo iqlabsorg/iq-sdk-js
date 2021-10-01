@@ -11,13 +11,13 @@ export const getEnterprise = async (
     enterpriseFactory.filters.EnterpriseDeployed(null, null, null, null, null),
     deploymentBlockNumber,
   );
-  const enterpriseAddress = events[0].args?.deployed;
+  const enterpriseAddress = events[0].args.deployed;
   return (await hre.ethers.getContractFactory('Enterprise')).attach(enterpriseAddress) as Enterprise;
 };
 
 export const getPowerToken = async (enterprise: Enterprise, deploymentBlockNumber: number): Promise<PowerToken> => {
   const events = await enterprise.queryFilter(enterprise.filters.ServiceRegistered(null), deploymentBlockNumber);
-  const powerTokenAddress = events[0].args?.powerToken;
+  const powerTokenAddress = events[0].args.powerToken;
   return (await hre.ethers.getContractFactory('PowerToken')).attach(powerTokenAddress) as PowerToken;
 };
 

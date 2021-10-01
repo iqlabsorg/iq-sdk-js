@@ -1,17 +1,15 @@
-import pkg from '@iqprotocol/eip155/package.json';
 import ts from "rollup-plugin-ts";
 import del from 'rollup-plugin-delete';
 import { builtinModules } from "module";
 
-const external = [
+export const buildExternalSection = (pkg) => [
   ...builtinModules,
   ...Object.keys(pkg.dependencies ?? {}),
   ...Object.keys(pkg.devDependencies ?? {}),
   ...Object.keys(pkg.peerDependencies ?? {})
 ];
 
-const input = "src/index.ts";
-const plugins = [
+export const buildPluginsSection = (pkg) => [
   del({ targets: 'dist/*' }),
   ts({
     tsconfig: "tsconfig.build.json",
@@ -28,12 +26,10 @@ const plugins = [
       }
     }
   }),
+]
 
-];
-
-export default {
-  input,
-  output: [
+export const buildOutputSection = (pkg) => {
+  return [
     {
       file: pkg.module,
       format: "esm",
@@ -44,7 +40,14 @@ export default {
       format: "cjs",
       sourcemap: true,
     }
-  ],
-  plugins,
-  external
-};
+  ]
+}
+
+export const buildConfig = ({ pkg, input, output, plugins, external }) => {
+  return {
+    input: input ?? "src/index.ts",
+    output: output ?? buildOutputSection(pkg),
+    plugins: plugins ?? buildPluginsSection(pkg),
+    external: external ?? buildExternalSection(pkg)
+  }
+}
