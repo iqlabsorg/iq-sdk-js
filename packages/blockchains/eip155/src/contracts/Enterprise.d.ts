@@ -17,7 +17,7 @@ import {
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
+import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface EnterpriseInterface extends ethers.utils.Interface {
   functions: {
@@ -44,6 +44,8 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     "getLiquidityInfo(uint256)": FunctionFragment;
     "getLiquidityToken()": FunctionFragment;
     "getLoanInfo(uint256)": FunctionFragment;
+    "getPaymentToken(uint256)": FunctionFragment;
+    "getPaymentTokenIndex(address)": FunctionFragment;
     "getPowerTokens()": FunctionFragment;
     "getProxyAdmin()": FunctionFragment;
     "getReserve()": FunctionFragment;
@@ -55,8 +57,6 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     "isSupportedPaymentToken(address)": FunctionFragment;
     "loanTransfer(address,address,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
-    "paymentToken(uint256)": FunctionFragment;
-    "paymentTokenIndex(address)": FunctionFragment;
     "reborrow(uint256,address,uint32,uint256)": FunctionFragment;
     "registerService(string,string,uint32,uint112,address,uint16,uint32,uint32,uint96,bool)": FunctionFragment;
     "removeLiquidity(uint256)": FunctionFragment;
@@ -72,10 +72,7 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     "setInterestGapHalvingPeriod(uint32)": FunctionFragment;
     "shutdownEnterpriseForever()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
-    "upgradeBorrowToken(address)": FunctionFragment;
-    "upgradeEnterprise(address)": FunctionFragment;
-    "upgradeInterestToken(address)": FunctionFragment;
-    "upgradePowerToken(address,address)": FunctionFragment;
+    "upgrade(address,address,address,address,address[])": FunctionFragment;
     "withdrawInterest(uint256)": FunctionFragment;
   };
 
@@ -169,6 +166,14 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "getPaymentToken",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getPaymentTokenIndex",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getPowerTokens",
     values?: undefined
   ): string;
@@ -209,14 +214,6 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     values: [string, string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "paymentToken",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "paymentTokenIndex",
-    values: [string]
-  ): string;
   encodeFunctionData(
     functionFragment: "reborrow",
     values: [BigNumberish, string, BigNumberish, BigNumberish]
@@ -286,20 +283,8 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "upgradeBorrowToken",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "upgradeEnterprise",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "upgradeInterestToken",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "upgradePowerToken",
-    values: [string, string]
+    functionFragment: "upgrade",
+    values: [string, string, string, string, string[]]
   ): string;
   encodeFunctionData(
     functionFragment: "withdrawInterest",
@@ -390,6 +375,14 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getPaymentToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getPaymentTokenIndex",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getPowerTokens",
     data: BytesLike
   ): Result;
@@ -424,14 +417,6 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "paymentToken",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "paymentTokenIndex",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "reborrow", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "registerService",
@@ -483,22 +468,7 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "upgradeBorrowToken",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "upgradeEnterprise",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "upgradeInterestToken",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "upgradePowerToken",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "upgrade", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "withdrawInterest",
     data: BytesLike
@@ -507,7 +477,7 @@ interface EnterpriseInterface extends ethers.utils.Interface {
   events: {
     "BaseUriChanged(string)": EventFragment;
     "BondingChanged(uint256,uint256)": EventFragment;
-    "Borrowed(address,uint256)": EventFragment;
+    "Borrowed(uint256,address,address,address,uint112,uint112,uint112,uint112,uint32,uint32,uint32,uint32,uint256,uint256)": EventFragment;
     "BorrowerLoanReturnGracePeriodChanged(uint32)": EventFragment;
     "ConverterChanged(address)": EventFragment;
     "EnterpriseCollectorChanged(address)": EventFragment;
@@ -517,14 +487,13 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     "FixedReserveChanged(uint256)": EventFragment;
     "GcFeePercentChanged(uint16)": EventFragment;
     "InterestGapHalvingPeriodChanged(uint32)": EventFragment;
-    "LiquidityChanged(uint256,uint8,uint256)": EventFragment;
-    "LoanReturned(uint256)": EventFragment;
+    "LiquidityChanged(uint256,address,uint8,uint256,uint256,uint256,uint256,uint256,uint256)": EventFragment;
+    "LoanExtended(uint256,address,address,uint112,uint112,uint32,uint32,uint32)": EventFragment;
+    "LoanReturned(uint256,address,address,uint112,uint112,address,uint256,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "PaymentTokenChange(address,bool)": EventFragment;
     "ServiceRegistered(address)": EventFragment;
     "StreamingReserveChanged(uint112,uint112)": EventFragment;
-    "TotalSharesChanged(uint256)": EventFragment;
-    "UsedReserveChanged(uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "BaseUriChanged"): EventFragment;
@@ -546,13 +515,12 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     nameOrSignatureOrTopic: "InterestGapHalvingPeriodChanged"
   ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LiquidityChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LoanExtended"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LoanReturned"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PaymentTokenChange"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ServiceRegistered"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "StreamingReserveChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TotalSharesChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "UsedReserveChanged"): EventFragment;
 }
 
 export type BaseUriChangedEvent = TypedEvent<[string] & { baseUri: string }>;
@@ -562,7 +530,37 @@ export type BondingChangedEvent = TypedEvent<
 >;
 
 export type BorrowedEvent = TypedEvent<
-  [string, BigNumber] & { powerToken: string; borrowTokenId: BigNumber }
+  [
+    BigNumber,
+    string,
+    string,
+    string,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    number,
+    number,
+    number,
+    number,
+    BigNumber,
+    BigNumber
+  ] & {
+    borrowTokenId: BigNumber;
+    borrower: string;
+    powerToken: string;
+    paymentToken: string;
+    amount: BigNumber;
+    interest: BigNumber;
+    serviceFee: BigNumber;
+    gcFee: BigNumber;
+    borrowingTime: number;
+    maturityTime: number;
+    borrowerReturnGraceTime: number;
+    enterpriseCollectGraceTime: number;
+    reserve: BigNumber;
+    usedReserve: BigNumber;
+  }
 >;
 
 export type BorrowerLoanReturnGracePeriodChangedEvent = TypedEvent<
@@ -600,15 +598,62 @@ export type InterestGapHalvingPeriodChangedEvent = TypedEvent<
 >;
 
 export type LiquidityChangedEvent = TypedEvent<
-  [BigNumber, number, BigNumber] & {
+  [
+    BigNumber,
+    string,
+    number,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber
+  ] & {
     interestTokenId: BigNumber;
+    liquidityProvider: string;
     changeType: number;
+    amountDelta: BigNumber;
     amount: BigNumber;
+    shares: BigNumber;
+    totalShares: BigNumber;
+    reserve: BigNumber;
+    usedReserve: BigNumber;
+  }
+>;
+
+export type LoanExtendedEvent = TypedEvent<
+  [BigNumber, string, string, BigNumber, BigNumber, number, number, number] & {
+    borrowTokenId: BigNumber;
+    borrower: string;
+    paymentToken: string;
+    interest: BigNumber;
+    serviceFee: BigNumber;
+    maturityTime: number;
+    borrowerReturnGraceTime: number;
+    enterpriseCollectGraceTime: number;
   }
 >;
 
 export type LoanReturnedEvent = TypedEvent<
-  [BigNumber] & { borrowTokenId: BigNumber }
+  [
+    BigNumber,
+    string,
+    string,
+    BigNumber,
+    BigNumber,
+    string,
+    BigNumber,
+    BigNumber
+  ] & {
+    borrowTokenId: BigNumber;
+    returner: string;
+    powerToken: string;
+    amount: BigNumber;
+    gcFee: BigNumber;
+    gcFeeToken: string;
+    reserve: BigNumber;
+    usedReserve: BigNumber;
+  }
 >;
 
 export type OwnershipTransferredEvent = TypedEvent<
@@ -628,14 +673,6 @@ export type StreamingReserveChangedEvent = TypedEvent<
     streamingReserve: BigNumber;
     streamingReserveTarget: BigNumber;
   }
->;
-
-export type TotalSharesChangedEvent = TypedEvent<
-  [BigNumber] & { totalShares: BigNumber }
->;
-
-export type UsedReserveChangedEvent = TypedEvent<
-  [BigNumber] & { fixedReserve: BigNumber }
 >;
 
 export class Enterprise extends BaseContract {
@@ -690,7 +727,7 @@ export class Enterprise extends BaseContract {
     borrow(
       powerToken: string,
       paymentToken: string,
-      amount: BigNumberish,
+      loanAmount: BigNumberish,
       duration: BigNumberish,
       maxPayment: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -698,7 +735,7 @@ export class Enterprise extends BaseContract {
 
     decreaseLiquidity(
       interestTokenId: BigNumberish,
-      amount: BigNumberish,
+      liquidityAmount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -829,6 +866,16 @@ export class Enterprise extends BaseContract {
       ]
     >;
 
+    getPaymentToken(
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    getPaymentTokenIndex(
+      token: string,
+      overrides?: CallOverrides
+    ): Promise<[number]>;
+
     getPowerTokens(overrides?: CallOverrides): Promise<[string[]]>;
 
     getProxyAdmin(overrides?: CallOverrides): Promise<[string]>;
@@ -839,7 +886,7 @@ export class Enterprise extends BaseContract {
 
     increaseLiquidity(
       interestTokenId: BigNumberish,
-      amount: BigNumberish,
+      liquidityAmount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -883,16 +930,6 @@ export class Enterprise extends BaseContract {
     ): Promise<ContractTransaction>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
-
-    paymentToken(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    paymentTokenIndex(
-      token: string,
-      overrides?: CallOverrides
-    ): Promise<[number]>;
 
     reborrow(
       borrowTokenId: BigNumberish,
@@ -981,24 +1018,12 @@ export class Enterprise extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    upgradeBorrowToken(
-      implementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    upgradeEnterprise(
-      implementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    upgradeInterestToken(
-      implementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    upgradePowerToken(
-      powerToken: string,
-      implementation: string,
+    upgrade(
+      enterpriseImplementation: string,
+      borrowTokenImplementation: string,
+      interestTokenImplementation: string,
+      powerTokenImplementation: string,
+      powerTokens: string[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -1016,7 +1041,7 @@ export class Enterprise extends BaseContract {
   borrow(
     powerToken: string,
     paymentToken: string,
-    amount: BigNumberish,
+    loanAmount: BigNumberish,
     duration: BigNumberish,
     maxPayment: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -1024,7 +1049,7 @@ export class Enterprise extends BaseContract {
 
   decreaseLiquidity(
     interestTokenId: BigNumberish,
-    amount: BigNumberish,
+    liquidityAmount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1140,6 +1165,16 @@ export class Enterprise extends BaseContract {
     }
   >;
 
+  getPaymentToken(
+    index: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  getPaymentTokenIndex(
+    token: string,
+    overrides?: CallOverrides
+  ): Promise<number>;
+
   getPowerTokens(overrides?: CallOverrides): Promise<string[]>;
 
   getProxyAdmin(overrides?: CallOverrides): Promise<string>;
@@ -1150,7 +1185,7 @@ export class Enterprise extends BaseContract {
 
   increaseLiquidity(
     interestTokenId: BigNumberish,
-    amount: BigNumberish,
+    liquidityAmount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1194,10 +1229,6 @@ export class Enterprise extends BaseContract {
   ): Promise<ContractTransaction>;
 
   owner(overrides?: CallOverrides): Promise<string>;
-
-  paymentToken(index: BigNumberish, overrides?: CallOverrides): Promise<string>;
-
-  paymentTokenIndex(token: string, overrides?: CallOverrides): Promise<number>;
 
   reborrow(
     borrowTokenId: BigNumberish,
@@ -1286,24 +1317,12 @@ export class Enterprise extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  upgradeBorrowToken(
-    implementation: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  upgradeEnterprise(
-    implementation: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  upgradeInterestToken(
-    implementation: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  upgradePowerToken(
-    powerToken: string,
-    implementation: string,
+  upgrade(
+    enterpriseImplementation: string,
+    borrowTokenImplementation: string,
+    interestTokenImplementation: string,
+    powerTokenImplementation: string,
+    powerTokens: string[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1321,7 +1340,7 @@ export class Enterprise extends BaseContract {
     borrow(
       powerToken: string,
       paymentToken: string,
-      amount: BigNumberish,
+      loanAmount: BigNumberish,
       duration: BigNumberish,
       maxPayment: BigNumberish,
       overrides?: CallOverrides
@@ -1329,7 +1348,7 @@ export class Enterprise extends BaseContract {
 
     decreaseLiquidity(
       interestTokenId: BigNumberish,
-      amount: BigNumberish,
+      liquidityAmount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1444,6 +1463,16 @@ export class Enterprise extends BaseContract {
       }
     >;
 
+    getPaymentToken(
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    getPaymentTokenIndex(
+      token: string,
+      overrides?: CallOverrides
+    ): Promise<number>;
+
     getPowerTokens(overrides?: CallOverrides): Promise<string[]>;
 
     getProxyAdmin(overrides?: CallOverrides): Promise<string>;
@@ -1454,7 +1483,7 @@ export class Enterprise extends BaseContract {
 
     increaseLiquidity(
       interestTokenId: BigNumberish,
-      amount: BigNumberish,
+      liquidityAmount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1498,16 +1527,6 @@ export class Enterprise extends BaseContract {
     ): Promise<void>;
 
     owner(overrides?: CallOverrides): Promise<string>;
-
-    paymentToken(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    paymentTokenIndex(
-      token: string,
-      overrides?: CallOverrides
-    ): Promise<number>;
 
     reborrow(
       borrowTokenId: BigNumberish,
@@ -1591,24 +1610,12 @@ export class Enterprise extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    upgradeBorrowToken(
-      implementation: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    upgradeEnterprise(
-      implementation: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    upgradeInterestToken(
-      implementation: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    upgradePowerToken(
-      powerToken: string,
-      implementation: string,
+    upgrade(
+      enterpriseImplementation: string,
+      borrowTokenImplementation: string,
+      interestTokenImplementation: string,
+      powerTokenImplementation: string,
+      powerTokens: string[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1643,20 +1650,104 @@ export class Enterprise extends BaseContract {
       { pole: BigNumber; slope: BigNumber }
     >;
 
-    "Borrowed(address,uint256)"(
+    "Borrowed(uint256,address,address,address,uint112,uint112,uint112,uint112,uint32,uint32,uint32,uint32,uint256,uint256)"(
+      borrowTokenId?: BigNumberish | null,
+      borrower?: string | null,
       powerToken?: string | null,
-      borrowTokenId?: BigNumberish | null
+      paymentToken?: null,
+      amount?: null,
+      interest?: null,
+      serviceFee?: null,
+      gcFee?: null,
+      borrowingTime?: null,
+      maturityTime?: null,
+      borrowerReturnGraceTime?: null,
+      enterpriseCollectGraceTime?: null,
+      reserve?: null,
+      usedReserve?: null
     ): TypedEventFilter<
-      [string, BigNumber],
-      { powerToken: string; borrowTokenId: BigNumber }
+      [
+        BigNumber,
+        string,
+        string,
+        string,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        number,
+        number,
+        number,
+        number,
+        BigNumber,
+        BigNumber
+      ],
+      {
+        borrowTokenId: BigNumber;
+        borrower: string;
+        powerToken: string;
+        paymentToken: string;
+        amount: BigNumber;
+        interest: BigNumber;
+        serviceFee: BigNumber;
+        gcFee: BigNumber;
+        borrowingTime: number;
+        maturityTime: number;
+        borrowerReturnGraceTime: number;
+        enterpriseCollectGraceTime: number;
+        reserve: BigNumber;
+        usedReserve: BigNumber;
+      }
     >;
 
     Borrowed(
+      borrowTokenId?: BigNumberish | null,
+      borrower?: string | null,
       powerToken?: string | null,
-      borrowTokenId?: BigNumberish | null
+      paymentToken?: null,
+      amount?: null,
+      interest?: null,
+      serviceFee?: null,
+      gcFee?: null,
+      borrowingTime?: null,
+      maturityTime?: null,
+      borrowerReturnGraceTime?: null,
+      enterpriseCollectGraceTime?: null,
+      reserve?: null,
+      usedReserve?: null
     ): TypedEventFilter<
-      [string, BigNumber],
-      { powerToken: string; borrowTokenId: BigNumber }
+      [
+        BigNumber,
+        string,
+        string,
+        string,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        number,
+        number,
+        number,
+        number,
+        BigNumber,
+        BigNumber
+      ],
+      {
+        borrowTokenId: BigNumber;
+        borrower: string;
+        powerToken: string;
+        paymentToken: string;
+        amount: BigNumber;
+        interest: BigNumber;
+        serviceFee: BigNumber;
+        gcFee: BigNumber;
+        borrowingTime: number;
+        maturityTime: number;
+        borrowerReturnGraceTime: number;
+        enterpriseCollectGraceTime: number;
+        reserve: BigNumber;
+        usedReserve: BigNumber;
+      }
     >;
 
     "BorrowerLoanReturnGracePeriodChanged(uint32)"(
@@ -1727,31 +1818,185 @@ export class Enterprise extends BaseContract {
       period?: null
     ): TypedEventFilter<[number], { period: number }>;
 
-    "LiquidityChanged(uint256,uint8,uint256)"(
+    "LiquidityChanged(uint256,address,uint8,uint256,uint256,uint256,uint256,uint256,uint256)"(
       interestTokenId?: BigNumberish | null,
+      liquidityProvider?: string | null,
       changeType?: BigNumberish | null,
-      amount?: null
+      amountDelta?: null,
+      amount?: null,
+      shares?: null,
+      totalShares?: null,
+      reserve?: null,
+      usedReserve?: null
     ): TypedEventFilter<
-      [BigNumber, number, BigNumber],
-      { interestTokenId: BigNumber; changeType: number; amount: BigNumber }
+      [
+        BigNumber,
+        string,
+        number,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber
+      ],
+      {
+        interestTokenId: BigNumber;
+        liquidityProvider: string;
+        changeType: number;
+        amountDelta: BigNumber;
+        amount: BigNumber;
+        shares: BigNumber;
+        totalShares: BigNumber;
+        reserve: BigNumber;
+        usedReserve: BigNumber;
+      }
     >;
 
     LiquidityChanged(
       interestTokenId?: BigNumberish | null,
+      liquidityProvider?: string | null,
       changeType?: BigNumberish | null,
-      amount?: null
+      amountDelta?: null,
+      amount?: null,
+      shares?: null,
+      totalShares?: null,
+      reserve?: null,
+      usedReserve?: null
     ): TypedEventFilter<
-      [BigNumber, number, BigNumber],
-      { interestTokenId: BigNumber; changeType: number; amount: BigNumber }
+      [
+        BigNumber,
+        string,
+        number,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber
+      ],
+      {
+        interestTokenId: BigNumber;
+        liquidityProvider: string;
+        changeType: number;
+        amountDelta: BigNumber;
+        amount: BigNumber;
+        shares: BigNumber;
+        totalShares: BigNumber;
+        reserve: BigNumber;
+        usedReserve: BigNumber;
+      }
     >;
 
-    "LoanReturned(uint256)"(
-      borrowTokenId?: BigNumberish | null
-    ): TypedEventFilter<[BigNumber], { borrowTokenId: BigNumber }>;
+    "LoanExtended(uint256,address,address,uint112,uint112,uint32,uint32,uint32)"(
+      borrowTokenId?: BigNumberish | null,
+      borrower?: string | null,
+      paymentToken?: null,
+      interest?: null,
+      serviceFee?: null,
+      maturityTime?: null,
+      borrowerReturnGraceTime?: null,
+      enterpriseCollectGraceTime?: null
+    ): TypedEventFilter<
+      [BigNumber, string, string, BigNumber, BigNumber, number, number, number],
+      {
+        borrowTokenId: BigNumber;
+        borrower: string;
+        paymentToken: string;
+        interest: BigNumber;
+        serviceFee: BigNumber;
+        maturityTime: number;
+        borrowerReturnGraceTime: number;
+        enterpriseCollectGraceTime: number;
+      }
+    >;
+
+    LoanExtended(
+      borrowTokenId?: BigNumberish | null,
+      borrower?: string | null,
+      paymentToken?: null,
+      interest?: null,
+      serviceFee?: null,
+      maturityTime?: null,
+      borrowerReturnGraceTime?: null,
+      enterpriseCollectGraceTime?: null
+    ): TypedEventFilter<
+      [BigNumber, string, string, BigNumber, BigNumber, number, number, number],
+      {
+        borrowTokenId: BigNumber;
+        borrower: string;
+        paymentToken: string;
+        interest: BigNumber;
+        serviceFee: BigNumber;
+        maturityTime: number;
+        borrowerReturnGraceTime: number;
+        enterpriseCollectGraceTime: number;
+      }
+    >;
+
+    "LoanReturned(uint256,address,address,uint112,uint112,address,uint256,uint256)"(
+      borrowTokenId?: BigNumberish | null,
+      returner?: string | null,
+      powerToken?: string | null,
+      amount?: null,
+      gcFee?: null,
+      gcFeeToken?: null,
+      reserve?: null,
+      usedReserve?: null
+    ): TypedEventFilter<
+      [
+        BigNumber,
+        string,
+        string,
+        BigNumber,
+        BigNumber,
+        string,
+        BigNumber,
+        BigNumber
+      ],
+      {
+        borrowTokenId: BigNumber;
+        returner: string;
+        powerToken: string;
+        amount: BigNumber;
+        gcFee: BigNumber;
+        gcFeeToken: string;
+        reserve: BigNumber;
+        usedReserve: BigNumber;
+      }
+    >;
 
     LoanReturned(
-      borrowTokenId?: BigNumberish | null
-    ): TypedEventFilter<[BigNumber], { borrowTokenId: BigNumber }>;
+      borrowTokenId?: BigNumberish | null,
+      returner?: string | null,
+      powerToken?: string | null,
+      amount?: null,
+      gcFee?: null,
+      gcFeeToken?: null,
+      reserve?: null,
+      usedReserve?: null
+    ): TypedEventFilter<
+      [
+        BigNumber,
+        string,
+        string,
+        BigNumber,
+        BigNumber,
+        string,
+        BigNumber,
+        BigNumber
+      ],
+      {
+        borrowTokenId: BigNumber;
+        returner: string;
+        powerToken: string;
+        amount: BigNumber;
+        gcFee: BigNumber;
+        gcFeeToken: string;
+        reserve: BigNumber;
+        usedReserve: BigNumber;
+      }
+    >;
 
     "OwnershipTransferred(address,address)"(
       previousOwner?: string | null,
@@ -1808,22 +2053,6 @@ export class Enterprise extends BaseContract {
       [BigNumber, BigNumber],
       { streamingReserve: BigNumber; streamingReserveTarget: BigNumber }
     >;
-
-    "TotalSharesChanged(uint256)"(
-      totalShares?: null
-    ): TypedEventFilter<[BigNumber], { totalShares: BigNumber }>;
-
-    TotalSharesChanged(
-      totalShares?: null
-    ): TypedEventFilter<[BigNumber], { totalShares: BigNumber }>;
-
-    "UsedReserveChanged(uint256)"(
-      fixedReserve?: null
-    ): TypedEventFilter<[BigNumber], { fixedReserve: BigNumber }>;
-
-    UsedReserveChanged(
-      fixedReserve?: null
-    ): TypedEventFilter<[BigNumber], { fixedReserve: BigNumber }>;
   };
 
   estimateGas: {
@@ -1835,7 +2064,7 @@ export class Enterprise extends BaseContract {
     borrow(
       powerToken: string,
       paymentToken: string,
-      amount: BigNumberish,
+      loanAmount: BigNumberish,
       duration: BigNumberish,
       maxPayment: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1843,7 +2072,7 @@ export class Enterprise extends BaseContract {
 
     decreaseLiquidity(
       interestTokenId: BigNumberish,
-      amount: BigNumberish,
+      liquidityAmount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1912,6 +2141,16 @@ export class Enterprise extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getPaymentToken(
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getPaymentTokenIndex(
+      token: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getPowerTokens(overrides?: CallOverrides): Promise<BigNumber>;
 
     getProxyAdmin(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1922,7 +2161,7 @@ export class Enterprise extends BaseContract {
 
     increaseLiquidity(
       interestTokenId: BigNumberish,
-      amount: BigNumberish,
+      liquidityAmount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1966,16 +2205,6 @@ export class Enterprise extends BaseContract {
     ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    paymentToken(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    paymentTokenIndex(
-      token: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     reborrow(
       borrowTokenId: BigNumberish,
@@ -2064,24 +2293,12 @@ export class Enterprise extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    upgradeBorrowToken(
-      implementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    upgradeEnterprise(
-      implementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    upgradeInterestToken(
-      implementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    upgradePowerToken(
-      powerToken: string,
-      implementation: string,
+    upgrade(
+      enterpriseImplementation: string,
+      borrowTokenImplementation: string,
+      interestTokenImplementation: string,
+      powerTokenImplementation: string,
+      powerTokens: string[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -2100,7 +2317,7 @@ export class Enterprise extends BaseContract {
     borrow(
       powerToken: string,
       paymentToken: string,
-      amount: BigNumberish,
+      loanAmount: BigNumberish,
       duration: BigNumberish,
       maxPayment: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -2108,7 +2325,7 @@ export class Enterprise extends BaseContract {
 
     decreaseLiquidity(
       interestTokenId: BigNumberish,
-      amount: BigNumberish,
+      liquidityAmount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2185,6 +2402,16 @@ export class Enterprise extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getPaymentToken(
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getPaymentTokenIndex(
+      token: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getPowerTokens(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getProxyAdmin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -2195,7 +2422,7 @@ export class Enterprise extends BaseContract {
 
     increaseLiquidity(
       interestTokenId: BigNumberish,
-      amount: BigNumberish,
+      liquidityAmount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2239,16 +2466,6 @@ export class Enterprise extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    paymentToken(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    paymentTokenIndex(
-      token: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     reborrow(
       borrowTokenId: BigNumberish,
@@ -2337,24 +2554,12 @@ export class Enterprise extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    upgradeBorrowToken(
-      implementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    upgradeEnterprise(
-      implementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    upgradeInterestToken(
-      implementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    upgradePowerToken(
-      powerToken: string,
-      implementation: string,
+    upgrade(
+      enterpriseImplementation: string,
+      borrowTokenImplementation: string,
+      interestTokenImplementation: string,
+      powerTokenImplementation: string,
+      powerTokens: string[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

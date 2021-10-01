@@ -210,32 +210,6 @@ const _abi = [
     type: "event",
   },
   {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "totalShares",
-        type: "uint256",
-      },
-    ],
-    name: "TotalSharesChanged",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "fixedReserve",
-        type: "uint256",
-      },
-    ],
-    name: "UsedReserveChanged",
-    type: "event",
-  },
-  {
     inputs: [
       {
         internalType: "address",
@@ -601,6 +575,44 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "index",
+        type: "uint256",
+      },
+    ],
+    name: "getPaymentToken",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IERC20",
+        name: "token",
+        type: "address",
+      },
+    ],
+    name: "getPaymentTokenIndex",
+    outputs: [
+      {
+        internalType: "int16",
+        name: "",
+        type: "int16",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "getPowerTokens",
     outputs: [
@@ -780,44 +792,6 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "index",
-        type: "uint256",
-      },
-    ],
-    name: "paymentToken",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "contract IERC20",
-        name: "token",
-        type: "address",
-      },
-    ],
-    name: "paymentTokenIndex",
-    outputs: [
-      {
-        internalType: "int16",
-        name: "",
-        type: "int16",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
         internalType: "string",
         name: "baseUri",
         type: "string",
@@ -954,55 +928,31 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "implementation",
-        type: "address",
-      },
-    ],
-    name: "upgradeBorrowToken",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "implementation",
-        type: "address",
-      },
-    ],
-    name: "upgradeEnterprise",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "implementation",
-        type: "address",
-      },
-    ],
-    name: "upgradeInterestToken",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "contract PowerToken",
-        name: "powerToken",
+        name: "enterpriseImplementation",
         type: "address",
       },
       {
         internalType: "address",
-        name: "implementation",
+        name: "borrowTokenImplementation",
         type: "address",
       },
+      {
+        internalType: "address",
+        name: "interestTokenImplementation",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "powerTokenImplementation",
+        type: "address",
+      },
+      {
+        internalType: "contract PowerToken[]",
+        name: "powerTokens",
+        type: "address[]",
+      },
     ],
-    name: "upgradePowerToken",
+    name: "upgrade",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

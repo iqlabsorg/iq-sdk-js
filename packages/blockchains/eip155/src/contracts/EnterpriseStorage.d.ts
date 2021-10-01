@@ -17,7 +17,7 @@ import {
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
+import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface EnterpriseStorageInterface extends ethers.utils.Interface {
   functions: {
@@ -39,6 +39,8 @@ interface EnterpriseStorageInterface extends ethers.utils.Interface {
     "getLiquidityInfo(uint256)": FunctionFragment;
     "getLiquidityToken()": FunctionFragment;
     "getLoanInfo(uint256)": FunctionFragment;
+    "getPaymentToken(uint256)": FunctionFragment;
+    "getPaymentTokenIndex(address)": FunctionFragment;
     "getPowerTokens()": FunctionFragment;
     "getProxyAdmin()": FunctionFragment;
     "getReserve()": FunctionFragment;
@@ -48,8 +50,6 @@ interface EnterpriseStorageInterface extends ethers.utils.Interface {
     "isRegisteredPowerToken(address)": FunctionFragment;
     "isSupportedPaymentToken(address)": FunctionFragment;
     "owner()": FunctionFragment;
-    "paymentToken(uint256)": FunctionFragment;
-    "paymentTokenIndex(address)": FunctionFragment;
     "setBaseUri(string)": FunctionFragment;
     "setBondingCurve(uint256,uint256)": FunctionFragment;
     "setBorrowerLoanReturnGracePeriod(uint32)": FunctionFragment;
@@ -60,10 +60,7 @@ interface EnterpriseStorageInterface extends ethers.utils.Interface {
     "setGcFeePercent(uint16)": FunctionFragment;
     "setInterestGapHalvingPeriod(uint32)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
-    "upgradeBorrowToken(address)": FunctionFragment;
-    "upgradeEnterprise(address)": FunctionFragment;
-    "upgradeInterestToken(address)": FunctionFragment;
-    "upgradePowerToken(address,address)": FunctionFragment;
+    "upgrade(address,address,address,address,address[])": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -136,6 +133,14 @@ interface EnterpriseStorageInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "getPaymentToken",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getPaymentTokenIndex",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getPowerTokens",
     values?: undefined
   ): string;
@@ -168,14 +173,6 @@ interface EnterpriseStorageInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "paymentToken",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "paymentTokenIndex",
-    values: [string]
-  ): string;
   encodeFunctionData(functionFragment: "setBaseUri", values: [string]): string;
   encodeFunctionData(
     functionFragment: "setBondingCurve",
@@ -214,20 +211,8 @@ interface EnterpriseStorageInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "upgradeBorrowToken",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "upgradeEnterprise",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "upgradeInterestToken",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "upgradePowerToken",
-    values: [string, string]
+    functionFragment: "upgrade",
+    values: [string, string, string, string, string[]]
   ): string;
 
   decodeFunctionResult(
@@ -297,6 +282,14 @@ interface EnterpriseStorageInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getPaymentToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getPaymentTokenIndex",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getPowerTokens",
     data: BytesLike
   ): Result;
@@ -323,14 +316,6 @@ interface EnterpriseStorageInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "paymentToken",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "paymentTokenIndex",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "setBaseUri", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setBondingCurve",
@@ -368,22 +353,7 @@ interface EnterpriseStorageInterface extends ethers.utils.Interface {
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "upgradeBorrowToken",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "upgradeEnterprise",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "upgradeInterestToken",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "upgradePowerToken",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "upgrade", data: BytesLike): Result;
 
   events: {
     "BaseUriChanged(string)": EventFragment;
@@ -400,8 +370,6 @@ interface EnterpriseStorageInterface extends ethers.utils.Interface {
     "OwnershipTransferred(address,address)": EventFragment;
     "PaymentTokenChange(address,bool)": EventFragment;
     "StreamingReserveChanged(uint112,uint112)": EventFragment;
-    "TotalSharesChanged(uint256)": EventFragment;
-    "UsedReserveChanged(uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "BaseUriChanged"): EventFragment;
@@ -424,8 +392,6 @@ interface EnterpriseStorageInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PaymentTokenChange"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "StreamingReserveChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TotalSharesChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "UsedReserveChanged"): EventFragment;
 }
 
 export type BaseUriChangedEvent = TypedEvent<[string] & { baseUri: string }>;
@@ -481,14 +447,6 @@ export type StreamingReserveChangedEvent = TypedEvent<
     streamingReserve: BigNumber;
     streamingReserveTarget: BigNumber;
   }
->;
-
-export type TotalSharesChangedEvent = TypedEvent<
-  [BigNumber] & { totalShares: BigNumber }
->;
-
-export type UsedReserveChangedEvent = TypedEvent<
-  [BigNumber] & { fixedReserve: BigNumber }
 >;
 
 export class EnterpriseStorage extends BaseContract {
@@ -649,6 +607,16 @@ export class EnterpriseStorage extends BaseContract {
       ]
     >;
 
+    getPaymentToken(
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    getPaymentTokenIndex(
+      token: string,
+      overrides?: CallOverrides
+    ): Promise<[number]>;
+
     getPowerTokens(overrides?: CallOverrides): Promise<[string[]]>;
 
     getProxyAdmin(overrides?: CallOverrides): Promise<[string]>;
@@ -690,16 +658,6 @@ export class EnterpriseStorage extends BaseContract {
     ): Promise<[boolean]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
-
-    paymentToken(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    paymentTokenIndex(
-      token: string,
-      overrides?: CallOverrides
-    ): Promise<[number]>;
 
     setBaseUri(
       baseUri: string,
@@ -752,24 +710,12 @@ export class EnterpriseStorage extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    upgradeBorrowToken(
-      implementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    upgradeEnterprise(
-      implementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    upgradeInterestToken(
-      implementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    upgradePowerToken(
-      powerToken: string,
-      implementation: string,
+    upgrade(
+      enterpriseImplementation: string,
+      borrowTokenImplementation: string,
+      interestTokenImplementation: string,
+      powerTokenImplementation: string,
+      powerTokens: string[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
@@ -873,6 +819,16 @@ export class EnterpriseStorage extends BaseContract {
     }
   >;
 
+  getPaymentToken(
+    index: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  getPaymentTokenIndex(
+    token: string,
+    overrides?: CallOverrides
+  ): Promise<number>;
+
   getPowerTokens(overrides?: CallOverrides): Promise<string[]>;
 
   getProxyAdmin(overrides?: CallOverrides): Promise<string>;
@@ -914,10 +870,6 @@ export class EnterpriseStorage extends BaseContract {
   ): Promise<boolean>;
 
   owner(overrides?: CallOverrides): Promise<string>;
-
-  paymentToken(index: BigNumberish, overrides?: CallOverrides): Promise<string>;
-
-  paymentTokenIndex(token: string, overrides?: CallOverrides): Promise<number>;
 
   setBaseUri(
     baseUri: string,
@@ -970,24 +922,12 @@ export class EnterpriseStorage extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  upgradeBorrowToken(
-    implementation: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  upgradeEnterprise(
-    implementation: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  upgradeInterestToken(
-    implementation: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  upgradePowerToken(
-    powerToken: string,
-    implementation: string,
+  upgrade(
+    enterpriseImplementation: string,
+    borrowTokenImplementation: string,
+    interestTokenImplementation: string,
+    powerTokenImplementation: string,
+    powerTokens: string[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1090,6 +1030,16 @@ export class EnterpriseStorage extends BaseContract {
       }
     >;
 
+    getPaymentToken(
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    getPaymentTokenIndex(
+      token: string,
+      overrides?: CallOverrides
+    ): Promise<number>;
+
     getPowerTokens(overrides?: CallOverrides): Promise<string[]>;
 
     getProxyAdmin(overrides?: CallOverrides): Promise<string>;
@@ -1131,16 +1081,6 @@ export class EnterpriseStorage extends BaseContract {
     ): Promise<boolean>;
 
     owner(overrides?: CallOverrides): Promise<string>;
-
-    paymentToken(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    paymentTokenIndex(
-      token: string,
-      overrides?: CallOverrides
-    ): Promise<number>;
 
     setBaseUri(baseUri: string, overrides?: CallOverrides): Promise<void>;
 
@@ -1190,24 +1130,12 @@ export class EnterpriseStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    upgradeBorrowToken(
-      implementation: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    upgradeEnterprise(
-      implementation: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    upgradeInterestToken(
-      implementation: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    upgradePowerToken(
-      powerToken: string,
-      implementation: string,
+    upgrade(
+      enterpriseImplementation: string,
+      borrowTokenImplementation: string,
+      interestTokenImplementation: string,
+      powerTokenImplementation: string,
+      powerTokens: string[],
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -1352,22 +1280,6 @@ export class EnterpriseStorage extends BaseContract {
       [BigNumber, BigNumber],
       { streamingReserve: BigNumber; streamingReserveTarget: BigNumber }
     >;
-
-    "TotalSharesChanged(uint256)"(
-      totalShares?: null
-    ): TypedEventFilter<[BigNumber], { totalShares: BigNumber }>;
-
-    TotalSharesChanged(
-      totalShares?: null
-    ): TypedEventFilter<[BigNumber], { totalShares: BigNumber }>;
-
-    "UsedReserveChanged(uint256)"(
-      fixedReserve?: null
-    ): TypedEventFilter<[BigNumber], { fixedReserve: BigNumber }>;
-
-    UsedReserveChanged(
-      fixedReserve?: null
-    ): TypedEventFilter<[BigNumber], { fixedReserve: BigNumber }>;
   };
 
   estimateGas: {
@@ -1423,6 +1335,16 @@ export class EnterpriseStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getPaymentToken(
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getPaymentTokenIndex(
+      token: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getPowerTokens(overrides?: CallOverrides): Promise<BigNumber>;
 
     getProxyAdmin(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1464,16 +1386,6 @@ export class EnterpriseStorage extends BaseContract {
     ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    paymentToken(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    paymentTokenIndex(
-      token: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     setBaseUri(
       baseUri: string,
@@ -1526,24 +1438,12 @@ export class EnterpriseStorage extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    upgradeBorrowToken(
-      implementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    upgradeEnterprise(
-      implementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    upgradeInterestToken(
-      implementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    upgradePowerToken(
-      powerToken: string,
-      implementation: string,
+    upgrade(
+      enterpriseImplementation: string,
+      borrowTokenImplementation: string,
+      interestTokenImplementation: string,
+      powerTokenImplementation: string,
+      powerTokens: string[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
@@ -1609,6 +1509,16 @@ export class EnterpriseStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getPaymentToken(
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getPaymentTokenIndex(
+      token: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getPowerTokens(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getProxyAdmin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1650,16 +1560,6 @@ export class EnterpriseStorage extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    paymentToken(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    paymentTokenIndex(
-      token: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     setBaseUri(
       baseUri: string,
@@ -1712,24 +1612,12 @@ export class EnterpriseStorage extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    upgradeBorrowToken(
-      implementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    upgradeEnterprise(
-      implementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    upgradeInterestToken(
-      implementation: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    upgradePowerToken(
-      powerToken: string,
-      implementation: string,
+    upgrade(
+      enterpriseImplementation: string,
+      borrowTokenImplementation: string,
+      interestTokenImplementation: string,
+      powerTokenImplementation: string,
+      powerTokens: string[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

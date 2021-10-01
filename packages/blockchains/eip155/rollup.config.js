@@ -5,7 +5,7 @@ baseConfig.plugins.push(
   copy({
     targets: [
       // copy typechain declarations files
-      { src: 'src/contracts/(*.d|commons).ts', dest: 'dist' },
+      { src: 'src/contracts/*.d.ts', dest: 'dist' },
     ]
   })
 );

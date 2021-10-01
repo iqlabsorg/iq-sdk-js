@@ -121,9 +121,9 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
     );
   }
 
-  async addLiquidity(enterpriseAddress: Address, amount: BigNumberish): Promise<ContractTransaction> {
+  async addLiquidity(enterpriseAddress: Address, liquidityAmount: BigNumberish): Promise<ContractTransaction> {
     const enterprise = this.resolveEnterprise(enterpriseAddress);
-    return enterprise.addLiquidity(amount);
+    return enterprise.addLiquidity(liquidityAmount);
   }
 
   async removeLiquidity(enterpriseAddress: Address, interestTokenId: BigNumberish): Promise<ContractTransaction> {
@@ -133,17 +133,17 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
   async increaseLiquidity(
     enterpriseAddress: Address,
     interestTokenId: BigNumberish,
-    amount: BigNumberish,
+    liquidityAmount: BigNumberish,
   ): Promise<ContractTransaction> {
-    return this.resolveEnterprise(enterpriseAddress).increaseLiquidity(interestTokenId, amount);
+    return this.resolveEnterprise(enterpriseAddress).increaseLiquidity(interestTokenId, liquidityAmount);
   }
 
   async decreaseLiquidity(
     enterpriseAddress: Address,
     interestTokenId: BigNumberish,
-    amount: BigNumberish,
+    liquidityAmount: BigNumberish,
   ): Promise<ContractTransaction> {
-    return this.resolveEnterprise(enterpriseAddress).decreaseLiquidity(interestTokenId, amount);
+    return this.resolveEnterprise(enterpriseAddress).decreaseLiquidity(interestTokenId, liquidityAmount);
   }
 
   async withdrawInterest(enterpriseAddress: Address, interestTokenId: BigNumberish): Promise<ContractTransaction> {
@@ -154,14 +154,14 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
     enterpriseAddress: Address,
     serviceAddress: Address,
     paymentTokenAddress: Address,
-    amount: BigNumberish,
+    loanAmount: BigNumberish,
     duration: BigNumberish,
     maxPayment: BigNumberish,
   ): Promise<ContractTransaction> {
     return this.resolveEnterprise(enterpriseAddress).borrow(
       serviceAddress,
       paymentTokenAddress,
-      amount,
+      loanAmount,
       duration,
       maxPayment,
     );
