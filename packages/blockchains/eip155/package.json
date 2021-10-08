@@ -1,27 +1,29 @@
 {
   "name": "@iqprotocol/eip155",
   "version": "0.15.7",
-  "license": "UNLICENSED",
-  "scripts": {
-    "start": "rollup -cw",
-    "build": "rollup -c",
-    "test": "jest --group=unit",
-    "test:integration": "jest --group=integration",
-    "prepublish": "run-s typechain build",
-    "typechain": "run-s typechain:clean typechain:generate",
-    "typechain:clean": "rimraf src/contracts",
-    "typechain:generate": "typechain --target ethers-v5 --out-dir src/contracts './node_modules/@iqprotocol/solidity-contracts/artifacts/contracts/**/*.json'"
+  "bugs": "https://github.com/iqlabsorg/iq-sdk-js/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iqlabsorg/iq-sdk-js"
   },
+  "license": "MIT",
+  "author": "IQ Labs (https://iqlabs.org)",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "typings": "dist/index.d.ts",
-  "typedocMain": "src/index.ts",
   "files": [
     "README.md",
     "dist"
   ],
-  "publishConfig": {
-    "access": "restricted"
+  "scripts": {
+    "build": "rollup -c",
+    "prepublish": "run-s typechain build",
+    "start": "rollup -cw",
+    "test": "jest --group=unit",
+    "test:integration": "jest --group=integration",
+    "typechain": "run-s typechain:clean typechain:generate",
+    "typechain:clean": "rimraf src/contracts",
+    "typechain:generate": "typechain --target ethers-v5 --out-dir src/contracts './node_modules/@iqprotocol/solidity-contracts/artifacts/contracts/**/*.json'"
   },
   "dependencies": {
     "@iqprotocol/abstract-blockchain": "^0.10.2"
@@ -37,5 +39,9 @@
   },
   "peerDependencies": {
     "ethers": "^5.4.5"
-  }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "typedocMain": "src/index.ts"
 }

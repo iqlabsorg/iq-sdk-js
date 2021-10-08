@@ -1,22 +1,28 @@
 {
   "name": "@iqprotocol/energy",
   "version": "0.6.2",
-  "license": "UNLICENSED",
-  "scripts": {
-    "start": "rollup -cw",
-    "build": "rollup -c",
-    "test": "jest --group=unit",
-    "prepublish": "npm run build"
+  "bugs": "https://github.com/iqlabsorg/iq-sdk-js/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iqlabsorg/iq-sdk-js"
   },
+  "license": "MIT",
+  "author": "IQ Labs (https://iqlabs.org)",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "typings": "dist/index.d.ts",
-  "typedocMain": "src/index.ts",
   "files": [
     "README.md",
     "dist"
   ],
+  "scripts": {
+    "build": "rollup -c",
+    "prepublish": "npm run build",
+    "start": "rollup -cw",
+    "test": "jest --group=unit"
+  },
   "publishConfig": {
-    "access": "restricted"
-  }
+    "access": "public"
+  },
+  "typedocMain": "src/index.ts"
 }
