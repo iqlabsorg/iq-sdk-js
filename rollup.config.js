@@ -1,58 +1,43 @@
 import ts from "rollup-plugin-ts";
 import del from 'rollup-plugin-delete';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+import autoExternal from 'rollup-plugin-auto-external';
+import commonjs from '@rollup/plugin-commonjs';
 import { terser } from "rollup-plugin-terser";
-import { builtinModules } from "module";
 
-const isProd = process.env.BUILD === 'production';
-if (isProd) console.info("Building for production!")
+const isProduction = process.env.NODE_ENV === 'production';
+if (isProduction) console.info("Building for production!")
 
-export const buildExternalSection = (pkg) => [
-  ...builtinModules,
-  ...Object.keys(pkg.dependencies ?? {}),
-  ...Object.keys(pkg.devDependencies ?? {}),
-  ...Object.keys(pkg.peerDependencies ?? {})
-];
-
-export const buildPluginsSection = (pkg) => [
+export const buildPluginsSection = () => [
   del({ targets: 'dist/*' }),
+  nodeResolve(),
+  commonjs(),
   ts({
     tsconfig: "tsconfig.build.json",
-    hook: {
-      outputPath: (path, kind) => {
-        // by default rollup-plugin-ts would generate d.ts file for each output and create duplicates
-        // this is to ensure single declaration file
-        if (kind === 'declaration') {
-          return pkg.typings;
-        }
-        if (kind === 'declarationMap') {
-          return `${pkg.typings}.map`;
-        }
-      }
-    }
   }),
-  isProd && terser()
+  autoExternal(),
+  isProduction && terser({
+    output: {
+      comments: false,
+    },
+  }),
 ]
 
-export const buildOutputSection = (pkg) => {
-  return [
-    {
-      file: pkg.module,
-      format: "esm",
-      sourcemap: true,
-    },
-    {
-      file: pkg.main,
-      format: "cjs",
-      sourcemap: true,
-    }
-  ]
-}
-
-export const buildConfig = ({ pkg, input, output, plugins, external }) => {
+export const buildConfig = ({ pkg, plugins }) => {
   return {
-    input: input ?? "src/index.ts",
-    output: output ?? buildOutputSection(pkg),
+    input: "src/index.ts",
+    output: [
+      {
+        file: pkg.module,
+        format: "esm",
+        sourcemap: isProduction,
+      },
+      {
+        file: pkg.main,
+        format: "cjs",
+        sourcemap: isProduction,
+      }
+    ],
     plugins: plugins ?? buildPluginsSection(pkg),
-    external: external ?? buildExternalSection(pkg)
   }
 }

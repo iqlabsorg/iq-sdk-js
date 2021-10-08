@@ -8,16 +8,16 @@
   },
   "license": "MIT",
   "author": "IQ Labs (https://iqlabs.org)",
-  "main": "dist/index.js",
-  "module": "dist/index.esm.js",
-  "typings": "dist/index.d.ts",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "typings": "dist/esm/index.d.ts",
   "files": [
     "README.md",
     "dist"
   ],
   "scripts": {
     "build": "rollup -c",
-    "prepublish": "BUILD=production yarn build",
+    "prepublish": "NODE_ENV=production yarn build",
     "start": "rollup -cw",
     "test": "jest --group=unit"
   },

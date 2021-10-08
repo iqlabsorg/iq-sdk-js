@@ -2,7 +2,7 @@ import { buildConfig, buildPluginsSection } from '../../../rollup.config';
 import pkg from './package.json';
 import copy from 'rollup-plugin-copy'
 
-const plugins = buildPluginsSection(pkg);
+const plugins = buildPluginsSection();
 plugins.push(
   copy({
     targets: [
