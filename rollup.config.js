@@ -1,6 +1,10 @@
 import ts from "rollup-plugin-ts";
 import del from 'rollup-plugin-delete';
+import { terser } from "rollup-plugin-terser";
 import { builtinModules } from "module";
+
+const isProd = process.env.BUILD === 'production';
+if (isProd) console.info("Building for production!")
 
 export const buildExternalSection = (pkg) => [
   ...builtinModules,
@@ -26,6 +30,7 @@ export const buildPluginsSection = (pkg) => [
       }
     }
   }),
+  isProd && terser()
 ]
 
 export const buildOutputSection = (pkg) => {

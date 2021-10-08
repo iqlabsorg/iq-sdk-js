@@ -17,7 +17,7 @@
   ],
   "scripts": {
     "build": "rollup -c",
-    "prepublish": "npm run build",
+    "prepublish": "BUILD=production yarn build",
     "start": "rollup -cw",
     "test": "jest --group=unit"
   },
