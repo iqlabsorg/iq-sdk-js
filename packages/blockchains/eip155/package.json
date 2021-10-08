@@ -29,7 +29,7 @@
     "@iqprotocol/abstract-blockchain": "^0.10.2"
   },
   "devDependencies": {
-    "@iqprotocol/solidity-contracts": "https://github.com/iqalliance/iq-smart-contracts#b88ecf3059f893e2da42840a8d9fca6c8e96d04e",
+    "@iqprotocol/solidity-contracts": "https://github.com/iqlabsorg/iq-smart-contracts#b88ecf3059f893e2da42840a8d9fca6c8e96d04e",
     "@typechain/ethers-v5": "^7.0.1",
     "ethers": "^5.4.5",
     "hardhat": "^2.6.5",
