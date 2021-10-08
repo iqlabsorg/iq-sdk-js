@@ -1,7 +1,10 @@
 # In-Memory Storage
-This package is part of [IQ Protocol JS SDK.](https://github.com/iqalliance/iq-sdk-js)
+This package is part of [IQ Protocol JS SDK.](https://github.com/iqlabsorg/iq-sdk-js)
 
-The package includes very basic [Storage Provider Interface](https://github.com/iqalliance/iq-sdk-js/tree/main/packages/abstract-storage) implementation for handling account states in memory.
+| :exclamation: The package is in development and breaking changes should be expected. Use at your own risk! |
+|:------------------------------------------------------------------------------------------------------------------|
+
+The package includes very basic [Storage Provider Interface](https://github.com/iqlabsorg/iq-sdk-js/tree/main/packages/abstract-storage) implementation for handling account states in memory.
 Use this package when you want to test account state management functionality without setting up a persistent storage.
 
 :warning: **This provider is meant for testing and does not guarantee data persistence. Do not use for production deployments!**

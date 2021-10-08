@@ -1,5 +1,9 @@
 # Abstract Storage
-This package is part of [IQ Protocol JS SDK.](https://github.com/iqalliance/iq-sdk-js)
+This package is part of [IQ Protocol JS SDK.](https://github.com/iqlabsorg/iq-sdk-js)
+
+| :exclamation: The package is in development and breaking changes should be expected. Use at your own risk! |
+|:------------------------------------------------------------------------------------------------------------------|
+
 The IQ Protocol off-chain state management is storage agnostic and relies on storage providers to implement required functionality.
 This package provides `AbstractStore` class which can be extended to implement store specific provider.    
 

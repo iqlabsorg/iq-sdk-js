@@ -1,5 +1,8 @@
 # Energy Utils
-This package is part of [IQ Protocol JS SDK.](https://github.com/iqalliance/iq-sdk-js)
+This package is part of [IQ Protocol JS SDK.](https://github.com/iqlabsorg/iq-sdk-js)
+
+| :exclamation: The package is in development and breaking changes should be expected. Use at your own risk! |
+|:------------------------------------------------------------------------------------------------------------------|
 
 The package provided various utility functions for *energy* calculation.
 

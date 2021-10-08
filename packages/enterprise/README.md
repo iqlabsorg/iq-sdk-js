@@ -1,5 +1,8 @@
 # Enterprise and Services
-This package is part of [IQ Protocol JS SDK.](https://github.com/iqalliance/iq-sdk-js)
+This package is part of [IQ Protocol JS SDK.](https://github.com/iqlabsorg/iq-sdk-js)
+
+| :exclamation: The package is in development and breaking changes should be expected. Use at your own risk! |
+|:------------------------------------------------------------------------------------------------------------------|
 
 This package provides higher level abstraction over IQ Protocol smart contracts, allowing application developers to work with IQ enterprises and services regardless of the underlying blockchain.   
 

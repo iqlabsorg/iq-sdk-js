@@ -1,5 +1,8 @@
 # Discovery Utils
-This package is part of [IQ Protocol JS SDK.](https://github.com/iqalliance/iq-sdk-js)
+This package is part of [IQ Protocol JS SDK.](https://github.com/iqlabsorg/iq-sdk-js)
+
+| :exclamation: The package is in development and breaking changes should be expected. Use at your own risk! |
+|:------------------------------------------------------------------------------------------------------------------|
 
 The package helps to discover IQ Protocol smart contracts. It contains the lists of IQ Protocol smart contracts addresses deployed by the IQ Protocol team.  
 
