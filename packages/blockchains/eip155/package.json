@@ -1,6 +1,6 @@
 {
   "name": "@iqprotocol/eip155",
-  "version": "0.15.7",
+  "version": "0.16.0",
   "bugs": "https://github.com/iqlabsorg/iq-sdk-js/issues",
   "repository": {
     "type": "git",
@@ -26,7 +26,7 @@
     "typechain:generate": "typechain --target ethers-v5 --out-dir src/contracts './node_modules/@iqprotocol/solidity-contracts/artifacts/contracts/**/*.json'"
   },
   "dependencies": {
-    "@iqprotocol/abstract-blockchain": "^0.10.2"
+    "@iqprotocol/abstract-blockchain": "^0.11.0"
   },
   "devDependencies": {
     "@iqprotocol/solidity-contracts": "https://github.com/iqlabsorg/iq-smart-contracts#2c867d55b63471b04aa102fa4706d3adfbe74465",

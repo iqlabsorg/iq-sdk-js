@@ -1,6 +1,6 @@
 {
   "name": "@iqprotocol/enterprise",
-  "version": "0.9.3",
+  "version": "0.10.0",
   "bugs": "https://github.com/iqlabsorg/iq-sdk-js/issues",
   "repository": {
     "type": "git",
@@ -21,7 +21,7 @@
     "test": "jest --group=unit"
   },
   "dependencies": {
-    "@iqprotocol/abstract-blockchain": "^0.10.2"
+    "@iqprotocol/abstract-blockchain": "^0.11.0"
   },
   "publishConfig": {
     "access": "public"
