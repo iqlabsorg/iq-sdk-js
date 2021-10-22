@@ -39,7 +39,8 @@ describe('AccountStateManager', () => {
     minLoanDuration: 3600,
     maxLoanDuration: 864000,
     serviceFeePercent: 5000,
-    allowsPerpetual: false,
+    wrappingEnabled: false,
+    transferEnabled: false,
   };
 
   const chainId = new ChainId({ namespace: 'eip155', reference: '1' });

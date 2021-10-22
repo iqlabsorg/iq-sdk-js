@@ -359,6 +359,19 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "getFactory",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "getGCFeePercent",
     outputs: [
       {
@@ -566,7 +579,7 @@ const _abi = [
             type: "uint16",
           },
         ],
-        internalType: "struct EnterpriseStorage.LoanInfo",
+        internalType: "struct IEnterpriseStorage.LoanInfo",
         name: "",
         type: "tuple",
       },
@@ -596,7 +609,7 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "contract IERC20",
+        internalType: "address",
         name: "token",
         type: "address",
       },
@@ -617,7 +630,7 @@ const _abi = [
     name: "getPowerTokens",
     outputs: [
       {
-        internalType: "contract PowerToken[]",
+        internalType: "contract IPowerToken[]",
         name: "",
         type: "address[]",
       },
@@ -741,7 +754,7 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "contract PowerToken",
+        internalType: "address",
         name: "powerToken",
         type: "address",
       },
@@ -760,7 +773,7 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "contract IERC20",
+        internalType: "address",
         name: "token",
         type: "address",
       },
@@ -928,6 +941,11 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
+        name: "enterpriseFactory",
+        type: "address",
+      },
+      {
+        internalType: "address",
         name: "enterpriseImplementation",
         type: "address",
       },
@@ -947,7 +965,7 @@ const _abi = [
         type: "address",
       },
       {
-        internalType: "contract PowerToken[]",
+        internalType: "address[]",
         name: "powerTokens",
         type: "address[]",
       },

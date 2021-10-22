@@ -5,26 +5,23 @@
 import { Contract, Signer, utils } from "ethers";
 import { Provider } from "@ethersproject/providers";
 import type {
-  EnterpriseOwnable,
-  EnterpriseOwnableInterface,
-} from "../EnterpriseOwnable";
+  IBorrowTokenStorage,
+  IBorrowTokenStorageInterface,
+} from "../IBorrowTokenStorage";
 
 const _abi = [
   {
-    inputs: [],
-    name: "getEnterprise",
-    outputs: [
-      {
-        internalType: "contract IEnterprise",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
+      {
+        internalType: "string",
+        name: "name",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "symbol",
+        type: "string",
+      },
       {
         internalType: "contract IEnterprise",
         name: "enterprise",
@@ -38,15 +35,15 @@ const _abi = [
   },
 ];
 
-export class EnterpriseOwnable__factory {
+export class IBorrowTokenStorage__factory {
   static readonly abi = _abi;
-  static createInterface(): EnterpriseOwnableInterface {
-    return new utils.Interface(_abi) as EnterpriseOwnableInterface;
+  static createInterface(): IBorrowTokenStorageInterface {
+    return new utils.Interface(_abi) as IBorrowTokenStorageInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): EnterpriseOwnable {
-    return new Contract(address, _abi, signerOrProvider) as EnterpriseOwnable;
+  ): IBorrowTokenStorage {
+    return new Contract(address, _abi, signerOrProvider) as IBorrowTokenStorage;
   }
 }

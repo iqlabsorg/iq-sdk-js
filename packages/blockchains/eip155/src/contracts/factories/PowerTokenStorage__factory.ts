@@ -56,12 +56,6 @@ const _abi = [
   },
   {
     anonymous: false,
-    inputs: [],
-    name: "PerpetualAllowed",
-    type: "event",
-  },
-  {
-    anonymous: false,
     inputs: [
       {
         indexed: false,
@@ -74,23 +68,29 @@ const _abi = [
     type: "event",
   },
   {
+    anonymous: false,
     inputs: [],
-    name: "allowPerpetualForever",
+    name: "TransferEnabled",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [],
+    name: "WrappingEnabled",
+    type: "event",
+  },
+  {
+    inputs: [],
+    name: "enableTransferForever",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
     inputs: [],
-    name: "getAllowsPerpetual",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
+    name: "enableWrappingForever",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -124,7 +124,7 @@ const _abi = [
     name: "getEnterprise",
     outputs: [
       {
-        internalType: "contract Enterprise",
+        internalType: "contract IEnterprise",
         name: "",
         type: "address",
       },
@@ -249,7 +249,7 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "contract Enterprise",
+        internalType: "contract IEnterprise",
         name: "enterprise",
         type: "address",
       },
@@ -278,6 +278,27 @@ const _abi = [
         name: "baseToken",
         type: "address",
       },
+    ],
+    name: "initialize",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IEnterprise",
+        name: "enterprise",
+        type: "address",
+      },
+    ],
+    name: "initialize",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
       {
         internalType: "uint32",
         name: "minLoanDuration",
@@ -295,24 +316,11 @@ const _abi = [
       },
       {
         internalType: "bool",
-        name: "allowsPerpetual",
+        name: "wrappingEnabled",
         type: "bool",
       },
     ],
-    name: "initialize",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "contract Enterprise",
-        name: "enterprise",
-        type: "address",
-      },
-    ],
-    name: "initialize",
+    name: "initialize2",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -326,6 +334,32 @@ const _abi = [
       },
     ],
     name: "isAllowedLoanDuration",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "isTransferEnabled",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "isWrappingEnabled",
     outputs: [
       {
         internalType: "bool",

@@ -117,7 +117,7 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
       params.minLoanDuration,
       params.maxLoanDuration,
       params.minGCFee,
-      params.allowsPerpetualTokensForever,
+      params.allowsWrappingForever,
     );
   }
 
@@ -440,7 +440,8 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
       'minLoanDuration',
       'maxLoanDuration',
       'serviceFeePercent',
-      'allowsPerpetual',
+      'wrappingEnabled',
+      'transferEnabled',
     ]);
 
     return { address: serviceAddress, ...info };
@@ -461,8 +462,12 @@ export class EIP155BlockchainProvider implements BlockchainProvider<ContractTran
     };
   }
 
-  async getAllowsPerpetual(serviceAddress: Address): Promise<boolean> {
-    return this.resolvePowerToken(serviceAddress).getAllowsPerpetual();
+  async isWrappingEnabled(serviceAddress: Address): Promise<boolean> {
+    return this.resolvePowerToken(serviceAddress).isWrappingEnabled();
+  }
+
+  async isTransferEnabled(serviceAddress: Address): Promise<boolean> {
+    return this.resolvePowerToken(serviceAddress).isTransferEnabled();
   }
 
   async getBaseRate(serviceAddress: Address): Promise<BigNumber> {

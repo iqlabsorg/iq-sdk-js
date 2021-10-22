@@ -3,7 +3,7 @@
  */
 import { chains } from '../src/chains';
 import { deployments } from '../src/deployments';
-import { getBlockchainInfo, getContractAddress, getContractAddresses } from '@iqprotocol/discovery';
+import { getBlockchainInfo, getContractAddress, getContractAddresses } from '../src';
 import { ChainId } from 'caip';
 import { IQContractName } from '../src/types';
 

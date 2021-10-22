@@ -68,7 +68,7 @@ describe('EIP155BlockchainProvider', () => {
       minLoanDuration: 12 * ONE_HOUR,
       maxLoanDuration: 60 * ONE_DAY,
       minGCFee: ONE_TOKEN,
-      allowsPerpetualTokensForever: true,
+      allowsWrappingForever: true,
     };
   });
 
@@ -211,7 +211,8 @@ describe('EIP155BlockchainProvider', () => {
           minLoanDuration: 12 * ONE_HOUR,
           maxLoanDuration: 60 * ONE_DAY,
           minGCFee: ONE_TOKEN,
-          allowsPerpetual: true,
+          wrappingEnabled: true,
+          transferEnabled: false,
         };
 
         // register first service
@@ -290,9 +291,9 @@ describe('EIP155BlockchainProvider', () => {
         );
       });
 
-      it('retrieves the service perpetual token flag', async () => {
-        await expect(blockchainProvider.getAllowsPerpetual(service1Address)).resolves.toEqual(
-          expectedServiceData1.allowsPerpetual,
+      it('retrieves the wrapping flag', async () => {
+        await expect(blockchainProvider.isWrappingEnabled(service1Address)).resolves.toEqual(
+          expectedServiceData1.wrappingEnabled,
         );
       });
 

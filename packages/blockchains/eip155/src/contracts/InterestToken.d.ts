@@ -261,8 +261,8 @@ export class InterestToken extends BaseContract {
     getNextTokenId(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     "initialize(string,string,address)"(
-      name_: string,
-      symbol_: string,
+      name: string,
+      symbol: string,
       enterprise: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -373,8 +373,8 @@ export class InterestToken extends BaseContract {
   getNextTokenId(overrides?: CallOverrides): Promise<BigNumber>;
 
   "initialize(string,string,address)"(
-    name_: string,
-    symbol_: string,
+    name: string,
+    symbol: string,
     enterprise: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -476,8 +476,8 @@ export class InterestToken extends BaseContract {
     getNextTokenId(overrides?: CallOverrides): Promise<BigNumber>;
 
     "initialize(string,string,address)"(
-      name_: string,
-      symbol_: string,
+      name: string,
+      symbol: string,
       enterprise: string,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -636,8 +636,8 @@ export class InterestToken extends BaseContract {
     getNextTokenId(overrides?: CallOverrides): Promise<BigNumber>;
 
     "initialize(string,string,address)"(
-      name_: string,
-      symbol_: string,
+      name: string,
+      symbol: string,
       enterprise: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -752,8 +752,8 @@ export class InterestToken extends BaseContract {
     getNextTokenId(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     "initialize(string,string,address)"(
-      name_: string,
-      symbol_: string,
+      name: string,
+      symbol: string,
       enterprise: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

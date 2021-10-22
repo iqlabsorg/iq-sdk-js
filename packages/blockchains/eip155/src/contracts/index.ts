@@ -2,6 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { BorrowToken } from "./BorrowToken";
+export type { BorrowTokenStorage } from "./BorrowTokenStorage";
 export type { DefaultConverter } from "./DefaultConverter";
 export type { Enterprise } from "./Enterprise";
 export type { EnterpriseFactory } from "./EnterpriseFactory";
@@ -9,10 +10,17 @@ export type { EnterpriseOwnable } from "./EnterpriseOwnable";
 export type { EnterpriseStorage } from "./EnterpriseStorage";
 export type { InitializableOwnable } from "./InitializableOwnable";
 export type { InterestToken } from "./InterestToken";
+export type { InterestTokenStorage } from "./InterestTokenStorage";
 export type { IBorrowToken } from "./IBorrowToken";
+export type { IBorrowTokenStorage } from "./IBorrowTokenStorage";
 export type { IConverter } from "./IConverter";
+export type { IEnterprise } from "./IEnterprise";
+export type { IEnterpriseStorage } from "./IEnterpriseStorage";
+export type { IInitializableOwnable } from "./IInitializableOwnable";
 export type { IInterestToken } from "./IInterestToken";
+export type { IInterestTokenStorage } from "./IInterestTokenStorage";
 export type { IPowerToken } from "./IPowerToken";
+export type { IPowerTokenStorage } from "./IPowerTokenStorage";
 export type { ERC20Mock } from "./ERC20Mock";
 export type { ExpMathMock } from "./ExpMathMock";
 export type { MockConverter } from "./MockConverter";
@@ -23,6 +31,7 @@ export type { ERC721 } from "./ERC721";
 export type { ERC721Enumerable } from "./ERC721Enumerable";
 
 export { BorrowToken__factory } from "./factories/BorrowToken__factory";
+export { BorrowTokenStorage__factory } from "./factories/BorrowTokenStorage__factory";
 export { DefaultConverter__factory } from "./factories/DefaultConverter__factory";
 export { Enterprise__factory } from "./factories/Enterprise__factory";
 export { EnterpriseFactory__factory } from "./factories/EnterpriseFactory__factory";
@@ -30,10 +39,17 @@ export { EnterpriseOwnable__factory } from "./factories/EnterpriseOwnable__facto
 export { EnterpriseStorage__factory } from "./factories/EnterpriseStorage__factory";
 export { InitializableOwnable__factory } from "./factories/InitializableOwnable__factory";
 export { InterestToken__factory } from "./factories/InterestToken__factory";
+export { InterestTokenStorage__factory } from "./factories/InterestTokenStorage__factory";
 export { IBorrowToken__factory } from "./factories/IBorrowToken__factory";
+export { IBorrowTokenStorage__factory } from "./factories/IBorrowTokenStorage__factory";
 export { IConverter__factory } from "./factories/IConverter__factory";
+export { IEnterprise__factory } from "./factories/IEnterprise__factory";
+export { IEnterpriseStorage__factory } from "./factories/IEnterpriseStorage__factory";
+export { IInitializableOwnable__factory } from "./factories/IInitializableOwnable__factory";
 export { IInterestToken__factory } from "./factories/IInterestToken__factory";
+export { IInterestTokenStorage__factory } from "./factories/IInterestTokenStorage__factory";
 export { IPowerToken__factory } from "./factories/IPowerToken__factory";
+export { IPowerTokenStorage__factory } from "./factories/IPowerTokenStorage__factory";
 export { ERC20Mock__factory } from "./factories/ERC20Mock__factory";
 export { ExpMathMock__factory } from "./factories/ExpMathMock__factory";
 export { MockConverter__factory } from "./factories/MockConverter__factory";

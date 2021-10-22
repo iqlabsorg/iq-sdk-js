@@ -4,7 +4,10 @@
 
 import { Contract, Signer, utils } from "ethers";
 import { Provider } from "@ethersproject/providers";
-import type { IBorrowToken, IBorrowTokenInterface } from "../IBorrowToken";
+import type {
+  IInterestTokenStorage,
+  IInterestTokenStorageInterface,
+} from "../IInterestTokenStorage";
 
 const _abi = [
   {
@@ -126,24 +129,6 @@ const _abi = [
         name: "tokenId",
         type: "uint256",
       },
-      {
-        internalType: "address",
-        name: "burner",
-        type: "address",
-      },
-    ],
-    name: "burn",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
     ],
     name: "getApproved",
     outputs: [
@@ -154,19 +139,6 @@ const _abi = [
       },
     ],
     stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "getNextTokenId",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -214,25 +186,6 @@ const _abi = [
       },
     ],
     stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-    ],
-    name: "mint",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -345,6 +298,62 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "uint256",
+        name: "index",
+        type: "uint256",
+      },
+    ],
+    name: "tokenByIndex",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "index",
+        type: "uint256",
+      },
+    ],
+    name: "tokenOfOwnerByIndex",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "totalSupply",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "address",
         name: "from",
         type: "address",
@@ -367,15 +376,19 @@ const _abi = [
   },
 ];
 
-export class IBorrowToken__factory {
+export class IInterestTokenStorage__factory {
   static readonly abi = _abi;
-  static createInterface(): IBorrowTokenInterface {
-    return new utils.Interface(_abi) as IBorrowTokenInterface;
+  static createInterface(): IInterestTokenStorageInterface {
+    return new utils.Interface(_abi) as IInterestTokenStorageInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): IBorrowToken {
-    return new Contract(address, _abi, signerOrProvider) as IBorrowToken;
+  ): IInterestTokenStorage {
+    return new Contract(
+      address,
+      _abi,
+      signerOrProvider
+    ) as IInterestTokenStorage;
   }
 }

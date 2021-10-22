@@ -32,6 +32,7 @@ interface EnterpriseStorageInterface extends ethers.utils.Interface {
     "getEnterpriseCollector()": FunctionFragment;
     "getEnterpriseLoanCollectGracePeriod()": FunctionFragment;
     "getEnterpriseVault()": FunctionFragment;
+    "getFactory()": FunctionFragment;
     "getGCFeePercent()": FunctionFragment;
     "getInfo()": FunctionFragment;
     "getInterestGapHalvingPeriod()": FunctionFragment;
@@ -60,7 +61,7 @@ interface EnterpriseStorageInterface extends ethers.utils.Interface {
     "setGcFeePercent(uint16)": FunctionFragment;
     "setInterestGapHalvingPeriod(uint32)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
-    "upgrade(address,address,address,address,address[])": FunctionFragment;
+    "upgrade(address,address,address,address,address,address[])": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -105,6 +106,10 @@ interface EnterpriseStorageInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getEnterpriseVault",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getFactory",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -212,7 +217,7 @@ interface EnterpriseStorageInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "upgrade",
-    values: [string, string, string, string, string[]]
+    values: [string, string, string, string, string, string[]]
   ): string;
 
   decodeFunctionResult(
@@ -256,6 +261,7 @@ interface EnterpriseStorageInterface extends ethers.utils.Interface {
     functionFragment: "getEnterpriseVault",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getFactory", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getGCFeePercent",
     data: BytesLike
@@ -527,6 +533,8 @@ export class EnterpriseStorage extends BaseContract {
 
     getEnterpriseVault(overrides?: CallOverrides): Promise<[string]>;
 
+    getFactory(overrides?: CallOverrides): Promise<[string]>;
+
     getGCFeePercent(overrides?: CallOverrides): Promise<[number]>;
 
     getInfo(
@@ -711,6 +719,7 @@ export class EnterpriseStorage extends BaseContract {
     ): Promise<ContractTransaction>;
 
     upgrade(
+      enterpriseFactory: string,
       enterpriseImplementation: string,
       borrowTokenImplementation: string,
       interestTokenImplementation: string,
@@ -751,6 +760,8 @@ export class EnterpriseStorage extends BaseContract {
   ): Promise<number>;
 
   getEnterpriseVault(overrides?: CallOverrides): Promise<string>;
+
+  getFactory(overrides?: CallOverrides): Promise<string>;
 
   getGCFeePercent(overrides?: CallOverrides): Promise<number>;
 
@@ -923,6 +934,7 @@ export class EnterpriseStorage extends BaseContract {
   ): Promise<ContractTransaction>;
 
   upgrade(
+    enterpriseFactory: string,
     enterpriseImplementation: string,
     borrowTokenImplementation: string,
     interestTokenImplementation: string,
@@ -962,6 +974,8 @@ export class EnterpriseStorage extends BaseContract {
     ): Promise<number>;
 
     getEnterpriseVault(overrides?: CallOverrides): Promise<string>;
+
+    getFactory(overrides?: CallOverrides): Promise<string>;
 
     getGCFeePercent(overrides?: CallOverrides): Promise<number>;
 
@@ -1131,6 +1145,7 @@ export class EnterpriseStorage extends BaseContract {
     ): Promise<void>;
 
     upgrade(
+      enterpriseFactory: string,
       enterpriseImplementation: string,
       borrowTokenImplementation: string,
       interestTokenImplementation: string,
@@ -1315,6 +1330,8 @@ export class EnterpriseStorage extends BaseContract {
 
     getEnterpriseVault(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getFactory(overrides?: CallOverrides): Promise<BigNumber>;
+
     getGCFeePercent(overrides?: CallOverrides): Promise<BigNumber>;
 
     getInfo(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1439,6 +1456,7 @@ export class EnterpriseStorage extends BaseContract {
     ): Promise<BigNumber>;
 
     upgrade(
+      enterpriseFactory: string,
       enterpriseImplementation: string,
       borrowTokenImplementation: string,
       interestTokenImplementation: string,
@@ -1486,6 +1504,8 @@ export class EnterpriseStorage extends BaseContract {
     getEnterpriseVault(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    getFactory(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getGCFeePercent(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1613,6 +1633,7 @@ export class EnterpriseStorage extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     upgrade(
+      enterpriseFactory: string,
       enterpriseImplementation: string,
       borrowTokenImplementation: string,
       interestTokenImplementation: string,

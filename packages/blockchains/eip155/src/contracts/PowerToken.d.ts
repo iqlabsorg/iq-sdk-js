@@ -21,7 +21,6 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface PowerTokenInterface extends ethers.utils.Interface {
   functions: {
-    "allowPerpetualForever()": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "availableBalanceOf(address)": FunctionFragment;
@@ -29,11 +28,12 @@ interface PowerTokenInterface extends ethers.utils.Interface {
     "burnFrom(address,uint256)": FunctionFragment;
     "decimals()": FunctionFragment;
     "decreaseAllowance(address,uint256)": FunctionFragment;
+    "enableTransferForever()": FunctionFragment;
+    "enableWrappingForever()": FunctionFragment;
     "energyAt(address,uint32)": FunctionFragment;
     "estimateLoan(address,uint112,uint32)": FunctionFragment;
     "estimateLoanDetailed(address,uint112,uint32)": FunctionFragment;
     "forceTransfer(address,address,uint256)": FunctionFragment;
-    "getAllowsPerpetual()": FunctionFragment;
     "getBaseRate()": FunctionFragment;
     "getBaseToken()": FunctionFragment;
     "getEnterprise()": FunctionFragment;
@@ -47,7 +47,10 @@ interface PowerTokenInterface extends ethers.utils.Interface {
     "getState(address)": FunctionFragment;
     "increaseAllowance(address,uint256)": FunctionFragment;
     "initialize(string,string,uint8)": FunctionFragment;
+    "initialize2(uint32,uint32,uint16,bool)": FunctionFragment;
     "isAllowedLoanDuration(uint32)": FunctionFragment;
+    "isTransferEnabled()": FunctionFragment;
+    "isWrappingEnabled()": FunctionFragment;
     "mint(address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "notifyNewLoan(uint256)": FunctionFragment;
@@ -63,10 +66,6 @@ interface PowerTokenInterface extends ethers.utils.Interface {
     "wrapTo(address,uint256)": FunctionFragment;
   };
 
-  encodeFunctionData(
-    functionFragment: "allowPerpetualForever",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "allowance",
     values: [string, string]
@@ -90,6 +89,14 @@ interface PowerTokenInterface extends ethers.utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "enableTransferForever",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "enableWrappingForever",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "energyAt",
     values: [string, BigNumberish]
   ): string;
@@ -104,10 +111,6 @@ interface PowerTokenInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "forceTransfer",
     values: [string, string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getAllowsPerpetual",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getBaseRate",
@@ -153,8 +156,20 @@ interface PowerTokenInterface extends ethers.utils.Interface {
     values: [string, string, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "initialize2",
+    values: [BigNumberish, BigNumberish, BigNumberish, boolean]
+  ): string;
+  encodeFunctionData(
     functionFragment: "isAllowedLoanDuration",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isTransferEnabled",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isWrappingEnabled",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "mint",
@@ -200,10 +215,6 @@ interface PowerTokenInterface extends ethers.utils.Interface {
     values: [string, BigNumberish]
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "allowPerpetualForever",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(
@@ -217,6 +228,14 @@ interface PowerTokenInterface extends ethers.utils.Interface {
     functionFragment: "decreaseAllowance",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "enableTransferForever",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "enableWrappingForever",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "energyAt", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "estimateLoan",
@@ -228,10 +247,6 @@ interface PowerTokenInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "forceTransfer",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getAllowsPerpetual",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -275,7 +290,19 @@ interface PowerTokenInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "initialize2",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "isAllowedLoanDuration",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isTransferEnabled",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isWrappingEnabled",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
@@ -314,17 +341,19 @@ interface PowerTokenInterface extends ethers.utils.Interface {
     "Approval(address,address,uint256)": EventFragment;
     "BaseRateChanged(uint112,address,uint96)": EventFragment;
     "LoanDurationLimitsChanged(uint32,uint32)": EventFragment;
-    "PerpetualAllowed()": EventFragment;
     "ServiceFeePercentChanged(uint16)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
+    "TransferEnabled()": EventFragment;
+    "WrappingEnabled()": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BaseRateChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "LoanDurationLimitsChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PerpetualAllowed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ServiceFeePercentChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TransferEnabled"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "WrappingEnabled"): EventFragment;
 }
 
 export type ApprovalEvent = TypedEvent<
@@ -347,8 +376,6 @@ export type LoanDurationLimitsChangedEvent = TypedEvent<
   [number, number] & { minDuration: number; maxDuration: number }
 >;
 
-export type PerpetualAllowedEvent = TypedEvent<[] & {}>;
-
 export type ServiceFeePercentChangedEvent = TypedEvent<
   [number] & { percent: number }
 >;
@@ -356,6 +383,10 @@ export type ServiceFeePercentChangedEvent = TypedEvent<
 export type TransferEvent = TypedEvent<
   [string, string, BigNumber] & { from: string; to: string; value: BigNumber }
 >;
+
+export type TransferEnabledEvent = TypedEvent<[] & {}>;
+
+export type WrappingEnabledEvent = TypedEvent<[] & {}>;
 
 export class PowerToken extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -401,10 +432,6 @@ export class PowerToken extends BaseContract {
   interface: PowerTokenInterface;
 
   functions: {
-    allowPerpetualForever(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     allowance(
       owner: string,
       spender: string,
@@ -435,6 +462,14 @@ export class PowerToken extends BaseContract {
     decreaseAllowance(
       spender: string,
       subtractedValue: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    enableTransferForever(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    enableWrappingForever(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -471,8 +506,6 @@ export class PowerToken extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    getAllowsPerpetual(overrides?: CallOverrides): Promise<[boolean]>;
-
     getBaseRate(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getBaseToken(overrides?: CallOverrides): Promise<[string]>;
@@ -497,6 +530,7 @@ export class PowerToken extends BaseContract {
         number,
         number,
         number,
+        boolean,
         boolean
       ] & {
         name: string;
@@ -509,7 +543,8 @@ export class PowerToken extends BaseContract {
         minLoanDuration: number;
         maxLoanDuration: number;
         serviceFeePercent: number;
-        allowsPerpetual: boolean;
+        wrappingEnabled: boolean;
+        transferEnabled: boolean;
       }
     >;
 
@@ -547,17 +582,13 @@ export class PowerToken extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "initialize(address,uint112,uint96,uint32,uint16,address,uint32,uint32,uint16,bool)"(
+    "initialize(address,uint112,uint96,uint32,uint16,address)"(
       enterprise: string,
       baseRate: BigNumberish,
       minGCFee: BigNumberish,
       gapHalvingPeriod: BigNumberish,
       index: BigNumberish,
       baseToken: string,
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
-      serviceFeePercent: BigNumberish,
-      allowsPerpetual: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -566,10 +597,22 @@ export class PowerToken extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    initialize2(
+      minLoanDuration: BigNumberish,
+      maxLoanDuration: BigNumberish,
+      serviceFeePercent: BigNumberish,
+      wrappingEnabled: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     isAllowedLoanDuration(
       duration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    isTransferEnabled(overrides?: CallOverrides): Promise<[boolean]>;
+
+    isWrappingEnabled(overrides?: CallOverrides): Promise<[boolean]>;
 
     mint(
       to: string,
@@ -636,10 +679,6 @@ export class PowerToken extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  allowPerpetualForever(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   allowance(
     owner: string,
     spender: string,
@@ -670,6 +709,14 @@ export class PowerToken extends BaseContract {
   decreaseAllowance(
     spender: string,
     subtractedValue: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  enableTransferForever(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  enableWrappingForever(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -706,8 +753,6 @@ export class PowerToken extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  getAllowsPerpetual(overrides?: CallOverrides): Promise<boolean>;
-
   getBaseRate(overrides?: CallOverrides): Promise<BigNumber>;
 
   getBaseToken(overrides?: CallOverrides): Promise<string>;
@@ -732,6 +777,7 @@ export class PowerToken extends BaseContract {
       number,
       number,
       number,
+      boolean,
       boolean
     ] & {
       name: string;
@@ -744,7 +790,8 @@ export class PowerToken extends BaseContract {
       minLoanDuration: number;
       maxLoanDuration: number;
       serviceFeePercent: number;
-      allowsPerpetual: boolean;
+      wrappingEnabled: boolean;
+      transferEnabled: boolean;
     }
   >;
 
@@ -780,17 +827,13 @@ export class PowerToken extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "initialize(address,uint112,uint96,uint32,uint16,address,uint32,uint32,uint16,bool)"(
+  "initialize(address,uint112,uint96,uint32,uint16,address)"(
     enterprise: string,
     baseRate: BigNumberish,
     minGCFee: BigNumberish,
     gapHalvingPeriod: BigNumberish,
     index: BigNumberish,
     baseToken: string,
-    minLoanDuration: BigNumberish,
-    maxLoanDuration: BigNumberish,
-    serviceFeePercent: BigNumberish,
-    allowsPerpetual: boolean,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -799,10 +842,22 @@ export class PowerToken extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  initialize2(
+    minLoanDuration: BigNumberish,
+    maxLoanDuration: BigNumberish,
+    serviceFeePercent: BigNumberish,
+    wrappingEnabled: boolean,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   isAllowedLoanDuration(
     duration: BigNumberish,
     overrides?: CallOverrides
   ): Promise<boolean>;
+
+  isTransferEnabled(overrides?: CallOverrides): Promise<boolean>;
+
+  isWrappingEnabled(overrides?: CallOverrides): Promise<boolean>;
 
   mint(
     to: string,
@@ -869,8 +924,6 @@ export class PowerToken extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    allowPerpetualForever(overrides?: CallOverrides): Promise<void>;
-
     allowance(
       owner: string,
       spender: string,
@@ -903,6 +956,10 @@ export class PowerToken extends BaseContract {
       subtractedValue: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    enableTransferForever(overrides?: CallOverrides): Promise<void>;
+
+    enableWrappingForever(overrides?: CallOverrides): Promise<void>;
 
     energyAt(
       who: string,
@@ -937,8 +994,6 @@ export class PowerToken extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    getAllowsPerpetual(overrides?: CallOverrides): Promise<boolean>;
-
     getBaseRate(overrides?: CallOverrides): Promise<BigNumber>;
 
     getBaseToken(overrides?: CallOverrides): Promise<string>;
@@ -963,6 +1018,7 @@ export class PowerToken extends BaseContract {
         number,
         number,
         number,
+        boolean,
         boolean
       ] & {
         name: string;
@@ -975,7 +1031,8 @@ export class PowerToken extends BaseContract {
         minLoanDuration: number;
         maxLoanDuration: number;
         serviceFeePercent: number;
-        allowsPerpetual: boolean;
+        wrappingEnabled: boolean;
+        transferEnabled: boolean;
       }
     >;
 
@@ -1011,17 +1068,13 @@ export class PowerToken extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "initialize(address,uint112,uint96,uint32,uint16,address,uint32,uint32,uint16,bool)"(
+    "initialize(address,uint112,uint96,uint32,uint16,address)"(
       enterprise: string,
       baseRate: BigNumberish,
       minGCFee: BigNumberish,
       gapHalvingPeriod: BigNumberish,
       index: BigNumberish,
       baseToken: string,
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
-      serviceFeePercent: BigNumberish,
-      allowsPerpetual: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1030,10 +1083,22 @@ export class PowerToken extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    initialize2(
+      minLoanDuration: BigNumberish,
+      maxLoanDuration: BigNumberish,
+      serviceFeePercent: BigNumberish,
+      wrappingEnabled: boolean,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     isAllowedLoanDuration(
       duration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    isTransferEnabled(overrides?: CallOverrides): Promise<boolean>;
+
+    isWrappingEnabled(overrides?: CallOverrides): Promise<boolean>;
 
     mint(
       to: string,
@@ -1147,10 +1212,6 @@ export class PowerToken extends BaseContract {
       { minDuration: number; maxDuration: number }
     >;
 
-    "PerpetualAllowed()"(): TypedEventFilter<[], {}>;
-
-    PerpetualAllowed(): TypedEventFilter<[], {}>;
-
     "ServiceFeePercentChanged(uint16)"(
       percent?: null
     ): TypedEventFilter<[number], { percent: number }>;
@@ -1176,13 +1237,17 @@ export class PowerToken extends BaseContract {
       [string, string, BigNumber],
       { from: string; to: string; value: BigNumber }
     >;
+
+    "TransferEnabled()"(): TypedEventFilter<[], {}>;
+
+    TransferEnabled(): TypedEventFilter<[], {}>;
+
+    "WrappingEnabled()"(): TypedEventFilter<[], {}>;
+
+    WrappingEnabled(): TypedEventFilter<[], {}>;
   };
 
   estimateGas: {
-    allowPerpetualForever(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     allowance(
       owner: string,
       spender: string,
@@ -1216,6 +1281,14 @@ export class PowerToken extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    enableTransferForever(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    enableWrappingForever(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     energyAt(
       who: string,
       timestamp: BigNumberish,
@@ -1242,8 +1315,6 @@ export class PowerToken extends BaseContract {
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
-
-    getAllowsPerpetual(overrides?: CallOverrides): Promise<BigNumber>;
 
     getBaseRate(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1280,17 +1351,13 @@ export class PowerToken extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "initialize(address,uint112,uint96,uint32,uint16,address,uint32,uint32,uint16,bool)"(
+    "initialize(address,uint112,uint96,uint32,uint16,address)"(
       enterprise: string,
       baseRate: BigNumberish,
       minGCFee: BigNumberish,
       gapHalvingPeriod: BigNumberish,
       index: BigNumberish,
       baseToken: string,
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
-      serviceFeePercent: BigNumberish,
-      allowsPerpetual: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1299,10 +1366,22 @@ export class PowerToken extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    initialize2(
+      minLoanDuration: BigNumberish,
+      maxLoanDuration: BigNumberish,
+      serviceFeePercent: BigNumberish,
+      wrappingEnabled: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     isAllowedLoanDuration(
       duration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    isTransferEnabled(overrides?: CallOverrides): Promise<BigNumber>;
+
+    isWrappingEnabled(overrides?: CallOverrides): Promise<BigNumber>;
 
     mint(
       to: string,
@@ -1370,10 +1449,6 @@ export class PowerToken extends BaseContract {
   };
 
   populateTransaction: {
-    allowPerpetualForever(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     allowance(
       owner: string,
       spender: string,
@@ -1410,6 +1485,14 @@ export class PowerToken extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    enableTransferForever(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    enableWrappingForever(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     energyAt(
       who: string,
       timestamp: BigNumberish,
@@ -1435,10 +1518,6 @@ export class PowerToken extends BaseContract {
       to: string,
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    getAllowsPerpetual(
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getBaseRate(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1487,17 +1566,13 @@ export class PowerToken extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "initialize(address,uint112,uint96,uint32,uint16,address,uint32,uint32,uint16,bool)"(
+    "initialize(address,uint112,uint96,uint32,uint16,address)"(
       enterprise: string,
       baseRate: BigNumberish,
       minGCFee: BigNumberish,
       gapHalvingPeriod: BigNumberish,
       index: BigNumberish,
       baseToken: string,
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
-      serviceFeePercent: BigNumberish,
-      allowsPerpetual: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1506,10 +1581,22 @@ export class PowerToken extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    initialize2(
+      minLoanDuration: BigNumberish,
+      maxLoanDuration: BigNumberish,
+      serviceFeePercent: BigNumberish,
+      wrappingEnabled: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     isAllowedLoanDuration(
       duration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    isTransferEnabled(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    isWrappingEnabled(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     mint(
       to: string,

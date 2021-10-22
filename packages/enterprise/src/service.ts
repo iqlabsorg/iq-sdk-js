@@ -79,8 +79,12 @@ export class Service<Transaction = unknown> {
     return this.blockchain.getServiceFeePercent(this.address);
   }
 
-  async isPerpetualTokenAllowed(): Promise<boolean> {
-    return this.blockchain.getAllowsPerpetual(this.address);
+  async isWrappingEnabled(): Promise<boolean> {
+    return this.blockchain.isWrappingEnabled(this.address);
+  }
+
+  async isTransferEnabled(): Promise<boolean> {
+    return this.blockchain.isTransferEnabled(this.address);
   }
 
   async getLiquidityAllowance(accountAddress?: Address): Promise<BigNumber> {

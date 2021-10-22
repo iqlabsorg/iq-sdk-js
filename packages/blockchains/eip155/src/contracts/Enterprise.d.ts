@@ -37,6 +37,7 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     "getEnterpriseCollector()": FunctionFragment;
     "getEnterpriseLoanCollectGracePeriod()": FunctionFragment;
     "getEnterpriseVault()": FunctionFragment;
+    "getFactory()": FunctionFragment;
     "getGCFeePercent()": FunctionFragment;
     "getInfo()": FunctionFragment;
     "getInterestGapHalvingPeriod()": FunctionFragment;
@@ -72,7 +73,7 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     "setInterestGapHalvingPeriod(uint32)": FunctionFragment;
     "shutdownEnterpriseForever()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
-    "upgrade(address,address,address,address,address[])": FunctionFragment;
+    "upgrade(address,address,address,address,address,address[])": FunctionFragment;
     "withdrawInterest(uint256)": FunctionFragment;
   };
 
@@ -138,6 +139,10 @@ interface EnterpriseInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getEnterpriseVault",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getFactory",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -284,7 +289,7 @@ interface EnterpriseInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "upgrade",
-    values: [string, string, string, string, string[]]
+    values: [string, string, string, string, string, string[]]
   ): string;
   encodeFunctionData(
     functionFragment: "withdrawInterest",
@@ -349,6 +354,7 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     functionFragment: "getEnterpriseVault",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getFactory", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getGCFeePercent",
     data: BytesLike
@@ -487,7 +493,7 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     "FixedReserveChanged(uint256)": EventFragment;
     "GcFeePercentChanged(uint16)": EventFragment;
     "InterestGapHalvingPeriodChanged(uint32)": EventFragment;
-    "LiquidityChanged(uint256,address,uint8,uint256,uint256,uint256,uint256,uint256,uint256)": EventFragment;
+    "LiquidityChanged(uint256,address,uint8,uint256,uint256,uint256,uint256,uint256,uint256,uint256)": EventFragment;
     "LoanExtended(uint256,address,address,uint112,uint112,uint32,uint32,uint32)": EventFragment;
     "LoanReturned(uint256,address,address,uint112,uint112,address,uint256,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
@@ -607,6 +613,7 @@ export type LiquidityChangedEvent = TypedEvent<
     BigNumber,
     BigNumber,
     BigNumber,
+    BigNumber,
     BigNumber
   ] & {
     interestTokenId: BigNumber;
@@ -614,6 +621,7 @@ export type LiquidityChangedEvent = TypedEvent<
     changeType: number;
     amountDelta: BigNumber;
     amount: BigNumber;
+    sharesDelta: BigNumber;
     shares: BigNumber;
     totalShares: BigNumber;
     reserve: BigNumber;
@@ -786,6 +794,8 @@ export class Enterprise extends BaseContract {
 
     getEnterpriseVault(overrides?: CallOverrides): Promise<[string]>;
 
+    getFactory(overrides?: CallOverrides): Promise<[string]>;
+
     getGCFeePercent(overrides?: CallOverrides): Promise<[number]>;
 
     getInfo(
@@ -949,7 +959,7 @@ export class Enterprise extends BaseContract {
       minLoanDuration: BigNumberish,
       maxLoanDuration: BigNumberish,
       minGCFee: BigNumberish,
-      allowsPerpetualTokensForever: boolean,
+      allowsWrappingForever: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -1019,6 +1029,7 @@ export class Enterprise extends BaseContract {
     ): Promise<ContractTransaction>;
 
     upgrade(
+      enterpriseFactory: string,
       enterpriseImplementation: string,
       borrowTokenImplementation: string,
       interestTokenImplementation: string,
@@ -1097,6 +1108,8 @@ export class Enterprise extends BaseContract {
   ): Promise<number>;
 
   getEnterpriseVault(overrides?: CallOverrides): Promise<string>;
+
+  getFactory(overrides?: CallOverrides): Promise<string>;
 
   getGCFeePercent(overrides?: CallOverrides): Promise<number>;
 
@@ -1248,7 +1261,7 @@ export class Enterprise extends BaseContract {
     minLoanDuration: BigNumberish,
     maxLoanDuration: BigNumberish,
     minGCFee: BigNumberish,
-    allowsPerpetualTokensForever: boolean,
+    allowsWrappingForever: boolean,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1318,6 +1331,7 @@ export class Enterprise extends BaseContract {
   ): Promise<ContractTransaction>;
 
   upgrade(
+    enterpriseFactory: string,
     enterpriseImplementation: string,
     borrowTokenImplementation: string,
     interestTokenImplementation: string,
@@ -1395,6 +1409,8 @@ export class Enterprise extends BaseContract {
     ): Promise<number>;
 
     getEnterpriseVault(overrides?: CallOverrides): Promise<string>;
+
+    getFactory(overrides?: CallOverrides): Promise<string>;
 
     getGCFeePercent(overrides?: CallOverrides): Promise<number>;
 
@@ -1546,7 +1562,7 @@ export class Enterprise extends BaseContract {
       minLoanDuration: BigNumberish,
       maxLoanDuration: BigNumberish,
       minGCFee: BigNumberish,
-      allowsPerpetualTokensForever: boolean,
+      allowsWrappingForever: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1611,6 +1627,7 @@ export class Enterprise extends BaseContract {
     ): Promise<void>;
 
     upgrade(
+      enterpriseFactory: string,
       enterpriseImplementation: string,
       borrowTokenImplementation: string,
       interestTokenImplementation: string,
@@ -1818,12 +1835,13 @@ export class Enterprise extends BaseContract {
       period?: null
     ): TypedEventFilter<[number], { period: number }>;
 
-    "LiquidityChanged(uint256,address,uint8,uint256,uint256,uint256,uint256,uint256,uint256)"(
+    "LiquidityChanged(uint256,address,uint8,uint256,uint256,uint256,uint256,uint256,uint256,uint256)"(
       interestTokenId?: BigNumberish | null,
       liquidityProvider?: string | null,
       changeType?: BigNumberish | null,
       amountDelta?: null,
       amount?: null,
+      sharesDelta?: null,
       shares?: null,
       totalShares?: null,
       reserve?: null,
@@ -1838,6 +1856,7 @@ export class Enterprise extends BaseContract {
         BigNumber,
         BigNumber,
         BigNumber,
+        BigNumber,
         BigNumber
       ],
       {
@@ -1846,6 +1865,7 @@ export class Enterprise extends BaseContract {
         changeType: number;
         amountDelta: BigNumber;
         amount: BigNumber;
+        sharesDelta: BigNumber;
         shares: BigNumber;
         totalShares: BigNumber;
         reserve: BigNumber;
@@ -1859,6 +1879,7 @@ export class Enterprise extends BaseContract {
       changeType?: BigNumberish | null,
       amountDelta?: null,
       amount?: null,
+      sharesDelta?: null,
       shares?: null,
       totalShares?: null,
       reserve?: null,
@@ -1873,6 +1894,7 @@ export class Enterprise extends BaseContract {
         BigNumber,
         BigNumber,
         BigNumber,
+        BigNumber,
         BigNumber
       ],
       {
@@ -1881,6 +1903,7 @@ export class Enterprise extends BaseContract {
         changeType: number;
         amountDelta: BigNumber;
         amount: BigNumber;
+        sharesDelta: BigNumber;
         shares: BigNumber;
         totalShares: BigNumber;
         reserve: BigNumber;
@@ -2121,6 +2144,8 @@ export class Enterprise extends BaseContract {
 
     getEnterpriseVault(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getFactory(overrides?: CallOverrides): Promise<BigNumber>;
+
     getGCFeePercent(overrides?: CallOverrides): Promise<BigNumber>;
 
     getInfo(overrides?: CallOverrides): Promise<BigNumber>;
@@ -2224,7 +2249,7 @@ export class Enterprise extends BaseContract {
       minLoanDuration: BigNumberish,
       maxLoanDuration: BigNumberish,
       minGCFee: BigNumberish,
-      allowsPerpetualTokensForever: boolean,
+      allowsWrappingForever: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -2294,6 +2319,7 @@ export class Enterprise extends BaseContract {
     ): Promise<BigNumber>;
 
     upgrade(
+      enterpriseFactory: string,
       enterpriseImplementation: string,
       borrowTokenImplementation: string,
       interestTokenImplementation: string,
@@ -2379,6 +2405,8 @@ export class Enterprise extends BaseContract {
     getEnterpriseVault(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    getFactory(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getGCFeePercent(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -2485,7 +2513,7 @@ export class Enterprise extends BaseContract {
       minLoanDuration: BigNumberish,
       maxLoanDuration: BigNumberish,
       minGCFee: BigNumberish,
-      allowsPerpetualTokensForever: boolean,
+      allowsWrappingForever: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2555,6 +2583,7 @@ export class Enterprise extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     upgrade(
+      enterpriseFactory: string,
       enterpriseImplementation: string,
       borrowTokenImplementation: string,
       interestTokenImplementation: string,

@@ -39,7 +39,7 @@ export interface ServiceParams {
   minLoanDuration: BigNumberish;
   maxLoanDuration: BigNumberish;
   minGCFee: BigNumberish;
-  allowsPerpetualTokensForever: boolean;
+  allowsWrappingForever: boolean;
 }
 
 export interface ServiceInfo {
@@ -54,7 +54,8 @@ export interface ServiceInfo {
   minLoanDuration: number;
   maxLoanDuration: number;
   serviceFeePercent: number;
-  allowsPerpetual: boolean;
+  wrappingEnabled: boolean;
+  transferEnabled: boolean;
 }
 
 export interface AccountState {
@@ -272,7 +273,9 @@ export interface BlockchainProvider<Transaction = unknown> {
 
   getServiceFeePercent(serviceAddress: Address): Promise<number>;
 
-  getAllowsPerpetual(serviceAddress: Address): Promise<boolean>;
+  isWrappingEnabled(serviceAddress: Address): Promise<boolean>;
+
+  isTransferEnabled(serviceAddress: Address): Promise<boolean>;
 
   getLiquidityTokenServiceAllowance(serviceAddress: Address, accountAddress?: Address): Promise<BigNumber>;
 

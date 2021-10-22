@@ -25,6 +25,8 @@ interface IInterestTokenInterface extends ethers.utils.Interface {
     "balanceOf(address)": FunctionFragment;
     "burn(uint256)": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
+    "getNextTokenId()": FunctionFragment;
+    "initialize(string,string,address)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
     "mint(address)": FunctionFragment;
     "ownerOf(uint256)": FunctionFragment;
@@ -46,6 +48,14 @@ interface IInterestTokenInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "getApproved",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getNextTokenId",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initialize",
+    values: [string, string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "isApprovedForAll",
@@ -92,6 +102,11 @@ interface IInterestTokenInterface extends ethers.utils.Interface {
     functionFragment: "getApproved",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "getNextTokenId",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isApprovedForAll",
     data: BytesLike
@@ -223,6 +238,15 @@ export class IInterestToken extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string] & { operator: string }>;
 
+    getNextTokenId(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    initialize(
+      name: string,
+      symbol: string,
+      enterprise: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     isApprovedForAll(
       owner: string,
       operator: string,
@@ -304,6 +328,15 @@ export class IInterestToken extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  getNextTokenId(overrides?: CallOverrides): Promise<BigNumber>;
+
+  initialize(
+    name: string,
+    symbol: string,
+    enterprise: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   isApprovedForAll(
     owner: string,
     operator: string,
@@ -378,6 +411,15 @@ export class IInterestToken extends BaseContract {
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    getNextTokenId(overrides?: CallOverrides): Promise<BigNumber>;
+
+    initialize(
+      name: string,
+      symbol: string,
+      enterprise: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     isApprovedForAll(
       owner: string,
@@ -511,6 +553,15 @@ export class IInterestToken extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getNextTokenId(overrides?: CallOverrides): Promise<BigNumber>;
+
+    initialize(
+      name: string,
+      symbol: string,
+      enterprise: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     isApprovedForAll(
       owner: string,
       operator: string,
@@ -594,6 +645,15 @@ export class IInterestToken extends BaseContract {
     getApproved(
       tokenId: BigNumberish,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getNextTokenId(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    initialize(
+      name: string,
+      symbol: string,
+      enterprise: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     isApprovedForAll(
