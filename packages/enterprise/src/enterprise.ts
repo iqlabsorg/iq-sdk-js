@@ -5,19 +5,20 @@ import {
   BigNumberish,
   BlockchainProvider,
   EnterpriseInfo,
-  LiquidityInfo,
-  LoanInfo,
+  Stake,
+  RentalAgreement,
+  BlockchainEnterprise,
 } from '@iqprotocol/abstract-blockchain';
 import { Service } from './service';
 
-export type LoanEstimationRequest = {
+export type RentalFeeEstimationRequest = {
   serviceAddress: Address;
   paymentTokenAddress: Address;
-  amount: BigNumberish;
-  duration: BigNumberish;
+  rentalAmount: BigNumberish;
+  rentalPeriod: BigNumberish;
 };
 
-export type BorrowRequest = LoanEstimationRequest & { maxPayment: BigNumberish };
+export type RentRequest = RentalFeeEstimationRequest & { maxPayment: BigNumberish };
 
 export interface EnterpriseConfig<Transaction> {
   blockchain: BlockchainProvider<Transaction>;
@@ -25,12 +26,14 @@ export interface EnterpriseConfig<Transaction> {
 }
 
 export class Enterprise<Transaction = unknown> {
-  private readonly blockchain: BlockchainProvider<Transaction>;
   private readonly address: Address;
+  private readonly blockchain: BlockchainProvider<Transaction>;
+  private readonly blockchainEnterprise: BlockchainEnterprise<Transaction>;
 
   constructor({ blockchain, address }: EnterpriseConfig<Transaction>) {
-    this.blockchain = blockchain;
     this.address = address;
+    this.blockchain = blockchain;
+    this.blockchainEnterprise = blockchain.enterprise(address);
   }
 
   attach(address: Address): Enterprise<Transaction> {
@@ -51,11 +54,11 @@ export class Enterprise<Transaction = unknown> {
   }
 
   async getInfo(): Promise<EnterpriseInfo> {
-    return this.blockchain.getEnterpriseInfo(this.address);
+    return this.blockchainEnterprise.getInfo();
   }
 
   async getServices(): Promise<Service<Transaction>[]> {
-    return (await this.blockchain.getServices(this.address)).map(
+    return (await this.blockchainEnterprise.getServiceAddresses()).map(
       address =>
         new Service({
           blockchain: this.blockchain,
@@ -64,168 +67,168 @@ export class Enterprise<Transaction = unknown> {
     );
   }
 
-  async estimateLoan({
+  async estimateRentalFee({
     serviceAddress,
     paymentTokenAddress,
-    amount,
-    duration,
-  }: LoanEstimationRequest): Promise<BigNumber> {
-    return this.blockchain.estimateLoan(this.address, serviceAddress, paymentTokenAddress, amount, duration);
+    rentalAmount,
+    rentalPeriod,
+  }: RentalFeeEstimationRequest): Promise<BigNumber> {
+    return this.blockchainEnterprise.estimateRentalFee(serviceAddress, paymentTokenAddress, rentalAmount, rentalPeriod);
   }
 
-  async borrow({
+  async rent({
     serviceAddress,
     paymentTokenAddress,
-    amount,
-    duration,
+    rentalAmount,
+    rentalPeriod,
     maxPayment,
-  }: BorrowRequest): Promise<Transaction> {
-    return this.blockchain.borrow(this.address, serviceAddress, paymentTokenAddress, amount, duration, maxPayment);
+  }: RentRequest): Promise<Transaction> {
+    return this.blockchainEnterprise.rent(serviceAddress, paymentTokenAddress, rentalAmount, rentalPeriod, maxPayment);
   }
 
-  async getAccruedInterest(interestTokenId: BigNumberish): Promise<BigNumber> {
-    return this.blockchain.getAccruedInterest(this.address, interestTokenId);
+  async getStakingReward(stakeTokenId: BigNumberish): Promise<BigNumber> {
+    return this.blockchainEnterprise.getStakingReward(stakeTokenId);
   }
 
-  async withdrawInterest(interestTokenId: BigNumberish): Promise<Transaction> {
-    return this.blockchain.withdrawInterest(this.address, interestTokenId);
+  async claimStakingReward(stakeTokenId: BigNumberish): Promise<Transaction> {
+    return this.blockchainEnterprise.claimStakingReward(stakeTokenId);
   }
 
-  async returnLoan(borrowTokenId: BigNumberish): Promise<Transaction> {
-    return this.blockchain.returnLoan(this.address, borrowTokenId);
+  async returnRental(rentalTokenId: BigNumberish): Promise<Transaction> {
+    return this.blockchainEnterprise.returnRental(rentalTokenId);
   }
 
-  async listLoanInfo(accountAddress?: Address): Promise<LoanInfo[]> {
-    const borrowTokenIds = await this.blockchain.getBorrowTokenIds(this.address, accountAddress);
-    return Promise.all(borrowTokenIds.map(async tokenId => this.blockchain.getLoanInfo(this.address, tokenId)));
+  async findRentalAgreements(accountAddress?: Address): Promise<RentalAgreement[]> {
+    const rentalTokenIds = await this.blockchainEnterprise.getRentalTokenIds(accountAddress);
+    return Promise.all(rentalTokenIds.map(async tokenId => this.blockchainEnterprise.getRentalAgreement(tokenId)));
   }
 
-  async getLoanInfo(borrowTokenId: BigNumberish): Promise<LoanInfo> {
-    return this.blockchain.getLoanInfo(this.address, borrowTokenId);
+  async getRentalAgreement(rentalTokenId: BigNumberish): Promise<RentalAgreement> {
+    return this.blockchainEnterprise.getRentalAgreement(rentalTokenId);
   }
 
-  async listLiquidityInfo(accountAddress?: Address): Promise<LiquidityInfo[]> {
-    const interestTokenIds = await this.blockchain.getInterestTokenIds(this.address, accountAddress);
-    return Promise.all(interestTokenIds.map(async tokenId => this.blockchain.getLiquidityInfo(this.address, tokenId)));
+  async findStakes(accountAddress?: Address): Promise<Stake[]> {
+    const stakeTokenIds = await this.blockchainEnterprise.getStakeTokenIds(accountAddress);
+    return Promise.all(stakeTokenIds.map(async tokenId => this.blockchainEnterprise.getStake(tokenId)));
   }
 
-  async getLiquidityInfo(interestTokenId: BigNumberish): Promise<LiquidityInfo> {
-    return this.blockchain.getLiquidityInfo(this.address, interestTokenId);
+  async getStake(stakeTokenId: BigNumberish): Promise<Stake> {
+    return this.blockchainEnterprise.getStake(stakeTokenId);
   }
 
-  async addLiquidity(amount: BigNumberish): Promise<Transaction> {
-    return this.blockchain.addLiquidity(this.address, amount);
+  async stake(amount: BigNumberish): Promise<Transaction> {
+    return this.blockchainEnterprise.stake(amount);
   }
 
-  async removeLiquidity(interestTokenId: BigNumberish): Promise<Transaction> {
-    return this.blockchain.removeLiquidity(this.address, interestTokenId);
+  async unstake(stakeTokenId: BigNumberish): Promise<Transaction> {
+    return this.blockchainEnterprise.unstake(stakeTokenId);
   }
 
-  async increaseLiquidity(interestTokenId: BigNumberish, amount: BigNumberish): Promise<Transaction> {
-    return this.blockchain.increaseLiquidity(this.address, interestTokenId, amount);
+  async increaseStake(stakeTokenId: BigNumberish, amount: BigNumberish): Promise<Transaction> {
+    return this.blockchainEnterprise.increaseStake(stakeTokenId, amount);
   }
 
-  async decreaseLiquidity(interestTokenId: BigNumberish, amount: BigNumberish): Promise<Transaction> {
-    return this.blockchain.decreaseLiquidity(this.address, interestTokenId, amount);
+  async decreaseStake(stakeTokenId: BigNumberish, amount: BigNumberish): Promise<Transaction> {
+    return this.blockchainEnterprise.decreaseStake(stakeTokenId, amount);
   }
 
-  async setLiquidityAllowance(amount: BigNumberish): Promise<Transaction> {
-    return this.blockchain.approveLiquidityTokensToEnterprise(this.address, amount);
+  async setEnterpriseTokenAllowance(amount: BigNumberish): Promise<Transaction> {
+    return this.blockchainEnterprise.setEnterpriseTokenAllowance(amount);
   }
 
-  async getLiquidityAllowance(accountAddress?: Address): Promise<BigNumber> {
-    return this.blockchain.getLiquidityTokenEnterpriseAllowance(this.address, accountAddress);
+  async getEnterpriseTokenAllowance(accountAddress?: Address): Promise<BigNumber> {
+    return this.blockchainEnterprise.getEnterpriseTokenAllowance(accountAddress);
   }
 
   async isRegisteredService(serviceAddress: Address): Promise<boolean> {
-    return this.blockchain.isRegisteredService(this.address, serviceAddress);
+    return this.blockchainEnterprise.isRegisteredService(serviceAddress);
   }
 
   async getProxyAdminAddress(): Promise<Address> {
-    return this.blockchain.getProxyAdminAddress(this.address);
+    return this.blockchainEnterprise.getProxyAdminAddress();
   }
 
   async getCollectorAddress(): Promise<Address> {
-    return this.blockchain.getEnterpriseCollectorAddress(this.address);
+    return this.blockchainEnterprise.getEnterpriseCollectorAddress();
   }
 
-  async getVaultAddress(): Promise<Address> {
-    return this.blockchain.getEnterpriseVaultAddress(this.address);
+  async getWalletAddress(): Promise<Address> {
+    return this.blockchainEnterprise.getEnterpriseWalletAddress();
   }
 
-  async getBorrowerLoanReturnGracePeriod(): Promise<number> {
-    return this.blockchain.getBorrowerLoanReturnGracePeriod(this.address);
+  async getRenterOnlyReturnPeriod(): Promise<number> {
+    return this.blockchainEnterprise.getRenterOnlyReturnPeriod();
   }
 
-  async getLoanCollectGracePeriod(): Promise<number> {
-    return this.blockchain.getEnterpriseLoanCollectGracePeriod(this.address);
+  async getEnterpriseOnlyCollectionPeriod(): Promise<number> {
+    return this.blockchainEnterprise.getEnterpriseOnlyCollectionPeriod();
   }
 
-  async getInterestGapHalvingPeriod(): Promise<number> {
-    return this.blockchain.getInterestGapHalvingPeriod(this.address);
+  async getStreamingReserveHalvingPeriod(): Promise<number> {
+    return this.blockchainEnterprise.getStreamingReserveHalvingPeriod();
   }
 
   async getConverterAddress(): Promise<Address> {
-    return this.blockchain.getConverterAddress(this.address);
+    return this.blockchainEnterprise.getConverterAddress();
   }
 
   async getBaseUri(): Promise<string> {
-    return this.blockchain.getBaseUri(this.address);
+    return this.blockchainEnterprise.getBaseUri();
   }
 
   async getReserve(): Promise<BigNumber> {
-    return this.blockchain.getReserve(this.address);
+    return this.blockchainEnterprise.getReserve();
   }
 
   async getUsedReserve(): Promise<BigNumber> {
-    return this.blockchain.getUsedReserve(this.address);
+    return this.blockchainEnterprise.getUsedReserve();
   }
 
   async getAvailableReserve(): Promise<BigNumber> {
-    return this.blockchain.getAvailableReserve(this.address);
+    return this.blockchainEnterprise.getAvailableReserve();
   }
 
   async getBondingCurve(): Promise<{ pole: BigNumber; slope: BigNumber }> {
-    return this.blockchain.getBondingCurve(this.address);
+    return this.blockchainEnterprise.getBondingCurve();
   }
 
   async getGCFeePercent(): Promise<number> {
-    return this.blockchain.getGCFeePercent(this.address);
+    return this.blockchainEnterprise.getGCFeePercent();
   }
 
   async setCollectorAddress(collectorAddress: Address): Promise<Transaction> {
-    return this.blockchain.setEnterpriseCollectorAddress(this.address, collectorAddress);
+    return this.blockchainEnterprise.setEnterpriseCollectorAddress(collectorAddress);
   }
 
-  async setVaultAddress(vaultAddress: Address): Promise<Transaction> {
-    return this.blockchain.setEnterpriseVaultAddress(this.address, vaultAddress);
+  async setWalletAddress(vaultAddress: Address): Promise<Transaction> {
+    return this.blockchainEnterprise.setEnterpriseWalletAddress(vaultAddress);
   }
 
   async setConverterAddress(converterAddress: Address): Promise<Transaction> {
-    return this.blockchain.setConverterAddress(this.address, converterAddress);
+    return this.blockchainEnterprise.setConverterAddress(converterAddress);
   }
 
   async setBondingCurve(pole: BigNumberish, slope: BigNumberish): Promise<Transaction> {
-    return this.blockchain.setBondingCurve(this.address, pole, slope);
+    return this.blockchainEnterprise.setBondingCurve(pole, slope);
   }
 
-  async setBorrowerLoanReturnGracePeriod(period: number): Promise<Transaction> {
-    return this.blockchain.setBorrowerLoanReturnGracePeriod(this.address, period);
+  async setRenterOnlyReturnPeriod(period: number): Promise<Transaction> {
+    return this.blockchainEnterprise.setRenterOnlyReturnPeriod(period);
   }
 
-  async setLoanCollectGracePeriod(period: number): Promise<Transaction> {
-    return this.blockchain.setEnterpriseLoanCollectGracePeriod(this.address, period);
+  async setEnterpriseOnlyCollectionPeriod(period: number): Promise<Transaction> {
+    return this.blockchainEnterprise.setEnterpriseOnlyCollectionPeriod(period);
   }
 
   async setBaseUri(baseUri: string): Promise<Transaction> {
-    return this.blockchain.setBaseUri(this.address, baseUri);
+    return this.blockchainEnterprise.setBaseUri(baseUri);
   }
 
-  async setInterestGapHalvingPeriod(interestGapHalvingPeriod: number): Promise<Transaction> {
-    return this.blockchain.setInterestGapHalvingPeriod(this.address, interestGapHalvingPeriod);
+  async setStreamingReserveHalvingPeriod(streamingReserveHalvingPeriod: number): Promise<Transaction> {
+    return this.blockchainEnterprise.setStreamingReserveHalvingPeriod(streamingReserveHalvingPeriod);
   }
 
   async setGcFeePercent(gcFeePercent: number): Promise<Transaction> {
-    return this.blockchain.setGcFeePercent(this.address, gcFeePercent);
+    return this.blockchainEnterprise.setGcFeePercent(gcFeePercent);
   }
 }

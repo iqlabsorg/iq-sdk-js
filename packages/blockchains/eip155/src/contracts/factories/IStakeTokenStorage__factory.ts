@@ -5,9 +5,9 @@
 import { Contract, Signer, utils } from "ethers";
 import { Provider } from "@ethersproject/providers";
 import type {
-  BorrowTokenStorage,
-  BorrowTokenStorageInterface,
-} from "../BorrowTokenStorage";
+  IStakeTokenStorage,
+  IStakeTokenStorageInterface,
+} from "../IStakeTokenStorage";
 
 const _abi = [
   {
@@ -115,7 +115,7 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "",
+        name: "balance",
         type: "uint256",
       },
     ],
@@ -134,20 +134,7 @@ const _abi = [
     outputs: [
       {
         internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "getEnterprise",
-    outputs: [
-      {
-        internalType: "contract IEnterprise",
-        name: "",
+        name: "operator",
         type: "address",
       },
     ],
@@ -166,37 +153,6 @@ const _abi = [
         name: "symbol",
         type: "string",
       },
-      {
-        internalType: "contract IEnterprise",
-        name: "enterprise",
-        type: "address",
-      },
-    ],
-    name: "initialize",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "string",
-        name: "name_",
-        type: "string",
-      },
-      {
-        internalType: "string",
-        name: "symbol_",
-        type: "string",
-      },
-    ],
-    name: "initialize",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
       {
         internalType: "contract IEnterprise",
         name: "enterprise",
@@ -233,19 +189,6 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "name",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
       {
         internalType: "uint256",
@@ -257,7 +200,7 @@ const _abi = [
     outputs: [
       {
         internalType: "address",
-        name: "",
+        name: "owner",
         type: "address",
       },
     ],
@@ -306,7 +249,7 @@ const _abi = [
       },
       {
         internalType: "bytes",
-        name: "_data",
+        name: "data",
         type: "bytes",
       },
     ],
@@ -324,7 +267,7 @@ const _abi = [
       },
       {
         internalType: "bool",
-        name: "approved",
+        name: "_approved",
         type: "bool",
       },
     ],
@@ -347,19 +290,6 @@ const _abi = [
         internalType: "bool",
         name: "",
         type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "symbol",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
       },
     ],
     stateMutability: "view",
@@ -401,27 +331,8 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
         name: "tokenId",
         type: "uint256",
-      },
-    ],
-    name: "tokenURI",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
       },
     ],
     stateMutability: "view",
@@ -465,15 +376,15 @@ const _abi = [
   },
 ];
 
-export class BorrowTokenStorage__factory {
+export class IStakeTokenStorage__factory {
   static readonly abi = _abi;
-  static createInterface(): BorrowTokenStorageInterface {
-    return new utils.Interface(_abi) as BorrowTokenStorageInterface;
+  static createInterface(): IStakeTokenStorageInterface {
+    return new utils.Interface(_abi) as IStakeTokenStorageInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): BorrowTokenStorage {
-    return new Contract(address, _abi, signerOrProvider) as BorrowTokenStorage;
+  ): IStakeTokenStorage {
+    return new Contract(address, _abi, signerOrProvider) as IStakeTokenStorage;
   }
 }

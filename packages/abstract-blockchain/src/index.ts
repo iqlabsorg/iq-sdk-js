@@ -9,7 +9,7 @@ export interface EnterpriseParams {
   name: string;
   baseUri: string;
   gcFeePercent: BigNumberish;
-  liquidityTokenAddress: Address;
+  enterpriseTokenAddress: Address;
   converterAddress: Address;
 }
 
@@ -18,9 +18,9 @@ export interface EnterpriseInfo {
   name: string;
   baseUri: string;
   totalShares: BigNumber;
-  interestGapHalvingPeriod: number;
-  borrowerLoanReturnGracePeriod: number;
-  enterpriseLoanCollectGracePeriod: number;
+  streamingReserveHalvingPeriod: number;
+  renterOnlyReturnPeriod: number;
+  enterpriseOnlyCollectionPeriod: number;
   gcFeePercent: number;
   fixedReserve: BigNumber;
   usedReserve: BigNumber;
@@ -30,31 +30,31 @@ export interface EnterpriseInfo {
 }
 
 export interface ServiceParams {
-  name: string;
-  symbol: string;
-  gapHalvingPeriod: BigNumberish;
+  serviceName: string;
+  serviceSymbol: string;
+  energyGapHalvingPeriod: BigNumberish;
   baseRate: BigNumberish;
   baseToken: Address;
   serviceFeePercent: BigNumberish;
-  minLoanDuration: BigNumberish;
-  maxLoanDuration: BigNumberish;
+  minRentalPeriod: BigNumberish;
+  maxRentalPeriod: BigNumberish;
   minGCFee: BigNumberish;
-  allowsWrappingForever: boolean;
+  swappingEnabledForever: boolean;
 }
 
 export interface ServiceInfo {
   address: Address;
   name: string;
   symbol: string;
+  baseToken: Address;
   baseRate: BigNumber;
   minGCFee: BigNumber;
-  gapHalvingPeriod: number;
-  index: number;
-  baseToken: Address;
-  minLoanDuration: number;
-  maxLoanDuration: number;
   serviceFeePercent: number;
-  wrappingEnabled: boolean;
+  energyGapHalvingPeriod: number;
+  index: number;
+  minRentalPeriod: number;
+  maxRentalPeriod: number;
+  swappingEnabled: boolean;
   transferEnabled: boolean;
 }
 
@@ -81,27 +81,190 @@ export interface ERC721Metadata {
   tokenUri: string;
 }
 
-export interface LiquidityInfo {
+export interface Stake {
   tokenId: BigNumber;
   amount: BigNumber;
   shares: BigNumber;
   block: BigNumber;
 }
 
-export interface LoanInfo {
-  tokenId: BigNumber;
-  amount: BigNumber;
+export interface RentalAgreement {
+  rentalTokenId: BigNumber;
+  rentalAmount: BigNumber;
   powerTokenIndex: number;
-  borrowingTime: number;
-  maturityTime: number;
-  borrowerReturnGraceTime: number;
-  enterpriseCollectGraceTime: number;
-  gcFee: BigNumber;
-  gcFeeTokenIndex: number;
+  startTime: number;
+  endTime: number;
+  renterOnlyReturnTime: number;
+  enterpriseOnlyCollectionTime: number;
+  gcRewardAmount: BigNumber;
+  gcRewardTokenIndex: number;
+}
+
+export interface BlockchainEnterprise<Transaction = unknown> {
+  registerService(serviceParams: ServiceParams): Promise<Transaction>;
+
+  // Staking
+
+  stake(stakeAmount: BigNumberish): Promise<Transaction>;
+
+  unstake(stakeTokenId: BigNumberish): Promise<Transaction>;
+
+  increaseStake(stakeTokenId: BigNumberish, stakeAmountDelta: BigNumberish): Promise<Transaction>;
+
+  decreaseStake(stakeTokenId: BigNumberish, stakeAmountDelta: BigNumberish): Promise<Transaction>;
+
+  claimStakingReward(stakeTokenId: BigNumberish): Promise<Transaction>;
+
+  // Renting
+
+  rent(
+    serviceAddress: Address,
+    paymentTokenAddress: Address,
+    rentalAmount: BigNumberish,
+    rentalPeriod: BigNumberish,
+    maxPayment: BigNumberish,
+  ): Promise<Transaction>;
+
+  returnRental(rentalTokenId: BigNumberish): Promise<Transaction>;
+
+  estimateRentalFee(
+    serviceAddress: Address,
+    paymentTokenAddress: Address,
+    rentalAmount: BigNumberish,
+    rentalPeriod: BigNumberish,
+  ): Promise<BigNumber>;
+
+  // Configuration
+
+  setEnterpriseCollectorAddress(collectorAddress: Address): Promise<Transaction>;
+
+  setEnterpriseWalletAddress(walletAddress: Address): Promise<Transaction>;
+
+  setConverterAddress(converterAddress: Address): Promise<Transaction>;
+
+  setBondingCurve(pole: BigNumberish, slope: BigNumberish): Promise<Transaction>;
+
+  setRenterOnlyReturnPeriod(period: number): Promise<Transaction>;
+
+  setEnterpriseOnlyCollectionPeriod(period: number): Promise<Transaction>;
+
+  setBaseUri(baseUri: string): Promise<Transaction>;
+
+  setStreamingReserveHalvingPeriod(streamingReserveHalvingPeriod: number): Promise<Transaction>;
+
+  setGcFeePercent(gcFeePercent: number): Promise<Transaction>;
+
+  setEnterpriseTokenAllowance(amount: BigNumberish): Promise<Transaction>;
+
+  isRegisteredService(serviceAddress: Address): Promise<boolean>;
+
+  getProxyAdminAddress(): Promise<Address>;
+
+  getEnterpriseCollectorAddress(): Promise<Address>;
+
+  getEnterpriseWalletAddress(): Promise<Address>;
+
+  getRenterOnlyReturnPeriod(): Promise<number>;
+
+  getEnterpriseOnlyCollectionPeriod(): Promise<number>;
+
+  getStreamingReserveHalvingPeriod(): Promise<number>;
+
+  getConverterAddress(): Promise<Address>;
+
+  getBaseUri(): Promise<string>;
+
+  getInfo(): Promise<EnterpriseInfo>;
+
+  getServiceAddresses(): Promise<Address[]>;
+
+  getRentalAgreement(rentalTokenId: BigNumberish): Promise<RentalAgreement>;
+
+  getStake(stakeTokenId: BigNumberish): Promise<Stake>;
+
+  getReserve(): Promise<BigNumber>;
+
+  getUsedReserve(): Promise<BigNumber>;
+
+  getAvailableReserve(): Promise<BigNumber>;
+
+  getBondingCurve(): Promise<{ pole: BigNumber; slope: BigNumber }>;
+
+  getGCFeePercent(): Promise<number>;
+
+  getEnterpriseTokenAllowance(accountAddress?: Address): Promise<BigNumber>;
+
+  getEnterpriseTokenAddress(): Promise<Address>;
+
+  getRentalTokenAddress(): Promise<Address>;
+
+  getStakeTokenAddress(): Promise<Address>;
+
+  getStakeTokenIds(accountAddress?: Address): Promise<BigNumber[]>;
+
+  getRentalTokenIds(accountAddress?: Address): Promise<BigNumber[]>;
+
+  getStakingReward(stakeTokenId: BigNumberish): Promise<BigNumber>;
+}
+
+export interface BlockchainService<Transaction = unknown> {
+  setEnterpriseTokenAllowance(amount: BigNumberish): Promise<Transaction>;
+
+  swapIn(amount: BigNumberish): Promise<Transaction>;
+
+  swapOut(amount: BigNumberish): Promise<Transaction>;
+
+  setBaseRate(baseRate: BigNumberish, baseToken: string, minGCFee: BigNumberish): Promise<Transaction>;
+
+  setServiceFeePercent(feePercent: BigNumberish): Promise<Transaction>;
+
+  setRentalPeriodLimits(minRentalPeriod: BigNumberish, maxRentalPeriod: BigNumberish): Promise<Transaction>;
+
+  getInfo(): Promise<ServiceInfo>;
+
+  getAccountState(accountAddress?: Address): Promise<AccountState>;
+
+  getBaseRate(): Promise<BigNumber>;
+
+  getMinGCFee(): Promise<BigNumber>;
+
+  getEnergyGapHalvingPeriod(): Promise<number>;
+
+  getIndex(): Promise<number>;
+
+  getBaseTokenAddress(): Promise<Address>;
+
+  getMinRentalPeriod(): Promise<number>;
+
+  getMaxRentalPeriod(): Promise<number>;
+
+  getServiceFeePercent(): Promise<number>;
+
+  isSwappingEnabled(): Promise<boolean>;
+
+  isTransferEnabled(): Promise<boolean>;
+
+  getEnterpriseTokenAllowance(accountAddress?: Address): Promise<BigNumber>;
+
+  getAvailableBalance(accountAddress?: Address): Promise<BigNumber>;
+
+  getBalance(accountAddress?: Address): Promise<BigNumber>;
+
+  getEnergyAt(timestamp: number, accountAddress?: Address): Promise<BigNumber>;
+
+  estimateRentalFee(
+    paymentTokenAddress: Address,
+    rentalAmount: BigNumberish,
+    rentalPeriod: BigNumberish,
+  ): Promise<{ poolFee: BigNumber; serviceFee: BigNumber; gcFee: BigNumber }>;
 }
 
 export interface BlockchainProvider<Transaction = unknown> {
   getChainId(): Promise<ChainId>;
+
+  enterprise(enterpriseAddress: Address): BlockchainEnterprise<Transaction>;
+
+  service(serviceAddress: Address): BlockchainService<Transaction>;
 
   deployEnterprise(enterpriseFactoryAddress: Address, params: EnterpriseParams): Promise<Transaction>;
 
@@ -111,188 +274,9 @@ export interface BlockchainProvider<Transaction = unknown> {
 
   getTokenBalance(tokenAddress: Address, accountAddress?: Address): Promise<BigNumber>;
 
-  // Enterprise
+  getEnterpriseTokenMetadata(enterpriseAddress: Address): Promise<ERC20Metadata>;
 
-  addLiquidity(enterpriseAddress: Address, amount: BigNumberish): Promise<Transaction>;
+  getRentalTokenMetadata(enterpriseAddress: Address, tokenId: BigNumberish): Promise<ERC721Metadata>;
 
-  removeLiquidity(enterpriseAddress: Address, interestTokenId: BigNumberish): Promise<Transaction>;
-
-  increaseLiquidity(
-    enterpriseAddress: Address,
-    interestTokenId: BigNumberish,
-    amount: BigNumberish,
-  ): Promise<Transaction>;
-
-  decreaseLiquidity(
-    enterpriseAddress: Address,
-    interestTokenId: BigNumberish,
-    amount: BigNumberish,
-  ): Promise<Transaction>;
-
-  withdrawInterest(enterpriseAddress: Address, interestTokenId: BigNumberish): Promise<Transaction>;
-
-  registerService(enterpriseAddress: Address, serviceParams: ServiceParams): Promise<Transaction>;
-
-  borrow(
-    enterpriseAddress: Address,
-    serviceAddress: Address,
-    paymentTokenAddress: Address,
-    amount: BigNumberish,
-    duration: BigNumberish,
-    maxPayment: BigNumberish,
-  ): Promise<Transaction>;
-
-  returnLoan(enterpriseAddress: Address, borrowTokenId: BigNumberish): Promise<Transaction>;
-
-  setEnterpriseCollectorAddress(enterpriseAddress: Address, collectorAddress: Address): Promise<Transaction>;
-
-  setEnterpriseVaultAddress(enterpriseAddress: Address, vaultAddress: Address): Promise<Transaction>;
-
-  setConverterAddress(enterpriseAddress: Address, converterAddress: Address): Promise<Transaction>;
-
-  setBondingCurve(enterpriseAddress: Address, pole: BigNumberish, slope: BigNumberish): Promise<Transaction>;
-
-  setBorrowerLoanReturnGracePeriod(enterpriseAddress: Address, period: number): Promise<Transaction>;
-
-  setEnterpriseLoanCollectGracePeriod(enterpriseAddress: Address, period: number): Promise<Transaction>;
-
-  setBaseUri(enterpriseAddress: Address, baseUri: string): Promise<Transaction>;
-
-  setInterestGapHalvingPeriod(enterpriseAddress: Address, interestGapHalvingPeriod: number): Promise<Transaction>;
-
-  setGcFeePercent(enterpriseAddress: Address, gcFeePercent: number): Promise<Transaction>;
-
-  approveLiquidityTokensToEnterprise(enterpriseAddress: Address, amount: BigNumberish): Promise<Transaction>;
-
-  isRegisteredService(enterpriseAddress: Address, serviceAddress: Address): Promise<boolean>;
-
-  getProxyAdminAddress(enterpriseAddress: Address): Promise<Address>;
-
-  getEnterpriseCollectorAddress(enterpriseAddress: Address): Promise<Address>;
-
-  getEnterpriseVaultAddress(enterpriseAddress: Address): Promise<Address>;
-
-  getBorrowerLoanReturnGracePeriod(enterpriseAddress: Address): Promise<number>;
-
-  getEnterpriseLoanCollectGracePeriod(enterpriseAddress: Address): Promise<number>;
-
-  getInterestGapHalvingPeriod(enterpriseAddress: Address): Promise<number>;
-
-  getConverterAddress(enterpriseAddress: Address): Promise<Address>;
-
-  getBaseUri(enterpriseAddress: Address): Promise<string>;
-
-  getEnterpriseInfo(enterpriseAddress: Address): Promise<EnterpriseInfo>;
-
-  getServices(enterpriseAddress: Address): Promise<Address[]>;
-
-  getLoanInfo(enterpriseAddress: Address, borrowTokenId: BigNumberish): Promise<LoanInfo>;
-
-  getLiquidityInfo(enterpriseAddress: Address, interestTokenId: BigNumberish): Promise<LiquidityInfo>;
-
-  getReserve(enterpriseAddress: Address): Promise<BigNumber>;
-
-  getUsedReserve(enterpriseAddress: Address): Promise<BigNumber>;
-
-  getAvailableReserve(enterpriseAddress: Address): Promise<BigNumber>;
-
-  getBondingCurve(enterpriseAddress: Address): Promise<{ pole: BigNumber; slope: BigNumber }>;
-
-  getGCFeePercent(enterpriseAddress: Address): Promise<number>;
-
-  getLiquidityTokenEnterpriseAllowance(enterpriseAddress: Address, accountAddress?: Address): Promise<BigNumber>;
-
-  getLiquidityTokenAddress(enterpriseAddress: Address): Promise<Address>;
-
-  getLiquidityTokenMetadata(enterpriseAddress: Address): Promise<ERC20Metadata>;
-
-  getBorrowTokenAddress(enterpriseAddress: Address): Promise<Address>;
-
-  getBorrowTokenMetadata(enterpriseAddress: Address, tokenId: BigNumberish): Promise<ERC721Metadata>;
-
-  getInterestTokenAddress(enterpriseAddress: Address): Promise<Address>;
-
-  getInterestTokenMetadata(enterpriseAddress: Address, tokenId: BigNumberish): Promise<ERC721Metadata>;
-
-  getInterestTokenIds(enterpriseAddress: Address, accountAddress?: Address): Promise<BigNumber[]>;
-
-  getBorrowTokenIds(enterpriseAddress: Address, accountAddress?: Address): Promise<BigNumber[]>;
-
-  getAccruedInterest(enterpriseAddress: Address, interestTokenId: BigNumberish): Promise<BigNumber>;
-
-  estimateLoan(
-    enterpriseAddress: Address,
-    serviceAddress: Address,
-    paymentTokenAddress: Address,
-    amount: BigNumberish,
-    duration: BigNumberish,
-  ): Promise<BigNumber>;
-
-  // Service
-
-  approveLiquidityTokensToService(serviceAddress: Address, amount: BigNumberish): Promise<Transaction>;
-
-  wrap(serviceAddress: Address, amount: BigNumberish): Promise<Transaction>;
-
-  wrapTo(serviceAddress: Address, accountAddress: Address, amount: BigNumberish): Promise<Transaction>;
-
-  unwrap(serviceAddress: Address, amount: BigNumberish): Promise<Transaction>;
-
-  setBaseRate(
-    serviceAddress: Address,
-    baseRate: BigNumberish,
-    baseToken: string,
-    minGCFee: BigNumberish,
-  ): Promise<Transaction>;
-
-  setServiceFeePercent(serviceAddress: Address, feePercent: BigNumberish): Promise<Transaction>;
-
-  setLoanDurationLimits(
-    serviceAddress: Address,
-    minLoanDuration: BigNumberish,
-    maxLoanDuration: BigNumberish,
-  ): Promise<Transaction>;
-
-  getServiceInfo(serviceAddress: Address): Promise<ServiceInfo>;
-
-  getAccountState(serviceAddress: Address, accountAddress: Address): Promise<AccountState>;
-
-  getBaseRate(serviceAddress: Address): Promise<BigNumber>;
-
-  getMinGCFee(serviceAddress: Address): Promise<BigNumber>;
-
-  getGapHalvingPeriod(serviceAddress: Address): Promise<number>;
-
-  getServiceIndex(serviceAddress: Address): Promise<number>;
-
-  getBaseTokenAddress(serviceAddress: Address): Promise<Address>;
-
-  getMinLoanDuration(serviceAddress: Address): Promise<number>;
-
-  getMaxLoanDuration(serviceAddress: Address): Promise<number>;
-
-  getServiceFeePercent(serviceAddress: Address): Promise<number>;
-
-  isWrappingEnabled(serviceAddress: Address): Promise<boolean>;
-
-  isTransferEnabled(serviceAddress: Address): Promise<boolean>;
-
-  getLiquidityTokenServiceAllowance(serviceAddress: Address, accountAddress?: Address): Promise<BigNumber>;
-
-  getPowerTokenAvailableBalance(serviceAddress: Address, accountAddress?: Address): Promise<BigNumber>;
-
-  getPowerTokenBalance(serviceAddress: Address, accountAddress?: Address): Promise<BigNumber>;
-
-  getEnergyAt(serviceAddress: Address, timestamp: number, accountAddress?: Address): Promise<BigNumber>;
-
-  estimateLoanDetailed(
-    serviceAddress: Address,
-    paymentTokenAddress: Address,
-    amount: BigNumberish,
-    duration: BigNumberish,
-  ): Promise<{
-    interest: BigNumber;
-    serviceFee: BigNumber;
-    gcFee: BigNumber;
-  }>;
+  getStakeTokenMetadata(enterpriseAddress: Address, tokenId: BigNumberish): Promise<ERC721Metadata>;
 }

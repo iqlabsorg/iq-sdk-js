@@ -47,19 +47,6 @@ const _abi = [
     inputs: [
       {
         indexed: false,
-        internalType: "uint32",
-        name: "period",
-        type: "uint32",
-      },
-    ],
-    name: "BorrowerLoanReturnGracePeriodChanged",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
         internalType: "address",
         name: "converter",
         type: "address",
@@ -91,7 +78,7 @@ const _abi = [
         type: "uint32",
       },
     ],
-    name: "EnterpriseLoanCollectGracePeriodChanged",
+    name: "EnterpriseOnlyCollectionPeriodChanged",
     type: "event",
   },
   {
@@ -106,11 +93,11 @@ const _abi = [
       {
         indexed: false,
         internalType: "address",
-        name: "vault",
+        name: "wallet",
         type: "address",
       },
     ],
-    name: "EnterpriseVaultChanged",
+    name: "EnterpriseWalletChanged",
     type: "event",
   },
   {
@@ -137,19 +124,6 @@ const _abi = [
       },
     ],
     name: "GcFeePercentChanged",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "uint32",
-        name: "period",
-        type: "uint32",
-      },
-    ],
-    name: "InterestGapHalvingPeriodChanged",
     type: "event",
   },
   {
@@ -195,6 +169,19 @@ const _abi = [
     inputs: [
       {
         indexed: false,
+        internalType: "uint32",
+        name: "period",
+        type: "uint32",
+      },
+    ],
+    name: "RenterOnlyReturnPeriodChanged",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
         internalType: "uint112",
         name: "streamingReserve",
         type: "uint112",
@@ -207,6 +194,19 @@ const _abi = [
       },
     ],
     name: "StreamingReserveChanged",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint32",
+        name: "period",
+        type: "uint32",
+      },
+    ],
+    name: "StreamingReserveHalvingPeriodChanged",
     type: "event",
   },
   {
@@ -281,32 +281,6 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "getBorrowToken",
-    outputs: [
-      {
-        internalType: "contract IBorrowToken",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "getBorrowerLoanReturnGracePeriod",
-    outputs: [
-      {
-        internalType: "uint32",
-        name: "",
-        type: "uint32",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
     name: "getConverter",
     outputs: [
       {
@@ -333,7 +307,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "getEnterpriseLoanCollectGracePeriod",
+    name: "getEnterpriseOnlyCollectionPeriod",
     outputs: [
       {
         internalType: "uint32",
@@ -346,7 +320,20 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "getEnterpriseVault",
+    name: "getEnterpriseToken",
+    outputs: [
+      {
+        internalType: "contract IERC20Metadata",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getEnterpriseWallet",
     outputs: [
       {
         internalType: "address",
@@ -398,29 +385,29 @@ const _abi = [
         type: "string",
       },
       {
-        internalType: "uint256",
-        name: "totalShares",
-        type: "uint256",
-      },
-      {
         internalType: "uint32",
-        name: "interestGapHalvingPeriod",
+        name: "streamingReserveHalvingPeriod",
         type: "uint32",
       },
       {
         internalType: "uint32",
-        name: "borrowerLoanReturnGracePeriod",
+        name: "renterOnlyReturnPeriod",
         type: "uint32",
       },
       {
         internalType: "uint32",
-        name: "enterpriseLoanCollectGracePeriod",
+        name: "enterpriseOnlyCollectionPeriod",
         type: "uint32",
       },
       {
         internalType: "uint16",
         name: "gcFeePercent",
         type: "uint16",
+      },
+      {
+        internalType: "uint256",
+        name: "totalShares",
+        type: "uint256",
       },
       {
         internalType: "uint256",
@@ -446,142 +433,6 @@ const _abi = [
         internalType: "uint32",
         name: "streamingReserveUpdated",
         type: "uint32",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "getInterestGapHalvingPeriod",
-    outputs: [
-      {
-        internalType: "uint32",
-        name: "",
-        type: "uint32",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "getInterestToken",
-    outputs: [
-      {
-        internalType: "contract IInterestToken",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "interestTokenId",
-        type: "uint256",
-      },
-    ],
-    name: "getLiquidityInfo",
-    outputs: [
-      {
-        components: [
-          {
-            internalType: "uint256",
-            name: "amount",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "shares",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "block",
-            type: "uint256",
-          },
-        ],
-        internalType: "struct EnterpriseStorage.LiquidityInfo",
-        name: "",
-        type: "tuple",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "getLiquidityToken",
-    outputs: [
-      {
-        internalType: "contract IERC20Metadata",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "borrowTokenId",
-        type: "uint256",
-      },
-    ],
-    name: "getLoanInfo",
-    outputs: [
-      {
-        components: [
-          {
-            internalType: "uint112",
-            name: "amount",
-            type: "uint112",
-          },
-          {
-            internalType: "uint16",
-            name: "powerTokenIndex",
-            type: "uint16",
-          },
-          {
-            internalType: "uint32",
-            name: "borrowingTime",
-            type: "uint32",
-          },
-          {
-            internalType: "uint32",
-            name: "maturityTime",
-            type: "uint32",
-          },
-          {
-            internalType: "uint32",
-            name: "borrowerReturnGraceTime",
-            type: "uint32",
-          },
-          {
-            internalType: "uint32",
-            name: "enterpriseCollectGraceTime",
-            type: "uint32",
-          },
-          {
-            internalType: "uint112",
-            name: "gcFee",
-            type: "uint112",
-          },
-          {
-            internalType: "uint16",
-            name: "gcFeeTokenIndex",
-            type: "uint16",
-          },
-        ],
-        internalType: "struct IEnterpriseStorage.LoanInfo",
-        name: "",
-        type: "tuple",
       },
     ],
     stateMutability: "view",
@@ -652,6 +503,93 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "rentalTokenId",
+        type: "uint256",
+      },
+    ],
+    name: "getRentalAgreement",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "uint112",
+            name: "rentalAmount",
+            type: "uint112",
+          },
+          {
+            internalType: "uint16",
+            name: "powerTokenIndex",
+            type: "uint16",
+          },
+          {
+            internalType: "uint32",
+            name: "startTime",
+            type: "uint32",
+          },
+          {
+            internalType: "uint32",
+            name: "endTime",
+            type: "uint32",
+          },
+          {
+            internalType: "uint32",
+            name: "renterOnlyReturnTime",
+            type: "uint32",
+          },
+          {
+            internalType: "uint32",
+            name: "enterpriseOnlyCollectionTime",
+            type: "uint32",
+          },
+          {
+            internalType: "uint112",
+            name: "gcRewardAmount",
+            type: "uint112",
+          },
+          {
+            internalType: "uint16",
+            name: "gcRewardTokenIndex",
+            type: "uint16",
+          },
+        ],
+        internalType: "struct IEnterpriseStorage.RentalAgreement",
+        name: "",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getRentalToken",
+    outputs: [
+      {
+        internalType: "contract IRentalToken",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getRenterOnlyReturnPeriod",
+    outputs: [
+      {
+        internalType: "uint32",
+        name: "",
+        type: "uint32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "getReserve",
     outputs: [
@@ -659,6 +597,68 @@ const _abi = [
         internalType: "uint256",
         name: "",
         type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "stakeTokenId",
+        type: "uint256",
+      },
+    ],
+    name: "getStake",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "amount",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "shares",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "block",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct EnterpriseStorage.Stake",
+        name: "",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getStakeToken",
+    outputs: [
+      {
+        internalType: "contract IStakeToken",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getStreamingReserveHalvingPeriod",
+    outputs: [
+      {
+        internalType: "uint32",
+        name: "",
+        type: "uint32",
       },
     ],
     stateMutability: "view",
@@ -732,17 +732,17 @@ const _abi = [
     inputs: [
       {
         internalType: "contract IERC20Metadata",
-        name: "liquidityToken",
+        name: "enterpriseToken",
         type: "address",
       },
       {
-        internalType: "contract IInterestToken",
-        name: "interestToken",
+        internalType: "contract IStakeToken",
+        name: "stakeToken",
         type: "address",
       },
       {
-        internalType: "contract IBorrowToken",
-        name: "borrowToken",
+        internalType: "contract IRentalToken",
+        name: "rentalToken",
         type: "address",
       },
     ],
@@ -836,19 +836,6 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint32",
-        name: "newPeriod",
-        type: "uint32",
-      },
-    ],
-    name: "setBorrowerLoanReturnGracePeriod",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
         internalType: "contract IConverter",
         name: "newConverter",
         type: "address",
@@ -880,7 +867,7 @@ const _abi = [
         type: "uint32",
       },
     ],
-    name: "setEnterpriseLoanCollectGracePeriod",
+    name: "setEnterpriseOnlyCollectionPeriod",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -889,11 +876,11 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "newVault",
+        name: "newWallet",
         type: "address",
       },
     ],
-    name: "setEnterpriseVault",
+    name: "setEnterpriseWallet",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -915,11 +902,24 @@ const _abi = [
     inputs: [
       {
         internalType: "uint32",
-        name: "interestGapHalvingPeriod",
+        name: "newPeriod",
         type: "uint32",
       },
     ],
-    name: "setInterestGapHalvingPeriod",
+    name: "setRenterOnlyReturnPeriod",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint32",
+        name: "streamingReserveHalvingPeriod",
+        type: "uint32",
+      },
+    ],
+    name: "setStreamingReserveHalvingPeriod",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -951,12 +951,12 @@ const _abi = [
       },
       {
         internalType: "address",
-        name: "borrowTokenImplementation",
+        name: "rentalTokenImplementation",
         type: "address",
       },
       {
         internalType: "address",
-        name: "interestTokenImplementation",
+        name: "stakeTokenImplementation",
         type: "address",
       },
       {

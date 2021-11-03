@@ -51,22 +51,22 @@ export const waitBlockchainTime = async (seconds: number): Promise<void> => {
   await mineBlock(time + seconds);
 };
 
-export const estimateAndBorrow = async (
+export const estimateAndRent = async (
   provider: BlockchainProvider<ContractTransaction>,
   enterpriseAddress: Address,
   serviceAddress: Address,
   paymentTokenAddress: Address,
-  loanAmount: BigNumberish,
-  duration: BigNumberish,
+  rentalAmount: BigNumberish,
+  rentalPeriod: BigNumberish,
 ): Promise<void> => {
-  const estimate = await provider.estimateLoan(
-    enterpriseAddress,
-    serviceAddress,
-    paymentTokenAddress,
-    loanAmount,
-    duration,
-  );
+  const estimate = await provider
+    .enterprise(enterpriseAddress)
+    .estimateRentalFee(serviceAddress, paymentTokenAddress, rentalAmount, rentalPeriod);
 
-  await wait(provider.approveLiquidityTokensToEnterprise(enterpriseAddress, estimate));
-  await wait(provider.borrow(enterpriseAddress, serviceAddress, paymentTokenAddress, loanAmount, duration, estimate));
+  await wait(provider.enterprise(enterpriseAddress).setEnterpriseTokenAllowance(estimate));
+  await wait(
+    provider
+      .enterprise(enterpriseAddress)
+      .rent(serviceAddress, paymentTokenAddress, rentalAmount, rentalPeriod, estimate),
+  );
 };

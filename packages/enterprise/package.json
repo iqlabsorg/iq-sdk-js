@@ -16,6 +16,7 @@
   ],
   "scripts": {
     "build": "rollup -c",
+    "build:clean": "rimraf dist",
     "prepublish": "NODE_ENV=production yarn build",
     "start": "rollup -cw",
     "test": "jest --group=unit"

@@ -10,6 +10,7 @@ import {
 import { EIP155BlockchainProvider } from '@iqprotocol/eip155';
 import { VoidSigner } from '@ethersproject/abstract-signer';
 import { AccountStateManager } from '../src';
+import { EIP155BlockchainService } from '@iqprotocol/eip155/src/service';
 
 /**
  * @group unit
@@ -33,13 +34,13 @@ describe('AccountStateManager', () => {
     symbol: 'TST',
     baseRate: BigNumber.from(1),
     minGCFee: BigNumber.from(1),
-    gapHalvingPeriod: 3600,
+    energyGapHalvingPeriod: 3600,
     index: 0,
     baseToken: '0x6238F38c32fd76E3189D1EAd943B8342Ff33055D',
-    minLoanDuration: 3600,
-    maxLoanDuration: 864000,
+    minRentalPeriod: 3600,
+    maxRentalPeriod: 864000,
     serviceFeePercent: 5000,
-    wrappingEnabled: false,
+    swappingEnabled: false,
     transferEnabled: false,
   };
 
@@ -55,7 +56,7 @@ describe('AccountStateManager', () => {
   const accountState: AccountState = {
     accountId: account.id,
     serviceId: serviceId.toString(),
-    gapHalvingPeriod: onChainServiceInfo.gapHalvingPeriod,
+    energyGapHalvingPeriod: onChainServiceInfo.energyGapHalvingPeriod,
     power: 1000n,
     lockedPower: 0n,
     energyCap: 500n,
@@ -68,18 +69,22 @@ describe('AccountStateManager', () => {
 
   beforeEach(() => {
     store = new InMemoryStore();
+    const signer = new VoidSigner('0x4429CeB244B101926b3780c6ee906139c0f0eEf1'); // random address
+    const blockchainProvider = new EIP155BlockchainProvider({ signer });
+    const blockchainService = new EIP155BlockchainService(serviceAddress, signer);
 
-    const blockchainProvider = new EIP155BlockchainProvider({
-      signer: new VoidSigner('0x4429CeB244B101926b3780c6ee906139c0f0eEf1'), // random address
-    });
-
-    jest.spyOn(blockchainProvider, 'getAccountState').mockResolvedValue(onChainAccountState);
-    jest.spyOn(blockchainProvider, 'getServiceInfo').mockResolvedValue(onChainServiceInfo);
+    jest.spyOn(blockchainService, 'getInfo').mockResolvedValue(onChainServiceInfo);
+    jest.spyOn(blockchainService, 'getAccountState').mockResolvedValue(onChainAccountState);
+    jest.spyOn(blockchainProvider, 'service').mockReturnValue(blockchainService);
 
     accountStateManager = new AccountStateManager({
       store,
       blockchain: blockchainProvider,
     });
+  });
+
+  afterEach(() => {
+    jest.clearAllTimers();
   });
 
   describe('When account is not registered', () => {
@@ -170,7 +175,7 @@ describe('AccountStateManager', () => {
 
       describe('When account state is initialized', () => {
         let initialState: AccountState;
-        const changeTimestamp = timestamp + onChainServiceInfo.gapHalvingPeriod;
+        const changeTimestamp = timestamp + onChainServiceInfo.energyGapHalvingPeriod;
         const changeDate = new Date(changeTimestamp * 1000);
         beforeEach(async () => {
           initialState = { ...accountState, power: 1500n, lockedPower: 700n };

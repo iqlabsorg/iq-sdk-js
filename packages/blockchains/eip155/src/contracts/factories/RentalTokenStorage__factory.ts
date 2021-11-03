@@ -5,9 +5,9 @@
 import { Contract, Signer, utils } from "ethers";
 import { Provider } from "@ethersproject/providers";
 import type {
-  IInterestToken,
-  IInterestTokenInterface,
-} from "../IInterestToken";
+  RentalTokenStorage,
+  RentalTokenStorageInterface,
+} from "../RentalTokenStorage";
 
 const _abi = [
   {
@@ -115,24 +115,11 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "balance",
+        name: "",
         type: "uint256",
       },
     ],
     stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "tokenId",
-        type: "uint256",
-      },
-    ],
-    name: "burn",
-    outputs: [],
-    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -147,7 +134,7 @@ const _abi = [
     outputs: [
       {
         internalType: "address",
-        name: "operator",
+        name: "",
         type: "address",
       },
     ],
@@ -156,12 +143,12 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "getNextTokenId",
+    name: "getEnterprise",
     outputs: [
       {
-        internalType: "uint256",
+        internalType: "contract IEnterprise",
         name: "",
-        type: "uint256",
+        type: "address",
       },
     ],
     stateMutability: "view",
@@ -179,6 +166,37 @@ const _abi = [
         name: "symbol",
         type: "string",
       },
+      {
+        internalType: "contract IEnterprise",
+        name: "enterprise",
+        type: "address",
+      },
+    ],
+    name: "initialize",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "name_",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "symbol_",
+        type: "string",
+      },
+    ],
+    name: "initialize",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
       {
         internalType: "contract IEnterprise",
         name: "enterprise",
@@ -215,22 +233,16 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-    ],
-    name: "mint",
+    inputs: [],
+    name: "name",
     outputs: [
       {
-        internalType: "uint256",
+        internalType: "string",
         name: "",
-        type: "uint256",
+        type: "string",
       },
     ],
-    stateMutability: "nonpayable",
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -245,7 +257,7 @@ const _abi = [
     outputs: [
       {
         internalType: "address",
-        name: "owner",
+        name: "",
         type: "address",
       },
     ],
@@ -294,7 +306,7 @@ const _abi = [
       },
       {
         internalType: "bytes",
-        name: "data",
+        name: "_data",
         type: "bytes",
       },
     ],
@@ -312,7 +324,7 @@ const _abi = [
       },
       {
         internalType: "bool",
-        name: "_approved",
+        name: "approved",
         type: "bool",
       },
     ],
@@ -335,6 +347,19 @@ const _abi = [
         internalType: "bool",
         name: "",
         type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "symbol",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
       },
     ],
     stateMutability: "view",
@@ -376,8 +401,27 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
         name: "tokenId",
         type: "uint256",
+      },
+    ],
+    name: "tokenURI",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
       },
     ],
     stateMutability: "view",
@@ -421,15 +465,15 @@ const _abi = [
   },
 ];
 
-export class IInterestToken__factory {
+export class RentalTokenStorage__factory {
   static readonly abi = _abi;
-  static createInterface(): IInterestTokenInterface {
-    return new utils.Interface(_abi) as IInterestTokenInterface;
+  static createInterface(): RentalTokenStorageInterface {
+    return new utils.Interface(_abi) as RentalTokenStorageInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): IInterestToken {
-    return new Contract(address, _abi, signerOrProvider) as IInterestToken;
+  ): RentalTokenStorage {
+    return new Contract(address, _abi, signerOrProvider) as RentalTokenStorage;
   }
 }

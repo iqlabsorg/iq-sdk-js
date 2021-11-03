@@ -23,7 +23,7 @@ type Serializable =
 export interface AccountState {
   serviceId: string;
   accountId: string;
-  gapHalvingPeriod: number;
+  energyGapHalvingPeriod: number;
   power: bigint;
   lockedPower: bigint;
   energyCap: bigint;

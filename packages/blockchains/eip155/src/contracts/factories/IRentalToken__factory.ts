@@ -4,7 +4,7 @@
 
 import { Contract, Signer, utils } from "ethers";
 import { Provider } from "@ethersproject/providers";
-import type { IBorrowToken, IBorrowTokenInterface } from "../IBorrowToken";
+import type { IRentalToken, IRentalTokenInterface } from "../IRentalToken";
 
 const _abi = [
   {
@@ -367,15 +367,15 @@ const _abi = [
   },
 ];
 
-export class IBorrowToken__factory {
+export class IRentalToken__factory {
   static readonly abi = _abi;
-  static createInterface(): IBorrowTokenInterface {
-    return new utils.Interface(_abi) as IBorrowTokenInterface;
+  static createInterface(): IRentalTokenInterface {
+    return new utils.Interface(_abi) as IRentalTokenInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): IBorrowToken {
-    return new Contract(address, _abi, signerOrProvider) as IBorrowToken;
+  ): IRentalToken {
+    return new Contract(address, _abi, signerOrProvider) as IRentalToken;
   }
 }
