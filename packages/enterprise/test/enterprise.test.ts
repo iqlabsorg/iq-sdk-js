@@ -1,72 +1,111 @@
-import { AccountId, BigNumber, ChainId } from '@iqprotocol/abstract-blockchain';
+import {
+  AccountId,
+  BigNumber,
+  ChainId,
+  EnterpriseInfo as OnChainEnterpriseInfo,
+} from '@iqprotocol/abstract-blockchain';
 import { blockchainEnterpriseMock, blockchainProviderMock } from './support/mocks';
-import { Enterprise, RentalFeeEstimationRequest } from '../src';
+import { Enterprise, RentalFeeEstimationRequest, EnterpriseInfo } from '../src';
 
 /**
  * @group unit
  */
 describe('Enterprise', () => {
-  const ENTERPRISE_ADDRESS = '0x34437589B4DC1EAcBe08824645164F93E5d989E1';
+  const chainId = new ChainId({ namespace: 'eip155', reference: '1' });
+  const enterpriseAddress = '0x34437589B4DC1EAcBe08824645164F93E5d989E1';
+  const enterpriseAccountId = new AccountId({ chainId, address: enterpriseAddress });
+
   let enterprise: Enterprise;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.clearAllMocks();
-    enterprise = new Enterprise({ blockchain: blockchainProviderMock, address: ENTERPRISE_ADDRESS });
+    blockchainProviderMock.getChainId.mockResolvedValue(chainId);
+    enterprise = await Enterprise.create({ blockchain: blockchainProviderMock, accountId: enterpriseAccountId });
   });
 
-  it('returns correct ID', async () => {
+  it('ensures matching chain ID upon creation', async () => {
+    await expect(
+      Enterprise.create({
+        blockchain: blockchainProviderMock,
+        accountId: new AccountId({ address: enterpriseAddress, chainId: 'eip155:2' }),
+      }),
+    ).rejects.toThrow();
+  });
+
+  it('returns correct ID', () => {
     const chainId = new ChainId({ namespace: 'eip155', reference: '1' });
     blockchainProviderMock.getChainId.mockResolvedValue(chainId);
-    await expect(enterprise.getId()).resolves.toStrictEqual(new AccountId({ chainId, address: ENTERPRISE_ADDRESS }));
+    expect(enterprise.getAccountId()).toStrictEqual(enterpriseAccountId);
   });
 
   it('retrieves enterprise info', async () => {
-    const getEnterpriseInfo = jest.spyOn(blockchainEnterpriseMock, 'getInfo');
-    await enterprise.getInfo();
-    expect(getEnterpriseInfo).toHaveBeenCalled();
+    const enterpriseInfo: Partial<OnChainEnterpriseInfo> = {
+      name: 'Test Enterprise',
+      baseUri: 'https://iq.space',
+      totalShares: BigNumber.from(0),
+      streamingReserveHalvingPeriod: 604800,
+      renterOnlyReturnPeriod: 43200,
+      enterpriseOnlyCollectionPeriod: 86400,
+      gcFeePercent: 200,
+      fixedReserve: BigNumber.from(0),
+      usedReserve: BigNumber.from(0),
+      streamingReserve: BigNumber.from(0),
+      streamingReserveTarget: BigNumber.from(0),
+      streamingReserveUpdated: 0,
+    };
+    jest
+      .spyOn(blockchainEnterpriseMock, 'getInfo')
+      .mockResolvedValue({ ...enterpriseInfo, address: enterpriseAddress } as OnChainEnterpriseInfo);
+
+    await expect(enterprise.getInfo()).resolves.toEqual({
+      ...enterpriseInfo,
+      accountId: enterpriseAccountId,
+    } as EnterpriseInfo);
   });
 
   it('lists registered services', async () => {
-    const addr1 = '0x52De41D6a2104812f84ef596BE15B84d1d846ee5';
-    const addr2 = '0x2C368A2E9Bd1bf16eb3DfCd924CA7eF4969CBBD9';
-    blockchainEnterpriseMock.getServiceAddresses.mockResolvedValue([addr1, addr2]);
+    const address1 = '0x52De41D6a2104812f84ef596BE15B84d1d846ee5';
+    const address2 = '0x2C368A2E9Bd1bf16eb3DfCd924CA7eF4969CBBD9';
+    blockchainEnterpriseMock.getServiceAddresses.mockResolvedValue([address1, address2]);
     const services = await enterprise.getServices();
     expect(services).toHaveLength(2);
-    expect(services[0].getAddress()).toEqual(addr1);
-    expect(services[1].getAddress()).toEqual(addr2);
+    expect(services[0].getAccountId()).toEqual(new AccountId({ chainId, address: address1 }));
+    expect(services[1].getAccountId()).toEqual(new AccountId({ chainId, address: address2 }));
   });
 
   it('allows to estimate rental fee', async () => {
-    const mockEstimatedRentalFee = BigNumber.from(520);
-
+    const expectedRentalFee = BigNumber.from(520);
     const serviceAddress = '0x52De41D6a2104812f84ef596BE15B84d1d846ee5';
     const paymentTokenAddress = '0x2C368A2E9Bd1bf16eb3DfCd924CA7eF4969CBBD9';
     const rentalAmount = 1000;
     const rentalPeriod = 86400;
 
     const rentParams: RentalFeeEstimationRequest = {
-      serviceAddress,
-      paymentTokenAddress,
+      serviceAccountId: new AccountId({ chainId, address: serviceAddress }),
+      paymentTokenAccountId: new AccountId({ chainId, address: paymentTokenAddress }),
       rentalAmount,
       rentalPeriod,
     };
 
-    const estimateRentalFee = jest.spyOn(blockchainEnterpriseMock, 'estimateRentalFee');
-    estimateRentalFee.mockResolvedValueOnce(mockEstimatedRentalFee);
+    const estimateRentalFee = jest
+      .spyOn(blockchainEnterpriseMock, 'estimateRentalFee')
+      .mockResolvedValueOnce(expectedRentalFee);
+
     const estimate = await enterprise.estimateRentalFee(rentParams);
 
-    expect(estimate).toEqual(mockEstimatedRentalFee);
+    expect(estimate).toEqual(expectedRentalFee);
     expect(estimateRentalFee).toHaveBeenCalledWith(serviceAddress, paymentTokenAddress, rentalAmount, rentalPeriod);
   });
 
   it('retrieves accrued staking reward', async () => {
     const stakeTokenId = '1';
-    const mockReward = BigNumber.from(125);
-    const getStakingReward = jest.spyOn(blockchainEnterpriseMock, 'getStakingReward');
-    getStakingReward.mockResolvedValueOnce(mockReward);
+    const expectedReward = BigNumber.from(125);
+    const getStakingReward = jest
+      .spyOn(blockchainEnterpriseMock, 'getStakingReward')
+      .mockResolvedValueOnce(expectedReward);
     const reward = await enterprise.getStakingReward(stakeTokenId);
     expect(getStakingReward).toHaveBeenCalledWith(stakeTokenId);
-    expect(reward).toEqual(mockReward);
+    expect(reward).toEqual(expectedReward);
   });
 
   it('allows to claim staking reward', async () => {

@@ -3,87 +3,116 @@ import {
   Address,
   BigNumber,
   BigNumberish,
-  BlockchainProvider,
-  EnterpriseInfo,
-  Stake,
-  RentalAgreement,
   BlockchainEnterprise,
+  BlockchainProvider,
+  ChainId,
+  RentalAgreement,
+  Stake,
 } from '@iqprotocol/abstract-blockchain';
 import { Service } from './service';
-
-export type RentalFeeEstimationRequest = {
-  serviceAddress: Address;
-  paymentTokenAddress: Address;
-  rentalAmount: BigNumberish;
-  rentalPeriod: BigNumberish;
-};
-
-export type RentRequest = RentalFeeEstimationRequest & { maxPayment: BigNumberish };
+import { EnterpriseInfo, RentalFeeEstimationRequest, RentRequest } from './types';
+import { pick } from './utils';
 
 export interface EnterpriseConfig<Transaction> {
   blockchain: BlockchainProvider<Transaction>;
-  address: Address;
+  accountId: AccountId;
 }
 
 export class Enterprise<Transaction = unknown> {
-  private readonly address: Address;
+  private readonly accountId: AccountId;
+  private readonly chainId: ChainId;
   private readonly blockchain: BlockchainProvider<Transaction>;
   private readonly blockchainEnterprise: BlockchainEnterprise<Transaction>;
 
-  constructor({ blockchain, address }: EnterpriseConfig<Transaction>) {
-    this.address = address;
+  protected constructor({ blockchain, accountId, chainId }: EnterpriseConfig<Transaction> & { chainId: ChainId }) {
+    this.accountId = accountId;
+    this.chainId = chainId;
     this.blockchain = blockchain;
-    this.blockchainEnterprise = blockchain.enterprise(address);
+    this.blockchainEnterprise = blockchain.enterprise(accountId.address);
   }
 
-  attach(address: Address): Enterprise<Transaction> {
-    return new Enterprise({ blockchain: this.blockchain, address });
+  static async create<Transaction = unknown>({
+    blockchain,
+    accountId,
+  }: EnterpriseConfig<Transaction>): Promise<Enterprise<Transaction>> {
+    const chainId = await blockchain.getChainId();
+    if (chainId.toString() !== accountId.chainId.toString()) {
+      throw new Error(`Chain ID mismatch!`);
+    }
+
+    return new Enterprise<Transaction>({ blockchain, accountId, chainId });
   }
 
-  connect<Transaction>(blockchain: BlockchainProvider<Transaction>, address: Address): Enterprise<Transaction> {
-    return new Enterprise({ blockchain, address });
+  getAccountId(): AccountId {
+    return this.accountId;
   }
 
-  async getId(): Promise<AccountId> {
-    const chainId = await this.blockchain.getChainId();
-    return new AccountId({ chainId, address: this.address });
-  }
-
-  getAddress(): Address {
-    return this.address;
+  getChainId(): ChainId {
+    return this.chainId;
   }
 
   async getInfo(): Promise<EnterpriseInfo> {
-    return this.blockchainEnterprise.getInfo();
+    const info = await this.blockchainEnterprise.getInfo();
+    return {
+      accountId: this.toAccountId(info.address),
+      ...pick(info, [
+        'name',
+        'baseUri',
+        'totalShares',
+        'streamingReserveHalvingPeriod',
+        'renterOnlyReturnPeriod',
+        'enterpriseOnlyCollectionPeriod',
+        'gcFeePercent',
+        'fixedReserve',
+        'usedReserve',
+        'streamingReserve',
+        'streamingReserveTarget',
+        'streamingReserveUpdated',
+      ]),
+    };
   }
 
   async getServices(): Promise<Service<Transaction>[]> {
-    return (await this.blockchainEnterprise.getServiceAddresses()).map(
-      address =>
-        new Service({
-          blockchain: this.blockchain,
-          address,
-        }),
-    );
+    const services = [];
+    const serviceAddresses = await this.blockchainEnterprise.getServiceAddresses();
+    for (const address of serviceAddresses) {
+      const service = await Service.create({
+        blockchain: this.blockchain,
+        accountId: this.toAccountId(address),
+      });
+      services.push(service);
+    }
+    return services;
   }
 
   async estimateRentalFee({
-    serviceAddress,
-    paymentTokenAddress,
+    serviceAccountId,
+    paymentTokenAccountId,
     rentalAmount,
     rentalPeriod,
   }: RentalFeeEstimationRequest): Promise<BigNumber> {
-    return this.blockchainEnterprise.estimateRentalFee(serviceAddress, paymentTokenAddress, rentalAmount, rentalPeriod);
+    return this.blockchainEnterprise.estimateRentalFee(
+      this.toAddress(serviceAccountId),
+      this.toAddress(paymentTokenAccountId),
+      rentalAmount,
+      rentalPeriod,
+    );
   }
 
   async rent({
-    serviceAddress,
-    paymentTokenAddress,
+    serviceAccountId,
+    paymentTokenAccountId,
     rentalAmount,
     rentalPeriod,
     maxPayment,
   }: RentRequest): Promise<Transaction> {
-    return this.blockchainEnterprise.rent(serviceAddress, paymentTokenAddress, rentalAmount, rentalPeriod, maxPayment);
+    return this.blockchainEnterprise.rent(
+      this.toAddress(serviceAccountId),
+      this.toAddress(paymentTokenAccountId),
+      rentalAmount,
+      rentalPeriod,
+      maxPayment,
+    );
   }
 
   async getStakingReward(stakeTokenId: BigNumberish): Promise<BigNumber> {
@@ -98,17 +127,18 @@ export class Enterprise<Transaction = unknown> {
     return this.blockchainEnterprise.returnRental(rentalTokenId);
   }
 
-  async findRentalAgreements(accountAddress?: Address): Promise<RentalAgreement[]> {
-    const rentalTokenIds = await this.blockchainEnterprise.getRentalTokenIds(accountAddress);
+  async findRentalAgreements(accountId?: AccountId): Promise<RentalAgreement[]> {
+    const rentalTokenIds = await this.blockchainEnterprise.getRentalTokenIds(this.toOptionalAddress(accountId));
     return Promise.all(rentalTokenIds.map(async tokenId => this.blockchainEnterprise.getRentalAgreement(tokenId)));
   }
 
   async getRentalAgreement(rentalTokenId: BigNumberish): Promise<RentalAgreement> {
+    // todo: replace  caip19
     return this.blockchainEnterprise.getRentalAgreement(rentalTokenId);
   }
 
-  async findStakes(accountAddress?: Address): Promise<Stake[]> {
-    const stakeTokenIds = await this.blockchainEnterprise.getStakeTokenIds(accountAddress);
+  async findStakes(accountId?: AccountId): Promise<Stake[]> {
+    const stakeTokenIds = await this.blockchainEnterprise.getStakeTokenIds(this.toOptionalAddress(accountId));
     return Promise.all(stakeTokenIds.map(async tokenId => this.blockchainEnterprise.getStake(tokenId)));
   }
 
@@ -136,24 +166,24 @@ export class Enterprise<Transaction = unknown> {
     return this.blockchainEnterprise.setEnterpriseTokenAllowance(amount);
   }
 
-  async getEnterpriseTokenAllowance(accountAddress?: Address): Promise<BigNumber> {
-    return this.blockchainEnterprise.getEnterpriseTokenAllowance(accountAddress);
+  async getEnterpriseTokenAllowance(accountId?: AccountId): Promise<BigNumber> {
+    return this.blockchainEnterprise.getEnterpriseTokenAllowance(this.toOptionalAddress(accountId));
   }
 
-  async isRegisteredService(serviceAddress: Address): Promise<boolean> {
-    return this.blockchainEnterprise.isRegisteredService(serviceAddress);
+  async isRegisteredService(serviceAccountId: AccountId): Promise<boolean> {
+    return this.blockchainEnterprise.isRegisteredService(this.toAddress(serviceAccountId));
   }
 
-  async getProxyAdminAddress(): Promise<Address> {
-    return this.blockchainEnterprise.getProxyAdminAddress();
+  async getProxyAdminAccountId(): Promise<AccountId> {
+    return this.toAccountId(await this.blockchainEnterprise.getProxyAdminAddress());
   }
 
-  async getCollectorAddress(): Promise<Address> {
-    return this.blockchainEnterprise.getEnterpriseCollectorAddress();
+  async getCollectorAccountId(): Promise<AccountId> {
+    return this.toAccountId(await this.blockchainEnterprise.getEnterpriseCollectorAddress());
   }
 
-  async getWalletAddress(): Promise<Address> {
-    return this.blockchainEnterprise.getEnterpriseWalletAddress();
+  async getWalletAccountId(): Promise<AccountId> {
+    return this.toAccountId(await this.blockchainEnterprise.getEnterpriseWalletAddress());
   }
 
   async getRenterOnlyReturnPeriod(): Promise<number> {
@@ -168,8 +198,8 @@ export class Enterprise<Transaction = unknown> {
     return this.blockchainEnterprise.getStreamingReserveHalvingPeriod();
   }
 
-  async getConverterAddress(): Promise<Address> {
-    return this.blockchainEnterprise.getConverterAddress();
+  async getConverterAccountId(): Promise<AccountId> {
+    return this.toAccountId(await this.blockchainEnterprise.getConverterAddress());
   }
 
   async getBaseUri(): Promise<string> {
@@ -196,16 +226,16 @@ export class Enterprise<Transaction = unknown> {
     return this.blockchainEnterprise.getGCFeePercent();
   }
 
-  async setCollectorAddress(collectorAddress: Address): Promise<Transaction> {
-    return this.blockchainEnterprise.setEnterpriseCollectorAddress(collectorAddress);
+  async setCollectorAccountId(accountId: AccountId): Promise<Transaction> {
+    return this.blockchainEnterprise.setEnterpriseCollectorAddress(this.toAddress(accountId));
   }
 
-  async setWalletAddress(vaultAddress: Address): Promise<Transaction> {
-    return this.blockchainEnterprise.setEnterpriseWalletAddress(vaultAddress);
+  async setWalletAccountId(accountId: AccountId): Promise<Transaction> {
+    return this.blockchainEnterprise.setEnterpriseWalletAddress(this.toAddress(accountId));
   }
 
-  async setConverterAddress(converterAddress: Address): Promise<Transaction> {
-    return this.blockchainEnterprise.setConverterAddress(converterAddress);
+  async setConverterAccountId(accountId: AccountId): Promise<Transaction> {
+    return this.blockchainEnterprise.setConverterAddress(this.toAddress(accountId));
   }
 
   async setBondingCurve(pole: BigNumberish, slope: BigNumberish): Promise<Transaction> {
@@ -230,5 +260,20 @@ export class Enterprise<Transaction = unknown> {
 
   async setGcFeePercent(gcFeePercent: number): Promise<Transaction> {
     return this.blockchainEnterprise.setGcFeePercent(gcFeePercent);
+  }
+
+  protected toAccountId(address: Address): AccountId {
+    return new AccountId({ chainId: this.chainId, address });
+  }
+
+  protected toAddress(accountId: AccountId): Address {
+    if (this.chainId.toString() !== accountId.chainId.toString()) {
+      throw new Error(`Chain ID mismatch for! Enterprise chain ID: ${this.chainId.toString()}`);
+    }
+    return accountId.address;
+  }
+
+  protected toOptionalAddress(accountId?: AccountId): Address | undefined {
+    return accountId ? this.toAddress(accountId) : undefined;
   }
 }
