@@ -1,7 +1,8 @@
-import { Enterprise, EnterpriseFactory, PowerToken } from '../../src/contracts';
 import hre from 'hardhat';
 import { ContractReceipt, ContractTransaction } from 'ethers';
-import { Address, BlockchainProvider, BigNumberish } from '@iqprotocol/abstract-blockchain';
+import { Address, BlockchainProvider } from '@iqprotocol/abstract-blockchain';
+import { BigNumberish } from '@ethersproject/bignumber';
+import { Enterprise, EnterpriseFactory, PowerToken } from '../../src/contracts';
 
 export const getEnterprise = async (
   enterpriseFactory: EnterpriseFactory,

@@ -1,16 +1,8 @@
-import {
-  AccountId,
-  Address,
-  BigNumber,
-  BigNumberish,
-  BlockchainEnterprise,
-  BlockchainProvider,
-  ChainId,
-  RentalAgreement,
-  Stake,
-} from '@iqprotocol/abstract-blockchain';
+import { AccountId, ChainId } from 'caip';
+import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
+import { Address, BlockchainEnterprise, BlockchainProvider } from '@iqprotocol/abstract-blockchain';
 import { Service } from './service';
-import { EnterpriseInfo, RentalFeeEstimationRequest, RentRequest } from './types';
+import { EnterpriseInfo, RentalAgreement, RentalFeeEstimationRequest, RentRequest, Stake } from './types';
 import { pick } from './utils';
 
 export interface EnterpriseConfig<Transaction> {
@@ -19,17 +11,12 @@ export interface EnterpriseConfig<Transaction> {
 }
 
 export class Enterprise<Transaction = unknown> {
-  private readonly accountId: AccountId;
-  private readonly chainId: ChainId;
-  private readonly blockchain: BlockchainProvider<Transaction>;
-  private readonly blockchainEnterprise: BlockchainEnterprise<Transaction>;
-
-  protected constructor({ blockchain, accountId, chainId }: EnterpriseConfig<Transaction> & { chainId: ChainId }) {
-    this.accountId = accountId;
-    this.chainId = chainId;
-    this.blockchain = blockchain;
-    this.blockchainEnterprise = blockchain.enterprise(accountId.address);
-  }
+  protected constructor(
+    private readonly accountId: AccountId,
+    private readonly chainId: ChainId,
+    private readonly blockchain: BlockchainProvider<Transaction>,
+    private readonly blockchainEnterprise: BlockchainEnterprise<Transaction>,
+  ) {}
 
   static async create<Transaction = unknown>({
     blockchain,
@@ -39,8 +26,10 @@ export class Enterprise<Transaction = unknown> {
     if (chainId.toString() !== accountId.chainId.toString()) {
       throw new Error(`Chain ID mismatch!`);
     }
+    // todo load: all tokens asset types for  future validation
+    const blockchainEnterprise = blockchain.enterprise(accountId.address);
 
-    return new Enterprise<Transaction>({ blockchain, accountId, chainId });
+    return new Enterprise<Transaction>(accountId, chainId, blockchain, blockchainEnterprise);
   }
 
   getAccountId(): AccountId {

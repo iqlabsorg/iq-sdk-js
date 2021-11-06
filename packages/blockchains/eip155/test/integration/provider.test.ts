@@ -1,13 +1,9 @@
 import { deployments, ethers } from 'hardhat';
 import 'hardhat-deploy-ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils';
-import { EIP155BlockchainProvider } from '../../src';
-import { baseRate, estimateAndRent, getEnterprise, getPowerToken, wait, waitBlockchainTime } from './utils';
-import { DefaultConverter, Enterprise, EnterpriseFactory, ERC20Mock } from '../../src/contracts';
 import {
   AccountState,
   Address,
-  BigNumber,
   EnterpriseInfo,
   EnterpriseParams,
   ERC20Metadata,
@@ -16,6 +12,10 @@ import {
   ServiceParams,
   Stake,
 } from '@iqprotocol/abstract-blockchain';
+import { BigNumber } from '@ethersproject/bignumber';
+import { EIP155BlockchainProvider } from '../../src';
+import { baseRate, estimateAndRent, getEnterprise, getPowerToken, wait, waitBlockchainTime } from './utils';
+import { DefaultConverter, Enterprise, EnterpriseFactory, ERC20Mock } from '../../src/contracts';
 
 type Awaited<T> = T extends PromiseLike<infer U> ? Awaited<U> : T;
 
@@ -450,7 +450,7 @@ describe('EIP155BlockchainProvider', () => {
             const [tokenId] = await stakerBlockchainProvider.enterprise(enterprise.address).getStakeTokenIds();
             const stake = await stakerBlockchainProvider.enterprise(enterprise.address).getStake(tokenId);
             expect(Object.keys(stake)).toEqual(
-              expect.arrayContaining(<Array<keyof Stake>>['tokenId', 'amount', 'shares', 'block']),
+              expect.arrayContaining<keyof Stake>(['tokenId', 'amount', 'shares', 'block']),
             );
             expect(stake).toMatchObject(<Stake>{
               tokenId,
@@ -591,7 +591,7 @@ describe('EIP155BlockchainProvider', () => {
 
                 expect(rentalAgreement.rentalTokenId).toEqual(tokenId);
                 expect(Object.keys(rentalAgreement)).toEqual(
-                  expect.arrayContaining(<Array<keyof RentalAgreement>>[
+                  expect.arrayContaining<keyof RentalAgreement>([
                     'rentalTokenId',
                     'rentalAmount',
                     'powerTokenIndex',

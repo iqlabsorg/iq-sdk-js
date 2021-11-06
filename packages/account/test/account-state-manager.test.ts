@@ -1,16 +1,12 @@
+import { AccountId, ChainId } from 'caip';
 import { InMemoryStore } from '@iqprotocol/in-memory-storage';
 import { Account, AccountState, AccountStateChangeResult } from '@iqprotocol/abstract-storage';
-import {
-  AccountId,
-  AccountState as OnChainAccountState,
-  BigNumber,
-  ChainId,
-  ServiceInfo,
-} from '@iqprotocol/abstract-blockchain';
+import { AccountState as OnChainAccountState, ServiceInfo } from '@iqprotocol/abstract-blockchain';
 import { EIP155BlockchainProvider } from '@iqprotocol/eip155';
 import { VoidSigner } from '@ethersproject/abstract-signer';
 import { AccountStateManager } from '../src';
 import { EIP155BlockchainService } from '@iqprotocol/eip155/src/service';
+import { BigNumber } from '@ethersproject/bignumber';
 
 /**
  * @group unit

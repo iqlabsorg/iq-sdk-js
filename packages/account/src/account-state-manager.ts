@@ -1,5 +1,6 @@
+import { AccountId } from 'caip';
 import { AccountState, AccountStateChangeResult, StorageProvider } from '@iqprotocol/abstract-storage';
-import { AccountId, AccountState as OnChainAccountState, BlockchainProvider } from '@iqprotocol/abstract-blockchain';
+import { AccountState as OnChainAccountState, BlockchainProvider } from '@iqprotocol/abstract-blockchain';
 import { calculateEffectiveEnergy } from '@iqprotocol/energy';
 
 export interface AccountStateManagerConfig {

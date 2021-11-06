@@ -1,8 +1,6 @@
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
-import { AccountId, ChainId } from 'caip';
+import { ChainId } from 'caip';
 
-export { ChainId, AccountId };
-export { BigNumber, BigNumberish };
 export type Address = string;
 
 export interface EnterpriseParams {

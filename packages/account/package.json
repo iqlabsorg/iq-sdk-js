@@ -26,6 +26,7 @@
     "@iqprotocol/abstract-blockchain": "^0.11.0",
     "@iqprotocol/abstract-storage": "^0.11.0",
     "@iqprotocol/energy": "^0.7.0",
+    "caip": "^1.0.0",
     "eth-sig-util": "^3.0.1"
   },
   "devDependencies": {

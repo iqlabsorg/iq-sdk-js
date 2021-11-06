@@ -1,8 +1,7 @@
 import { ContractTransaction, Signer } from 'ethers';
+import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
 import {
   Address,
-  BigNumber,
-  BigNumberish,
   BlockchainEnterprise,
   EnterpriseInfo,
   RentalAgreement,

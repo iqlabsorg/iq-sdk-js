@@ -1,9 +1,6 @@
-import {
-  AccountId,
-  BigNumber,
-  ChainId,
-  EnterpriseInfo as OnChainEnterpriseInfo,
-} from '@iqprotocol/abstract-blockchain';
+import { AccountId, ChainId } from 'caip';
+import { BigNumber } from '@ethersproject/bignumber';
+import { EnterpriseInfo as OnChainEnterpriseInfo } from '@iqprotocol/abstract-blockchain';
 import { blockchainEnterpriseMock, blockchainProviderMock } from './support/mocks';
 import { Enterprise, RentalFeeEstimationRequest, EnterpriseInfo } from '../src';
 

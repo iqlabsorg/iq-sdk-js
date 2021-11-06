@@ -1,12 +1,6 @@
-import {
-  AccountId,
-  ChainId,
-  Address,
-  BigNumber,
-  BigNumberish,
-  BlockchainProvider,
-  BlockchainService,
-} from '@iqprotocol/abstract-blockchain';
+import { AccountId, ChainId } from 'caip';
+import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
+import { Address, BlockchainProvider, BlockchainService } from '@iqprotocol/abstract-blockchain';
 import { ServiceInfo, AccountState } from './types';
 import { pick } from './utils';
 
@@ -16,15 +10,11 @@ export interface ServiceConfig<Transaction> {
 }
 
 export class Service<Transaction = unknown> {
-  private readonly accountId: AccountId;
-  private readonly chainId: ChainId;
-  private readonly blockchainService: BlockchainService<Transaction>;
-
-  protected constructor({ blockchain, accountId, chainId }: ServiceConfig<Transaction> & { chainId: ChainId }) {
-    this.accountId = accountId;
-    this.chainId = chainId;
-    this.blockchainService = blockchain.service(accountId.address);
-  }
+  protected constructor(
+    private readonly accountId: AccountId,
+    private readonly chainId: ChainId,
+    private readonly blockchainService: BlockchainService<Transaction>,
+  ) {}
 
   static async create<Transaction = unknown>({
     blockchain,
@@ -34,8 +24,8 @@ export class Service<Transaction = unknown> {
     if (chainId.toString() !== accountId.chainId.toString()) {
       throw new Error(`Chain ID mismatch!`);
     }
-
-    return new Service<Transaction>({ blockchain, accountId, chainId });
+    const blockchainService = blockchain.service(accountId.address);
+    return new Service<Transaction>(accountId, chainId, blockchainService);
   }
 
   getAccountId(): AccountId {

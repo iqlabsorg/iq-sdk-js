@@ -1,12 +1,6 @@
 import { ContractTransaction, Signer } from 'ethers';
-import {
-  AccountState,
-  Address,
-  BigNumber,
-  BigNumberish,
-  BlockchainService,
-  ServiceInfo,
-} from '@iqprotocol/abstract-blockchain';
+import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
+import { AccountState, Address, BlockchainService, ServiceInfo } from '@iqprotocol/abstract-blockchain';
 import { PowerToken } from './contracts';
 import { ContractResolver } from './contract-resolver';
 import { pick } from './utils';

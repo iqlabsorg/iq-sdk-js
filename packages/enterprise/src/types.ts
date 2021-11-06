@@ -1,10 +1,12 @@
-import type {
+import { AccountId } from 'caip';
+import { BigNumberish } from '@ethersproject/bignumber';
+import {
   AccountState as OnChainAccountState,
   EnterpriseInfo as OnChainEnterpriseInfo,
+  RentalAgreement as OnChainRentalAgreement,
   ServiceInfo as OnChainServiceInfo,
+  Stake as OnChainStake,
 } from '@iqprotocol/abstract-blockchain';
-import { BigNumberish } from '@iqprotocol/abstract-blockchain';
-import { AccountId } from 'caip';
 
 export type EnterpriseInfo = Omit<OnChainEnterpriseInfo, 'address'> & {
   accountId: AccountId;
@@ -28,3 +30,10 @@ export type AccountState = Omit<OnChainAccountState, 'serviceAddress' | 'account
   serviceId: AccountId;
   accountId: AccountId;
 };
+
+// export type Stake = Omit<OnChainStake, 'tokenId'> & {
+//   tokenId: AssetId;
+// };
+export type Stake = OnChainStake;
+
+export type RentalAgreement = OnChainRentalAgreement;

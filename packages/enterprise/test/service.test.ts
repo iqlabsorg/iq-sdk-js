@@ -1,9 +1,8 @@
+import { AccountId, ChainId } from 'caip';
+import { BigNumber } from '@ethersproject/bignumber';
 import {
-  AccountId,
   ServiceInfo as OnChainServiceInfo,
   AccountState as OnChainAccountState,
-  BigNumber,
-  ChainId,
 } from '@iqprotocol/abstract-blockchain';
 import { blockchainProviderMock, blockchainServiceMock } from './support/mocks';
 import { Service, ServiceInfo, AccountState } from '../src';

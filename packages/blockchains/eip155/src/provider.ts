@@ -1,17 +1,15 @@
+import { ChainId } from 'caip';
+import { ContractTransaction, Signer } from 'ethers';
+import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
 import {
   Address,
-  BigNumber,
-  BigNumberish,
   BlockchainEnterprise,
   BlockchainProvider,
   BlockchainService,
-  ChainId,
   EnterpriseParams,
   ERC20Metadata,
   ERC721Metadata,
 } from '@iqprotocol/abstract-blockchain';
-
-import { ContractTransaction, Signer } from 'ethers';
 import { ContractResolver } from './contract-resolver';
 import { EIP155BlockchainEnterprise } from './enterprise';
 import { EIP155BlockchainService } from './service';

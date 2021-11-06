@@ -22,7 +22,9 @@
     "test": "jest --group=unit"
   },
   "dependencies": {
-    "@iqprotocol/abstract-blockchain": "^0.11.0"
+    "@ethersproject/bignumber": "^5.3.0",
+    "@iqprotocol/abstract-blockchain": "^0.11.0",
+    "caip": "^1.0.0"
   },
   "publishConfig": {
     "access": "public"
