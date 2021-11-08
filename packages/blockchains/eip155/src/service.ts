@@ -2,10 +2,10 @@ import { ContractTransaction, Signer } from 'ethers';
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
 import { AccountState, Address, BlockchainService, ServiceInfo } from '@iqprotocol/abstract-blockchain';
 import { PowerToken } from './contracts';
-import { ContractResolver } from './contract-resolver';
+import { BlockchainEntity } from './blockchain-entity';
 import { pick } from './utils';
 
-export class EIP155BlockchainService extends ContractResolver implements BlockchainService<ContractTransaction> {
+export class EIP155BlockchainService extends BlockchainEntity implements BlockchainService<ContractTransaction> {
   private readonly contract: PowerToken;
 
   constructor(address: Address, signer: Signer) {

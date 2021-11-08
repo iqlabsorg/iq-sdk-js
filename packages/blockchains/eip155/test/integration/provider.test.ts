@@ -6,7 +6,8 @@ import {
   Address,
   EnterpriseInfo,
   EnterpriseParams,
-  ERC20Metadata,
+  FungibleTokenMetadata,
+  NonFungibleTokenMetadata,
   RentalAgreement,
   ServiceInfo,
   ServiceParams,
@@ -16,6 +17,7 @@ import { BigNumber } from '@ethersproject/bignumber';
 import { EIP155BlockchainProvider } from '../../src';
 import { baseRate, estimateAndRent, getEnterprise, getPowerToken, wait, waitBlockchainTime } from './utils';
 import { DefaultConverter, Enterprise, EnterpriseFactory, ERC20Mock } from '../../src/contracts';
+import { AssetType, ChainId } from 'caip';
 
 type Awaited<T> = T extends PromiseLike<infer U> ? Awaited<U> : T;
 
@@ -31,6 +33,7 @@ describe('EIP155BlockchainProvider', () => {
   const BASE_RATE = BigNumber.from(baseRate(100n, 86400n, 3n));
   const GAP_HALVING_PERIOD = 86400;
 
+  let chainId: ChainId;
   let blockchainProvider: EIP155BlockchainProvider;
   let deployerSigner: Awaited<ReturnType<typeof ethers.getNamedSigner>>;
   let enterpriseToken: ERC20Mock;
@@ -40,7 +43,7 @@ describe('EIP155BlockchainProvider', () => {
   let baseEnterpriseParams: EnterpriseParams;
   let baseServiceParams: ServiceParams;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     await deployments.fixture();
     deployerSigner = await ethers.getNamedSigner('deployer');
     enterpriseFactory = await ethers.getContract('EnterpriseFactory');
@@ -50,9 +53,14 @@ describe('EIP155BlockchainProvider', () => {
       signer: deployerSigner,
     });
 
+    chainId = new ChainId({
+      namespace: 'eip155',
+      reference: String(await deployerSigner.getChainId()),
+    });
+
     baseEnterpriseParams = {
       name: 'Test Enterprise',
-      baseUri: 'https://iq.space',
+      baseUri: 'https://iq.space/',
       gcFeePercent: 2 * ONE_PERCENT,
       enterpriseTokenAddress: enterpriseToken.address,
       converterAddress: converter.address,
@@ -60,7 +68,7 @@ describe('EIP155BlockchainProvider', () => {
 
     baseServiceParams = {
       serviceName: 'Test Service',
-      serviceSymbol: 'IQPT',
+      serviceSymbol: 'SERV',
       energyGapHalvingPeriod: GAP_HALVING_PERIOD,
       baseRate: BASE_RATE,
       baseToken: enterpriseToken.address,
@@ -77,9 +85,8 @@ describe('EIP155BlockchainProvider', () => {
     expect(receipt.status).toBe(1);
   });
 
-  it('returns correct CAIP-2 chain ID', async () => {
-    const chainId = await blockchainProvider.getChainId();
-    expect(chainId.toString()).toEqual(`eip155:${await deployerSigner.getChainId()}`);
+  it('returns correct provider chain ID', async () => {
+    await expect(blockchainProvider.getChainId()).resolves.toEqual(chainId);
   });
 
   it('retrieves an arbitrary token balance', async () => {
@@ -120,19 +127,61 @@ describe('EIP155BlockchainProvider', () => {
       };
     });
 
+    it('returns correct enterprise chain ID', async () => {
+      await expect(blockchainProvider.enterprise(enterprise.address).getChainId()).resolves.toEqual(chainId);
+    });
+
     it('retrieves enterprise data', async () => {
       const data = await blockchainProvider.enterprise(enterprise.address).getInfo();
       expect(data).toStrictEqual(expectedEnterpriseData);
     });
 
-    it('retrieves enterprise enterprise token metadata', async () => {
-      const metadata = await blockchainProvider.getEnterpriseTokenMetadata(enterprise.address);
-      expect(metadata).toEqual(<ERC20Metadata>{
+    it('returns enterprise token type', async () => {
+      const tokenAddress = await blockchainProvider.enterprise(enterprise.address).getEnterpriseTokenAddress();
+      await expect(blockchainProvider.enterprise(enterprise.address).getEnterpriseTokenType()).resolves.toEqual(
+        new AssetType({
+          chainId,
+          assetName: {
+            namespace: 'erc20',
+            reference: tokenAddress,
+          },
+        }),
+      );
+    });
+
+    it('returns rental token type', async () => {
+      const tokenAddress = await blockchainProvider.enterprise(enterprise.address).getRentalTokenAddress();
+      await expect(blockchainProvider.enterprise(enterprise.address).getRentalTokenType()).resolves.toEqual(
+        new AssetType({
+          chainId,
+          assetName: {
+            namespace: 'erc721',
+            reference: tokenAddress,
+          },
+        }),
+      );
+    });
+
+    it('returns stake token type', async () => {
+      const tokenAddress = await blockchainProvider.enterprise(enterprise.address).getStakeTokenAddress();
+      await expect(blockchainProvider.enterprise(enterprise.address).getStakeTokenType()).resolves.toEqual(
+        new AssetType({
+          chainId,
+          assetName: {
+            namespace: 'erc721',
+            reference: tokenAddress,
+          },
+        }),
+      );
+    });
+
+    it('retrieves enterprise token metadata', async () => {
+      await expect(blockchainProvider.enterprise(enterprise.address).getEnterpriseTokenMetadata()).resolves.toEqual({
         address: enterpriseToken.address,
         name: 'Testing',
         symbol: 'TST',
         decimals: 18,
-      });
+      } as FungibleTokenMetadata);
     });
 
     it('registers new services', async () => {
@@ -257,6 +306,11 @@ describe('EIP155BlockchainProvider', () => {
 
         expect(services[0]).toEqual(service1Address);
         expect(services[1]).toEqual(service2Address);
+      });
+
+      it('returns correct service chain ID', async () => {
+        await expect(blockchainProvider.service(service1Address).getChainId()).resolves.toEqual(chainId);
+        await expect(blockchainProvider.service(service2Address).getChainId()).resolves.toEqual(chainId);
       });
 
       it('retrieves the service information', async () => {
@@ -459,6 +513,19 @@ describe('EIP155BlockchainProvider', () => {
             });
           });
 
+          it('retrieves stake token metadata', async () => {
+            const tokenAddress = await blockchainProvider.enterprise(enterprise.address).getStakeTokenAddress();
+            const [tokenId] = await stakerBlockchainProvider.enterprise(enterprise.address).getStakeTokenIds();
+            await expect(
+              stakerBlockchainProvider.enterprise(enterprise.address).getStakeTokenMetadata(tokenId),
+            ).resolves.toEqual({
+              address: tokenAddress,
+              name: 'Staking TST',
+              symbol: 'sTST',
+              tokenUri: `${baseEnterpriseParams.baseUri}stake/${tokenId.toString()}`,
+            } as NonFungibleTokenMetadata);
+          });
+
           it('allows to increase stake', async () => {
             const [tokenId] = await stakerBlockchainProvider.enterprise(enterprise.address).getStakeTokenIds();
             await wait(
@@ -558,6 +625,21 @@ describe('EIP155BlockchainProvider', () => {
                   ONE_TOKEN.mul(200),
                   5 * ONE_DAY,
                 );
+              });
+
+              it('retrieves rental token metadata', async () => {
+                const tokenAddress = await renterBlockchainProvider
+                  .enterprise(enterprise.address)
+                  .getRentalTokenAddress();
+                const [tokenId] = await renterBlockchainProvider.enterprise(enterprise.address).getRentalTokenIds();
+                await expect(
+                  renterBlockchainProvider.enterprise(enterprise.address).getRentalTokenMetadata(tokenId),
+                ).resolves.toEqual({
+                  address: tokenAddress,
+                  name: 'Rental TST',
+                  symbol: 'rTST',
+                  tokenUri: `${baseEnterpriseParams.baseUri}rental/${tokenId.toString()}`,
+                } as NonFungibleTokenMetadata);
               });
 
               it('retrieves power token balance for account', async () => {

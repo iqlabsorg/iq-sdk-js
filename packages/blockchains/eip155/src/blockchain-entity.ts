@@ -1,5 +1,5 @@
 import { Signer } from 'ethers';
-import { Address } from '@iqprotocol/abstract-blockchain';
+import { Address, ChainAware, FungibleTokenMetadata, NonFungibleTokenMetadata } from '@iqprotocol/abstract-blockchain';
 import {
   Enterprise,
   Enterprise__factory,
@@ -16,12 +16,40 @@ import {
   StakeToken,
   StakeToken__factory,
 } from './contracts';
+import { ChainId } from 'caip';
+import { BigNumberish } from '@ethersproject/bignumber';
 
-export abstract class ContractResolver {
+export abstract class BlockchainEntity implements ChainAware {
   protected readonly signer: Signer;
 
   protected constructor(signer: Signer) {
     this.signer = signer;
+  }
+
+  async getChainId(): Promise<ChainId> {
+    const reference = await this.signer.getChainId();
+    return new ChainId({ namespace: 'eip155', reference: reference.toString() });
+  }
+
+  // todo: resolve namespaces from chainID
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
+  getAssetNamespace(chainId: ChainId, ntf: boolean): string {
+    return ntf ? 'erc721' : 'erc20';
+  }
+
+  protected async getFungibleTokenMetadata(tokenAddress: Address): Promise<FungibleTokenMetadata> {
+    const token = this.resolveERC20Token(tokenAddress);
+    const [name, symbol, decimals] = await Promise.all([token.name(), token.symbol(), token.decimals()]);
+    return { address: tokenAddress, name, symbol, decimals };
+  }
+
+  protected async getNonFungibleTokenMetadata(
+    tokenAddress: Address,
+    tokenId: BigNumberish,
+  ): Promise<NonFungibleTokenMetadata> {
+    const token = this.resolveERC721Token(tokenAddress);
+    const [name, symbol, tokenUri] = await Promise.all([token.name(), token.symbol(), token.tokenURI(tokenId)]);
+    return { address: tokenAddress, name, symbol, tokenUri };
   }
 
   protected async withFallbackToSignerAddress(accountAddress?: Address): Promise<Address> {

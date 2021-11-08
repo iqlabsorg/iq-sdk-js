@@ -1,5 +1,5 @@
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
-import { ChainId } from 'caip';
+import { AssetType, ChainId } from 'caip';
 
 export type Address = string;
 
@@ -65,14 +65,14 @@ export interface AccountState {
   timestamp: number;
 }
 
-export interface ERC20Metadata {
+export interface FungibleTokenMetadata {
   address: Address;
   name: string;
   symbol: string;
   decimals: number;
 }
 
-export interface ERC721Metadata {
+export interface NonFungibleTokenMetadata {
   address: Address;
   name: string;
   symbol: string;
@@ -98,7 +98,12 @@ export interface RentalAgreement {
   gcRewardTokenIndex: number;
 }
 
-export interface BlockchainEnterprise<Transaction = unknown> {
+export interface ChainAware {
+  // https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md
+  getChainId(): Promise<ChainId>;
+}
+
+export interface BlockchainEnterprise<Transaction = unknown> extends ChainAware {
   registerService(serviceParams: ServiceParams): Promise<Transaction>;
 
   // Staking
@@ -154,6 +159,8 @@ export interface BlockchainEnterprise<Transaction = unknown> {
 
   setEnterpriseTokenAllowance(amount: BigNumberish): Promise<Transaction>;
 
+  // Accessors
+
   isRegisteredService(serviceAddress: Address): Promise<boolean>;
 
   getProxyAdminAddress(): Promise<Address>;
@@ -194,9 +201,21 @@ export interface BlockchainEnterprise<Transaction = unknown> {
 
   getEnterpriseTokenAddress(): Promise<Address>;
 
+  getEnterpriseTokenMetadata(): Promise<FungibleTokenMetadata>;
+
+  getEnterpriseTokenType(): Promise<AssetType>;
+
   getRentalTokenAddress(): Promise<Address>;
 
+  getRentalTokenMetadata(tokenId: BigNumberish): Promise<NonFungibleTokenMetadata>;
+
+  getRentalTokenType(): Promise<AssetType>;
+
   getStakeTokenAddress(): Promise<Address>;
+
+  getStakeTokenType(): Promise<AssetType>;
+
+  getStakeTokenMetadata(tokenId: BigNumberish): Promise<NonFungibleTokenMetadata>;
 
   getStakeTokenIds(accountAddress?: Address): Promise<BigNumber[]>;
 
@@ -205,7 +224,7 @@ export interface BlockchainEnterprise<Transaction = unknown> {
   getStakingReward(stakeTokenId: BigNumberish): Promise<BigNumber>;
 }
 
-export interface BlockchainService<Transaction = unknown> {
+export interface BlockchainService<Transaction = unknown> extends ChainAware {
   setEnterpriseTokenAllowance(amount: BigNumberish): Promise<Transaction>;
 
   swapIn(amount: BigNumberish): Promise<Transaction>;
@@ -257,24 +276,12 @@ export interface BlockchainService<Transaction = unknown> {
   ): Promise<{ poolFee: BigNumber; serviceFee: BigNumber; gcFee: BigNumber }>;
 }
 
-export interface BlockchainProvider<Transaction = unknown> {
-  getChainId(): Promise<ChainId>;
-
+export interface BlockchainProvider<Transaction = unknown> extends ChainAware {
   enterprise(enterpriseAddress: Address): BlockchainEnterprise<Transaction>;
 
   service(serviceAddress: Address): BlockchainService<Transaction>;
 
   deployEnterprise(enterpriseFactoryAddress: Address, params: EnterpriseParams): Promise<Transaction>;
 
-  getERC20Metadata(tokenAddress: Address): Promise<ERC20Metadata>;
-
-  getERC721Metadata(tokenAddress: Address, tokenId: BigNumberish): Promise<ERC721Metadata>;
-
   getTokenBalance(tokenAddress: Address, accountAddress?: Address): Promise<BigNumber>;
-
-  getEnterpriseTokenMetadata(enterpriseAddress: Address): Promise<ERC20Metadata>;
-
-  getRentalTokenMetadata(enterpriseAddress: Address, tokenId: BigNumberish): Promise<ERC721Metadata>;
-
-  getStakeTokenMetadata(enterpriseAddress: Address, tokenId: BigNumberish): Promise<ERC721Metadata>;
 }
