@@ -205,6 +205,8 @@ export interface BlockchainEnterprise<Transaction = unknown> extends ChainAware 
 
   getRentalTokenAddress(): Promise<Address>;
 
+  getPaymentTokenAddressByIndex(index: BigNumberish): Promise<Address>;
+
   getRentalTokenMetadata(tokenId: BigNumberish): Promise<NonFungibleTokenMetadata>;
 
   getStakeTokenAddress(): Promise<Address>;

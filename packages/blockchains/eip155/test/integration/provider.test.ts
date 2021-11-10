@@ -131,6 +131,12 @@ describe('EIP155BlockchainProvider', () => {
       await expect(blockchainProvider.enterprise(enterprise.address).getChainId()).resolves.toEqual(chainId);
     });
 
+    it('retrieves payment token address by index', async () => {
+      await expect(blockchainProvider.enterprise(enterprise.address).getPaymentTokenAddressByIndex(0)).resolves.toEqual(
+        enterpriseToken.address,
+      );
+    });
+
     it('retrieves enterprise data', async () => {
       const data = await blockchainProvider.enterprise(enterprise.address).getInfo();
       expect(data).toStrictEqual(expectedEnterpriseData);

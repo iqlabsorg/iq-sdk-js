@@ -160,6 +160,10 @@ export class EIP155BlockchainEnterprise extends BlockchainEntity implements Bloc
     return this.contract.getStakingReward(stakeTokenId);
   }
 
+  async getPaymentTokenAddressByIndex(index: BigNumberish): Promise<Address> {
+    return this.contract.getPaymentToken(index);
+  }
+
   async getEnterpriseTokenAllowance(accountAddress?: Address): Promise<BigNumber> {
     const enterpriseTokenAddress = await this.contract.getEnterpriseToken();
     const targetAccountAddress = await this.withFallbackToSignerAddress(accountAddress);
