@@ -1,4 +1,4 @@
-import { AccountId } from 'caip';
+import { AccountId, AssetId } from 'caip';
 import { BigNumberish } from '@ethersproject/bignumber';
 import {
   AccountState as OnChainAccountState,
@@ -12,7 +12,7 @@ export type EnterpriseInfo = Omit<OnChainEnterpriseInfo, 'address'> & {
   accountId: AccountId;
 };
 
-export type ServiceInfo = Omit<OnChainServiceInfo, 'address' | 'baseToken'> & {
+export type ServiceInfo = Omit<OnChainServiceInfo, 'address' | 'baseToken' | 'index'> & {
   accountId: AccountId;
   baseTokenAccountId: AccountId;
 };
@@ -27,13 +27,14 @@ export type RentalFeeEstimationRequest = {
 export type RentRequest = RentalFeeEstimationRequest & { maxPayment: BigNumberish };
 
 export type AccountState = Omit<OnChainAccountState, 'serviceAddress' | 'accountAddress'> & {
-  serviceId: AccountId;
+  serviceAccountId: AccountId;
   accountId: AccountId;
 };
 
-// export type Stake = Omit<OnChainStake, 'tokenId'> & {
-//   tokenId: AssetId;
-// };
-export type Stake = OnChainStake;
+export type Stake = Omit<OnChainStake, 'tokenId'> & {
+  tokenId: AssetId;
+};
 
-export type RentalAgreement = OnChainRentalAgreement;
+export type RentalAgreement = Omit<OnChainRentalAgreement, 'rentalTokenId'> & {
+  rentalTokenId: AssetId;
+};

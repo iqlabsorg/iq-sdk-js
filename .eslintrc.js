@@ -105,4 +105,12 @@ module.exports = {
     'no-unneeded-ternary': 'error',
     'no-useless-computed-key': 'error',
   },
+  'overrides': [
+    {
+      'files': ['*.test.ts'],
+      'rules': {
+        'sonarjs/no-duplicate-string': 'off',
+      },
+    },
+  ],
 };

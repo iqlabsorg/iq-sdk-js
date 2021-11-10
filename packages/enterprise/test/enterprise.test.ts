@@ -1,22 +1,43 @@
-import { AccountId, ChainId } from 'caip';
+import { AccountId, AssetId, AssetType, ChainId } from 'caip';
 import { BigNumber } from '@ethersproject/bignumber';
 import { EnterpriseInfo as OnChainEnterpriseInfo } from '@iqprotocol/abstract-blockchain';
-import { blockchainEnterpriseMock, blockchainProviderMock } from './support/mocks';
-import { Enterprise, RentalFeeEstimationRequest, EnterpriseInfo } from '../src';
+import { blockchainEnterpriseMock, blockchainProviderMock, blockchainServiceMock } from './support/mocks';
+import { Enterprise, EnterpriseInfo, RentalFeeEstimationRequest, RentRequest } from '../src';
+import { AssetTypes } from '../src/enterprise';
 
 /**
  * @group unit
  */
 describe('Enterprise', () => {
   const chainId = new ChainId({ namespace: 'eip155', reference: '1' });
+  const nftStandard = 'erc721';
   const enterpriseAddress = '0x34437589B4DC1EAcBe08824645164F93E5d989E1';
+  const rentalTokenAddress = '0x6A1f07F09952851fB0AEF2b37e502347688Ea074';
+  const stakeTokenAddress = '0xCd64963Eb20Bf46F0fe6dd3EbdA1142d69bc6f3f';
   const enterpriseAccountId = new AccountId({ chainId, address: enterpriseAddress });
+
+  const assetTypes: AssetTypes = {
+    rentalToken: new AssetType({
+      chainId,
+      assetName: { namespace: nftStandard, reference: rentalTokenAddress },
+    }),
+    stakeToken: new AssetType({
+      chainId,
+      assetName: { namespace: nftStandard, reference: stakeTokenAddress },
+    }),
+  };
 
   let enterprise: Enterprise;
 
   beforeEach(async () => {
     jest.clearAllMocks();
+    blockchainProviderMock.getNonFungibleTokenStandard.mockResolvedValue(nftStandard);
     blockchainProviderMock.getChainId.mockResolvedValue(chainId);
+    blockchainServiceMock.getChainId.mockResolvedValue(chainId);
+    blockchainEnterpriseMock.getChainId.mockResolvedValue(chainId);
+    blockchainEnterpriseMock.getRentalTokenAddress.mockResolvedValue(rentalTokenAddress);
+    blockchainEnterpriseMock.getStakeTokenAddress.mockResolvedValue(stakeTokenAddress);
+
     enterprise = await Enterprise.create({ blockchain: blockchainProviderMock, accountId: enterpriseAccountId });
   });
 
@@ -30,9 +51,15 @@ describe('Enterprise', () => {
   });
 
   it('returns correct ID', () => {
-    const chainId = new ChainId({ namespace: 'eip155', reference: '1' });
-    blockchainProviderMock.getChainId.mockResolvedValue(chainId);
     expect(enterprise.getAccountId()).toStrictEqual(enterpriseAccountId);
+  });
+
+  it('returns rental token type', () => {
+    expect(enterprise.getRentalTokenType()).toEqual(assetTypes.rentalToken);
+  });
+
+  it('returns stake token type', () => {
+    expect(enterprise.getStakeTokenType()).toEqual(assetTypes.stakeToken);
   });
 
   it('retrieves enterprise info', async () => {
@@ -100,7 +127,9 @@ describe('Enterprise', () => {
     const getStakingReward = jest
       .spyOn(blockchainEnterpriseMock, 'getStakingReward')
       .mockResolvedValueOnce(expectedReward);
-    const reward = await enterprise.getStakingReward(stakeTokenId);
+    const reward = await enterprise.getStakingReward(
+      new AssetId({ chainId, assetName: assetTypes.stakeToken.assetName, tokenId: stakeTokenId }),
+    );
     expect(getStakingReward).toHaveBeenCalledWith(stakeTokenId);
     expect(reward).toEqual(expectedReward);
   });
@@ -108,14 +137,37 @@ describe('Enterprise', () => {
   it('allows to claim staking reward', async () => {
     const stakeTokenId = '1';
     const claimStakingReward = jest.spyOn(blockchainEnterpriseMock, 'claimStakingReward');
-    await enterprise.claimStakingReward(stakeTokenId);
+    await enterprise.claimStakingReward(
+      new AssetId({ chainId, assetName: assetTypes.stakeToken.assetName, tokenId: stakeTokenId }),
+    );
     expect(claimStakingReward).toHaveBeenCalledWith(stakeTokenId);
+  });
+
+  it('allows to rent', async () => {
+    const rent = jest.spyOn(blockchainEnterpriseMock, 'rent');
+    const serviceAddress = '0x5f93C65C8541ff4d975ed61026C213F9b85A8ea1';
+    const paymentTokenAddress = '0x923360eEbb90A53a1538365Cd674F529F117Ea99';
+    const rentalAmount = BigNumber.from(10);
+    const rentalPeriod = 86400 * 7;
+    const maxPayment = BigNumber.from(1);
+
+    await enterprise.rent({
+      serviceAccountId: new AccountId({ chainId, address: serviceAddress }),
+      paymentTokenAccountId: new AccountId({ chainId, address: paymentTokenAddress }),
+      rentalAmount,
+      rentalPeriod,
+      maxPayment,
+    } as RentRequest);
+
+    expect(rent).toHaveBeenCalledWith(serviceAddress, paymentTokenAddress, rentalAmount, rentalPeriod, maxPayment);
   });
 
   it('allows to return rental', async () => {
     const rentalTokenId = '1';
     const returnRental = jest.spyOn(blockchainEnterpriseMock, 'returnRental');
-    await enterprise.returnRental(rentalTokenId);
+    await enterprise.returnRental(
+      new AssetId({ chainId, assetName: assetTypes.rentalToken.assetName, tokenId: rentalTokenId }),
+    );
     expect(returnRental).toHaveBeenCalledWith(rentalTokenId);
   });
 });

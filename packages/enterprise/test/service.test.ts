@@ -40,7 +40,6 @@ describe('Service', () => {
       transferEnabled: false,
       name: 'Test Service 1',
       symbol: 'TST IQPT1',
-      index: 0,
     };
 
     jest.spyOn(blockchainServiceMock, 'getInfo').mockResolvedValue({
@@ -74,7 +73,7 @@ describe('Service', () => {
     await expect(service.getAccountState(accountId)).resolves.toEqual({
       ...accountState,
       accountId,
-      serviceId: serviceAccountId,
+      serviceAccountId: serviceAccountId,
     } as AccountState);
     expect(getAccountState).toHaveBeenCalledWith(accountAddress);
   });

@@ -1,5 +1,5 @@
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
-import { AssetType, ChainId } from 'caip';
+import { ChainId } from 'caip';
 
 export type Address = string;
 
@@ -203,17 +203,11 @@ export interface BlockchainEnterprise<Transaction = unknown> extends ChainAware 
 
   getEnterpriseTokenMetadata(): Promise<FungibleTokenMetadata>;
 
-  getEnterpriseTokenType(): Promise<AssetType>;
-
   getRentalTokenAddress(): Promise<Address>;
 
   getRentalTokenMetadata(tokenId: BigNumberish): Promise<NonFungibleTokenMetadata>;
 
-  getRentalTokenType(): Promise<AssetType>;
-
   getStakeTokenAddress(): Promise<Address>;
-
-  getStakeTokenType(): Promise<AssetType>;
 
   getStakeTokenMetadata(tokenId: BigNumberish): Promise<NonFungibleTokenMetadata>;
 
@@ -284,4 +278,6 @@ export interface BlockchainProvider<Transaction = unknown> extends ChainAware {
   deployEnterprise(enterpriseFactoryAddress: Address, params: EnterpriseParams): Promise<Transaction>;
 
   getTokenBalance(tokenAddress: Address, accountAddress?: Address): Promise<BigNumber>;
+
+  getNonFungibleTokenStandard(): Promise<string>;
 }

@@ -31,12 +31,6 @@ export abstract class BlockchainEntity implements ChainAware {
     return new ChainId({ namespace: 'eip155', reference: reference.toString() });
   }
 
-  // todo: resolve namespaces from chainID
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-  getAssetNamespace(chainId: ChainId, ntf: boolean): string {
-    return ntf ? 'erc721' : 'erc20';
-  }
-
   protected async getFungibleTokenMetadata(tokenAddress: Address): Promise<FungibleTokenMetadata> {
     const token = this.resolveERC20Token(tokenAddress);
     const [name, symbol, decimals] = await Promise.all([token.name(), token.symbol(), token.decimals()]);

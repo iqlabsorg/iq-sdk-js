@@ -13,7 +13,6 @@ import {
 import { Enterprise } from './contracts';
 import { BlockchainEntity } from './blockchain-entity';
 import { pick } from './utils';
-import { AssetType } from 'caip';
 
 export class EIP155BlockchainEnterprise extends BlockchainEntity implements BlockchainEnterprise<ContractTransaction> {
   private readonly contract: Enterprise;
@@ -171,19 +170,6 @@ export class EIP155BlockchainEnterprise extends BlockchainEntity implements Bloc
     return this.contract.getEnterpriseToken();
   }
 
-  async getEnterpriseTokenType(): Promise<AssetType> {
-    const chainId = await this.getChainId();
-    const namespace = this.getAssetNamespace(chainId, false);
-    const reference = await this.getEnterpriseTokenAddress();
-    return new AssetType({
-      chainId,
-      assetName: {
-        namespace,
-        reference,
-      },
-    });
-  }
-
   async getEnterpriseTokenMetadata(): Promise<FungibleTokenMetadata> {
     const tokenAddress = await this.getEnterpriseTokenAddress();
     return this.getFungibleTokenMetadata(tokenAddress);
@@ -193,19 +179,6 @@ export class EIP155BlockchainEnterprise extends BlockchainEntity implements Bloc
     return this.contract.getRentalToken();
   }
 
-  async getRentalTokenType(): Promise<AssetType> {
-    const chainId = await this.getChainId();
-    const namespace = this.getAssetNamespace(chainId, true);
-    const reference = await this.getRentalTokenAddress();
-    return new AssetType({
-      chainId,
-      assetName: {
-        namespace,
-        reference,
-      },
-    });
-  }
-
   async getRentalTokenMetadata(tokenId: BigNumberish): Promise<NonFungibleTokenMetadata> {
     const tokenAddress = await this.getRentalTokenAddress();
     return this.getNonFungibleTokenMetadata(tokenAddress, tokenId);
@@ -213,19 +186,6 @@ export class EIP155BlockchainEnterprise extends BlockchainEntity implements Bloc
 
   async getStakeTokenAddress(): Promise<Address> {
     return this.contract.getStakeToken();
-  }
-
-  async getStakeTokenType(): Promise<AssetType> {
-    const chainId = await this.getChainId();
-    const namespace = this.getAssetNamespace(chainId, true);
-    const reference = await this.getStakeTokenAddress();
-    return new AssetType({
-      chainId,
-      assetName: {
-        namespace,
-        reference,
-      },
-    });
   }
 
   async getStakeTokenMetadata(tokenId: BigNumberish): Promise<NonFungibleTokenMetadata> {

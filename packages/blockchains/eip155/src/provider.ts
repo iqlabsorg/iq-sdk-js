@@ -42,4 +42,15 @@ export class EIP155BlockchainProvider extends BlockchainEntity implements Blockc
     const targetAccountAddress = await this.withFallbackToSignerAddress(accountAddress);
     return this.resolveERC20Token(tokenAddress).balanceOf(targetAccountAddress);
   }
+
+  async getNonFungibleTokenStandard(): Promise<string> {
+    const chainId = await this.getChainId();
+    switch (chainId.namespace) {
+      case 'eip155:56':
+      case 'eip155:97':
+        return 'bep721';
+      default:
+        return 'erc721';
+    }
+  }
 }

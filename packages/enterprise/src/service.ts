@@ -3,6 +3,7 @@ import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
 import { Address, BlockchainProvider, BlockchainService } from '@iqprotocol/abstract-blockchain';
 import { ServiceInfo, AccountState } from './types';
 import { pick } from './utils';
+import { AddressTranslator } from './address-translator';
 
 export interface ServiceConfig<Transaction> {
   blockchain: BlockchainProvider<Transaction>;
@@ -10,11 +11,17 @@ export interface ServiceConfig<Transaction> {
 }
 
 export class Service<Transaction = unknown> {
+  private readonly blockchainService: BlockchainService<Transaction>;
+  private readonly addressTranslator: AddressTranslator;
+
   protected constructor(
     private readonly accountId: AccountId,
     private readonly chainId: ChainId,
-    private readonly blockchainService: BlockchainService<Transaction>,
-  ) {}
+    readonly blockchain: BlockchainProvider<Transaction>,
+  ) {
+    this.blockchainService = blockchain.service(accountId.address);
+    this.addressTranslator = new AddressTranslator(chainId);
+  }
 
   static async create<Transaction = unknown>({
     blockchain,
@@ -24,8 +31,8 @@ export class Service<Transaction = unknown> {
     if (chainId.toString() !== accountId.chainId.toString()) {
       throw new Error(`Chain ID mismatch!`);
     }
-    const blockchainService = blockchain.service(accountId.address);
-    return new Service<Transaction>(accountId, chainId, blockchainService);
+
+    return new Service<Transaction>(accountId, chainId, blockchain);
   }
 
   getAccountId(): AccountId {
@@ -39,8 +46,8 @@ export class Service<Transaction = unknown> {
   async getInfo(): Promise<ServiceInfo> {
     const info = await this.blockchainService.getInfo();
     return {
-      accountId: this.toAccountId(info.address),
-      baseTokenAccountId: this.toAccountId(info.baseToken),
+      accountId: this.addressToAccountId(info.address),
+      baseTokenAccountId: this.addressToAccountId(info.baseToken),
       ...pick(info, [
         'name',
         'symbol',
@@ -48,7 +55,6 @@ export class Service<Transaction = unknown> {
         'minGCFee',
         'serviceFeePercent',
         'energyGapHalvingPeriod',
-        'index',
         'minRentalPeriod',
         'maxRentalPeriod',
         'swappingEnabled',
@@ -58,10 +64,10 @@ export class Service<Transaction = unknown> {
   }
 
   async getAccountState(accountId: AccountId): Promise<AccountState> {
-    const state = await this.blockchainService.getAccountState(this.toAddress(accountId));
+    const state = await this.blockchainService.getAccountState(this.accountIdToAddress(accountId));
     return {
-      serviceId: this.accountId,
-      accountId: this.toAccountId(state.accountAddress),
+      serviceAccountId: this.accountId,
+      accountId: this.addressToAccountId(state.accountAddress),
       ...pick(state, ['balance', 'lockedBalance', 'energy', 'timestamp']),
     };
   }
@@ -83,7 +89,7 @@ export class Service<Transaction = unknown> {
   }
 
   async getBaseTokenAccountId(): Promise<AccountId> {
-    return this.toAccountId(await this.blockchainService.getBaseTokenAddress());
+    return this.addressToAccountId(await this.blockchainService.getBaseTokenAddress());
   }
 
   async getMinRentalPeriod(): Promise<number> {
@@ -107,7 +113,7 @@ export class Service<Transaction = unknown> {
   }
 
   async getEnterpriseTokenAllowance(accountId?: AccountId): Promise<BigNumber> {
-    return this.blockchainService.getEnterpriseTokenAllowance(this.toOptionalAddress(accountId));
+    return this.blockchainService.getEnterpriseTokenAllowance(this.optionalAccountIdToAddress(accountId));
   }
 
   async setEnterpriseTokenAllowance(amount: BigNumberish): Promise<Transaction> {
@@ -119,7 +125,7 @@ export class Service<Transaction = unknown> {
     baseTokenAccountId: AccountId,
     minGCFee: BigNumberish,
   ): Promise<Transaction> {
-    return this.blockchainService.setBaseRate(baseRate, this.toAddress(baseTokenAccountId), minGCFee);
+    return this.blockchainService.setBaseRate(baseRate, this.accountIdToAddress(baseTokenAccountId), minGCFee);
   }
 
   async setRentalPeriodLimits(minRentalPeriod: BigNumberish, maxRentalPeriod: BigNumberish): Promise<Transaction> {
@@ -139,15 +145,15 @@ export class Service<Transaction = unknown> {
   }
 
   async getAvailableBalance(accountId?: AccountId): Promise<BigNumber> {
-    return this.blockchainService.getAvailableBalance(this.toOptionalAddress(accountId));
+    return this.blockchainService.getAvailableBalance(this.optionalAccountIdToAddress(accountId));
   }
 
   async getBalance(accountId?: AccountId): Promise<BigNumber> {
-    return this.blockchainService.getBalance(this.toOptionalAddress(accountId));
+    return this.blockchainService.getBalance(this.optionalAccountIdToAddress(accountId));
   }
 
   async getEnergyAt(timestamp: number, accountId?: AccountId): Promise<BigNumber> {
-    return this.blockchainService.getEnergyAt(timestamp, this.toOptionalAddress(accountId));
+    return this.blockchainService.getEnergyAt(timestamp, this.optionalAccountIdToAddress(accountId));
   }
 
   async estimateRentalFee(
@@ -155,21 +161,22 @@ export class Service<Transaction = unknown> {
     rentalAmount: BigNumberish,
     rentalPeriod: BigNumberish,
   ): Promise<{ poolFee: BigNumber; serviceFee: BigNumber; gcFee: BigNumber }> {
-    return this.blockchainService.estimateRentalFee(this.toAddress(paymentTokenAccountId), rentalAmount, rentalPeriod);
+    return this.blockchainService.estimateRentalFee(
+      this.accountIdToAddress(paymentTokenAccountId),
+      rentalAmount,
+      rentalPeriod,
+    );
   }
 
-  protected toAccountId(address: Address): AccountId {
-    return new AccountId({ chainId: this.chainId, address });
+  protected addressToAccountId(address: Address): AccountId {
+    return this.addressTranslator.addressToAccountId(address);
   }
 
-  protected toAddress(accountId: AccountId): Address {
-    if (this.chainId.toString() !== accountId.chainId.toString()) {
-      throw new Error(`Chain ID mismatch for! Service chain ID: ${this.chainId.toString()}`);
-    }
-    return accountId.address;
+  protected accountIdToAddress(accountId: AccountId): Address {
+    return this.addressTranslator.accountIdToAddress(accountId);
   }
 
-  protected toOptionalAddress(accountId?: AccountId): Address | undefined {
-    return accountId ? this.toAddress(accountId) : undefined;
+  protected optionalAccountIdToAddress(accountId?: AccountId): Address | undefined {
+    return this.addressTranslator.optionalAccountIdToAddress(accountId);
   }
 }

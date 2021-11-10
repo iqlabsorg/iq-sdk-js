@@ -17,7 +17,7 @@ import { BigNumber } from '@ethersproject/bignumber';
 import { EIP155BlockchainProvider } from '../../src';
 import { baseRate, estimateAndRent, getEnterprise, getPowerToken, wait, waitBlockchainTime } from './utils';
 import { DefaultConverter, Enterprise, EnterpriseFactory, ERC20Mock } from '../../src/contracts';
-import { AssetType, ChainId } from 'caip';
+import { ChainId } from 'caip';
 
 type Awaited<T> = T extends PromiseLike<infer U> ? Awaited<U> : T;
 
@@ -134,45 +134,6 @@ describe('EIP155BlockchainProvider', () => {
     it('retrieves enterprise data', async () => {
       const data = await blockchainProvider.enterprise(enterprise.address).getInfo();
       expect(data).toStrictEqual(expectedEnterpriseData);
-    });
-
-    it('returns enterprise token type', async () => {
-      const tokenAddress = await blockchainProvider.enterprise(enterprise.address).getEnterpriseTokenAddress();
-      await expect(blockchainProvider.enterprise(enterprise.address).getEnterpriseTokenType()).resolves.toEqual(
-        new AssetType({
-          chainId,
-          assetName: {
-            namespace: 'erc20',
-            reference: tokenAddress,
-          },
-        }),
-      );
-    });
-
-    it('returns rental token type', async () => {
-      const tokenAddress = await blockchainProvider.enterprise(enterprise.address).getRentalTokenAddress();
-      await expect(blockchainProvider.enterprise(enterprise.address).getRentalTokenType()).resolves.toEqual(
-        new AssetType({
-          chainId,
-          assetName: {
-            namespace: 'erc721',
-            reference: tokenAddress,
-          },
-        }),
-      );
-    });
-
-    it('returns stake token type', async () => {
-      const tokenAddress = await blockchainProvider.enterprise(enterprise.address).getStakeTokenAddress();
-      await expect(blockchainProvider.enterprise(enterprise.address).getStakeTokenType()).resolves.toEqual(
-        new AssetType({
-          chainId,
-          assetName: {
-            namespace: 'erc721',
-            reference: tokenAddress,
-          },
-        }),
-      );
     });
 
     it('retrieves enterprise token metadata', async () => {
