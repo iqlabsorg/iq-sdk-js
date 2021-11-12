@@ -1,6 +1,6 @@
 {
   "name": "@iqprotocol/enterprise",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "bugs": "https://github.com/iqlabsorg/iq-sdk-js/issues",
   "repository": {
     "type": "git",
@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@ethersproject/bignumber": "^5.3.0",
-    "@iqprotocol/abstract-blockchain": "^0.11.0",
+    "@iqprotocol/abstract-blockchain": "^0.12.0",
     "caip": "^1.0.0"
   },
   "publishConfig": {
