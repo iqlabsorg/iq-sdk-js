@@ -1,38 +1,29 @@
 import { AccountId, ChainId } from 'caip';
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
-import { Address, BlockchainProvider, BlockchainService } from '@iqprotocol/abstract-blockchain';
-import { ServiceInfo, AccountState } from './types';
+import { BlockchainProvider } from '@iqprotocol/abstract-blockchain';
+import { AccountState, Service, ServiceConfigWriter, ServiceInfo } from './types';
 import { pick } from './utils';
 import { AddressTranslator } from './address-translator';
+import { AbstractServiceConfig } from './abstract-service-config';
+import { ServiceConfigurator } from './service-configurator';
 
-export interface ServiceConfig<Transaction> {
-  blockchain: BlockchainProvider<Transaction>;
-  accountId: AccountId;
-}
-
-export class Service<Transaction = unknown> {
-  private readonly blockchainService: BlockchainService<Transaction>;
-  private readonly addressTranslator: AddressTranslator;
-
-  protected constructor(
+export class ServiceImpl<Transaction = unknown>
+  extends AbstractServiceConfig<Transaction>
+  implements Service<Transaction>
+{
+  constructor(
     private readonly accountId: AccountId,
     private readonly chainId: ChainId,
     readonly blockchain: BlockchainProvider<Transaction>,
   ) {
-    this.blockchainService = blockchain.service(accountId.address);
-    this.addressTranslator = new AddressTranslator(chainId);
-  }
-
-  static async create<Transaction = unknown>({
-    blockchain,
-    accountId,
-  }: ServiceConfig<Transaction>): Promise<Service<Transaction>> {
-    const chainId = await blockchain.getChainId();
+    super(blockchain.service(accountId.address), new AddressTranslator(chainId));
     if (chainId.toString() !== accountId.chainId.toString()) {
       throw new Error(`Chain ID mismatch!`);
     }
+  }
 
-    return new Service<Transaction>(accountId, chainId, blockchain);
+  getConfigurator(): ServiceConfigWriter<Transaction> {
+    return new ServiceConfigurator<Transaction>(this.blockchainService, this.addressTranslator);
   }
 
   getAccountId(): AccountId {
@@ -72,68 +63,12 @@ export class Service<Transaction = unknown> {
     };
   }
 
-  async getBaseRate(): Promise<BigNumber> {
-    return this.blockchainService.getBaseRate();
-  }
-
-  async getMinGCFee(): Promise<BigNumber> {
-    return this.blockchainService.getMinGCFee();
-  }
-
-  async getEnergyGapHalvingPeriod(): Promise<number> {
-    return this.blockchainService.getEnergyGapHalvingPeriod();
-  }
-
-  async getServiceIndex(): Promise<number> {
-    return this.blockchainService.getIndex();
-  }
-
-  async getBaseTokenAccountId(): Promise<AccountId> {
-    return this.addressToAccountId(await this.blockchainService.getBaseTokenAddress());
-  }
-
-  async getMinRentalPeriod(): Promise<number> {
-    return this.blockchainService.getMinRentalPeriod();
-  }
-
-  async getMaxRentalPeriod(): Promise<number> {
-    return this.blockchainService.getMaxRentalPeriod();
-  }
-
-  async getServiceFeePercent(): Promise<number> {
-    return this.blockchainService.getServiceFeePercent();
-  }
-
-  async isSwappingEnabled(): Promise<boolean> {
-    return this.blockchainService.isSwappingEnabled();
-  }
-
-  async isTransferEnabled(): Promise<boolean> {
-    return this.blockchainService.isTransferEnabled();
-  }
-
   async getEnterpriseTokenAllowance(accountId?: AccountId): Promise<BigNumber> {
     return this.blockchainService.getEnterpriseTokenAllowance(this.optionalAccountIdToAddress(accountId));
   }
 
   async setEnterpriseTokenAllowance(amount: BigNumberish): Promise<Transaction> {
     return this.blockchainService.setEnterpriseTokenAllowance(amount);
-  }
-
-  async setBaseRate(
-    baseRate: BigNumberish,
-    baseTokenAccountId: AccountId,
-    minGCFee: BigNumberish,
-  ): Promise<Transaction> {
-    return this.blockchainService.setBaseRate(baseRate, this.accountIdToAddress(baseTokenAccountId), minGCFee);
-  }
-
-  async setRentalPeriodLimits(minRentalPeriod: BigNumberish, maxRentalPeriod: BigNumberish): Promise<Transaction> {
-    return this.blockchainService.setRentalPeriodLimits(minRentalPeriod, maxRentalPeriod);
-  }
-
-  async setServiceFeePercent(feePercent: BigNumberish): Promise<Transaction> {
-    return this.blockchainService.setServiceFeePercent(feePercent);
   }
 
   async swapIn(amount: BigNumberish): Promise<Transaction> {
@@ -166,17 +101,5 @@ export class Service<Transaction = unknown> {
       rentalAmount,
       rentalPeriod,
     );
-  }
-
-  protected addressToAccountId(address: Address): AccountId {
-    return this.addressTranslator.addressToAccountId(address);
-  }
-
-  protected accountIdToAddress(accountId: AccountId): Address {
-    return this.addressTranslator.accountIdToAddress(accountId);
-  }
-
-  protected optionalAccountIdToAddress(accountId?: AccountId): Address | undefined {
-    return this.addressTranslator.optionalAccountIdToAddress(accountId);
   }
 }

@@ -5,7 +5,8 @@ import {
   AccountState as OnChainAccountState,
 } from '@iqprotocol/abstract-blockchain';
 import { blockchainProviderMock, blockchainServiceMock } from './support/mocks';
-import { Service, ServiceInfo, AccountState } from '../src';
+import { ServiceInfo, AccountState, Service } from '../src';
+import { ServiceFactory } from '../src/service-factory';
 
 /**
  * @group unit
@@ -20,7 +21,7 @@ describe('Service', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
     blockchainProviderMock.getChainId.mockResolvedValue(chainId);
-    service = await Service.create({ blockchain: blockchainProviderMock, accountId: serviceAccountId });
+    service = await new ServiceFactory(blockchainProviderMock).create(serviceAccountId);
   });
 
   it('returns correct ID', () => {

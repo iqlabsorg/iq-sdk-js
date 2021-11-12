@@ -1,6 +1,7 @@
 import { BlockchainEnterprise, BlockchainProvider, BlockchainService } from '@iqprotocol/abstract-blockchain';
 
 export const blockchainEnterpriseMock: jest.Mocked<BlockchainEnterprise> = {
+  getPaymentTokenAddressByIndex: jest.fn(),
   claimStakingReward: jest.fn(),
   decreaseStake: jest.fn(),
   estimateRentalFee: jest.fn(),

@@ -1,3 +1,5 @@
 export * from './types';
-export * from './enterprise';
-export * from './service';
+export { ServiceFactory } from './service-factory';
+export { EnterpriseFactory } from './enterprise-factory';
+export { EnterpriseConfigurator } from './enterprise-configurator';
+export { ServiceConfigurator } from './service-configurator';

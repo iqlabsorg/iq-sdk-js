@@ -69,6 +69,7 @@ module.exports = {
         allowTypedFunctionExpressions: true,
       },
     ],
+    '@typescript-eslint/no-empty-function': ['error', {allow: ['private-constructors']}],
 
     // eslint:recommended additional rules & best practices
     'no-extra-parens': 'error',
@@ -83,7 +84,6 @@ module.exports = {
     'grouped-accessor-pairs': 'error',
     'guard-for-in': 'error',
     'no-else-return': 'error',
-    'no-empty-function': ['error', { allow: ['constructors'] }],
     'no-eval': 'error',
     'no-extend-native': 'error',
     'no-floating-decimal': 'error',
