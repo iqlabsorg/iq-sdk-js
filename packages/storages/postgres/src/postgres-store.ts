@@ -54,7 +54,7 @@ export class PostgresStore extends AbstractStore {
     return {
       serviceId: String(row.service_id),
       accountId: String(row.account_id),
-      gapHalvingPeriod: Number(row.gap_halving_period),
+      energyGapHalvingPeriod: Number(row.energy_gap_halving_period),
       power: BigInt(row.power as string),
       lockedPower: BigInt(row.locked_power as string),
       energyCap: BigInt(row.energy_cap as string),
@@ -76,7 +76,7 @@ export class PostgresStore extends AbstractStore {
         sql`CREATE TABLE IF NOT EXISTS ${this.stateTableName} (
           service_id varchar NOT NULL,
           account_id varchar NOT NULL REFERENCES ${this.accountTableName} ON UPDATE RESTRICT ON DELETE RESTRICT,
-          gap_halving_period varchar NOT NULL,
+          energy_gap_halving_period varchar NOT NULL,
           power varchar NOT NULL,
           locked_power varchar NOT NULL,
           energy_cap varchar NOT NULL,
@@ -153,7 +153,7 @@ export class PostgresStore extends AbstractStore {
   protected async _initAccountState({
     accountId,
     serviceId,
-    gapHalvingPeriod,
+    energyGapHalvingPeriod,
     power,
     lockedPower,
     energyCap,
@@ -165,7 +165,7 @@ export class PostgresStore extends AbstractStore {
         sql`INSERT INTO ${this.stateTableName} (
             account_id,
             service_id,
-            gap_halving_period,
+            energy_gap_halving_period,
             power,
             locked_power,
             energy_cap,
@@ -174,7 +174,7 @@ export class PostgresStore extends AbstractStore {
           ) VALUES (
             ${accountId},
             ${serviceId},
-            ${gapHalvingPeriod.toString(10)},
+            ${energyGapHalvingPeriod.toString(10)},
             ${power.toString(10)},
             ${lockedPower.toString(10)},
             ${energyCap.toString(10)},
@@ -209,7 +209,7 @@ export class PostgresStore extends AbstractStore {
           WHERE
             account_id = ${prevState.accountId}
             AND service_id = ${prevState.serviceId}
-            AND gap_halving_period = ${prevState.gapHalvingPeriod.toString(10)}
+            AND energy_gap_halving_period = ${prevState.energyGapHalvingPeriod.toString(10)}
             AND power = ${prevState.power.toString(10)}
             AND locked_power = ${prevState.lockedPower.toString(10)}
             AND energy_cap = ${prevState.energyCap.toString(10)}
@@ -236,7 +236,7 @@ export class PostgresStore extends AbstractStore {
       sql`SELECT
             account_id,
             service_id,
-            gap_halving_period,
+            energy_gap_halving_period,
             power,
             locked_power,
             energy_cap,

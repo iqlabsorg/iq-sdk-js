@@ -1,4 +1,4 @@
-import { AccountId } from '@iqprotocol/abstract-blockchain';
+import { AccountId } from 'caip';
 import { recoverTypedSignature_v4, TypedMessage } from 'eth-sig-util';
 
 interface MessageTypeProperty {

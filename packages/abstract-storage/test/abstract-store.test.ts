@@ -40,7 +40,7 @@ describe('AbstractStore', () => {
   const accountState: AccountState = {
     accountId: account.id,
     serviceId: 'test-service',
-    gapHalvingPeriod: 86400,
+    energyGapHalvingPeriod: 86400,
     power: 10n,
     lockedPower: 0n,
     energyCap: 5n,

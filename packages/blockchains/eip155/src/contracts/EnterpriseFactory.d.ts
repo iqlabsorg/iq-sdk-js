@@ -23,10 +23,10 @@ interface EnterpriseFactoryInterface extends ethers.utils.Interface {
   functions: {
     "deploy(string,address,string,uint16,address)": FunctionFragment;
     "deployService(address)": FunctionFragment;
-    "getBorrowTokenImpl()": FunctionFragment;
     "getEnterpriseImpl()": FunctionFragment;
-    "getInterestTokenImpl()": FunctionFragment;
     "getPowerTokenImpl()": FunctionFragment;
+    "getRentalTokenImpl()": FunctionFragment;
+    "getStakeTokenImpl()": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -38,19 +38,19 @@ interface EnterpriseFactoryInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "getBorrowTokenImpl",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "getEnterpriseImpl",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getInterestTokenImpl",
+    functionFragment: "getPowerTokenImpl",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getPowerTokenImpl",
+    functionFragment: "getRentalTokenImpl",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getStakeTokenImpl",
     values?: undefined
   ): string;
 
@@ -60,19 +60,19 @@ interface EnterpriseFactoryInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getBorrowTokenImpl",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getEnterpriseImpl",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getInterestTokenImpl",
+    functionFragment: "getPowerTokenImpl",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getPowerTokenImpl",
+    functionFragment: "getRentalTokenImpl",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getStakeTokenImpl",
     data: BytesLike
   ): Result;
 
@@ -86,7 +86,7 @@ interface EnterpriseFactoryInterface extends ethers.utils.Interface {
 export type EnterpriseDeployedEvent = TypedEvent<
   [string, string, string, string, string] & {
     creator: string;
-    liquidityToken: string;
+    enterpriseToken: string;
     name: string;
     baseUri: string;
     deployed: string;
@@ -139,7 +139,7 @@ export class EnterpriseFactory extends BaseContract {
   functions: {
     deploy(
       name: string,
-      liquidityToken: string,
+      enterpriseToken: string,
       baseUri: string,
       gcFeePercent: BigNumberish,
       converter: string,
@@ -151,18 +151,18 @@ export class EnterpriseFactory extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    getBorrowTokenImpl(overrides?: CallOverrides): Promise<[string]>;
-
     getEnterpriseImpl(overrides?: CallOverrides): Promise<[string]>;
 
-    getInterestTokenImpl(overrides?: CallOverrides): Promise<[string]>;
-
     getPowerTokenImpl(overrides?: CallOverrides): Promise<[string]>;
+
+    getRentalTokenImpl(overrides?: CallOverrides): Promise<[string]>;
+
+    getStakeTokenImpl(overrides?: CallOverrides): Promise<[string]>;
   };
 
   deploy(
     name: string,
-    liquidityToken: string,
+    enterpriseToken: string,
     baseUri: string,
     gcFeePercent: BigNumberish,
     converter: string,
@@ -174,18 +174,18 @@ export class EnterpriseFactory extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  getBorrowTokenImpl(overrides?: CallOverrides): Promise<string>;
-
   getEnterpriseImpl(overrides?: CallOverrides): Promise<string>;
 
-  getInterestTokenImpl(overrides?: CallOverrides): Promise<string>;
-
   getPowerTokenImpl(overrides?: CallOverrides): Promise<string>;
+
+  getRentalTokenImpl(overrides?: CallOverrides): Promise<string>;
+
+  getStakeTokenImpl(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
     deploy(
       name: string,
-      liquidityToken: string,
+      enterpriseToken: string,
       baseUri: string,
       gcFeePercent: BigNumberish,
       converter: string,
@@ -194,19 +194,19 @@ export class EnterpriseFactory extends BaseContract {
 
     deployService(admin: string, overrides?: CallOverrides): Promise<string>;
 
-    getBorrowTokenImpl(overrides?: CallOverrides): Promise<string>;
-
     getEnterpriseImpl(overrides?: CallOverrides): Promise<string>;
 
-    getInterestTokenImpl(overrides?: CallOverrides): Promise<string>;
-
     getPowerTokenImpl(overrides?: CallOverrides): Promise<string>;
+
+    getRentalTokenImpl(overrides?: CallOverrides): Promise<string>;
+
+    getStakeTokenImpl(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
     "EnterpriseDeployed(address,address,string,string,address)"(
       creator?: string | null,
-      liquidityToken?: string | null,
+      enterpriseToken?: string | null,
       name?: null,
       baseUri?: null,
       deployed?: null
@@ -214,7 +214,7 @@ export class EnterpriseFactory extends BaseContract {
       [string, string, string, string, string],
       {
         creator: string;
-        liquidityToken: string;
+        enterpriseToken: string;
         name: string;
         baseUri: string;
         deployed: string;
@@ -223,7 +223,7 @@ export class EnterpriseFactory extends BaseContract {
 
     EnterpriseDeployed(
       creator?: string | null,
-      liquidityToken?: string | null,
+      enterpriseToken?: string | null,
       name?: null,
       baseUri?: null,
       deployed?: null
@@ -231,7 +231,7 @@ export class EnterpriseFactory extends BaseContract {
       [string, string, string, string, string],
       {
         creator: string;
-        liquidityToken: string;
+        enterpriseToken: string;
         name: string;
         baseUri: string;
         deployed: string;
@@ -242,7 +242,7 @@ export class EnterpriseFactory extends BaseContract {
   estimateGas: {
     deploy(
       name: string,
-      liquidityToken: string,
+      enterpriseToken: string,
       baseUri: string,
       gcFeePercent: BigNumberish,
       converter: string,
@@ -254,19 +254,19 @@ export class EnterpriseFactory extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    getBorrowTokenImpl(overrides?: CallOverrides): Promise<BigNumber>;
-
     getEnterpriseImpl(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getInterestTokenImpl(overrides?: CallOverrides): Promise<BigNumber>;
-
     getPowerTokenImpl(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getRentalTokenImpl(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getStakeTokenImpl(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
     deploy(
       name: string,
-      liquidityToken: string,
+      enterpriseToken: string,
       baseUri: string,
       gcFeePercent: BigNumberish,
       converter: string,
@@ -278,16 +278,14 @@ export class EnterpriseFactory extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    getBorrowTokenImpl(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getEnterpriseImpl(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getInterestTokenImpl(
+    getPowerTokenImpl(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getRentalTokenImpl(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getPowerTokenImpl(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getStakeTokenImpl(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

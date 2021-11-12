@@ -1,10 +1,10 @@
 // IQ Protocol smart contract names.
 export enum IQContractName {
-  BorrowToken = 'BorrowToken',
+  RentalToken = 'RentalToken',
   DefaultConverter = 'DefaultConverter',
   Enterprise = 'Enterprise',
   EnterpriseFactory = 'EnterpriseFactory',
-  InterestToken = 'InterestToken',
+  StakeToken = 'StakeToken',
   PowerToken = 'PowerToken',
 }
 

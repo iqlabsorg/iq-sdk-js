@@ -1,5 +1,5 @@
+import { AccountId } from 'caip';
 import { Account, AccountData, AccountOwnershipProof, StorageProvider } from '@iqprotocol/abstract-storage';
-import { AccountId } from '@iqprotocol/abstract-blockchain';
 import { AccountOwnershipVerifier } from './account-ownership-verifier';
 
 export interface AccountManagerConfig {

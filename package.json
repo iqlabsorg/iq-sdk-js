@@ -21,6 +21,7 @@
     "lint": "eslint packages/**/*.ts",
     "lint:fix": "yarn lint --fix",
     "build": "lerna run build",
+    "build:clean": "lerna run build:clean",
     "prepublish": "lerna run prepublish",
     "prepare": "husky install",
     "docs": "run-s docs:clean docs:generate",

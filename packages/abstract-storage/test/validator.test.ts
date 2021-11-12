@@ -30,7 +30,7 @@ describe('DefaultValidator', () => {
     const accountState: AccountState = {
       accountId: 'account-id',
       serviceId: 'test-service',
-      gapHalvingPeriod: 86400,
+      energyGapHalvingPeriod: 86400,
       power: 10n,
       lockedPower: 2n,
       energyCap: 5n,
@@ -58,11 +58,11 @@ describe('DefaultValidator', () => {
     });
 
     it('throws an error when the gap halving period is not positive', () => {
-      expect(() => validator.validateAccountState({ ...accountState, gapHalvingPeriod: 0 })).toThrowError(
-        new AccountStateError('Invalid gap halving period'),
+      expect(() => validator.validateAccountState({ ...accountState, energyGapHalvingPeriod: 0 })).toThrowError(
+        new AccountStateError('Invalid energy gap halving period'),
       );
-      expect(() => validator.validateAccountState({ ...accountState, gapHalvingPeriod: -1 })).toThrowError(
-        new AccountStateError('Invalid gap halving period'),
+      expect(() => validator.validateAccountState({ ...accountState, energyGapHalvingPeriod: -1 })).toThrowError(
+        new AccountStateError('Invalid energy gap halving period'),
       );
     });
 
@@ -72,7 +72,7 @@ describe('DefaultValidator', () => {
       );
     });
 
-    it.only('throws an error when the energyCalculatedAt is negative', () => {
+    it('throws an error when the energyCalculatedAt is negative', () => {
       expect(() => validator.validateAccountState({ ...accountState, energyCalculatedAt: -1 })).toThrowError(
         new AccountStateError('Negative energy calculation time'),
       );

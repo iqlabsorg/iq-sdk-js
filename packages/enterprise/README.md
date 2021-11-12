@@ -15,12 +15,14 @@ yarn add @iqprotocol/enterprise
 
 ## Usage
 ```ts
-import { Enterprise } from '@iqprotocol/enterprise';
+import { EnterpriseFactory } from '@iqprotocol/enterprise';
 import { EIP155BlockchainProvider } from '@iqprotocol/eip155';
 
-const enterpriseContractAddress = '0x...'
 const blockchain = new EIP155BlockchainProvider(...);
-const enterprise = new Enterprise({ blockchain, address: enterpriseContractAddress });
+const chainId = await blockchain.getChainId();
+const accountId = new AccountId({ address: '0x...', chainId });
+const enterpriseFactory = new EnterpriseFactory(blockchain); 
+const enterprise = await enterpriseFactory.create(accountId);
 
 const enterpriseInfo = await enterprise.getInfo();
 const services = await enterprise.getServices();

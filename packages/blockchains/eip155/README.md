@@ -29,6 +29,7 @@ const blockchain = new EIP155BlockchainProvider({
 });
 
 const enterpriseAddress = '0x...';
-const enterpriseInfo = await blockchain.getEnterpriseInfo(enterpriseAddress);
-
+const serviceAddress = '0x...';
+const enterpriseInfo = await blockchain.enterprise(enterpriseAddress).getInfo();
+const serviceInfo = await blockchain.service(serviceAddress).getInfo();
 ```

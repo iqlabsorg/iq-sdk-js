@@ -20,12 +20,12 @@ export class DefaultValidator implements AccountStateValidator {
     const requiredProperties: Array<keyof AccountState> = [
       'serviceId',
       'accountId',
-      'gapHalvingPeriod',
       'power',
       'lockedPower',
       'energyCap',
       'energy',
       'energyCalculatedAt',
+      'energyGapHalvingPeriod',
     ];
 
     requiredProperties.forEach(propName => {
@@ -38,8 +38,8 @@ export class DefaultValidator implements AccountStateValidator {
       throw new AccountStateError('Negative power');
     }
 
-    if (accountState.gapHalvingPeriod <= 0) {
-      throw new AccountStateError('Invalid gap halving period');
+    if (accountState.energyGapHalvingPeriod <= 0) {
+      throw new AccountStateError('Invalid energy gap halving period');
     }
 
     if (accountState.lockedPower < 0) {

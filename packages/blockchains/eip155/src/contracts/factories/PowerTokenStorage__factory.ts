@@ -41,17 +41,17 @@ const _abi = [
       {
         indexed: false,
         internalType: "uint32",
-        name: "minDuration",
+        name: "minRentalPeriod",
         type: "uint32",
       },
       {
         indexed: false,
         internalType: "uint32",
-        name: "maxDuration",
+        name: "maxRentalPeriod",
         type: "uint32",
       },
     ],
-    name: "LoanDurationLimitsChanged",
+    name: "RentalPeriodLimitsChanged",
     type: "event",
   },
   {
@@ -70,25 +70,25 @@ const _abi = [
   {
     anonymous: false,
     inputs: [],
-    name: "TransferEnabled",
+    name: "SwappingEnabled",
     type: "event",
   },
   {
     anonymous: false,
     inputs: [],
-    name: "WrappingEnabled",
+    name: "TransferEnabled",
     type: "event",
   },
   {
     inputs: [],
-    name: "enableTransferForever",
+    name: "enableSwappingForever",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
     inputs: [],
-    name: "enableWrappingForever",
+    name: "enableTransferForever",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -121,12 +121,12 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "getEnterprise",
+    name: "getEnergyGapHalvingPeriod",
     outputs: [
       {
-        internalType: "contract IEnterprise",
+        internalType: "uint32",
         name: "",
-        type: "address",
+        type: "uint32",
       },
     ],
     stateMutability: "view",
@@ -134,12 +134,12 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "getGapHalvingPeriod",
+    name: "getEnterprise",
     outputs: [
       {
-        internalType: "uint32",
+        internalType: "contract IEnterprise",
         name: "",
-        type: "uint32",
+        type: "address",
       },
     ],
     stateMutability: "view",
@@ -160,7 +160,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "getMaxLoanDuration",
+    name: "getMaxRentalPeriod",
     outputs: [
       {
         internalType: "uint32",
@@ -186,7 +186,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "getMinLoanDuration",
+    name: "getMinRentalPeriod",
     outputs: [
       {
         internalType: "uint32",
@@ -254,6 +254,11 @@ const _abi = [
         type: "address",
       },
       {
+        internalType: "contract IERC20Metadata",
+        name: "baseToken",
+        type: "address",
+      },
+      {
         internalType: "uint112",
         name: "baseRate",
         type: "uint112",
@@ -264,8 +269,13 @@ const _abi = [
         type: "uint96",
       },
       {
+        internalType: "uint16",
+        name: "serviceFeePercent",
+        type: "uint16",
+      },
+      {
         internalType: "uint32",
-        name: "gapHalvingPeriod",
+        name: "energyGapHalvingPeriod",
         type: "uint32",
       },
       {
@@ -274,9 +284,19 @@ const _abi = [
         type: "uint16",
       },
       {
-        internalType: "contract IERC20Metadata",
-        name: "baseToken",
-        type: "address",
+        internalType: "uint32",
+        name: "minRentalPeriod",
+        type: "uint32",
+      },
+      {
+        internalType: "uint32",
+        name: "maxRentalPeriod",
+        type: "uint32",
+      },
+      {
+        internalType: "bool",
+        name: "swappingEnabled",
+        type: "bool",
       },
     ],
     name: "initialize",
@@ -301,39 +321,24 @@ const _abi = [
     inputs: [
       {
         internalType: "uint32",
-        name: "minLoanDuration",
+        name: "period",
         type: "uint32",
       },
-      {
-        internalType: "uint32",
-        name: "maxLoanDuration",
-        type: "uint32",
-      },
-      {
-        internalType: "uint16",
-        name: "serviceFeePercent",
-        type: "uint16",
-      },
+    ],
+    name: "isAllowedRentalPeriod",
+    outputs: [
       {
         internalType: "bool",
-        name: "wrappingEnabled",
+        name: "",
         type: "bool",
       },
     ],
-    name: "initialize2",
-    outputs: [],
-    stateMutability: "nonpayable",
+    stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint32",
-        name: "duration",
-        type: "uint32",
-      },
-    ],
-    name: "isAllowedLoanDuration",
+    inputs: [],
+    name: "isSwappingEnabled",
     outputs: [
       {
         internalType: "bool",
@@ -347,19 +352,6 @@ const _abi = [
   {
     inputs: [],
     name: "isTransferEnabled",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "isWrappingEnabled",
     outputs: [
       {
         internalType: "bool",
@@ -397,16 +389,16 @@ const _abi = [
     inputs: [
       {
         internalType: "uint32",
-        name: "minLoanDuration",
+        name: "minRentalPeriod",
         type: "uint32",
       },
       {
         internalType: "uint32",
-        name: "maxLoanDuration",
+        name: "maxRentalPeriod",
         type: "uint32",
       },
     ],
-    name: "setLoanDurationLimits",
+    name: "setRentalPeriodLimits",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

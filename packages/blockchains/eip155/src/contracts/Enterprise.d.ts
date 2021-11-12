@@ -21,72 +21,68 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface EnterpriseInterface extends ethers.utils.Interface {
   functions: {
-    "addLiquidity(uint256)": FunctionFragment;
-    "borrow(address,address,uint112,uint32,uint256)": FunctionFragment;
-    "decreaseLiquidity(uint256,uint256)": FunctionFragment;
+    "claimStakingReward(uint256)": FunctionFragment;
+    "decreaseStake(uint256,uint256)": FunctionFragment;
     "disablePaymentToken(address)": FunctionFragment;
     "enablePaymentToken(address)": FunctionFragment;
-    "estimateLoan(address,address,uint112,uint32)": FunctionFragment;
-    "getAccruedInterest(uint256)": FunctionFragment;
+    "estimateRentalFee(address,address,uint112,uint32)": FunctionFragment;
+    "extendRentalPeriod(uint256,address,uint32,uint256)": FunctionFragment;
     "getAvailableReserve()": FunctionFragment;
     "getBaseUri()": FunctionFragment;
     "getBondingCurve()": FunctionFragment;
-    "getBorrowToken()": FunctionFragment;
-    "getBorrowerLoanReturnGracePeriod()": FunctionFragment;
     "getConverter()": FunctionFragment;
     "getEnterpriseCollector()": FunctionFragment;
-    "getEnterpriseLoanCollectGracePeriod()": FunctionFragment;
-    "getEnterpriseVault()": FunctionFragment;
+    "getEnterpriseOnlyCollectionPeriod()": FunctionFragment;
+    "getEnterpriseToken()": FunctionFragment;
+    "getEnterpriseWallet()": FunctionFragment;
     "getFactory()": FunctionFragment;
     "getGCFeePercent()": FunctionFragment;
     "getInfo()": FunctionFragment;
-    "getInterestGapHalvingPeriod()": FunctionFragment;
-    "getInterestToken()": FunctionFragment;
-    "getLiquidityInfo(uint256)": FunctionFragment;
-    "getLiquidityToken()": FunctionFragment;
-    "getLoanInfo(uint256)": FunctionFragment;
     "getPaymentToken(uint256)": FunctionFragment;
     "getPaymentTokenIndex(address)": FunctionFragment;
     "getPowerTokens()": FunctionFragment;
     "getProxyAdmin()": FunctionFragment;
+    "getRentalAgreement(uint256)": FunctionFragment;
+    "getRentalToken()": FunctionFragment;
+    "getRenterOnlyReturnPeriod()": FunctionFragment;
     "getReserve()": FunctionFragment;
+    "getStake(uint256)": FunctionFragment;
+    "getStakeToken()": FunctionFragment;
+    "getStakingReward(uint256)": FunctionFragment;
+    "getStreamingReserveHalvingPeriod()": FunctionFragment;
     "getUsedReserve()": FunctionFragment;
-    "increaseLiquidity(uint256,uint256)": FunctionFragment;
+    "increaseStake(uint256,uint256)": FunctionFragment;
     "initialize(string,string,uint16,address,address,address)": FunctionFragment;
     "initializeTokens(address,address,address)": FunctionFragment;
     "isRegisteredPowerToken(address)": FunctionFragment;
     "isSupportedPaymentToken(address)": FunctionFragment;
-    "loanTransfer(address,address,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
-    "reborrow(uint256,address,uint32,uint256)": FunctionFragment;
     "registerService(string,string,uint32,uint112,address,uint16,uint32,uint32,uint96,bool)": FunctionFragment;
-    "removeLiquidity(uint256)": FunctionFragment;
-    "returnLoan(uint256)": FunctionFragment;
+    "rent(address,address,uint112,uint32,uint256)": FunctionFragment;
+    "returnRental(uint256)": FunctionFragment;
     "setBaseUri(string)": FunctionFragment;
     "setBondingCurve(uint256,uint256)": FunctionFragment;
-    "setBorrowerLoanReturnGracePeriod(uint32)": FunctionFragment;
     "setConverter(address)": FunctionFragment;
     "setEnterpriseCollector(address)": FunctionFragment;
-    "setEnterpriseLoanCollectGracePeriod(uint32)": FunctionFragment;
-    "setEnterpriseVault(address)": FunctionFragment;
+    "setEnterpriseOnlyCollectionPeriod(uint32)": FunctionFragment;
+    "setEnterpriseWallet(address)": FunctionFragment;
     "setGcFeePercent(uint16)": FunctionFragment;
-    "setInterestGapHalvingPeriod(uint32)": FunctionFragment;
+    "setRenterOnlyReturnPeriod(uint32)": FunctionFragment;
+    "setStreamingReserveHalvingPeriod(uint32)": FunctionFragment;
     "shutdownEnterpriseForever()": FunctionFragment;
+    "stake(uint256)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "transferRental(address,address,uint256)": FunctionFragment;
+    "unstake(uint256)": FunctionFragment;
     "upgrade(address,address,address,address,address,address[])": FunctionFragment;
-    "withdrawInterest(uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "addLiquidity",
+    functionFragment: "claimStakingReward",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "borrow",
-    values: [string, string, BigNumberish, BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "decreaseLiquidity",
+    functionFragment: "decreaseStake",
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
@@ -98,12 +94,12 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "estimateLoan",
+    functionFragment: "estimateRentalFee",
     values: [string, string, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "getAccruedInterest",
-    values: [BigNumberish]
+    functionFragment: "extendRentalPeriod",
+    values: [BigNumberish, string, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getAvailableReserve",
@@ -118,14 +114,6 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getBorrowToken",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getBorrowerLoanReturnGracePeriod",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "getConverter",
     values?: undefined
   ): string;
@@ -134,11 +122,15 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getEnterpriseLoanCollectGracePeriod",
+    functionFragment: "getEnterpriseOnlyCollectionPeriod",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getEnterpriseVault",
+    functionFragment: "getEnterpriseToken",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getEnterpriseWallet",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -150,26 +142,6 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "getInfo", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "getInterestGapHalvingPeriod",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getInterestToken",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getLiquidityInfo",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getLiquidityToken",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getLoanInfo",
-    values: [BigNumberish]
-  ): string;
   encodeFunctionData(
     functionFragment: "getPaymentToken",
     values: [BigNumberish]
@@ -187,7 +159,35 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "getRentalAgreement",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRentalToken",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRenterOnlyReturnPeriod",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "getReserve",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getStake",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getStakeToken",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getStakingReward",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getStreamingReserveHalvingPeriod",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -195,7 +195,7 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "increaseLiquidity",
+    functionFragment: "increaseStake",
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
@@ -214,15 +214,7 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     functionFragment: "isSupportedPaymentToken",
     values: [string]
   ): string;
-  encodeFunctionData(
-    functionFragment: "loanTransfer",
-    values: [string, string, BigNumberish]
-  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "reborrow",
-    values: [BigNumberish, string, BigNumberish, BigNumberish]
-  ): string;
   encodeFunctionData(
     functionFragment: "registerService",
     values: [
@@ -239,21 +231,17 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "removeLiquidity",
-    values: [BigNumberish]
+    functionFragment: "rent",
+    values: [string, string, BigNumberish, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "returnLoan",
+    functionFragment: "returnRental",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "setBaseUri", values: [string]): string;
   encodeFunctionData(
     functionFragment: "setBondingCurve",
     values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setBorrowerLoanReturnGracePeriod",
-    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setConverter",
@@ -264,11 +252,11 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "setEnterpriseLoanCollectGracePeriod",
+    functionFragment: "setEnterpriseOnlyCollectionPeriod",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "setEnterpriseVault",
+    functionFragment: "setEnterpriseWallet",
     values: [string]
   ): string;
   encodeFunctionData(
@@ -276,33 +264,41 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "setInterestGapHalvingPeriod",
+    functionFragment: "setRenterOnlyReturnPeriod",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setStreamingReserveHalvingPeriod",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "shutdownEnterpriseForever",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "stake", values: [BigNumberish]): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [string]
   ): string;
   encodeFunctionData(
+    functionFragment: "transferRental",
+    values: [string, string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "unstake",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "upgrade",
     values: [string, string, string, string, string, string[]]
   ): string;
-  encodeFunctionData(
-    functionFragment: "withdrawInterest",
-    values: [BigNumberish]
-  ): string;
 
   decodeFunctionResult(
-    functionFragment: "addLiquidity",
+    functionFragment: "claimStakingReward",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "borrow", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "decreaseLiquidity",
+    functionFragment: "decreaseStake",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -314,11 +310,11 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "estimateLoan",
+    functionFragment: "estimateRentalFee",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getAccruedInterest",
+    functionFragment: "extendRentalPeriod",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -331,14 +327,6 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getBorrowToken",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getBorrowerLoanReturnGracePeriod",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getConverter",
     data: BytesLike
   ): Result;
@@ -347,11 +335,15 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getEnterpriseLoanCollectGracePeriod",
+    functionFragment: "getEnterpriseOnlyCollectionPeriod",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getEnterpriseVault",
+    functionFragment: "getEnterpriseToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getEnterpriseWallet",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getFactory", data: BytesLike): Result;
@@ -360,26 +352,6 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getInfo", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "getInterestGapHalvingPeriod",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getInterestToken",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getLiquidityInfo",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getLiquidityToken",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getLoanInfo",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "getPaymentToken",
     data: BytesLike
@@ -396,13 +368,38 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     functionFragment: "getProxyAdmin",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRentalAgreement",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRentalToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRenterOnlyReturnPeriod",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getReserve", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getStake", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getStakeToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getStakingReward",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getStreamingReserveHalvingPeriod",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getUsedReserve",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "increaseLiquidity",
+    functionFragment: "increaseStake",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
@@ -418,28 +415,19 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     functionFragment: "isSupportedPaymentToken",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "loanTransfer",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "reborrow", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "registerService",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "rent", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "removeLiquidity",
+    functionFragment: "returnRental",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "returnLoan", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setBaseUri", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setBondingCurve",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setBorrowerLoanReturnGracePeriod",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -451,11 +439,11 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setEnterpriseLoanCollectGracePeriod",
+    functionFragment: "setEnterpriseOnlyCollectionPeriod",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setEnterpriseVault",
+    functionFragment: "setEnterpriseWallet",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -463,114 +451,82 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setInterestGapHalvingPeriod",
+    functionFragment: "setRenterOnlyReturnPeriod",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setStreamingReserveHalvingPeriod",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "shutdownEnterpriseForever",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "stake", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "upgrade", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "withdrawInterest",
+    functionFragment: "transferRental",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "unstake", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "upgrade", data: BytesLike): Result;
 
   events: {
     "BaseUriChanged(string)": EventFragment;
     "BondingChanged(uint256,uint256)": EventFragment;
-    "Borrowed(uint256,address,address,address,uint112,uint112,uint112,uint112,uint32,uint32,uint32,uint32,uint256,uint256)": EventFragment;
-    "BorrowerLoanReturnGracePeriodChanged(uint32)": EventFragment;
     "ConverterChanged(address)": EventFragment;
     "EnterpriseCollectorChanged(address)": EventFragment;
-    "EnterpriseLoanCollectGracePeriodChanged(uint32)": EventFragment;
+    "EnterpriseOnlyCollectionPeriodChanged(uint32)": EventFragment;
     "EnterpriseShutdown()": EventFragment;
-    "EnterpriseVaultChanged(address)": EventFragment;
+    "EnterpriseWalletChanged(address)": EventFragment;
     "FixedReserveChanged(uint256)": EventFragment;
     "GcFeePercentChanged(uint16)": EventFragment;
-    "InterestGapHalvingPeriodChanged(uint32)": EventFragment;
-    "LiquidityChanged(uint256,address,uint8,uint256,uint256,uint256,uint256,uint256,uint256,uint256)": EventFragment;
-    "LoanExtended(uint256,address,address,uint112,uint112,uint32,uint32,uint32)": EventFragment;
-    "LoanReturned(uint256,address,address,uint112,uint112,address,uint256,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "PaymentTokenChange(address,bool)": EventFragment;
+    "RentalPeriodExtended(uint256,address,address,uint112,uint112,uint32,uint32,uint32)": EventFragment;
+    "RentalReturned(uint256,address,address,uint112,uint112,address,uint256,uint256)": EventFragment;
+    "Rented(uint256,address,address,address,uint112,uint112,uint112,uint112,uint32,uint32,uint32,uint32,uint256,uint256)": EventFragment;
+    "RenterOnlyReturnPeriodChanged(uint32)": EventFragment;
     "ServiceRegistered(address)": EventFragment;
+    "StakeChanged(uint256,address,uint8,uint256,uint256,uint256,uint256,uint256,uint256,uint256)": EventFragment;
     "StreamingReserveChanged(uint112,uint112)": EventFragment;
+    "StreamingReserveHalvingPeriodChanged(uint32)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "BaseUriChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BondingChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Borrowed"): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "BorrowerLoanReturnGracePeriodChanged"
-  ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ConverterChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EnterpriseCollectorChanged"): EventFragment;
   getEvent(
-    nameOrSignatureOrTopic: "EnterpriseLoanCollectGracePeriodChanged"
+    nameOrSignatureOrTopic: "EnterpriseOnlyCollectionPeriodChanged"
   ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EnterpriseShutdown"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "EnterpriseVaultChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EnterpriseWalletChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "FixedReserveChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "GcFeePercentChanged"): EventFragment;
-  getEvent(
-    nameOrSignatureOrTopic: "InterestGapHalvingPeriodChanged"
-  ): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "LiquidityChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "LoanExtended"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "LoanReturned"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PaymentTokenChange"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RentalPeriodExtended"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RentalReturned"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Rented"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "RenterOnlyReturnPeriodChanged"
+  ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ServiceRegistered"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "StakeChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "StreamingReserveChanged"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "StreamingReserveHalvingPeriodChanged"
+  ): EventFragment;
 }
 
 export type BaseUriChangedEvent = TypedEvent<[string] & { baseUri: string }>;
 
 export type BondingChangedEvent = TypedEvent<
   [BigNumber, BigNumber] & { pole: BigNumber; slope: BigNumber }
->;
-
-export type BorrowedEvent = TypedEvent<
-  [
-    BigNumber,
-    string,
-    string,
-    string,
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    number,
-    number,
-    number,
-    number,
-    BigNumber,
-    BigNumber
-  ] & {
-    borrowTokenId: BigNumber;
-    borrower: string;
-    powerToken: string;
-    paymentToken: string;
-    amount: BigNumber;
-    interest: BigNumber;
-    serviceFee: BigNumber;
-    gcFee: BigNumber;
-    borrowingTime: number;
-    maturityTime: number;
-    borrowerReturnGraceTime: number;
-    enterpriseCollectGraceTime: number;
-    reserve: BigNumber;
-    usedReserve: BigNumber;
-  }
->;
-
-export type BorrowerLoanReturnGracePeriodChangedEvent = TypedEvent<
-  [number] & { period: number }
 >;
 
 export type ConverterChangedEvent = TypedEvent<
@@ -581,14 +537,14 @@ export type EnterpriseCollectorChangedEvent = TypedEvent<
   [string] & { collector: string }
 >;
 
-export type EnterpriseLoanCollectGracePeriodChangedEvent = TypedEvent<
+export type EnterpriseOnlyCollectionPeriodChangedEvent = TypedEvent<
   [number] & { period: number }
 >;
 
 export type EnterpriseShutdownEvent = TypedEvent<[] & {}>;
 
-export type EnterpriseVaultChangedEvent = TypedEvent<
-  [string] & { vault: string }
+export type EnterpriseWalletChangedEvent = TypedEvent<
+  [string] & { wallet: string }
 >;
 
 export type FixedReserveChangedEvent = TypedEvent<
@@ -599,11 +555,92 @@ export type GcFeePercentChangedEvent = TypedEvent<
   [number] & { percent: number }
 >;
 
-export type InterestGapHalvingPeriodChangedEvent = TypedEvent<
+export type OwnershipTransferredEvent = TypedEvent<
+  [string, string] & { previousOwner: string; newOwner: string }
+>;
+
+export type PaymentTokenChangeEvent = TypedEvent<
+  [string, boolean] & { paymentToken: string; enabled: boolean }
+>;
+
+export type RentalPeriodExtendedEvent = TypedEvent<
+  [BigNumber, string, string, BigNumber, BigNumber, number, number, number] & {
+    rentalTokenId: BigNumber;
+    renter: string;
+    paymentToken: string;
+    poolFee: BigNumber;
+    serviceFee: BigNumber;
+    endTime: number;
+    renterOnlyReturnTime: number;
+    enterpriseOnlyCollectionTime: number;
+  }
+>;
+
+export type RentalReturnedEvent = TypedEvent<
+  [
+    BigNumber,
+    string,
+    string,
+    BigNumber,
+    BigNumber,
+    string,
+    BigNumber,
+    BigNumber
+  ] & {
+    rentalTokenId: BigNumber;
+    returner: string;
+    powerToken: string;
+    rentalAmount: BigNumber;
+    gcRewardAmount: BigNumber;
+    gcRewardToken: string;
+    totalReserve: BigNumber;
+    totalUsedReserve: BigNumber;
+  }
+>;
+
+export type RentedEvent = TypedEvent<
+  [
+    BigNumber,
+    string,
+    string,
+    string,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    number,
+    number,
+    number,
+    number,
+    BigNumber,
+    BigNumber
+  ] & {
+    rentalTokenId: BigNumber;
+    renter: string;
+    powerToken: string;
+    paymentToken: string;
+    rentalAmount: BigNumber;
+    poolFee: BigNumber;
+    serviceFee: BigNumber;
+    gcFee: BigNumber;
+    startTime: number;
+    endTime: number;
+    renterOnlyReturnTime: number;
+    enterpriseOnlyCollectionTime: number;
+    totalReserve: BigNumber;
+    totalUsedReserve: BigNumber;
+  }
+>;
+
+export type RenterOnlyReturnPeriodChangedEvent = TypedEvent<
   [number] & { period: number }
 >;
 
-export type LiquidityChangedEvent = TypedEvent<
+export type ServiceRegisteredEvent = TypedEvent<
+  [string] & { powerToken: string }
+>;
+
+export type StakeChangedEvent = TypedEvent<
   [
     BigNumber,
     string,
@@ -616,64 +653,17 @@ export type LiquidityChangedEvent = TypedEvent<
     BigNumber,
     BigNumber
   ] & {
-    interestTokenId: BigNumber;
-    liquidityProvider: string;
-    changeType: number;
+    stakeTokenId: BigNumber;
+    staker: string;
+    operation: number;
     amountDelta: BigNumber;
     amount: BigNumber;
     sharesDelta: BigNumber;
     shares: BigNumber;
     totalShares: BigNumber;
-    reserve: BigNumber;
-    usedReserve: BigNumber;
+    totalReserve: BigNumber;
+    totalUsedReserve: BigNumber;
   }
->;
-
-export type LoanExtendedEvent = TypedEvent<
-  [BigNumber, string, string, BigNumber, BigNumber, number, number, number] & {
-    borrowTokenId: BigNumber;
-    borrower: string;
-    paymentToken: string;
-    interest: BigNumber;
-    serviceFee: BigNumber;
-    maturityTime: number;
-    borrowerReturnGraceTime: number;
-    enterpriseCollectGraceTime: number;
-  }
->;
-
-export type LoanReturnedEvent = TypedEvent<
-  [
-    BigNumber,
-    string,
-    string,
-    BigNumber,
-    BigNumber,
-    string,
-    BigNumber,
-    BigNumber
-  ] & {
-    borrowTokenId: BigNumber;
-    returner: string;
-    powerToken: string;
-    amount: BigNumber;
-    gcFee: BigNumber;
-    gcFeeToken: string;
-    reserve: BigNumber;
-    usedReserve: BigNumber;
-  }
->;
-
-export type OwnershipTransferredEvent = TypedEvent<
-  [string, string] & { previousOwner: string; newOwner: string }
->;
-
-export type PaymentTokenChangeEvent = TypedEvent<
-  [string, boolean] & { paymentToken: string; enabled: boolean }
->;
-
-export type ServiceRegisteredEvent = TypedEvent<
-  [string] & { powerToken: string }
 >;
 
 export type StreamingReserveChangedEvent = TypedEvent<
@@ -681,6 +671,10 @@ export type StreamingReserveChangedEvent = TypedEvent<
     streamingReserve: BigNumber;
     streamingReserveTarget: BigNumber;
   }
+>;
+
+export type StreamingReserveHalvingPeriodChangedEvent = TypedEvent<
+  [number] & { period: number }
 >;
 
 export class Enterprise extends BaseContract {
@@ -727,23 +721,14 @@ export class Enterprise extends BaseContract {
   interface: EnterpriseInterface;
 
   functions: {
-    addLiquidity(
-      liquidityAmount: BigNumberish,
+    claimStakingReward(
+      stakeTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    borrow(
-      powerToken: string,
-      paymentToken: string,
-      loanAmount: BigNumberish,
-      duration: BigNumberish,
-      maxPayment: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    decreaseLiquidity(
-      interestTokenId: BigNumberish,
-      liquidityAmount: BigNumberish,
+    decreaseStake(
+      stakeTokenId: BigNumberish,
+      stakeAmountDelta: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -757,18 +742,21 @@ export class Enterprise extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    estimateLoan(
+    estimateRentalFee(
       powerToken: string,
       paymentToken: string,
-      amount: BigNumberish,
-      duration: BigNumberish,
+      rentalAmount: BigNumberish,
+      rentalPeriod: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    getAccruedInterest(
-      interestTokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    extendRentalPeriod(
+      rentalTokenId: BigNumberish,
+      paymentToken: string,
+      rentalPeriod: BigNumberish,
+      maxPayment: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     getAvailableReserve(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -778,21 +766,17 @@ export class Enterprise extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber, BigNumber] & { pole: BigNumber; slope: BigNumber }>;
 
-    getBorrowToken(overrides?: CallOverrides): Promise<[string]>;
-
-    getBorrowerLoanReturnGracePeriod(
-      overrides?: CallOverrides
-    ): Promise<[number]>;
-
     getConverter(overrides?: CallOverrides): Promise<[string]>;
 
     getEnterpriseCollector(overrides?: CallOverrides): Promise<[string]>;
 
-    getEnterpriseLoanCollectGracePeriod(
+    getEnterpriseOnlyCollectionPeriod(
       overrides?: CallOverrides
     ): Promise<[number]>;
 
-    getEnterpriseVault(overrides?: CallOverrides): Promise<[string]>;
+    getEnterpriseToken(overrides?: CallOverrides): Promise<[string]>;
+
+    getEnterpriseWallet(overrides?: CallOverrides): Promise<[string]>;
 
     getFactory(overrides?: CallOverrides): Promise<[string]>;
 
@@ -804,11 +788,11 @@ export class Enterprise extends BaseContract {
       [
         string,
         string,
+        number,
+        number,
+        number,
+        number,
         BigNumber,
-        number,
-        number,
-        number,
-        number,
         BigNumber,
         BigNumber,
         BigNumber,
@@ -817,63 +801,17 @@ export class Enterprise extends BaseContract {
       ] & {
         name: string;
         baseUri: string;
-        totalShares: BigNumber;
-        interestGapHalvingPeriod: number;
-        borrowerLoanReturnGracePeriod: number;
-        enterpriseLoanCollectGracePeriod: number;
+        streamingReserveHalvingPeriod: number;
+        renterOnlyReturnPeriod: number;
+        enterpriseOnlyCollectionPeriod: number;
         gcFeePercent: number;
+        totalShares: BigNumber;
         fixedReserve: BigNumber;
         usedReserve: BigNumber;
         streamingReserve: BigNumber;
         streamingReserveTarget: BigNumber;
         streamingReserveUpdated: number;
       }
-    >;
-
-    getInterestGapHalvingPeriod(overrides?: CallOverrides): Promise<[number]>;
-
-    getInterestToken(overrides?: CallOverrides): Promise<[string]>;
-
-    getLiquidityInfo(
-      interestTokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [
-        [BigNumber, BigNumber, BigNumber] & {
-          amount: BigNumber;
-          shares: BigNumber;
-          block: BigNumber;
-        }
-      ]
-    >;
-
-    getLiquidityToken(overrides?: CallOverrides): Promise<[string]>;
-
-    getLoanInfo(
-      borrowTokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [
-        [
-          BigNumber,
-          number,
-          number,
-          number,
-          number,
-          number,
-          BigNumber,
-          number
-        ] & {
-          amount: BigNumber;
-          powerTokenIndex: number;
-          borrowingTime: number;
-          maturityTime: number;
-          borrowerReturnGraceTime: number;
-          enterpriseCollectGraceTime: number;
-          gcFee: BigNumber;
-          gcFeeTokenIndex: number;
-        }
-      ]
     >;
 
     getPaymentToken(
@@ -890,13 +828,68 @@ export class Enterprise extends BaseContract {
 
     getProxyAdmin(overrides?: CallOverrides): Promise<[string]>;
 
+    getRentalAgreement(
+      rentalTokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        [
+          BigNumber,
+          number,
+          number,
+          number,
+          number,
+          number,
+          BigNumber,
+          number
+        ] & {
+          rentalAmount: BigNumber;
+          powerTokenIndex: number;
+          startTime: number;
+          endTime: number;
+          renterOnlyReturnTime: number;
+          enterpriseOnlyCollectionTime: number;
+          gcRewardAmount: BigNumber;
+          gcRewardTokenIndex: number;
+        }
+      ]
+    >;
+
+    getRentalToken(overrides?: CallOverrides): Promise<[string]>;
+
+    getRenterOnlyReturnPeriod(overrides?: CallOverrides): Promise<[number]>;
+
     getReserve(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    getStake(
+      stakeTokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        [BigNumber, BigNumber, BigNumber] & {
+          amount: BigNumber;
+          shares: BigNumber;
+          block: BigNumber;
+        }
+      ]
+    >;
+
+    getStakeToken(overrides?: CallOverrides): Promise<[string]>;
+
+    getStakingReward(
+      stakeTokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getStreamingReserveHalvingPeriod(
+      overrides?: CallOverrides
+    ): Promise<[number]>;
 
     getUsedReserve(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    increaseLiquidity(
-      interestTokenId: BigNumberish,
-      liquidityAmount: BigNumberish,
+    increaseStake(
+      stakeTokenId: BigNumberish,
+      stakeAmountDelta: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -916,9 +909,9 @@ export class Enterprise extends BaseContract {
     ): Promise<ContractTransaction>;
 
     initializeTokens(
-      liquidityToken: string,
-      interestToken: string,
-      borrowToken: string,
+      enterpriseToken: string,
+      stakeToken: string,
+      rentalToken: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -932,44 +925,33 @@ export class Enterprise extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    loanTransfer(
-      from: string,
-      to: string,
-      borrowTokenId: BigNumberish,
+    owner(overrides?: CallOverrides): Promise<[string]>;
+
+    registerService(
+      serviceName: string,
+      serviceSymbol: string,
+      energyGapHalvingPeriod: BigNumberish,
+      baseRate: BigNumberish,
+      baseToken: string,
+      serviceFeePercent: BigNumberish,
+      minRentalPeriod: BigNumberish,
+      maxRentalPeriod: BigNumberish,
+      minGCFee: BigNumberish,
+      swappingEnabledForever: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    owner(overrides?: CallOverrides): Promise<[string]>;
-
-    reborrow(
-      borrowTokenId: BigNumberish,
+    rent(
+      powerToken: string,
       paymentToken: string,
-      duration: BigNumberish,
+      rentalAmount: BigNumberish,
+      rentalPeriod: BigNumberish,
       maxPayment: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    registerService(
-      serviceName: string,
-      symbol: string,
-      gapHalvingPeriod: BigNumberish,
-      baseRate: BigNumberish,
-      baseToken: string,
-      serviceFeePercent: BigNumberish,
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
-      minGCFee: BigNumberish,
-      allowsWrappingForever: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    removeLiquidity(
-      interestTokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    returnLoan(
-      borrowTokenId: BigNumberish,
+    returnRental(
+      rentalTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -984,11 +966,6 @@ export class Enterprise extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setBorrowerLoanReturnGracePeriod(
-      newPeriod: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     setConverter(
       newConverter: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -999,13 +976,13 @@ export class Enterprise extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setEnterpriseLoanCollectGracePeriod(
+    setEnterpriseOnlyCollectionPeriod(
       newPeriod: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setEnterpriseVault(
-      newVault: string,
+    setEnterpriseWallet(
+      newWallet: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -1014,12 +991,22 @@ export class Enterprise extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setInterestGapHalvingPeriod(
-      interestGapHalvingPeriod: BigNumberish,
+    setRenterOnlyReturnPeriod(
+      newPeriod: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setStreamingReserveHalvingPeriod(
+      streamingReserveHalvingPeriod: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     shutdownEnterpriseForever(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    stake(
+      stakeAmount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -1028,39 +1015,37 @@ export class Enterprise extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    transferRental(
+      from: string,
+      to: string,
+      rentalTokenId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    unstake(
+      stakeTokenId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     upgrade(
       enterpriseFactory: string,
       enterpriseImplementation: string,
-      borrowTokenImplementation: string,
-      interestTokenImplementation: string,
+      rentalTokenImplementation: string,
+      stakeTokenImplementation: string,
       powerTokenImplementation: string,
       powerTokens: string[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-
-    withdrawInterest(
-      interestTokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
   };
 
-  addLiquidity(
-    liquidityAmount: BigNumberish,
+  claimStakingReward(
+    stakeTokenId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  borrow(
-    powerToken: string,
-    paymentToken: string,
-    loanAmount: BigNumberish,
-    duration: BigNumberish,
-    maxPayment: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  decreaseLiquidity(
-    interestTokenId: BigNumberish,
-    liquidityAmount: BigNumberish,
+  decreaseStake(
+    stakeTokenId: BigNumberish,
+    stakeAmountDelta: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1074,18 +1059,21 @@ export class Enterprise extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  estimateLoan(
+  estimateRentalFee(
     powerToken: string,
     paymentToken: string,
-    amount: BigNumberish,
-    duration: BigNumberish,
+    rentalAmount: BigNumberish,
+    rentalPeriod: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  getAccruedInterest(
-    interestTokenId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  extendRentalPeriod(
+    rentalTokenId: BigNumberish,
+    paymentToken: string,
+    rentalPeriod: BigNumberish,
+    maxPayment: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   getAvailableReserve(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1095,19 +1083,15 @@ export class Enterprise extends BaseContract {
     overrides?: CallOverrides
   ): Promise<[BigNumber, BigNumber] & { pole: BigNumber; slope: BigNumber }>;
 
-  getBorrowToken(overrides?: CallOverrides): Promise<string>;
-
-  getBorrowerLoanReturnGracePeriod(overrides?: CallOverrides): Promise<number>;
-
   getConverter(overrides?: CallOverrides): Promise<string>;
 
   getEnterpriseCollector(overrides?: CallOverrides): Promise<string>;
 
-  getEnterpriseLoanCollectGracePeriod(
-    overrides?: CallOverrides
-  ): Promise<number>;
+  getEnterpriseOnlyCollectionPeriod(overrides?: CallOverrides): Promise<number>;
 
-  getEnterpriseVault(overrides?: CallOverrides): Promise<string>;
+  getEnterpriseToken(overrides?: CallOverrides): Promise<string>;
+
+  getEnterpriseWallet(overrides?: CallOverrides): Promise<string>;
 
   getFactory(overrides?: CallOverrides): Promise<string>;
 
@@ -1119,11 +1103,11 @@ export class Enterprise extends BaseContract {
     [
       string,
       string,
+      number,
+      number,
+      number,
+      number,
       BigNumber,
-      number,
-      number,
-      number,
-      number,
       BigNumber,
       BigNumber,
       BigNumber,
@@ -1132,49 +1116,16 @@ export class Enterprise extends BaseContract {
     ] & {
       name: string;
       baseUri: string;
-      totalShares: BigNumber;
-      interestGapHalvingPeriod: number;
-      borrowerLoanReturnGracePeriod: number;
-      enterpriseLoanCollectGracePeriod: number;
+      streamingReserveHalvingPeriod: number;
+      renterOnlyReturnPeriod: number;
+      enterpriseOnlyCollectionPeriod: number;
       gcFeePercent: number;
+      totalShares: BigNumber;
       fixedReserve: BigNumber;
       usedReserve: BigNumber;
       streamingReserve: BigNumber;
       streamingReserveTarget: BigNumber;
       streamingReserveUpdated: number;
-    }
-  >;
-
-  getInterestGapHalvingPeriod(overrides?: CallOverrides): Promise<number>;
-
-  getInterestToken(overrides?: CallOverrides): Promise<string>;
-
-  getLiquidityInfo(
-    interestTokenId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, BigNumber] & {
-      amount: BigNumber;
-      shares: BigNumber;
-      block: BigNumber;
-    }
-  >;
-
-  getLiquidityToken(overrides?: CallOverrides): Promise<string>;
-
-  getLoanInfo(
-    borrowTokenId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, number, number, number, number, number, BigNumber, number] & {
-      amount: BigNumber;
-      powerTokenIndex: number;
-      borrowingTime: number;
-      maturityTime: number;
-      borrowerReturnGraceTime: number;
-      enterpriseCollectGraceTime: number;
-      gcFee: BigNumber;
-      gcFeeTokenIndex: number;
     }
   >;
 
@@ -1192,13 +1143,53 @@ export class Enterprise extends BaseContract {
 
   getProxyAdmin(overrides?: CallOverrides): Promise<string>;
 
+  getRentalAgreement(
+    rentalTokenId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, number, number, number, number, number, BigNumber, number] & {
+      rentalAmount: BigNumber;
+      powerTokenIndex: number;
+      startTime: number;
+      endTime: number;
+      renterOnlyReturnTime: number;
+      enterpriseOnlyCollectionTime: number;
+      gcRewardAmount: BigNumber;
+      gcRewardTokenIndex: number;
+    }
+  >;
+
+  getRentalToken(overrides?: CallOverrides): Promise<string>;
+
+  getRenterOnlyReturnPeriod(overrides?: CallOverrides): Promise<number>;
+
   getReserve(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getStake(
+    stakeTokenId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber] & {
+      amount: BigNumber;
+      shares: BigNumber;
+      block: BigNumber;
+    }
+  >;
+
+  getStakeToken(overrides?: CallOverrides): Promise<string>;
+
+  getStakingReward(
+    stakeTokenId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getStreamingReserveHalvingPeriod(overrides?: CallOverrides): Promise<number>;
 
   getUsedReserve(overrides?: CallOverrides): Promise<BigNumber>;
 
-  increaseLiquidity(
-    interestTokenId: BigNumberish,
-    liquidityAmount: BigNumberish,
+  increaseStake(
+    stakeTokenId: BigNumberish,
+    stakeAmountDelta: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1218,9 +1209,9 @@ export class Enterprise extends BaseContract {
   ): Promise<ContractTransaction>;
 
   initializeTokens(
-    liquidityToken: string,
-    interestToken: string,
-    borrowToken: string,
+    enterpriseToken: string,
+    stakeToken: string,
+    rentalToken: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1234,44 +1225,33 @@ export class Enterprise extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  loanTransfer(
-    from: string,
-    to: string,
-    borrowTokenId: BigNumberish,
+  owner(overrides?: CallOverrides): Promise<string>;
+
+  registerService(
+    serviceName: string,
+    serviceSymbol: string,
+    energyGapHalvingPeriod: BigNumberish,
+    baseRate: BigNumberish,
+    baseToken: string,
+    serviceFeePercent: BigNumberish,
+    minRentalPeriod: BigNumberish,
+    maxRentalPeriod: BigNumberish,
+    minGCFee: BigNumberish,
+    swappingEnabledForever: boolean,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  owner(overrides?: CallOverrides): Promise<string>;
-
-  reborrow(
-    borrowTokenId: BigNumberish,
+  rent(
+    powerToken: string,
     paymentToken: string,
-    duration: BigNumberish,
+    rentalAmount: BigNumberish,
+    rentalPeriod: BigNumberish,
     maxPayment: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  registerService(
-    serviceName: string,
-    symbol: string,
-    gapHalvingPeriod: BigNumberish,
-    baseRate: BigNumberish,
-    baseToken: string,
-    serviceFeePercent: BigNumberish,
-    minLoanDuration: BigNumberish,
-    maxLoanDuration: BigNumberish,
-    minGCFee: BigNumberish,
-    allowsWrappingForever: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  removeLiquidity(
-    interestTokenId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  returnLoan(
-    borrowTokenId: BigNumberish,
+  returnRental(
+    rentalTokenId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1286,11 +1266,6 @@ export class Enterprise extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setBorrowerLoanReturnGracePeriod(
-    newPeriod: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   setConverter(
     newConverter: string,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -1301,13 +1276,13 @@ export class Enterprise extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setEnterpriseLoanCollectGracePeriod(
+  setEnterpriseOnlyCollectionPeriod(
     newPeriod: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setEnterpriseVault(
-    newVault: string,
+  setEnterpriseWallet(
+    newWallet: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1316,12 +1291,22 @@ export class Enterprise extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setInterestGapHalvingPeriod(
-    interestGapHalvingPeriod: BigNumberish,
+  setRenterOnlyReturnPeriod(
+    newPeriod: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setStreamingReserveHalvingPeriod(
+    streamingReserveHalvingPeriod: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   shutdownEnterpriseForever(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  stake(
+    stakeAmount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1330,39 +1315,37 @@ export class Enterprise extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  transferRental(
+    from: string,
+    to: string,
+    rentalTokenId: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  unstake(
+    stakeTokenId: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   upgrade(
     enterpriseFactory: string,
     enterpriseImplementation: string,
-    borrowTokenImplementation: string,
-    interestTokenImplementation: string,
+    rentalTokenImplementation: string,
+    stakeTokenImplementation: string,
     powerTokenImplementation: string,
     powerTokens: string[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  withdrawInterest(
-    interestTokenId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   callStatic: {
-    addLiquidity(
-      liquidityAmount: BigNumberish,
+    claimStakingReward(
+      stakeTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    borrow(
-      powerToken: string,
-      paymentToken: string,
-      loanAmount: BigNumberish,
-      duration: BigNumberish,
-      maxPayment: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    decreaseLiquidity(
-      interestTokenId: BigNumberish,
-      liquidityAmount: BigNumberish,
+    decreaseStake(
+      stakeTokenId: BigNumberish,
+      stakeAmountDelta: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1373,18 +1356,21 @@ export class Enterprise extends BaseContract {
 
     enablePaymentToken(token: string, overrides?: CallOverrides): Promise<void>;
 
-    estimateLoan(
+    estimateRentalFee(
       powerToken: string,
       paymentToken: string,
-      amount: BigNumberish,
-      duration: BigNumberish,
+      rentalAmount: BigNumberish,
+      rentalPeriod: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getAccruedInterest(
-      interestTokenId: BigNumberish,
+    extendRentalPeriod(
+      rentalTokenId: BigNumberish,
+      paymentToken: string,
+      rentalPeriod: BigNumberish,
+      maxPayment: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<void>;
 
     getAvailableReserve(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1394,21 +1380,17 @@ export class Enterprise extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber, BigNumber] & { pole: BigNumber; slope: BigNumber }>;
 
-    getBorrowToken(overrides?: CallOverrides): Promise<string>;
-
-    getBorrowerLoanReturnGracePeriod(
-      overrides?: CallOverrides
-    ): Promise<number>;
-
     getConverter(overrides?: CallOverrides): Promise<string>;
 
     getEnterpriseCollector(overrides?: CallOverrides): Promise<string>;
 
-    getEnterpriseLoanCollectGracePeriod(
+    getEnterpriseOnlyCollectionPeriod(
       overrides?: CallOverrides
     ): Promise<number>;
 
-    getEnterpriseVault(overrides?: CallOverrides): Promise<string>;
+    getEnterpriseToken(overrides?: CallOverrides): Promise<string>;
+
+    getEnterpriseWallet(overrides?: CallOverrides): Promise<string>;
 
     getFactory(overrides?: CallOverrides): Promise<string>;
 
@@ -1420,11 +1402,11 @@ export class Enterprise extends BaseContract {
       [
         string,
         string,
+        number,
+        number,
+        number,
+        number,
         BigNumber,
-        number,
-        number,
-        number,
-        number,
         BigNumber,
         BigNumber,
         BigNumber,
@@ -1433,49 +1415,16 @@ export class Enterprise extends BaseContract {
       ] & {
         name: string;
         baseUri: string;
-        totalShares: BigNumber;
-        interestGapHalvingPeriod: number;
-        borrowerLoanReturnGracePeriod: number;
-        enterpriseLoanCollectGracePeriod: number;
+        streamingReserveHalvingPeriod: number;
+        renterOnlyReturnPeriod: number;
+        enterpriseOnlyCollectionPeriod: number;
         gcFeePercent: number;
+        totalShares: BigNumber;
         fixedReserve: BigNumber;
         usedReserve: BigNumber;
         streamingReserve: BigNumber;
         streamingReserveTarget: BigNumber;
         streamingReserveUpdated: number;
-      }
-    >;
-
-    getInterestGapHalvingPeriod(overrides?: CallOverrides): Promise<number>;
-
-    getInterestToken(overrides?: CallOverrides): Promise<string>;
-
-    getLiquidityInfo(
-      interestTokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber] & {
-        amount: BigNumber;
-        shares: BigNumber;
-        block: BigNumber;
-      }
-    >;
-
-    getLiquidityToken(overrides?: CallOverrides): Promise<string>;
-
-    getLoanInfo(
-      borrowTokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, number, number, number, number, number, BigNumber, number] & {
-        amount: BigNumber;
-        powerTokenIndex: number;
-        borrowingTime: number;
-        maturityTime: number;
-        borrowerReturnGraceTime: number;
-        enterpriseCollectGraceTime: number;
-        gcFee: BigNumber;
-        gcFeeTokenIndex: number;
       }
     >;
 
@@ -1493,13 +1442,55 @@ export class Enterprise extends BaseContract {
 
     getProxyAdmin(overrides?: CallOverrides): Promise<string>;
 
+    getRentalAgreement(
+      rentalTokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, number, number, number, number, number, BigNumber, number] & {
+        rentalAmount: BigNumber;
+        powerTokenIndex: number;
+        startTime: number;
+        endTime: number;
+        renterOnlyReturnTime: number;
+        enterpriseOnlyCollectionTime: number;
+        gcRewardAmount: BigNumber;
+        gcRewardTokenIndex: number;
+      }
+    >;
+
+    getRentalToken(overrides?: CallOverrides): Promise<string>;
+
+    getRenterOnlyReturnPeriod(overrides?: CallOverrides): Promise<number>;
+
     getReserve(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getStake(
+      stakeTokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        amount: BigNumber;
+        shares: BigNumber;
+        block: BigNumber;
+      }
+    >;
+
+    getStakeToken(overrides?: CallOverrides): Promise<string>;
+
+    getStakingReward(
+      stakeTokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getStreamingReserveHalvingPeriod(
+      overrides?: CallOverrides
+    ): Promise<number>;
 
     getUsedReserve(overrides?: CallOverrides): Promise<BigNumber>;
 
-    increaseLiquidity(
-      interestTokenId: BigNumberish,
-      liquidityAmount: BigNumberish,
+    increaseStake(
+      stakeTokenId: BigNumberish,
+      stakeAmountDelta: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1519,9 +1510,9 @@ export class Enterprise extends BaseContract {
     ): Promise<void>;
 
     initializeTokens(
-      liquidityToken: string,
-      interestToken: string,
-      borrowToken: string,
+      enterpriseToken: string,
+      stakeToken: string,
+      rentalToken: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1535,44 +1526,33 @@ export class Enterprise extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    loanTransfer(
-      from: string,
-      to: string,
-      borrowTokenId: BigNumberish,
+    owner(overrides?: CallOverrides): Promise<string>;
+
+    registerService(
+      serviceName: string,
+      serviceSymbol: string,
+      energyGapHalvingPeriod: BigNumberish,
+      baseRate: BigNumberish,
+      baseToken: string,
+      serviceFeePercent: BigNumberish,
+      minRentalPeriod: BigNumberish,
+      maxRentalPeriod: BigNumberish,
+      minGCFee: BigNumberish,
+      swappingEnabledForever: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    owner(overrides?: CallOverrides): Promise<string>;
-
-    reborrow(
-      borrowTokenId: BigNumberish,
+    rent(
+      powerToken: string,
       paymentToken: string,
-      duration: BigNumberish,
+      rentalAmount: BigNumberish,
+      rentalPeriod: BigNumberish,
       maxPayment: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    registerService(
-      serviceName: string,
-      symbol: string,
-      gapHalvingPeriod: BigNumberish,
-      baseRate: BigNumberish,
-      baseToken: string,
-      serviceFeePercent: BigNumberish,
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
-      minGCFee: BigNumberish,
-      allowsWrappingForever: boolean,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    removeLiquidity(
-      interestTokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    returnLoan(
-      borrowTokenId: BigNumberish,
+    returnRental(
+      rentalTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1581,11 +1561,6 @@ export class Enterprise extends BaseContract {
     setBondingCurve(
       pole: BigNumberish,
       slope: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setBorrowerLoanReturnGracePeriod(
-      newPeriod: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1599,13 +1574,13 @@ export class Enterprise extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setEnterpriseLoanCollectGracePeriod(
+    setEnterpriseOnlyCollectionPeriod(
       newPeriod: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setEnterpriseVault(
-      newVault: string,
+    setEnterpriseWallet(
+      newWallet: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1614,30 +1589,44 @@ export class Enterprise extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setInterestGapHalvingPeriod(
-      interestGapHalvingPeriod: BigNumberish,
+    setRenterOnlyReturnPeriod(
+      newPeriod: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setStreamingReserveHalvingPeriod(
+      streamingReserveHalvingPeriod: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     shutdownEnterpriseForever(overrides?: CallOverrides): Promise<void>;
+
+    stake(stakeAmount: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
     transferOwnership(
       newOwner: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    upgrade(
-      enterpriseFactory: string,
-      enterpriseImplementation: string,
-      borrowTokenImplementation: string,
-      interestTokenImplementation: string,
-      powerTokenImplementation: string,
-      powerTokens: string[],
+    transferRental(
+      from: string,
+      to: string,
+      rentalTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    withdrawInterest(
-      interestTokenId: BigNumberish,
+    unstake(
+      stakeTokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    upgrade(
+      enterpriseFactory: string,
+      enterpriseImplementation: string,
+      rentalTokenImplementation: string,
+      stakeTokenImplementation: string,
+      powerTokenImplementation: string,
+      powerTokens: string[],
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -1667,114 +1656,6 @@ export class Enterprise extends BaseContract {
       { pole: BigNumber; slope: BigNumber }
     >;
 
-    "Borrowed(uint256,address,address,address,uint112,uint112,uint112,uint112,uint32,uint32,uint32,uint32,uint256,uint256)"(
-      borrowTokenId?: BigNumberish | null,
-      borrower?: string | null,
-      powerToken?: string | null,
-      paymentToken?: null,
-      amount?: null,
-      interest?: null,
-      serviceFee?: null,
-      gcFee?: null,
-      borrowingTime?: null,
-      maturityTime?: null,
-      borrowerReturnGraceTime?: null,
-      enterpriseCollectGraceTime?: null,
-      reserve?: null,
-      usedReserve?: null
-    ): TypedEventFilter<
-      [
-        BigNumber,
-        string,
-        string,
-        string,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        number,
-        number,
-        number,
-        number,
-        BigNumber,
-        BigNumber
-      ],
-      {
-        borrowTokenId: BigNumber;
-        borrower: string;
-        powerToken: string;
-        paymentToken: string;
-        amount: BigNumber;
-        interest: BigNumber;
-        serviceFee: BigNumber;
-        gcFee: BigNumber;
-        borrowingTime: number;
-        maturityTime: number;
-        borrowerReturnGraceTime: number;
-        enterpriseCollectGraceTime: number;
-        reserve: BigNumber;
-        usedReserve: BigNumber;
-      }
-    >;
-
-    Borrowed(
-      borrowTokenId?: BigNumberish | null,
-      borrower?: string | null,
-      powerToken?: string | null,
-      paymentToken?: null,
-      amount?: null,
-      interest?: null,
-      serviceFee?: null,
-      gcFee?: null,
-      borrowingTime?: null,
-      maturityTime?: null,
-      borrowerReturnGraceTime?: null,
-      enterpriseCollectGraceTime?: null,
-      reserve?: null,
-      usedReserve?: null
-    ): TypedEventFilter<
-      [
-        BigNumber,
-        string,
-        string,
-        string,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        number,
-        number,
-        number,
-        number,
-        BigNumber,
-        BigNumber
-      ],
-      {
-        borrowTokenId: BigNumber;
-        borrower: string;
-        powerToken: string;
-        paymentToken: string;
-        amount: BigNumber;
-        interest: BigNumber;
-        serviceFee: BigNumber;
-        gcFee: BigNumber;
-        borrowingTime: number;
-        maturityTime: number;
-        borrowerReturnGraceTime: number;
-        enterpriseCollectGraceTime: number;
-        reserve: BigNumber;
-        usedReserve: BigNumber;
-      }
-    >;
-
-    "BorrowerLoanReturnGracePeriodChanged(uint32)"(
-      period?: null
-    ): TypedEventFilter<[number], { period: number }>;
-
-    BorrowerLoanReturnGracePeriodChanged(
-      period?: null
-    ): TypedEventFilter<[number], { period: number }>;
-
     "ConverterChanged(address)"(
       converter?: null
     ): TypedEventFilter<[string], { converter: string }>;
@@ -1791,11 +1672,11 @@ export class Enterprise extends BaseContract {
       collector?: null
     ): TypedEventFilter<[string], { collector: string }>;
 
-    "EnterpriseLoanCollectGracePeriodChanged(uint32)"(
+    "EnterpriseOnlyCollectionPeriodChanged(uint32)"(
       period?: null
     ): TypedEventFilter<[number], { period: number }>;
 
-    EnterpriseLoanCollectGracePeriodChanged(
+    EnterpriseOnlyCollectionPeriodChanged(
       period?: null
     ): TypedEventFilter<[number], { period: number }>;
 
@@ -1803,13 +1684,13 @@ export class Enterprise extends BaseContract {
 
     EnterpriseShutdown(): TypedEventFilter<[], {}>;
 
-    "EnterpriseVaultChanged(address)"(
-      vault?: null
-    ): TypedEventFilter<[string], { vault: string }>;
+    "EnterpriseWalletChanged(address)"(
+      wallet?: null
+    ): TypedEventFilter<[string], { wallet: string }>;
 
-    EnterpriseVaultChanged(
-      vault?: null
-    ): TypedEventFilter<[string], { vault: string }>;
+    EnterpriseWalletChanged(
+      wallet?: null
+    ): TypedEventFilter<[string], { wallet: string }>;
 
     "FixedReserveChanged(uint256)"(
       fixedReserve?: null
@@ -1826,200 +1707,6 @@ export class Enterprise extends BaseContract {
     GcFeePercentChanged(
       percent?: null
     ): TypedEventFilter<[number], { percent: number }>;
-
-    "InterestGapHalvingPeriodChanged(uint32)"(
-      period?: null
-    ): TypedEventFilter<[number], { period: number }>;
-
-    InterestGapHalvingPeriodChanged(
-      period?: null
-    ): TypedEventFilter<[number], { period: number }>;
-
-    "LiquidityChanged(uint256,address,uint8,uint256,uint256,uint256,uint256,uint256,uint256,uint256)"(
-      interestTokenId?: BigNumberish | null,
-      liquidityProvider?: string | null,
-      changeType?: BigNumberish | null,
-      amountDelta?: null,
-      amount?: null,
-      sharesDelta?: null,
-      shares?: null,
-      totalShares?: null,
-      reserve?: null,
-      usedReserve?: null
-    ): TypedEventFilter<
-      [
-        BigNumber,
-        string,
-        number,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber
-      ],
-      {
-        interestTokenId: BigNumber;
-        liquidityProvider: string;
-        changeType: number;
-        amountDelta: BigNumber;
-        amount: BigNumber;
-        sharesDelta: BigNumber;
-        shares: BigNumber;
-        totalShares: BigNumber;
-        reserve: BigNumber;
-        usedReserve: BigNumber;
-      }
-    >;
-
-    LiquidityChanged(
-      interestTokenId?: BigNumberish | null,
-      liquidityProvider?: string | null,
-      changeType?: BigNumberish | null,
-      amountDelta?: null,
-      amount?: null,
-      sharesDelta?: null,
-      shares?: null,
-      totalShares?: null,
-      reserve?: null,
-      usedReserve?: null
-    ): TypedEventFilter<
-      [
-        BigNumber,
-        string,
-        number,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber
-      ],
-      {
-        interestTokenId: BigNumber;
-        liquidityProvider: string;
-        changeType: number;
-        amountDelta: BigNumber;
-        amount: BigNumber;
-        sharesDelta: BigNumber;
-        shares: BigNumber;
-        totalShares: BigNumber;
-        reserve: BigNumber;
-        usedReserve: BigNumber;
-      }
-    >;
-
-    "LoanExtended(uint256,address,address,uint112,uint112,uint32,uint32,uint32)"(
-      borrowTokenId?: BigNumberish | null,
-      borrower?: string | null,
-      paymentToken?: null,
-      interest?: null,
-      serviceFee?: null,
-      maturityTime?: null,
-      borrowerReturnGraceTime?: null,
-      enterpriseCollectGraceTime?: null
-    ): TypedEventFilter<
-      [BigNumber, string, string, BigNumber, BigNumber, number, number, number],
-      {
-        borrowTokenId: BigNumber;
-        borrower: string;
-        paymentToken: string;
-        interest: BigNumber;
-        serviceFee: BigNumber;
-        maturityTime: number;
-        borrowerReturnGraceTime: number;
-        enterpriseCollectGraceTime: number;
-      }
-    >;
-
-    LoanExtended(
-      borrowTokenId?: BigNumberish | null,
-      borrower?: string | null,
-      paymentToken?: null,
-      interest?: null,
-      serviceFee?: null,
-      maturityTime?: null,
-      borrowerReturnGraceTime?: null,
-      enterpriseCollectGraceTime?: null
-    ): TypedEventFilter<
-      [BigNumber, string, string, BigNumber, BigNumber, number, number, number],
-      {
-        borrowTokenId: BigNumber;
-        borrower: string;
-        paymentToken: string;
-        interest: BigNumber;
-        serviceFee: BigNumber;
-        maturityTime: number;
-        borrowerReturnGraceTime: number;
-        enterpriseCollectGraceTime: number;
-      }
-    >;
-
-    "LoanReturned(uint256,address,address,uint112,uint112,address,uint256,uint256)"(
-      borrowTokenId?: BigNumberish | null,
-      returner?: string | null,
-      powerToken?: string | null,
-      amount?: null,
-      gcFee?: null,
-      gcFeeToken?: null,
-      reserve?: null,
-      usedReserve?: null
-    ): TypedEventFilter<
-      [
-        BigNumber,
-        string,
-        string,
-        BigNumber,
-        BigNumber,
-        string,
-        BigNumber,
-        BigNumber
-      ],
-      {
-        borrowTokenId: BigNumber;
-        returner: string;
-        powerToken: string;
-        amount: BigNumber;
-        gcFee: BigNumber;
-        gcFeeToken: string;
-        reserve: BigNumber;
-        usedReserve: BigNumber;
-      }
-    >;
-
-    LoanReturned(
-      borrowTokenId?: BigNumberish | null,
-      returner?: string | null,
-      powerToken?: string | null,
-      amount?: null,
-      gcFee?: null,
-      gcFeeToken?: null,
-      reserve?: null,
-      usedReserve?: null
-    ): TypedEventFilter<
-      [
-        BigNumber,
-        string,
-        string,
-        BigNumber,
-        BigNumber,
-        string,
-        BigNumber,
-        BigNumber
-      ],
-      {
-        borrowTokenId: BigNumber;
-        returner: string;
-        powerToken: string;
-        amount: BigNumber;
-        gcFee: BigNumber;
-        gcFeeToken: string;
-        reserve: BigNumber;
-        usedReserve: BigNumber;
-      }
-    >;
 
     "OwnershipTransferred(address,address)"(
       previousOwner?: string | null,
@@ -2053,6 +1740,224 @@ export class Enterprise extends BaseContract {
       { paymentToken: string; enabled: boolean }
     >;
 
+    "RentalPeriodExtended(uint256,address,address,uint112,uint112,uint32,uint32,uint32)"(
+      rentalTokenId?: BigNumberish | null,
+      renter?: string | null,
+      paymentToken?: null,
+      poolFee?: null,
+      serviceFee?: null,
+      endTime?: null,
+      renterOnlyReturnTime?: null,
+      enterpriseOnlyCollectionTime?: null
+    ): TypedEventFilter<
+      [BigNumber, string, string, BigNumber, BigNumber, number, number, number],
+      {
+        rentalTokenId: BigNumber;
+        renter: string;
+        paymentToken: string;
+        poolFee: BigNumber;
+        serviceFee: BigNumber;
+        endTime: number;
+        renterOnlyReturnTime: number;
+        enterpriseOnlyCollectionTime: number;
+      }
+    >;
+
+    RentalPeriodExtended(
+      rentalTokenId?: BigNumberish | null,
+      renter?: string | null,
+      paymentToken?: null,
+      poolFee?: null,
+      serviceFee?: null,
+      endTime?: null,
+      renterOnlyReturnTime?: null,
+      enterpriseOnlyCollectionTime?: null
+    ): TypedEventFilter<
+      [BigNumber, string, string, BigNumber, BigNumber, number, number, number],
+      {
+        rentalTokenId: BigNumber;
+        renter: string;
+        paymentToken: string;
+        poolFee: BigNumber;
+        serviceFee: BigNumber;
+        endTime: number;
+        renterOnlyReturnTime: number;
+        enterpriseOnlyCollectionTime: number;
+      }
+    >;
+
+    "RentalReturned(uint256,address,address,uint112,uint112,address,uint256,uint256)"(
+      rentalTokenId?: BigNumberish | null,
+      returner?: string | null,
+      powerToken?: string | null,
+      rentalAmount?: null,
+      gcRewardAmount?: null,
+      gcRewardToken?: null,
+      totalReserve?: null,
+      totalUsedReserve?: null
+    ): TypedEventFilter<
+      [
+        BigNumber,
+        string,
+        string,
+        BigNumber,
+        BigNumber,
+        string,
+        BigNumber,
+        BigNumber
+      ],
+      {
+        rentalTokenId: BigNumber;
+        returner: string;
+        powerToken: string;
+        rentalAmount: BigNumber;
+        gcRewardAmount: BigNumber;
+        gcRewardToken: string;
+        totalReserve: BigNumber;
+        totalUsedReserve: BigNumber;
+      }
+    >;
+
+    RentalReturned(
+      rentalTokenId?: BigNumberish | null,
+      returner?: string | null,
+      powerToken?: string | null,
+      rentalAmount?: null,
+      gcRewardAmount?: null,
+      gcRewardToken?: null,
+      totalReserve?: null,
+      totalUsedReserve?: null
+    ): TypedEventFilter<
+      [
+        BigNumber,
+        string,
+        string,
+        BigNumber,
+        BigNumber,
+        string,
+        BigNumber,
+        BigNumber
+      ],
+      {
+        rentalTokenId: BigNumber;
+        returner: string;
+        powerToken: string;
+        rentalAmount: BigNumber;
+        gcRewardAmount: BigNumber;
+        gcRewardToken: string;
+        totalReserve: BigNumber;
+        totalUsedReserve: BigNumber;
+      }
+    >;
+
+    "Rented(uint256,address,address,address,uint112,uint112,uint112,uint112,uint32,uint32,uint32,uint32,uint256,uint256)"(
+      rentalTokenId?: BigNumberish | null,
+      renter?: string | null,
+      powerToken?: string | null,
+      paymentToken?: null,
+      rentalAmount?: null,
+      poolFee?: null,
+      serviceFee?: null,
+      gcFee?: null,
+      startTime?: null,
+      endTime?: null,
+      renterOnlyReturnTime?: null,
+      enterpriseOnlyCollectionTime?: null,
+      totalReserve?: null,
+      totalUsedReserve?: null
+    ): TypedEventFilter<
+      [
+        BigNumber,
+        string,
+        string,
+        string,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        number,
+        number,
+        number,
+        number,
+        BigNumber,
+        BigNumber
+      ],
+      {
+        rentalTokenId: BigNumber;
+        renter: string;
+        powerToken: string;
+        paymentToken: string;
+        rentalAmount: BigNumber;
+        poolFee: BigNumber;
+        serviceFee: BigNumber;
+        gcFee: BigNumber;
+        startTime: number;
+        endTime: number;
+        renterOnlyReturnTime: number;
+        enterpriseOnlyCollectionTime: number;
+        totalReserve: BigNumber;
+        totalUsedReserve: BigNumber;
+      }
+    >;
+
+    Rented(
+      rentalTokenId?: BigNumberish | null,
+      renter?: string | null,
+      powerToken?: string | null,
+      paymentToken?: null,
+      rentalAmount?: null,
+      poolFee?: null,
+      serviceFee?: null,
+      gcFee?: null,
+      startTime?: null,
+      endTime?: null,
+      renterOnlyReturnTime?: null,
+      enterpriseOnlyCollectionTime?: null,
+      totalReserve?: null,
+      totalUsedReserve?: null
+    ): TypedEventFilter<
+      [
+        BigNumber,
+        string,
+        string,
+        string,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        number,
+        number,
+        number,
+        number,
+        BigNumber,
+        BigNumber
+      ],
+      {
+        rentalTokenId: BigNumber;
+        renter: string;
+        powerToken: string;
+        paymentToken: string;
+        rentalAmount: BigNumber;
+        poolFee: BigNumber;
+        serviceFee: BigNumber;
+        gcFee: BigNumber;
+        startTime: number;
+        endTime: number;
+        renterOnlyReturnTime: number;
+        enterpriseOnlyCollectionTime: number;
+        totalReserve: BigNumber;
+        totalUsedReserve: BigNumber;
+      }
+    >;
+
+    "RenterOnlyReturnPeriodChanged(uint32)"(
+      period?: null
+    ): TypedEventFilter<[number], { period: number }>;
+
+    RenterOnlyReturnPeriodChanged(
+      period?: null
+    ): TypedEventFilter<[number], { period: number }>;
+
     "ServiceRegistered(address)"(
       powerToken?: string | null
     ): TypedEventFilter<[string], { powerToken: string }>;
@@ -2060,6 +1965,82 @@ export class Enterprise extends BaseContract {
     ServiceRegistered(
       powerToken?: string | null
     ): TypedEventFilter<[string], { powerToken: string }>;
+
+    "StakeChanged(uint256,address,uint8,uint256,uint256,uint256,uint256,uint256,uint256,uint256)"(
+      stakeTokenId?: BigNumberish | null,
+      staker?: string | null,
+      operation?: BigNumberish | null,
+      amountDelta?: null,
+      amount?: null,
+      sharesDelta?: null,
+      shares?: null,
+      totalShares?: null,
+      totalReserve?: null,
+      totalUsedReserve?: null
+    ): TypedEventFilter<
+      [
+        BigNumber,
+        string,
+        number,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber
+      ],
+      {
+        stakeTokenId: BigNumber;
+        staker: string;
+        operation: number;
+        amountDelta: BigNumber;
+        amount: BigNumber;
+        sharesDelta: BigNumber;
+        shares: BigNumber;
+        totalShares: BigNumber;
+        totalReserve: BigNumber;
+        totalUsedReserve: BigNumber;
+      }
+    >;
+
+    StakeChanged(
+      stakeTokenId?: BigNumberish | null,
+      staker?: string | null,
+      operation?: BigNumberish | null,
+      amountDelta?: null,
+      amount?: null,
+      sharesDelta?: null,
+      shares?: null,
+      totalShares?: null,
+      totalReserve?: null,
+      totalUsedReserve?: null
+    ): TypedEventFilter<
+      [
+        BigNumber,
+        string,
+        number,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber
+      ],
+      {
+        stakeTokenId: BigNumber;
+        staker: string;
+        operation: number;
+        amountDelta: BigNumber;
+        amount: BigNumber;
+        sharesDelta: BigNumber;
+        shares: BigNumber;
+        totalShares: BigNumber;
+        totalReserve: BigNumber;
+        totalUsedReserve: BigNumber;
+      }
+    >;
 
     "StreamingReserveChanged(uint112,uint112)"(
       streamingReserve?: null,
@@ -2076,26 +2057,25 @@ export class Enterprise extends BaseContract {
       [BigNumber, BigNumber],
       { streamingReserve: BigNumber; streamingReserveTarget: BigNumber }
     >;
+
+    "StreamingReserveHalvingPeriodChanged(uint32)"(
+      period?: null
+    ): TypedEventFilter<[number], { period: number }>;
+
+    StreamingReserveHalvingPeriodChanged(
+      period?: null
+    ): TypedEventFilter<[number], { period: number }>;
   };
 
   estimateGas: {
-    addLiquidity(
-      liquidityAmount: BigNumberish,
+    claimStakingReward(
+      stakeTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    borrow(
-      powerToken: string,
-      paymentToken: string,
-      loanAmount: BigNumberish,
-      duration: BigNumberish,
-      maxPayment: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    decreaseLiquidity(
-      interestTokenId: BigNumberish,
-      liquidityAmount: BigNumberish,
+    decreaseStake(
+      stakeTokenId: BigNumberish,
+      stakeAmountDelta: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -2109,17 +2089,20 @@ export class Enterprise extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    estimateLoan(
+    estimateRentalFee(
       powerToken: string,
       paymentToken: string,
-      amount: BigNumberish,
-      duration: BigNumberish,
+      rentalAmount: BigNumberish,
+      rentalPeriod: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getAccruedInterest(
-      interestTokenId: BigNumberish,
-      overrides?: CallOverrides
+    extendRentalPeriod(
+      rentalTokenId: BigNumberish,
+      paymentToken: string,
+      rentalPeriod: BigNumberish,
+      maxPayment: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     getAvailableReserve(overrides?: CallOverrides): Promise<BigNumber>;
@@ -2128,43 +2111,23 @@ export class Enterprise extends BaseContract {
 
     getBondingCurve(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getBorrowToken(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getBorrowerLoanReturnGracePeriod(
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getConverter(overrides?: CallOverrides): Promise<BigNumber>;
 
     getEnterpriseCollector(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getEnterpriseLoanCollectGracePeriod(
+    getEnterpriseOnlyCollectionPeriod(
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getEnterpriseVault(overrides?: CallOverrides): Promise<BigNumber>;
+    getEnterpriseToken(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getEnterpriseWallet(overrides?: CallOverrides): Promise<BigNumber>;
 
     getFactory(overrides?: CallOverrides): Promise<BigNumber>;
 
     getGCFeePercent(overrides?: CallOverrides): Promise<BigNumber>;
 
     getInfo(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getInterestGapHalvingPeriod(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getInterestToken(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getLiquidityInfo(
-      interestTokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getLiquidityToken(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getLoanInfo(
-      borrowTokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     getPaymentToken(
       index: BigNumberish,
@@ -2180,13 +2143,38 @@ export class Enterprise extends BaseContract {
 
     getProxyAdmin(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getRentalAgreement(
+      rentalTokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getRentalToken(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getRenterOnlyReturnPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
     getReserve(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getStake(
+      stakeTokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getStakeToken(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getStakingReward(
+      stakeTokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getStreamingReserveHalvingPeriod(
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getUsedReserve(overrides?: CallOverrides): Promise<BigNumber>;
 
-    increaseLiquidity(
-      interestTokenId: BigNumberish,
-      liquidityAmount: BigNumberish,
+    increaseStake(
+      stakeTokenId: BigNumberish,
+      stakeAmountDelta: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -2206,9 +2194,9 @@ export class Enterprise extends BaseContract {
     ): Promise<BigNumber>;
 
     initializeTokens(
-      liquidityToken: string,
-      interestToken: string,
-      borrowToken: string,
+      enterpriseToken: string,
+      stakeToken: string,
+      rentalToken: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -2222,44 +2210,33 @@ export class Enterprise extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    loanTransfer(
-      from: string,
-      to: string,
-      borrowTokenId: BigNumberish,
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
+
+    registerService(
+      serviceName: string,
+      serviceSymbol: string,
+      energyGapHalvingPeriod: BigNumberish,
+      baseRate: BigNumberish,
+      baseToken: string,
+      serviceFeePercent: BigNumberish,
+      minRentalPeriod: BigNumberish,
+      maxRentalPeriod: BigNumberish,
+      minGCFee: BigNumberish,
+      swappingEnabledForever: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    owner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    reborrow(
-      borrowTokenId: BigNumberish,
+    rent(
+      powerToken: string,
       paymentToken: string,
-      duration: BigNumberish,
+      rentalAmount: BigNumberish,
+      rentalPeriod: BigNumberish,
       maxPayment: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    registerService(
-      serviceName: string,
-      symbol: string,
-      gapHalvingPeriod: BigNumberish,
-      baseRate: BigNumberish,
-      baseToken: string,
-      serviceFeePercent: BigNumberish,
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
-      minGCFee: BigNumberish,
-      allowsWrappingForever: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    removeLiquidity(
-      interestTokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    returnLoan(
-      borrowTokenId: BigNumberish,
+    returnRental(
+      rentalTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -2274,11 +2251,6 @@ export class Enterprise extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setBorrowerLoanReturnGracePeriod(
-      newPeriod: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     setConverter(
       newConverter: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -2289,13 +2261,13 @@ export class Enterprise extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setEnterpriseLoanCollectGracePeriod(
+    setEnterpriseOnlyCollectionPeriod(
       newPeriod: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setEnterpriseVault(
-      newVault: string,
+    setEnterpriseWallet(
+      newWallet: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -2304,12 +2276,22 @@ export class Enterprise extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setInterestGapHalvingPeriod(
-      interestGapHalvingPeriod: BigNumberish,
+    setRenterOnlyReturnPeriod(
+      newPeriod: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setStreamingReserveHalvingPeriod(
+      streamingReserveHalvingPeriod: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     shutdownEnterpriseForever(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    stake(
+      stakeAmount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -2318,40 +2300,38 @@ export class Enterprise extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    upgrade(
-      enterpriseFactory: string,
-      enterpriseImplementation: string,
-      borrowTokenImplementation: string,
-      interestTokenImplementation: string,
-      powerTokenImplementation: string,
-      powerTokens: string[],
+    transferRental(
+      from: string,
+      to: string,
+      rentalTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    withdrawInterest(
-      interestTokenId: BigNumberish,
+    unstake(
+      stakeTokenId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    upgrade(
+      enterpriseFactory: string,
+      enterpriseImplementation: string,
+      rentalTokenImplementation: string,
+      stakeTokenImplementation: string,
+      powerTokenImplementation: string,
+      powerTokens: string[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    addLiquidity(
-      liquidityAmount: BigNumberish,
+    claimStakingReward(
+      stakeTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    borrow(
-      powerToken: string,
-      paymentToken: string,
-      loanAmount: BigNumberish,
-      duration: BigNumberish,
-      maxPayment: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    decreaseLiquidity(
-      interestTokenId: BigNumberish,
-      liquidityAmount: BigNumberish,
+    decreaseStake(
+      stakeTokenId: BigNumberish,
+      stakeAmountDelta: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2365,17 +2345,20 @@ export class Enterprise extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    estimateLoan(
+    estimateRentalFee(
       powerToken: string,
       paymentToken: string,
-      amount: BigNumberish,
-      duration: BigNumberish,
+      rentalAmount: BigNumberish,
+      rentalPeriod: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getAccruedInterest(
-      interestTokenId: BigNumberish,
-      overrides?: CallOverrides
+    extendRentalPeriod(
+      rentalTokenId: BigNumberish,
+      paymentToken: string,
+      rentalPeriod: BigNumberish,
+      maxPayment: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     getAvailableReserve(
@@ -2386,23 +2369,21 @@ export class Enterprise extends BaseContract {
 
     getBondingCurve(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getBorrowToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getBorrowerLoanReturnGracePeriod(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getConverter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getEnterpriseCollector(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getEnterpriseLoanCollectGracePeriod(
+    getEnterpriseOnlyCollectionPeriod(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getEnterpriseVault(
+    getEnterpriseToken(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getEnterpriseWallet(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2411,24 +2392,6 @@ export class Enterprise extends BaseContract {
     getGCFeePercent(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getInfo(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getInterestGapHalvingPeriod(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getInterestToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getLiquidityInfo(
-      interestTokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getLiquidityToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getLoanInfo(
-      borrowTokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     getPaymentToken(
       index: BigNumberish,
@@ -2444,13 +2407,40 @@ export class Enterprise extends BaseContract {
 
     getProxyAdmin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    getRentalAgreement(
+      rentalTokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getRentalToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getRenterOnlyReturnPeriod(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getReserve(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getStake(
+      stakeTokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getStakeToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getStakingReward(
+      stakeTokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getStreamingReserveHalvingPeriod(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     getUsedReserve(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    increaseLiquidity(
-      interestTokenId: BigNumberish,
-      liquidityAmount: BigNumberish,
+    increaseStake(
+      stakeTokenId: BigNumberish,
+      stakeAmountDelta: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2470,9 +2460,9 @@ export class Enterprise extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     initializeTokens(
-      liquidityToken: string,
-      interestToken: string,
-      borrowToken: string,
+      enterpriseToken: string,
+      stakeToken: string,
+      rentalToken: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2486,44 +2476,33 @@ export class Enterprise extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    loanTransfer(
-      from: string,
-      to: string,
-      borrowTokenId: BigNumberish,
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    registerService(
+      serviceName: string,
+      serviceSymbol: string,
+      energyGapHalvingPeriod: BigNumberish,
+      baseRate: BigNumberish,
+      baseToken: string,
+      serviceFeePercent: BigNumberish,
+      minRentalPeriod: BigNumberish,
+      maxRentalPeriod: BigNumberish,
+      minGCFee: BigNumberish,
+      swappingEnabledForever: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    reborrow(
-      borrowTokenId: BigNumberish,
+    rent(
+      powerToken: string,
       paymentToken: string,
-      duration: BigNumberish,
+      rentalAmount: BigNumberish,
+      rentalPeriod: BigNumberish,
       maxPayment: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    registerService(
-      serviceName: string,
-      symbol: string,
-      gapHalvingPeriod: BigNumberish,
-      baseRate: BigNumberish,
-      baseToken: string,
-      serviceFeePercent: BigNumberish,
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
-      minGCFee: BigNumberish,
-      allowsWrappingForever: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    removeLiquidity(
-      interestTokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    returnLoan(
-      borrowTokenId: BigNumberish,
+    returnRental(
+      rentalTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2538,11 +2517,6 @@ export class Enterprise extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setBorrowerLoanReturnGracePeriod(
-      newPeriod: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     setConverter(
       newConverter: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -2553,13 +2527,13 @@ export class Enterprise extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setEnterpriseLoanCollectGracePeriod(
+    setEnterpriseOnlyCollectionPeriod(
       newPeriod: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setEnterpriseVault(
-      newVault: string,
+    setEnterpriseWallet(
+      newWallet: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2568,12 +2542,22 @@ export class Enterprise extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setInterestGapHalvingPeriod(
-      interestGapHalvingPeriod: BigNumberish,
+    setRenterOnlyReturnPeriod(
+      newPeriod: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setStreamingReserveHalvingPeriod(
+      streamingReserveHalvingPeriod: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     shutdownEnterpriseForever(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    stake(
+      stakeAmount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2582,18 +2566,25 @@ export class Enterprise extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    upgrade(
-      enterpriseFactory: string,
-      enterpriseImplementation: string,
-      borrowTokenImplementation: string,
-      interestTokenImplementation: string,
-      powerTokenImplementation: string,
-      powerTokens: string[],
+    transferRental(
+      from: string,
+      to: string,
+      rentalTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    withdrawInterest(
-      interestTokenId: BigNumberish,
+    unstake(
+      stakeTokenId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    upgrade(
+      enterpriseFactory: string,
+      enterpriseImplementation: string,
+      rentalTokenImplementation: string,
+      stakeTokenImplementation: string,
+      powerTokenImplementation: string,
+      powerTokens: string[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

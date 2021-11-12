@@ -22,11 +22,10 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 interface IPowerTokenStorageInterface extends ethers.utils.Interface {
   functions: {
     "getIndex()": FunctionFragment;
-    "initialize(address,uint112,uint96,uint32,uint16,address)": FunctionFragment;
-    "initialize2(uint32,uint32,uint16,bool)": FunctionFragment;
-    "isAllowedLoanDuration(uint32)": FunctionFragment;
+    "initialize(address,address,uint112,uint96,uint16,uint32,uint16,uint32,uint32,bool)": FunctionFragment;
+    "isAllowedRentalPeriod(uint32)": FunctionFragment;
+    "isSwappingEnabled()": FunctionFragment;
     "isTransferEnabled()": FunctionFragment;
-    "isWrappingEnabled()": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "getIndex", values?: undefined): string;
@@ -34,46 +33,42 @@ interface IPowerTokenStorageInterface extends ethers.utils.Interface {
     functionFragment: "initialize",
     values: [
       string,
+      string,
       BigNumberish,
       BigNumberish,
       BigNumberish,
       BigNumberish,
-      string
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      boolean
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "initialize2",
-    values: [BigNumberish, BigNumberish, BigNumberish, boolean]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "isAllowedLoanDuration",
+    functionFragment: "isAllowedRentalPeriod",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "isTransferEnabled",
+    functionFragment: "isSwappingEnabled",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "isWrappingEnabled",
+    functionFragment: "isTransferEnabled",
     values?: undefined
   ): string;
 
   decodeFunctionResult(functionFragment: "getIndex", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "initialize2",
+    functionFragment: "isAllowedRentalPeriod",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "isAllowedLoanDuration",
+    functionFragment: "isSwappingEnabled",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "isTransferEnabled",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "isWrappingEnabled",
     data: BytesLike
   ): Result;
 
@@ -128,90 +123,78 @@ export class IPowerTokenStorage extends BaseContract {
 
     initialize(
       enterprise: string,
+      baseToken: string,
       baseRate: BigNumberish,
       minGCFee: BigNumberish,
-      gapHalvingPeriod: BigNumberish,
-      index: BigNumberish,
-      baseToken: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    initialize2(
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
       serviceFeePercent: BigNumberish,
-      wrappingEnabled: boolean,
+      energyGapHalvingPeriod: BigNumberish,
+      index: BigNumberish,
+      minRentalPeriod: BigNumberish,
+      maxRentalPeriod: BigNumberish,
+      swappingEnabled: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    isAllowedLoanDuration(
-      duration: BigNumberish,
+    isAllowedRentalPeriod(
+      period: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    isTransferEnabled(overrides?: CallOverrides): Promise<[boolean]>;
+    isSwappingEnabled(overrides?: CallOverrides): Promise<[boolean]>;
 
-    isWrappingEnabled(overrides?: CallOverrides): Promise<[boolean]>;
+    isTransferEnabled(overrides?: CallOverrides): Promise<[boolean]>;
   };
 
   getIndex(overrides?: CallOverrides): Promise<number>;
 
   initialize(
     enterprise: string,
+    baseToken: string,
     baseRate: BigNumberish,
     minGCFee: BigNumberish,
-    gapHalvingPeriod: BigNumberish,
-    index: BigNumberish,
-    baseToken: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  initialize2(
-    minLoanDuration: BigNumberish,
-    maxLoanDuration: BigNumberish,
     serviceFeePercent: BigNumberish,
-    wrappingEnabled: boolean,
+    energyGapHalvingPeriod: BigNumberish,
+    index: BigNumberish,
+    minRentalPeriod: BigNumberish,
+    maxRentalPeriod: BigNumberish,
+    swappingEnabled: boolean,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  isAllowedLoanDuration(
-    duration: BigNumberish,
+  isAllowedRentalPeriod(
+    period: BigNumberish,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  isTransferEnabled(overrides?: CallOverrides): Promise<boolean>;
+  isSwappingEnabled(overrides?: CallOverrides): Promise<boolean>;
 
-  isWrappingEnabled(overrides?: CallOverrides): Promise<boolean>;
+  isTransferEnabled(overrides?: CallOverrides): Promise<boolean>;
 
   callStatic: {
     getIndex(overrides?: CallOverrides): Promise<number>;
 
     initialize(
       enterprise: string,
+      baseToken: string,
       baseRate: BigNumberish,
       minGCFee: BigNumberish,
-      gapHalvingPeriod: BigNumberish,
-      index: BigNumberish,
-      baseToken: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    initialize2(
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
       serviceFeePercent: BigNumberish,
-      wrappingEnabled: boolean,
+      energyGapHalvingPeriod: BigNumberish,
+      index: BigNumberish,
+      minRentalPeriod: BigNumberish,
+      maxRentalPeriod: BigNumberish,
+      swappingEnabled: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    isAllowedLoanDuration(
-      duration: BigNumberish,
+    isAllowedRentalPeriod(
+      period: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    isTransferEnabled(overrides?: CallOverrides): Promise<boolean>;
+    isSwappingEnabled(overrides?: CallOverrides): Promise<boolean>;
 
-    isWrappingEnabled(overrides?: CallOverrides): Promise<boolean>;
+    isTransferEnabled(overrides?: CallOverrides): Promise<boolean>;
   };
 
   filters: {};
@@ -221,30 +204,26 @@ export class IPowerTokenStorage extends BaseContract {
 
     initialize(
       enterprise: string,
+      baseToken: string,
       baseRate: BigNumberish,
       minGCFee: BigNumberish,
-      gapHalvingPeriod: BigNumberish,
-      index: BigNumberish,
-      baseToken: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    initialize2(
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
       serviceFeePercent: BigNumberish,
-      wrappingEnabled: boolean,
+      energyGapHalvingPeriod: BigNumberish,
+      index: BigNumberish,
+      minRentalPeriod: BigNumberish,
+      maxRentalPeriod: BigNumberish,
+      swappingEnabled: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    isAllowedLoanDuration(
-      duration: BigNumberish,
+    isAllowedRentalPeriod(
+      period: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    isTransferEnabled(overrides?: CallOverrides): Promise<BigNumber>;
+    isSwappingEnabled(overrides?: CallOverrides): Promise<BigNumber>;
 
-    isWrappingEnabled(overrides?: CallOverrides): Promise<BigNumber>;
+    isTransferEnabled(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -252,29 +231,25 @@ export class IPowerTokenStorage extends BaseContract {
 
     initialize(
       enterprise: string,
+      baseToken: string,
       baseRate: BigNumberish,
       minGCFee: BigNumberish,
-      gapHalvingPeriod: BigNumberish,
-      index: BigNumberish,
-      baseToken: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    initialize2(
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
       serviceFeePercent: BigNumberish,
-      wrappingEnabled: boolean,
+      energyGapHalvingPeriod: BigNumberish,
+      index: BigNumberish,
+      minRentalPeriod: BigNumberish,
+      maxRentalPeriod: BigNumberish,
+      swappingEnabled: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    isAllowedLoanDuration(
-      duration: BigNumberish,
+    isAllowedRentalPeriod(
+      period: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    isTransferEnabled(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    isSwappingEnabled(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    isWrappingEnabled(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    isTransferEnabled(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

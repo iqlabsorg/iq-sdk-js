@@ -1,21 +1,23 @@
 import { deployments, ethers } from 'hardhat';
 import 'hardhat-deploy-ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils';
-import { EIP155BlockchainProvider } from '../../src';
-import { baseRate, estimateAndBorrow, getEnterprise, getPowerToken, wait, waitBlockchainTime } from './utils';
-import { DefaultConverter, Enterprise, EnterpriseFactory, ERC20Mock } from '../../src/contracts';
 import {
   AccountState,
   Address,
-  BigNumber,
   EnterpriseInfo,
   EnterpriseParams,
-  ERC20Metadata,
-  LiquidityInfo,
-  LoanInfo,
+  FungibleTokenMetadata,
+  NonFungibleTokenMetadata,
+  RentalAgreement,
   ServiceInfo,
   ServiceParams,
+  Stake,
 } from '@iqprotocol/abstract-blockchain';
+import { BigNumber } from '@ethersproject/bignumber';
+import { EIP155BlockchainProvider } from '../../src';
+import { baseRate, estimateAndRent, getEnterprise, getPowerToken, wait, waitBlockchainTime } from './utils';
+import { DefaultConverter, Enterprise, EnterpriseFactory, ERC20Mock } from '../../src/contracts';
+import { ChainId } from 'caip';
 
 type Awaited<T> = T extends PromiseLike<infer U> ? Awaited<U> : T;
 
@@ -31,44 +33,50 @@ describe('EIP155BlockchainProvider', () => {
   const BASE_RATE = BigNumber.from(baseRate(100n, 86400n, 3n));
   const GAP_HALVING_PERIOD = 86400;
 
+  let chainId: ChainId;
   let blockchainProvider: EIP155BlockchainProvider;
   let deployerSigner: Awaited<ReturnType<typeof ethers.getNamedSigner>>;
-  let liquidityToken: ERC20Mock;
+  let enterpriseToken: ERC20Mock;
   let enterpriseFactory: EnterpriseFactory;
   let converter: DefaultConverter;
 
   let baseEnterpriseParams: EnterpriseParams;
   let baseServiceParams: ServiceParams;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     await deployments.fixture();
     deployerSigner = await ethers.getNamedSigner('deployer');
     enterpriseFactory = await ethers.getContract('EnterpriseFactory');
-    liquidityToken = await ethers.getContract('ERC20Mock');
+    enterpriseToken = await ethers.getContract('ERC20Mock');
     converter = await ethers.getContract('DefaultConverter');
     blockchainProvider = new EIP155BlockchainProvider({
       signer: deployerSigner,
     });
 
+    chainId = new ChainId({
+      namespace: 'eip155',
+      reference: String(await deployerSigner.getChainId()),
+    });
+
     baseEnterpriseParams = {
       name: 'Test Enterprise',
-      baseUri: 'https://iq.space',
+      baseUri: 'https://iq.space/',
       gcFeePercent: 2 * ONE_PERCENT,
-      liquidityTokenAddress: liquidityToken.address,
+      enterpriseTokenAddress: enterpriseToken.address,
       converterAddress: converter.address,
     };
 
     baseServiceParams = {
-      name: 'Test Service',
-      symbol: 'IQPT',
-      gapHalvingPeriod: GAP_HALVING_PERIOD,
+      serviceName: 'Test Service',
+      serviceSymbol: 'SERV',
+      energyGapHalvingPeriod: GAP_HALVING_PERIOD,
       baseRate: BASE_RATE,
-      baseToken: liquidityToken.address,
+      baseToken: enterpriseToken.address,
       serviceFeePercent: 3 * ONE_PERCENT,
-      minLoanDuration: 12 * ONE_HOUR,
-      maxLoanDuration: 60 * ONE_DAY,
+      minRentalPeriod: 12 * ONE_HOUR,
+      maxRentalPeriod: 60 * ONE_DAY,
       minGCFee: ONE_TOKEN,
-      allowsWrappingForever: true,
+      swappingEnabledForever: true,
     };
   });
 
@@ -77,19 +85,18 @@ describe('EIP155BlockchainProvider', () => {
     expect(receipt.status).toBe(1);
   });
 
-  it('returns correct CAIP-2 chain ID', async () => {
-    const chainId = await blockchainProvider.getChainId();
-    expect(chainId.toString()).toEqual(`eip155:${await deployerSigner.getChainId()}`);
+  it('returns correct provider chain ID', async () => {
+    await expect(blockchainProvider.getChainId()).resolves.toEqual(chainId);
   });
 
   it('retrieves an arbitrary token balance', async () => {
     // fallback to signer address
-    let balance = await blockchainProvider.getTokenBalance(liquidityToken.address);
+    let balance = await blockchainProvider.getTokenBalance(enterpriseToken.address);
     expect(balance).toEqual(parseUnits('1000000000'));
 
     // use arbitrary address
     balance = await blockchainProvider.getTokenBalance(
-      liquidityToken.address,
+      enterpriseToken.address,
       '0x17CdaD42F88fcecF77F53467B3c15613e8063adD',
     );
     expect(balance).toEqual(BigNumber.from(0));
@@ -108,9 +115,9 @@ describe('EIP155BlockchainProvider', () => {
         name: baseEnterpriseParams.name,
         baseUri: baseEnterpriseParams.baseUri,
         totalShares: BigNumber.from(0),
-        interestGapHalvingPeriod: 7 * ONE_DAY,
-        borrowerLoanReturnGracePeriod: 12 * ONE_HOUR,
-        enterpriseLoanCollectGracePeriod: ONE_DAY,
+        streamingReserveHalvingPeriod: 7 * ONE_DAY,
+        renterOnlyReturnPeriod: 12 * ONE_HOUR,
+        enterpriseOnlyCollectionPeriod: ONE_DAY,
         gcFeePercent: 2 * ONE_PERCENT,
         fixedReserve: BigNumber.from(0),
         usedReserve: BigNumber.from(0),
@@ -120,80 +127,99 @@ describe('EIP155BlockchainProvider', () => {
       };
     });
 
+    it('returns correct enterprise chain ID', async () => {
+      await expect(blockchainProvider.enterprise(enterprise.address).getChainId()).resolves.toEqual(chainId);
+    });
+
+    it('retrieves payment token address by index', async () => {
+      await expect(blockchainProvider.enterprise(enterprise.address).getPaymentTokenAddressByIndex(0)).resolves.toEqual(
+        enterpriseToken.address,
+      );
+    });
+
     it('retrieves enterprise data', async () => {
-      const data = await blockchainProvider.getEnterpriseInfo(enterprise.address);
+      const data = await blockchainProvider.enterprise(enterprise.address).getInfo();
       expect(data).toStrictEqual(expectedEnterpriseData);
     });
 
-    it('retrieves enterprise liquidity token metadata', async () => {
-      const metadata = await blockchainProvider.getLiquidityTokenMetadata(enterprise.address);
-      expect(metadata).toEqual(<ERC20Metadata>{
-        address: liquidityToken.address,
+    it('retrieves enterprise token metadata', async () => {
+      await expect(blockchainProvider.enterprise(enterprise.address).getEnterpriseTokenMetadata()).resolves.toEqual({
+        address: enterpriseToken.address,
         name: 'Testing',
         symbol: 'TST',
         decimals: 18,
-      });
+      } as FungibleTokenMetadata);
     });
 
     it('registers new services', async () => {
-      const receipt = await wait(blockchainProvider.registerService(enterprise.address, baseServiceParams));
+      const receipt = await wait(blockchainProvider.enterprise(enterprise.address).registerService(baseServiceParams));
       expect(receipt.status).toBe(1);
     });
 
     it('allows to set a collector address', async () => {
       const collector = '0x17CdaD42F88fcecF77F53467B3c15613e8063adD';
-      await wait(blockchainProvider.setEnterpriseCollectorAddress(enterprise.address, collector));
-      await expect(blockchainProvider.getEnterpriseCollectorAddress(enterprise.address)).resolves.toEqual(collector);
+      await wait(blockchainProvider.enterprise(enterprise.address).setEnterpriseCollectorAddress(collector));
+      await expect(blockchainProvider.enterprise(enterprise.address).getEnterpriseCollectorAddress()).resolves.toEqual(
+        collector,
+      );
     });
 
-    it('allows to set an enterprise vault address', async () => {
-      const vault = '0x1E60bE47921E15FBc9e9246daC71F771d4b78a6c';
-      await wait(blockchainProvider.setEnterpriseVaultAddress(enterprise.address, vault));
-      await expect(blockchainProvider.getEnterpriseVaultAddress(enterprise.address)).resolves.toEqual(vault);
+    it('allows to set an enterprise wallet address', async () => {
+      const wallet = '0x1E60bE47921E15FBc9e9246daC71F771d4b78a6c';
+      await wait(blockchainProvider.enterprise(enterprise.address).setEnterpriseWalletAddress(wallet));
+      await expect(blockchainProvider.enterprise(enterprise.address).getEnterpriseWalletAddress()).resolves.toEqual(
+        wallet,
+      );
     });
 
     it('allows to set a converter address', async () => {
       const converter = '0x312D566FABE323BA574fFf724d29c08F46b746b0';
-      await wait(blockchainProvider.setConverterAddress(enterprise.address, converter));
-      await expect(blockchainProvider.getConverterAddress(enterprise.address)).resolves.toEqual(converter);
+      await wait(blockchainProvider.enterprise(enterprise.address).setConverterAddress(converter));
+      await expect(blockchainProvider.enterprise(enterprise.address).getConverterAddress()).resolves.toEqual(converter);
     });
 
     it('allows to set a bonding curve', async () => {
-      await wait(blockchainProvider.setBondingCurve(enterprise.address, 10, 5));
-      await expect(blockchainProvider.getBondingCurve(enterprise.address)).resolves.toEqual({
+      await wait(blockchainProvider.enterprise(enterprise.address).setBondingCurve(10, 5));
+      await expect(blockchainProvider.enterprise(enterprise.address).getBondingCurve()).resolves.toEqual({
         pole: BigNumber.from(10),
         slope: BigNumber.from(5),
       });
     });
 
-    it('allows to set a borrower return grace period', async () => {
+    it('allows to set a renter only return period', async () => {
       const period = 3 * ONE_HOUR;
-      await wait(blockchainProvider.setBorrowerLoanReturnGracePeriod(enterprise.address, period));
-      await expect(blockchainProvider.getBorrowerLoanReturnGracePeriod(enterprise.address)).resolves.toEqual(period);
+      await wait(blockchainProvider.enterprise(enterprise.address).setRenterOnlyReturnPeriod(period));
+      await expect(blockchainProvider.enterprise(enterprise.address).getRenterOnlyReturnPeriod()).resolves.toEqual(
+        period,
+      );
     });
 
-    it('allows to set a collector grace period', async () => {
+    it('allows to set a collector only period', async () => {
       const period = 14 * ONE_HOUR;
-      await wait(blockchainProvider.setEnterpriseLoanCollectGracePeriod(enterprise.address, period));
-      await expect(blockchainProvider.getEnterpriseLoanCollectGracePeriod(enterprise.address)).resolves.toEqual(period);
+      await wait(blockchainProvider.enterprise(enterprise.address).setEnterpriseOnlyCollectionPeriod(period));
+      await expect(
+        blockchainProvider.enterprise(enterprise.address).getEnterpriseOnlyCollectionPeriod(),
+      ).resolves.toEqual(period);
     });
 
     it('allows to set enterprise base URI', async () => {
       const uri = 'https://iq.space';
-      await wait(blockchainProvider.setBaseUri(enterprise.address, uri));
-      await expect(blockchainProvider.getBaseUri(enterprise.address)).resolves.toEqual(uri);
+      await wait(blockchainProvider.enterprise(enterprise.address).setBaseUri(uri));
+      await expect(blockchainProvider.enterprise(enterprise.address).getBaseUri()).resolves.toEqual(uri);
     });
 
-    it('allows to set interest gap halving period', async () => {
+    it('allows to set streaming reserve halving period', async () => {
       const period = 6 * ONE_HOUR;
-      await wait(blockchainProvider.setInterestGapHalvingPeriod(enterprise.address, period));
-      await expect(blockchainProvider.getInterestGapHalvingPeriod(enterprise.address)).resolves.toEqual(period);
+      await wait(blockchainProvider.enterprise(enterprise.address).setStreamingReserveHalvingPeriod(period));
+      await expect(
+        blockchainProvider.enterprise(enterprise.address).getStreamingReserveHalvingPeriod(),
+      ).resolves.toEqual(period);
     });
 
     it('allows to set GC fee percent', async () => {
       const percent = 200; // 2%
-      await wait(blockchainProvider.setGcFeePercent(enterprise.address, percent));
-      await expect(blockchainProvider.getGCFeePercent(enterprise.address)).resolves.toEqual(percent);
+      await wait(blockchainProvider.enterprise(enterprise.address).setGcFeePercent(percent));
+      await expect(blockchainProvider.enterprise(enterprise.address).getGCFeePercent()).resolves.toEqual(percent);
     });
 
     describe('When enterprise has registered services', () => {
@@ -202,55 +228,60 @@ describe('EIP155BlockchainProvider', () => {
       let expectedServiceData1: ServiceInfo;
 
       beforeEach(async () => {
-        const liquidityTokenSymbol = await liquidityToken.symbol();
+        const enterpriseTokenSymbol = await enterpriseToken.symbol();
         const baseExpectedServiceData: Omit<ServiceInfo, 'address' | 'name' | 'symbol' | 'index'> = {
-          gapHalvingPeriod: GAP_HALVING_PERIOD,
+          energyGapHalvingPeriod: GAP_HALVING_PERIOD,
           baseRate: BASE_RATE,
-          baseToken: liquidityToken.address,
+          baseToken: enterpriseToken.address,
           serviceFeePercent: 3 * ONE_PERCENT,
-          minLoanDuration: 12 * ONE_HOUR,
-          maxLoanDuration: 60 * ONE_DAY,
+          minRentalPeriod: 12 * ONE_HOUR,
+          maxRentalPeriod: 60 * ONE_DAY,
           minGCFee: ONE_TOKEN,
-          wrappingEnabled: true,
+          swappingEnabled: true,
           transferEnabled: false,
         };
 
         // register first service
-        const serviceParams1 = {
+        const serviceParams1 = <ServiceParams>{
           ...baseServiceParams,
-          name: 'Test Service 1',
-          symbol: 'IQPT1',
+          serviceName: 'Test Service 1',
+          serviceSymbol: 'IQPT1',
         };
-        const r1 = await wait(blockchainProvider.registerService(enterprise.address, serviceParams1));
+        const r1 = await wait(blockchainProvider.enterprise(enterprise.address).registerService(serviceParams1));
         service1Address = (await getPowerToken(enterprise, r1.blockNumber)).address;
-        expectedServiceData1 = {
+        expectedServiceData1 = <ServiceInfo>{
           ...baseExpectedServiceData,
           address: service1Address,
-          name: serviceParams1.name,
-          symbol: `${liquidityTokenSymbol} ${serviceParams1.symbol}`,
+          name: serviceParams1.serviceName,
+          symbol: `${enterpriseTokenSymbol} ${serviceParams1.serviceSymbol}`,
           index: 0,
         };
 
         // register second service
-        const serviceParams2 = {
+        const serviceParams2 = <ServiceParams>{
           ...baseServiceParams,
-          name: 'Test Service 2',
-          symbol: 'IQPT2',
+          serviceName: 'Test Service 2',
+          serviceSymbol: 'IQPT2',
         };
-        const r2 = await wait(blockchainProvider.registerService(enterprise.address, serviceParams2));
+        const r2 = await wait(blockchainProvider.enterprise(enterprise.address).registerService(serviceParams2));
         service2Address = (await getPowerToken(enterprise, r2.blockNumber)).address;
       });
 
       it('lists enterprise services', async () => {
-        const services = await blockchainProvider.getServices(enterprise.address);
+        const services = await blockchainProvider.enterprise(enterprise.address).getServiceAddresses();
         expect(services).toHaveLength(2);
 
         expect(services[0]).toEqual(service1Address);
         expect(services[1]).toEqual(service2Address);
       });
 
-      it('retrieves the service data', async () => {
-        const service = await blockchainProvider.getServiceInfo(service1Address);
+      it('returns correct service chain ID', async () => {
+        await expect(blockchainProvider.service(service1Address).getChainId()).resolves.toEqual(chainId);
+        await expect(blockchainProvider.service(service2Address).getChainId()).resolves.toEqual(chainId);
+      });
+
+      it('retrieves the service information', async () => {
+        const service = await blockchainProvider.service(service1Address).getInfo();
         expect(service).toStrictEqual(expectedServiceData1);
       });
 
@@ -267,33 +298,35 @@ describe('EIP155BlockchainProvider', () => {
           timestamp: 0,
         };
 
-        let accountState = await blockchainProvider.getAccountState(serviceAddress, accountAddress);
+        let accountState = await blockchainProvider.service(serviceAddress).getAccountState(accountAddress);
         expect(accountState).toStrictEqual(expectedState);
 
         // check fallback to signer address
-        accountState = await blockchainProvider.getAccountState(serviceAddress);
+        accountState = await blockchainProvider.service(serviceAddress).getAccountState();
         expect(accountState).toStrictEqual({ ...expectedState, accountAddress: deployerSigner.address });
       });
 
-      it('retrieves the service gap halving period', async () => {
-        await expect(blockchainProvider.getGapHalvingPeriod(service1Address)).resolves.toEqual(
-          expectedServiceData1.gapHalvingPeriod,
+      it('retrieves the service energy gap halving period', async () => {
+        await expect(blockchainProvider.service(service1Address).getEnergyGapHalvingPeriod()).resolves.toEqual(
+          expectedServiceData1.energyGapHalvingPeriod,
         );
       });
 
       it('retrieves the service index', async () => {
-        await expect(blockchainProvider.getServiceIndex(service1Address)).resolves.toEqual(expectedServiceData1.index);
+        await expect(blockchainProvider.service(service1Address).getIndex()).resolves.toEqual(
+          expectedServiceData1.index,
+        );
       });
 
       it('retrieves the service fee percent', async () => {
-        await expect(blockchainProvider.getServiceFeePercent(service1Address)).resolves.toEqual(
+        await expect(blockchainProvider.service(service1Address).getServiceFeePercent()).resolves.toEqual(
           expectedServiceData1.serviceFeePercent,
         );
       });
 
-      it('retrieves the wrapping flag', async () => {
-        await expect(blockchainProvider.isWrappingEnabled(service1Address)).resolves.toEqual(
-          expectedServiceData1.wrappingEnabled,
+      it('retrieves the swapping flag', async () => {
+        await expect(blockchainProvider.service(service1Address).isSwappingEnabled()).resolves.toEqual(
+          expectedServiceData1.swappingEnabled,
         );
       });
 
@@ -301,347 +334,377 @@ describe('EIP155BlockchainProvider', () => {
         const baseRate = BigNumber.from(10);
         const baseToken = '0xBC7024d93ae7db4a60E0720c09127A49477aea80';
         const minGCFee = BigNumber.from(2);
-        await wait(blockchainProvider.setBaseRate(service1Address, baseRate, baseToken, minGCFee));
-        await expect(blockchainProvider.getBaseRate(service1Address)).resolves.toEqual(baseRate);
-        await expect(blockchainProvider.getBaseTokenAddress(service1Address)).resolves.toEqual(baseToken);
-        await expect(blockchainProvider.getMinGCFee(service1Address)).resolves.toEqual(minGCFee);
+        await wait(blockchainProvider.service(service1Address).setBaseRate(baseRate, baseToken, minGCFee));
+        await expect(blockchainProvider.service(service1Address).getBaseRate()).resolves.toEqual(baseRate);
+        await expect(blockchainProvider.service(service1Address).getBaseTokenAddress()).resolves.toEqual(baseToken);
+        await expect(blockchainProvider.service(service1Address).getMinGCFee()).resolves.toEqual(minGCFee);
       });
 
       it('allows to set service fee percent', async () => {
         const feePercent = ONE_PERCENT * 12;
-        await wait(blockchainProvider.setServiceFeePercent(service1Address, feePercent));
-        await expect(blockchainProvider.getServiceFeePercent(service1Address)).resolves.toEqual(feePercent);
+        await wait(blockchainProvider.service(service1Address).setServiceFeePercent(feePercent));
+        await expect(blockchainProvider.service(service1Address).getServiceFeePercent()).resolves.toEqual(feePercent);
       });
 
-      it('allows to set service loan duration limits', async () => {
-        const minLoanDuration = 8 * ONE_HOUR;
-        const maxLoanDuration = 10 * ONE_DAY;
-        await wait(blockchainProvider.setLoanDurationLimits(service1Address, minLoanDuration, maxLoanDuration));
-        await expect(blockchainProvider.getMinLoanDuration(service1Address)).resolves.toEqual(minLoanDuration);
-        await expect(blockchainProvider.getMaxLoanDuration(service1Address)).resolves.toEqual(maxLoanDuration);
+      it('allows to set rental period limits', async () => {
+        const minRentalPeriod = 8 * ONE_HOUR;
+        const maxRentalPeriod = 10 * ONE_DAY;
+        await wait(blockchainProvider.service(service1Address).setRentalPeriodLimits(minRentalPeriod, maxRentalPeriod));
+        await expect(blockchainProvider.service(service1Address).getMinRentalPeriod()).resolves.toEqual(
+          minRentalPeriod,
+        );
+        await expect(blockchainProvider.service(service1Address).getMaxRentalPeriod()).resolves.toEqual(
+          maxRentalPeriod,
+        );
       });
 
-      it('allows to approve liquidity tokens to a service', async () => {
-        await wait(blockchainProvider.approveLiquidityTokensToService(service1Address, ONE_TOKEN));
-        const allowance = await liquidityToken.allowance(deployerSigner.address, service1Address);
+      it('allows to approve enterprise tokens to a service', async () => {
+        await wait(blockchainProvider.service(service1Address).setEnterpriseTokenAllowance(ONE_TOKEN));
+        const allowance = await enterpriseToken.allowance(deployerSigner.address, service1Address);
         expect(allowance).toEqual(ONE_TOKEN);
       });
 
-      it('retrieves liquidity token allowance to service', async () => {
-        await wait(blockchainProvider.approveLiquidityTokensToService(service1Address, ONE_TOKEN));
-        const allowance = await blockchainProvider.getLiquidityTokenServiceAllowance(service1Address);
+      it('retrieves enterprise token allowance to service', async () => {
+        await wait(blockchainProvider.service(service1Address).setEnterpriseTokenAllowance(ONE_TOKEN));
+        const allowance = await blockchainProvider.service(service1Address).getEnterpriseTokenAllowance();
         expect(allowance).toEqual(ONE_TOKEN);
       });
 
-      it('allows to wrap liquidity tokens to get power tokens', async () => {
+      it('allows to swap enterprise tokens to get power tokens', async () => {
         const amount = ONE_TOKEN.mul(15);
-        const liquidityTokenBalanceBefore = await liquidityToken.balanceOf(deployerSigner.address);
+        const enterpriseTokenBalanceBefore = await enterpriseToken.balanceOf(deployerSigner.address);
         const powerTokenBalanceBefore = await blockchainProvider.getTokenBalance(
           service1Address,
           deployerSigner.address,
         );
-        await wait(blockchainProvider.approveLiquidityTokensToService(service1Address, amount));
-        await wait(blockchainProvider.wrap(service1Address, amount));
-        const liquidityTokenBalanceAfter = await liquidityToken.balanceOf(deployerSigner.address);
+        await wait(blockchainProvider.service(service1Address).setEnterpriseTokenAllowance(amount));
+        await wait(blockchainProvider.service(service1Address).swapIn(amount));
+        const enterpriseTokenBalanceAfter = await enterpriseToken.balanceOf(deployerSigner.address);
         const powerTokenBalanceAfter = await blockchainProvider.getTokenBalance(
           service1Address,
           deployerSigner.address,
         );
         expect(powerTokenBalanceBefore).toEqual(BigNumber.from(0));
         expect(powerTokenBalanceAfter).toEqual(amount);
-        expect(liquidityTokenBalanceAfter).toEqual(liquidityTokenBalanceBefore.sub(amount));
+        expect(enterpriseTokenBalanceAfter).toEqual(enterpriseTokenBalanceBefore.sub(amount));
       });
 
-      it('allows to wrap liquidity tokens to get power tokens (specific account)', async () => {
-        const amount = ONE_TOKEN.mul(12);
-        const destAccountAddress = '0x6b75B02c3B5174832C1aa3404F5c7A60CB436e03';
-        const liquidityTokenBalanceBefore = await liquidityToken.balanceOf(deployerSigner.address);
-        const powerTokenBalanceBefore = await blockchainProvider.getTokenBalance(service1Address, destAccountAddress);
-        await wait(blockchainProvider.approveLiquidityTokensToService(service1Address, amount));
-        await wait(blockchainProvider.wrapTo(service1Address, destAccountAddress, amount));
-        const liquidityTokenBalanceAfter = await liquidityToken.balanceOf(deployerSigner.address);
-        const powerTokenBalanceAfter = await blockchainProvider.getTokenBalance(service1Address, destAccountAddress);
-        expect(powerTokenBalanceBefore).toEqual(BigNumber.from(0));
-        expect(powerTokenBalanceAfter).toEqual(amount);
-        expect(liquidityTokenBalanceAfter).toEqual(liquidityTokenBalanceBefore.sub(amount));
-      });
-
-      describe('When there are wrapped tokens', () => {
-        let wrappedAmount: BigNumber;
+      describe('When there are swapped tokens', () => {
+        let swappedAmount: BigNumber;
         beforeEach(async () => {
-          wrappedAmount = ONE_TOKEN.mul(25);
-          await wait(blockchainProvider.approveLiquidityTokensToService(service1Address, wrappedAmount));
-          await wait(blockchainProvider.wrap(service1Address, wrappedAmount));
+          swappedAmount = ONE_TOKEN.mul(25);
+          await wait(blockchainProvider.service(service1Address).setEnterpriseTokenAllowance(swappedAmount));
+          await wait(blockchainProvider.service(service1Address).swapIn(swappedAmount));
         });
 
         it('retrieves power token balance for account', async () => {
-          await expect(blockchainProvider.getPowerTokenBalance(service1Address)).resolves.toEqual(wrappedAmount);
-          await expect(blockchainProvider.getPowerTokenAvailableBalance(service1Address)).resolves.toEqual(
-            wrappedAmount,
+          await expect(blockchainProvider.service(service1Address).getBalance()).resolves.toEqual(swappedAmount);
+          await expect(blockchainProvider.service(service1Address).getAvailableBalance()).resolves.toEqual(
+            swappedAmount,
           );
         });
 
-        it('allows to unwrap power tokens to get liquidity tokens', async () => {
-          const liquidityTokenBalanceBefore = await liquidityToken.balanceOf(deployerSigner.address);
+        it('allows to swap power tokens back to get enterprise tokens', async () => {
+          const enterpriseTokenBalanceBefore = await enterpriseToken.balanceOf(deployerSigner.address);
           const powerTokenBalanceBefore = await blockchainProvider.getTokenBalance(
             service1Address,
             deployerSigner.address,
           );
-          await wait(blockchainProvider.unwrap(service1Address, wrappedAmount));
-          const liquidityTokenBalanceAfter = await liquidityToken.balanceOf(deployerSigner.address);
+          await wait(blockchainProvider.service(service1Address).swapOut(swappedAmount));
+          const enterpriseTokenBalanceAfter = await enterpriseToken.balanceOf(deployerSigner.address);
           const powerTokenBalanceAfter = await blockchainProvider.getTokenBalance(
             service1Address,
             deployerSigner.address,
           );
 
-          expect(powerTokenBalanceAfter).toEqual(powerTokenBalanceBefore.sub(wrappedAmount));
-          expect(liquidityTokenBalanceAfter).toEqual(liquidityTokenBalanceBefore.add(wrappedAmount));
+          expect(powerTokenBalanceAfter).toEqual(powerTokenBalanceBefore.sub(swappedAmount));
+          expect(enterpriseTokenBalanceAfter).toEqual(enterpriseTokenBalanceBefore.add(swappedAmount));
         });
       });
 
-      describe('When there is a liquidity provider', () => {
-        let liquidityProvider: Awaited<ReturnType<typeof ethers.getNamedSigner>>;
-        let lpBlockchainProvider: EIP155BlockchainProvider;
+      describe('When there is a staker', () => {
+        let staker: Awaited<ReturnType<typeof ethers.getNamedSigner>>;
+        let stakerBlockchainProvider: EIP155BlockchainProvider;
 
         beforeEach(async () => {
-          liquidityProvider = await ethers.getNamedSigner('liquidityProvider');
-          // allocate tokens to liquidity provider
-          await liquidityToken.transfer(liquidityProvider.address, ONE_TOKEN.mul(10000));
-          lpBlockchainProvider = new EIP155BlockchainProvider({ signer: liquidityProvider });
+          staker = await ethers.getNamedSigner('staker');
+          // allocate tokens to staker
+          await enterpriseToken.transfer(staker.address, ONE_TOKEN.mul(10000));
+          stakerBlockchainProvider = new EIP155BlockchainProvider({ signer: staker });
         });
 
-        it('allows to approve liquidity tokens to enterprise', async () => {
-          await wait(lpBlockchainProvider.approveLiquidityTokensToEnterprise(enterprise.address, ONE_TOKEN));
-          const allowance = await liquidityToken.allowance(liquidityProvider.address, enterprise.address);
+        it('allows to approve enterprise tokens to enterprise', async () => {
+          await wait(stakerBlockchainProvider.enterprise(enterprise.address).setEnterpriseTokenAllowance(ONE_TOKEN));
+          const allowance = await enterpriseToken.allowance(staker.address, enterprise.address);
           expect(allowance).toEqual(ONE_TOKEN);
         });
 
-        it('retrieves liquidity token allowance to enterprise', async () => {
-          await wait(lpBlockchainProvider.approveLiquidityTokensToEnterprise(enterprise.address, ONE_TOKEN));
-          const allowance = await lpBlockchainProvider.getLiquidityTokenEnterpriseAllowance(enterprise.address);
+        it('retrieves enterprise token allowance to enterprise', async () => {
+          await wait(stakerBlockchainProvider.enterprise(enterprise.address).setEnterpriseTokenAllowance(ONE_TOKEN));
+          const allowance = await stakerBlockchainProvider.enterprise(enterprise.address).getEnterpriseTokenAllowance();
           expect(allowance).toEqual(ONE_TOKEN);
         });
 
-        it('allows to add liquidity', async () => {
-          await wait(lpBlockchainProvider.approveLiquidityTokensToEnterprise(enterprise.address, ONE_TOKEN.mul(100)));
-          const receipt = await wait(lpBlockchainProvider.addLiquidity(enterprise.address, ONE_TOKEN.mul(100)));
+        it('allows to stake', async () => {
+          await wait(
+            stakerBlockchainProvider.enterprise(enterprise.address).setEnterpriseTokenAllowance(ONE_TOKEN.mul(100)),
+          );
+          const receipt = await wait(stakerBlockchainProvider.enterprise(enterprise.address).stake(ONE_TOKEN.mul(100)));
           expect(receipt.status).toBe(1);
         });
 
-        describe('When liquidity is added', () => {
+        describe('When staked', () => {
           beforeEach(async () => {
             await wait(
-              lpBlockchainProvider.approveLiquidityTokensToEnterprise(enterprise.address, ONE_TOKEN.mul(2000)),
+              stakerBlockchainProvider.enterprise(enterprise.address).setEnterpriseTokenAllowance(ONE_TOKEN.mul(2000)),
             );
-            await wait(lpBlockchainProvider.addLiquidity(enterprise.address, ONE_TOKEN.mul(1000)));
-            await wait(lpBlockchainProvider.addLiquidity(enterprise.address, ONE_TOKEN.mul(800)));
+            await wait(stakerBlockchainProvider.enterprise(enterprise.address).stake(ONE_TOKEN.mul(1000)));
+            await wait(stakerBlockchainProvider.enterprise(enterprise.address).stake(ONE_TOKEN.mul(800)));
           });
 
-          it('retrieves a list of interest tokens', async () => {
-            const interestTokenIds = await lpBlockchainProvider.getInterestTokenIds(enterprise.address);
-            expect(interestTokenIds).toHaveLength(2);
+          it('retrieves a list of stake tokens', async () => {
+            const stakeTokenIds = await stakerBlockchainProvider.enterprise(enterprise.address).getStakeTokenIds();
+            expect(stakeTokenIds).toHaveLength(2);
           });
 
-          it('retrieves liquidity info by interest token ID', async () => {
-            const [tokenId] = await lpBlockchainProvider.getInterestTokenIds(enterprise.address);
-            const liquidityInfo = await lpBlockchainProvider.getLiquidityInfo(enterprise.address, tokenId);
-            expect(Object.keys(liquidityInfo)).toEqual(
-              expect.arrayContaining(<Array<keyof LiquidityInfo>>['tokenId', 'amount', 'shares', 'block']),
+          it('retrieves stake info by stake token ID', async () => {
+            const [tokenId] = await stakerBlockchainProvider.enterprise(enterprise.address).getStakeTokenIds();
+            const stake = await stakerBlockchainProvider.enterprise(enterprise.address).getStake(tokenId);
+            expect(Object.keys(stake)).toEqual(
+              expect.arrayContaining<keyof Stake>(['tokenId', 'amount', 'shares', 'block']),
             );
-            expect(liquidityInfo).toMatchObject(<LiquidityInfo>{
+            expect(stake).toMatchObject(<Stake>{
               tokenId,
               amount: ONE_TOKEN.mul(1000),
               shares: ONE_SHARE.mul(1000),
             });
           });
 
-          it('allows to increase liquidity', async () => {
-            const [tokenId] = await lpBlockchainProvider.getInterestTokenIds(enterprise.address);
-            await wait(lpBlockchainProvider.increaseLiquidity(enterprise.address, tokenId, ONE_TOKEN.mul(200)));
-            const liquidityInfo = await lpBlockchainProvider.getLiquidityInfo(enterprise.address, tokenId);
-            expect(liquidityInfo).toMatchObject(<LiquidityInfo>{
+          it('retrieves stake token metadata', async () => {
+            const tokenAddress = await blockchainProvider.enterprise(enterprise.address).getStakeTokenAddress();
+            const [tokenId] = await stakerBlockchainProvider.enterprise(enterprise.address).getStakeTokenIds();
+            await expect(
+              stakerBlockchainProvider.enterprise(enterprise.address).getStakeTokenMetadata(tokenId),
+            ).resolves.toEqual({
+              address: tokenAddress,
+              name: 'Staking TST',
+              symbol: 'sTST',
+              tokenUri: `${baseEnterpriseParams.baseUri}stake/${tokenId.toString()}`,
+            } as NonFungibleTokenMetadata);
+          });
+
+          it('allows to increase stake', async () => {
+            const [tokenId] = await stakerBlockchainProvider.enterprise(enterprise.address).getStakeTokenIds();
+            await wait(
+              stakerBlockchainProvider.enterprise(enterprise.address).increaseStake(tokenId, ONE_TOKEN.mul(200)),
+            );
+            const stake = await stakerBlockchainProvider.enterprise(enterprise.address).getStake(tokenId);
+            expect(stake).toMatchObject(<Stake>{
               tokenId,
               amount: ONE_TOKEN.mul(1200),
               shares: ONE_SHARE.mul(1200),
             });
           });
 
-          it('allows to decrease liquidity', async () => {
-            const [tokenId] = await lpBlockchainProvider.getInterestTokenIds(enterprise.address);
-            await wait(lpBlockchainProvider.decreaseLiquidity(enterprise.address, tokenId, ONE_TOKEN.mul(500)));
-            const liquidityInfo = await lpBlockchainProvider.getLiquidityInfo(enterprise.address, tokenId);
-            expect(liquidityInfo).toMatchObject(<LiquidityInfo>{
+          it('allows to decrease stake', async () => {
+            const [tokenId] = await stakerBlockchainProvider.enterprise(enterprise.address).getStakeTokenIds();
+            await wait(
+              stakerBlockchainProvider.enterprise(enterprise.address).decreaseStake(tokenId, ONE_TOKEN.mul(500)),
+            );
+            const stake = await stakerBlockchainProvider.enterprise(enterprise.address).getStake(tokenId);
+            expect(stake).toMatchObject(<Stake>{
               tokenId,
               amount: ONE_TOKEN.mul(500),
               shares: ONE_SHARE.mul(500),
             });
           });
 
-          it('allows to remove liquidity', async () => {
-            const [tokenId] = await lpBlockchainProvider.getInterestTokenIds(enterprise.address);
-            await wait(lpBlockchainProvider.removeLiquidity(enterprise.address, tokenId));
-            const interestTokenIds = await lpBlockchainProvider.getInterestTokenIds(enterprise.address);
-            expect(interestTokenIds).toHaveLength(1);
-            await expect(lpBlockchainProvider.getLiquidityInfo(enterprise.address, tokenId)).rejects.toThrow();
+          it('allows to unstake', async () => {
+            const [tokenId] = await stakerBlockchainProvider.enterprise(enterprise.address).getStakeTokenIds();
+            await wait(stakerBlockchainProvider.enterprise(enterprise.address).unstake(tokenId));
+            const stakeTokenIds = await stakerBlockchainProvider.enterprise(enterprise.address).getStakeTokenIds();
+            expect(stakeTokenIds).toHaveLength(1);
+            await expect(stakerBlockchainProvider.enterprise(enterprise.address).getStake(tokenId)).rejects.toThrow();
           });
 
-          describe('When there is a borrower', () => {
-            let borrower: Awaited<ReturnType<typeof ethers.getNamedSigner>>;
-            let borrowerBlockchainProvider: EIP155BlockchainProvider;
+          describe('When there is renter', () => {
+            let renter: Awaited<ReturnType<typeof ethers.getNamedSigner>>;
+            let renterBlockchainProvider: EIP155BlockchainProvider;
 
             beforeEach(async () => {
-              borrower = await ethers.getNamedSigner('borrower');
-              // allocate tokens to borrower, so that he is able to loan fee
-              await liquidityToken.transfer(borrower.address, ONE_TOKEN.mul(500));
-              // Create borrower blockchain provider
-              borrowerBlockchainProvider = new EIP155BlockchainProvider({ signer: borrower });
+              renter = await ethers.getNamedSigner('renter');
+              // allocate tokens to renter, so that he is able to pay rental fee
+              await enterpriseToken.transfer(renter.address, ONE_TOKEN.mul(500));
+              // Create renter blockchain provider
+              renterBlockchainProvider = new EIP155BlockchainProvider({ signer: renter });
             });
 
-            it('allows to estimates a loan via enterprise', async () => {
-              const estimate = await borrowerBlockchainProvider.estimateLoan(
-                enterprise.address,
-                service1Address,
-                liquidityToken.address,
-                ONE_TOKEN.mul(1000),
-                10 * ONE_DAY,
-              );
+            it('allows to estimates rental fee via enterprise', async () => {
+              const estimate = await renterBlockchainProvider
+                .enterprise(enterprise.address)
+                .estimateRentalFee(service1Address, enterpriseToken.address, ONE_TOKEN.mul(1000), 10 * ONE_DAY);
 
               expect(estimate).toEqual(BigNumber.from('435295774647884690054')); // ~435 tokens
             });
 
-            it('allows to get loan estimation breakdown via service', async () => {
-              const { interest, gcFee, serviceFee } = await borrowerBlockchainProvider.estimateLoanDetailed(
-                service1Address,
-                liquidityToken.address,
-                ONE_TOKEN.mul(1000),
-                10 * ONE_DAY,
-              );
+            it('allows to get rental fee estimation breakdown via service', async () => {
+              const { poolFee, gcFee, serviceFee } = await renterBlockchainProvider
+                .service(service1Address)
+                .estimateRentalFee(enterpriseToken.address, ONE_TOKEN.mul(1000), 10 * ONE_DAY);
 
-              expect(interest).toEqual(BigNumber.from('413957746478870734661'));
+              expect(poolFee).toEqual(BigNumber.from('413957746478870734661'));
               expect(gcFee).toEqual(BigNumber.from('8535211267605582157'));
               expect(serviceFee).toEqual(BigNumber.from('12802816901408373236'));
             });
 
-            it('allows to borrow power tokens', async () => {
-              const powerTokenBalanceBefore = await borrowerBlockchainProvider.getTokenBalance(service1Address);
-              const loanAmount = ONE_TOKEN.mul(1000);
-              await estimateAndBorrow(
-                borrowerBlockchainProvider,
+            it('allows to rent power tokens', async () => {
+              const powerTokenBalanceBefore = await renterBlockchainProvider.getTokenBalance(service1Address);
+              const rentalAmount = ONE_TOKEN.mul(1000);
+              await estimateAndRent(
+                renterBlockchainProvider,
                 enterprise.address,
                 service1Address,
-                liquidityToken.address,
+                enterpriseToken.address,
                 ONE_TOKEN.mul(1000),
                 10 * ONE_DAY,
               );
 
-              const powerTokenBalanceAfter = await borrowerBlockchainProvider.getTokenBalance(service1Address);
-              expect(powerTokenBalanceAfter).toEqual(powerTokenBalanceBefore.add(loanAmount));
+              const powerTokenBalanceAfter = await renterBlockchainProvider.getTokenBalance(service1Address);
+              expect(powerTokenBalanceAfter).toEqual(powerTokenBalanceBefore.add(rentalAmount));
             });
 
-            describe('When loans are taken', () => {
+            describe('When power tokens are rented', () => {
               beforeEach(async () => {
-                await estimateAndBorrow(
-                  borrowerBlockchainProvider,
+                await estimateAndRent(
+                  renterBlockchainProvider,
                   enterprise.address,
                   service1Address,
-                  liquidityToken.address,
+                  enterpriseToken.address,
                   ONE_TOKEN.mul(100),
                   10 * ONE_DAY,
                 );
 
-                await estimateAndBorrow(
-                  borrowerBlockchainProvider,
+                await estimateAndRent(
+                  renterBlockchainProvider,
                   enterprise.address,
                   service1Address,
-                  liquidityToken.address,
+                  enterpriseToken.address,
                   ONE_TOKEN.mul(200),
                   5 * ONE_DAY,
                 );
               });
 
+              it('retrieves rental token metadata', async () => {
+                const tokenAddress = await renterBlockchainProvider
+                  .enterprise(enterprise.address)
+                  .getRentalTokenAddress();
+                const [tokenId] = await renterBlockchainProvider.enterprise(enterprise.address).getRentalTokenIds();
+                await expect(
+                  renterBlockchainProvider.enterprise(enterprise.address).getRentalTokenMetadata(tokenId),
+                ).resolves.toEqual({
+                  address: tokenAddress,
+                  name: 'Rental TST',
+                  symbol: 'rTST',
+                  tokenUri: `${baseEnterpriseParams.baseUri}rental/${tokenId.toString()}`,
+                } as NonFungibleTokenMetadata);
+              });
+
               it('retrieves power token balance for account', async () => {
-                await expect(borrowerBlockchainProvider.getPowerTokenBalance(service1Address)).resolves.toEqual(
+                await expect(renterBlockchainProvider.service(service1Address).getBalance()).resolves.toEqual(
                   ONE_TOKEN.mul(300),
                 );
-                await expect(
-                  borrowerBlockchainProvider.getPowerTokenAvailableBalance(service1Address),
-                ).resolves.toEqual(BigNumber.from(0)); // must be zero since all amount came from borrowing
+                await expect(renterBlockchainProvider.service(service1Address).getAvailableBalance()).resolves.toEqual(
+                  BigNumber.from(0),
+                ); // must be zero since all amount came from renting
               });
 
               it('retrieves energy cap value at the specific time', async () => {
-                const energyCap = await borrowerBlockchainProvider.getEnergyAt(
-                  service1Address,
-                  Math.floor(Date.now() / 1000) + ONE_HOUR,
-                );
+                const energyCap = await renterBlockchainProvider
+                  .service(service1Address)
+                  .getEnergyAt(Math.floor(Date.now() / 1000) + ONE_HOUR);
                 expect(energyCap.toBigInt()).toBeGreaterThan(0n);
               });
 
-              it('retrieves a list of borrow tokens', async () => {
-                const borrowTokenIds = await borrowerBlockchainProvider.getBorrowTokenIds(enterprise.address);
-                expect(borrowTokenIds).toHaveLength(2);
+              it('retrieves a list of rented tokens', async () => {
+                const rentalTokenIds = await renterBlockchainProvider
+                  .enterprise(enterprise.address)
+                  .getRentalTokenIds();
+                expect(rentalTokenIds).toHaveLength(2);
               });
 
-              it('retrieves loan info by borrow token ID', async () => {
-                const [tokenId] = await borrowerBlockchainProvider.getBorrowTokenIds(enterprise.address);
-                const loanInfo = await borrowerBlockchainProvider.getLoanInfo(enterprise.address, tokenId);
+              it('retrieves the rental agreement by rental token ID', async () => {
+                const [tokenId] = await renterBlockchainProvider.enterprise(enterprise.address).getRentalTokenIds();
+                const rentalAgreement = await renterBlockchainProvider
+                  .enterprise(enterprise.address)
+                  .getRentalAgreement(tokenId);
 
-                expect(loanInfo.tokenId).toEqual(tokenId);
-                expect(Object.keys(loanInfo)).toEqual(
-                  expect.arrayContaining(<Array<keyof LoanInfo>>[
-                    'tokenId',
-                    'amount',
+                expect(rentalAgreement.rentalTokenId).toEqual(tokenId);
+                expect(Object.keys(rentalAgreement)).toEqual(
+                  expect.arrayContaining<keyof RentalAgreement>([
+                    'rentalTokenId',
+                    'rentalAmount',
                     'powerTokenIndex',
-                    'borrowingTime',
-                    'maturityTime',
-                    'borrowerReturnGraceTime',
-                    'enterpriseCollectGraceTime',
-                    'gcFee',
-                    'gcFeeTokenIndex',
+                    'startTime',
+                    'endTime',
+                    'renterOnlyReturnTime',
+                    'enterpriseOnlyCollectionTime',
+                    'gcRewardAmount',
+                    'gcRewardTokenIndex',
                   ]),
                 );
               });
 
-              it('retrieves liquidity provider accrued interest', async () => {
-                const [tokenId] = await lpBlockchainProvider.getInterestTokenIds(enterprise.address);
-                const interest = await blockchainProvider.getAccruedInterest(enterprise.address, tokenId);
-                expect(interest.gt(0)).toBeTruthy();
+              it('retrieves staking reward amount', async () => {
+                const [tokenId] = await stakerBlockchainProvider.enterprise(enterprise.address).getStakeTokenIds();
+                const reward = await blockchainProvider.enterprise(enterprise.address).getStakingReward(tokenId);
+                expect(reward.gt(0)).toBeTruthy();
               });
 
-              it('allows liquidity provider to withdraw accrued interest', async () => {
-                const [tokenId] = await lpBlockchainProvider.getInterestTokenIds(enterprise.address);
-                const liquidityTokenBalanceBefore = await lpBlockchainProvider.getTokenBalance(liquidityToken.address);
+              it('allows staker to claim staking reward', async () => {
+                const [tokenId] = await stakerBlockchainProvider.enterprise(enterprise.address).getStakeTokenIds();
+                const enterpriseTokenBalanceBefore = await stakerBlockchainProvider.getTokenBalance(
+                  enterpriseToken.address,
+                );
 
                 await waitBlockchainTime(ONE_DAY);
-                const interest = await lpBlockchainProvider.getAccruedInterest(enterprise.address, tokenId);
-                await wait(lpBlockchainProvider.withdrawInterest(enterprise.address, tokenId));
-                const liquidityTokenBalanceAfter = await lpBlockchainProvider.getTokenBalance(liquidityToken.address);
+                const rewardAmount = await stakerBlockchainProvider
+                  .enterprise(enterprise.address)
+                  .getStakingReward(tokenId);
+                await wait(stakerBlockchainProvider.enterprise(enterprise.address).claimStakingReward(tokenId));
+                const enterpriseTokenBalanceAfter = await stakerBlockchainProvider.getTokenBalance(
+                  enterpriseToken.address,
+                );
 
                 expect(
-                  Number(formatUnits(liquidityTokenBalanceAfter.sub(liquidityTokenBalanceBefore.add(interest)))),
+                  Number(formatUnits(enterpriseTokenBalanceAfter.sub(enterpriseTokenBalanceBefore.add(rewardAmount)))),
                 ).toBeCloseTo(0, 3);
               });
 
-              it('allows to return a loan', async () => {
-                const services = await borrowerBlockchainProvider.getServices(enterprise.address);
-                const [tokenId] = await borrowerBlockchainProvider.getBorrowTokenIds(enterprise.address);
-                const loanInfo = await borrowerBlockchainProvider.getLoanInfo(enterprise.address, tokenId);
-                const liquidityTokenBalanceBefore = await borrowerBlockchainProvider.getTokenBalance(
-                  liquidityToken.address,
+              it('allows to return a rental', async () => {
+                const services = await renterBlockchainProvider.enterprise(enterprise.address).getServiceAddresses();
+                const [tokenId] = await renterBlockchainProvider.enterprise(enterprise.address).getRentalTokenIds();
+                const rentalAgreement = await renterBlockchainProvider
+                  .enterprise(enterprise.address)
+                  .getRentalAgreement(tokenId);
+                const enterpriseTokenBalanceBefore = await renterBlockchainProvider.getTokenBalance(
+                  enterpriseToken.address,
                 );
-                const powerTokenBalanceBefore = await borrowerBlockchainProvider.getTokenBalance(
-                  services[loanInfo.powerTokenIndex],
-                );
-
-                await wait(borrowerBlockchainProvider.returnLoan(enterprise.address, tokenId));
-                const liquidityTokenBalanceAfter = await borrowerBlockchainProvider.getTokenBalance(
-                  liquidityToken.address,
-                );
-                const powerTokenBalanceAfter = await borrowerBlockchainProvider.getTokenBalance(
-                  services[loanInfo.powerTokenIndex],
+                const powerTokenBalanceBefore = await renterBlockchainProvider.getTokenBalance(
+                  services[rentalAgreement.powerTokenIndex],
                 );
 
-                expect(powerTokenBalanceAfter).toEqual(powerTokenBalanceBefore.sub(loanInfo.amount));
-                expect(liquidityTokenBalanceAfter).toEqual(liquidityTokenBalanceBefore.add(loanInfo.gcFee));
+                await wait(renterBlockchainProvider.enterprise(enterprise.address).returnRental(tokenId));
+                const enterpriseTokenBalanceAfter = await renterBlockchainProvider.getTokenBalance(
+                  enterpriseToken.address,
+                );
+                const powerTokenBalanceAfter = await renterBlockchainProvider.getTokenBalance(
+                  services[rentalAgreement.powerTokenIndex],
+                );
+
+                expect(powerTokenBalanceAfter).toEqual(powerTokenBalanceBefore.sub(rentalAgreement.rentalAmount));
+                expect(enterpriseTokenBalanceAfter).toEqual(
+                  enterpriseTokenBalanceBefore.add(rentalAgreement.gcRewardAmount),
+                );
               });
             });
           });

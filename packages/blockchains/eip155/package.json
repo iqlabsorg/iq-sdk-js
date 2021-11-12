@@ -17,6 +17,7 @@
   ],
   "scripts": {
     "build": "rollup -c",
+    "build:clean": "rimraf dist",
     "prepublish": "NODE_ENV=production run-s typechain build",
     "start": "rollup -cw",
     "test": "jest --group=unit",
@@ -26,10 +27,11 @@
     "typechain:generate": "typechain --target ethers-v5 --out-dir src/contracts './node_modules/@iqprotocol/solidity-contracts/artifacts/contracts/**/*.json'"
   },
   "dependencies": {
+    "@ethersproject/bignumber": "^5.3.0",
     "@iqprotocol/abstract-blockchain": "^0.11.0"
   },
   "devDependencies": {
-    "@iqprotocol/solidity-contracts": "https://github.com/iqlabsorg/iq-smart-contracts#2c867d55b63471b04aa102fa4706d3adfbe74465",
+    "@iqprotocol/solidity-contracts": "https://github.com/iqlabsorg/iq-smart-contracts#ef9c665183acfd74030ba637f99921f6859358e2",
     "@typechain/ethers-v5": "^7.0.1",
     "ethers": "^5.4.5",
     "hardhat": "^2.6.5",

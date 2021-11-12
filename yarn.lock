@@ -1380,9 +1380,9 @@
   resolved "https://registry.yarnpkg.com/@hutson/parse-repository-url/-/parse-repository-url-3.0.2.tgz#98c23c950a3d9b6c8f0daed06da6c3af06981340"
   integrity sha512-H9XAx3hc0BQHY6l+IFSWHDySypcXsvsuLhgYLUGywmJ5pswRVQJUHpOsobnLYp2ZUaUlKiKDrgWWhosOwAEM8Q==
 
-"@iqprotocol/solidity-contracts@https://github.com/iqlabsorg/iq-smart-contracts#2c867d55b63471b04aa102fa4706d3adfbe74465":
+"@iqprotocol/solidity-contracts@https://github.com/iqlabsorg/iq-smart-contracts#ef9c665183acfd74030ba637f99921f6859358e2":
   version "0.2.0"
-  resolved "https://github.com/iqlabsorg/iq-smart-contracts#2c867d55b63471b04aa102fa4706d3adfbe74465"
+  resolved "https://github.com/iqlabsorg/iq-smart-contracts#ef9c665183acfd74030ba637f99921f6859358e2"
 
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.1.0"

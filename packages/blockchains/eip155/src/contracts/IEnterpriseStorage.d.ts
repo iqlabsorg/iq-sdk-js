@@ -25,10 +25,10 @@ interface IEnterpriseStorageInterface extends ethers.utils.Interface {
     "getBaseUri()": FunctionFragment;
     "getBondingCurve()": FunctionFragment;
     "getConverter()": FunctionFragment;
+    "getEnterpriseToken()": FunctionFragment;
     "getGCFeePercent()": FunctionFragment;
-    "getLiquidityToken()": FunctionFragment;
-    "getLoanInfo(uint256)": FunctionFragment;
     "getPaymentToken(uint256)": FunctionFragment;
+    "getRentalAgreement(uint256)": FunctionFragment;
     "getReserve()": FunctionFragment;
     "getUsedReserve()": FunctionFragment;
     "initialize(string,string,uint16,address,address,address)": FunctionFragment;
@@ -54,19 +54,19 @@ interface IEnterpriseStorageInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "getEnterpriseToken",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "getGCFeePercent",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getLiquidityToken",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getLoanInfo",
+    functionFragment: "getPaymentToken",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "getPaymentToken",
+    functionFragment: "getRentalAgreement",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -105,19 +105,19 @@ interface IEnterpriseStorageInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getEnterpriseToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getGCFeePercent",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getLiquidityToken",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getLoanInfo",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getPaymentToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRentalAgreement",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getReserve", data: BytesLike): Result;
@@ -193,12 +193,17 @@ export class IEnterpriseStorage extends BaseContract {
 
     getConverter(overrides?: CallOverrides): Promise<[string]>;
 
+    getEnterpriseToken(overrides?: CallOverrides): Promise<[string]>;
+
     getGCFeePercent(overrides?: CallOverrides): Promise<[number]>;
 
-    getLiquidityToken(overrides?: CallOverrides): Promise<[string]>;
+    getPaymentToken(
+      index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
-    getLoanInfo(
-      borrowTokenId: BigNumberish,
+    getRentalAgreement(
+      rentalTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [
@@ -212,22 +217,17 @@ export class IEnterpriseStorage extends BaseContract {
           BigNumber,
           number
         ] & {
-          amount: BigNumber;
+          rentalAmount: BigNumber;
           powerTokenIndex: number;
-          borrowingTime: number;
-          maturityTime: number;
-          borrowerReturnGraceTime: number;
-          enterpriseCollectGraceTime: number;
-          gcFee: BigNumber;
-          gcFeeTokenIndex: number;
+          startTime: number;
+          endTime: number;
+          renterOnlyReturnTime: number;
+          enterpriseOnlyCollectionTime: number;
+          gcRewardAmount: BigNumber;
+          gcRewardTokenIndex: number;
         }
       ]
     >;
-
-    getPaymentToken(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
 
     getReserve(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -244,9 +244,9 @@ export class IEnterpriseStorage extends BaseContract {
     ): Promise<ContractTransaction>;
 
     initializeTokens(
-      liquidityToken: string,
-      interestToken: string,
-      borrowToken: string,
+      enterpriseToken: string,
+      stakeToken: string,
+      rentalToken: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -268,30 +268,30 @@ export class IEnterpriseStorage extends BaseContract {
 
   getConverter(overrides?: CallOverrides): Promise<string>;
 
+  getEnterpriseToken(overrides?: CallOverrides): Promise<string>;
+
   getGCFeePercent(overrides?: CallOverrides): Promise<number>;
-
-  getLiquidityToken(overrides?: CallOverrides): Promise<string>;
-
-  getLoanInfo(
-    borrowTokenId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, number, number, number, number, number, BigNumber, number] & {
-      amount: BigNumber;
-      powerTokenIndex: number;
-      borrowingTime: number;
-      maturityTime: number;
-      borrowerReturnGraceTime: number;
-      enterpriseCollectGraceTime: number;
-      gcFee: BigNumber;
-      gcFeeTokenIndex: number;
-    }
-  >;
 
   getPaymentToken(
     index: BigNumberish,
     overrides?: CallOverrides
   ): Promise<string>;
+
+  getRentalAgreement(
+    rentalTokenId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, number, number, number, number, number, BigNumber, number] & {
+      rentalAmount: BigNumber;
+      powerTokenIndex: number;
+      startTime: number;
+      endTime: number;
+      renterOnlyReturnTime: number;
+      enterpriseOnlyCollectionTime: number;
+      gcRewardAmount: BigNumber;
+      gcRewardTokenIndex: number;
+    }
+  >;
 
   getReserve(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -308,9 +308,9 @@ export class IEnterpriseStorage extends BaseContract {
   ): Promise<ContractTransaction>;
 
   initializeTokens(
-    liquidityToken: string,
-    interestToken: string,
-    borrowToken: string,
+    enterpriseToken: string,
+    stakeToken: string,
+    rentalToken: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -332,30 +332,30 @@ export class IEnterpriseStorage extends BaseContract {
 
     getConverter(overrides?: CallOverrides): Promise<string>;
 
+    getEnterpriseToken(overrides?: CallOverrides): Promise<string>;
+
     getGCFeePercent(overrides?: CallOverrides): Promise<number>;
-
-    getLiquidityToken(overrides?: CallOverrides): Promise<string>;
-
-    getLoanInfo(
-      borrowTokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, number, number, number, number, number, BigNumber, number] & {
-        amount: BigNumber;
-        powerTokenIndex: number;
-        borrowingTime: number;
-        maturityTime: number;
-        borrowerReturnGraceTime: number;
-        enterpriseCollectGraceTime: number;
-        gcFee: BigNumber;
-        gcFeeTokenIndex: number;
-      }
-    >;
 
     getPaymentToken(
       index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    getRentalAgreement(
+      rentalTokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, number, number, number, number, number, BigNumber, number] & {
+        rentalAmount: BigNumber;
+        powerTokenIndex: number;
+        startTime: number;
+        endTime: number;
+        renterOnlyReturnTime: number;
+        enterpriseOnlyCollectionTime: number;
+        gcRewardAmount: BigNumber;
+        gcRewardTokenIndex: number;
+      }
+    >;
 
     getReserve(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -372,9 +372,9 @@ export class IEnterpriseStorage extends BaseContract {
     ): Promise<void>;
 
     initializeTokens(
-      liquidityToken: string,
-      interestToken: string,
-      borrowToken: string,
+      enterpriseToken: string,
+      stakeToken: string,
+      rentalToken: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -397,17 +397,17 @@ export class IEnterpriseStorage extends BaseContract {
 
     getConverter(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getEnterpriseToken(overrides?: CallOverrides): Promise<BigNumber>;
+
     getGCFeePercent(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getLiquidityToken(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getLoanInfo(
-      borrowTokenId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     getPaymentToken(
       index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getRentalAgreement(
+      rentalTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -426,9 +426,9 @@ export class IEnterpriseStorage extends BaseContract {
     ): Promise<BigNumber>;
 
     initializeTokens(
-      liquidityToken: string,
-      interestToken: string,
-      borrowToken: string,
+      enterpriseToken: string,
+      stakeToken: string,
+      rentalToken: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -451,17 +451,19 @@ export class IEnterpriseStorage extends BaseContract {
 
     getConverter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getGCFeePercent(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getLiquidityToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getLoanInfo(
-      borrowTokenId: BigNumberish,
+    getEnterpriseToken(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getGCFeePercent(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getPaymentToken(
       index: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getRentalAgreement(
+      rentalTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -480,9 +482,9 @@ export class IEnterpriseStorage extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     initializeTokens(
-      liquidityToken: string,
-      interestToken: string,
-      borrowToken: string,
+      enterpriseToken: string,
+      stakeToken: string,
+      rentalToken: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

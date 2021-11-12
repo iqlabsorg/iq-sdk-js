@@ -1,5 +1,6 @@
+import { AccountId, ChainId } from 'caip';
 import { normalize, signTypedMessage } from 'eth-sig-util';
-import { AccountId, ChainId, AccountOwnershipVerifier, MessageTypes } from '../src';
+import { AccountOwnershipVerifier, MessageTypes } from '../src';
 
 /**
  * @group unit

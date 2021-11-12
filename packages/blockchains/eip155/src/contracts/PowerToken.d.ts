@@ -28,42 +28,39 @@ interface PowerTokenInterface extends ethers.utils.Interface {
     "burnFrom(address,uint256)": FunctionFragment;
     "decimals()": FunctionFragment;
     "decreaseAllowance(address,uint256)": FunctionFragment;
+    "enableSwappingForever()": FunctionFragment;
     "enableTransferForever()": FunctionFragment;
-    "enableWrappingForever()": FunctionFragment;
     "energyAt(address,uint32)": FunctionFragment;
-    "estimateLoan(address,uint112,uint32)": FunctionFragment;
-    "estimateLoanDetailed(address,uint112,uint32)": FunctionFragment;
+    "estimateRentalFee(address,uint112,uint32)": FunctionFragment;
     "forceTransfer(address,address,uint256)": FunctionFragment;
     "getBaseRate()": FunctionFragment;
     "getBaseToken()": FunctionFragment;
+    "getEnergyGapHalvingPeriod()": FunctionFragment;
     "getEnterprise()": FunctionFragment;
-    "getGapHalvingPeriod()": FunctionFragment;
     "getIndex()": FunctionFragment;
     "getInfo()": FunctionFragment;
-    "getMaxLoanDuration()": FunctionFragment;
+    "getMaxRentalPeriod()": FunctionFragment;
     "getMinGCFee()": FunctionFragment;
-    "getMinLoanDuration()": FunctionFragment;
+    "getMinRentalPeriod()": FunctionFragment;
     "getServiceFeePercent()": FunctionFragment;
     "getState(address)": FunctionFragment;
     "increaseAllowance(address,uint256)": FunctionFragment;
     "initialize(string,string,uint8)": FunctionFragment;
-    "initialize2(uint32,uint32,uint16,bool)": FunctionFragment;
-    "isAllowedLoanDuration(uint32)": FunctionFragment;
+    "isAllowedRentalPeriod(uint32)": FunctionFragment;
+    "isSwappingEnabled()": FunctionFragment;
     "isTransferEnabled()": FunctionFragment;
-    "isWrappingEnabled()": FunctionFragment;
     "mint(address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
-    "notifyNewLoan(uint256)": FunctionFragment;
+    "notifyNewRental(uint256)": FunctionFragment;
     "setBaseRate(uint112,address,uint96)": FunctionFragment;
-    "setLoanDurationLimits(uint32,uint32)": FunctionFragment;
+    "setRentalPeriodLimits(uint32,uint32)": FunctionFragment;
     "setServiceFeePercent(uint16)": FunctionFragment;
+    "swapIn(uint256)": FunctionFragment;
+    "swapOut(uint256)": FunctionFragment;
     "symbol()": FunctionFragment;
     "totalSupply()": FunctionFragment;
     "transfer(address,uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
-    "unwrap(uint256)": FunctionFragment;
-    "wrap(uint256)": FunctionFragment;
-    "wrapTo(address,uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -89,11 +86,11 @@ interface PowerTokenInterface extends ethers.utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "enableTransferForever",
+    functionFragment: "enableSwappingForever",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "enableWrappingForever",
+    functionFragment: "enableTransferForever",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -101,11 +98,7 @@ interface PowerTokenInterface extends ethers.utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "estimateLoan",
-    values: [string, BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "estimateLoanDetailed",
+    functionFragment: "estimateRentalFee",
     values: [string, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
@@ -121,17 +114,17 @@ interface PowerTokenInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getEnterprise",
+    functionFragment: "getEnergyGapHalvingPeriod",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getGapHalvingPeriod",
+    functionFragment: "getEnterprise",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "getIndex", values?: undefined): string;
   encodeFunctionData(functionFragment: "getInfo", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "getMaxLoanDuration",
+    functionFragment: "getMaxRentalPeriod",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -139,7 +132,7 @@ interface PowerTokenInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getMinLoanDuration",
+    functionFragment: "getMinRentalPeriod",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -156,19 +149,15 @@ interface PowerTokenInterface extends ethers.utils.Interface {
     values: [string, string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "initialize2",
-    values: [BigNumberish, BigNumberish, BigNumberish, boolean]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "isAllowedLoanDuration",
+    functionFragment: "isAllowedRentalPeriod",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "isTransferEnabled",
+    functionFragment: "isSwappingEnabled",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "isWrappingEnabled",
+    functionFragment: "isTransferEnabled",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -177,7 +166,7 @@ interface PowerTokenInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "notifyNewLoan",
+    functionFragment: "notifyNewRental",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -185,11 +174,19 @@ interface PowerTokenInterface extends ethers.utils.Interface {
     values: [BigNumberish, string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "setLoanDurationLimits",
+    functionFragment: "setRentalPeriodLimits",
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setServiceFeePercent",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "swapIn",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "swapOut",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
@@ -204,15 +201,6 @@ interface PowerTokenInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "transferFrom",
     values: [string, string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "unwrap",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "wrap", values: [BigNumberish]): string;
-  encodeFunctionData(
-    functionFragment: "wrapTo",
-    values: [string, BigNumberish]
   ): string;
 
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
@@ -229,20 +217,16 @@ interface PowerTokenInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "enableTransferForever",
+    functionFragment: "enableSwappingForever",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "enableWrappingForever",
+    functionFragment: "enableTransferForever",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "energyAt", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "estimateLoan",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "estimateLoanDetailed",
+    functionFragment: "estimateRentalFee",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -258,17 +242,17 @@ interface PowerTokenInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getEnterprise",
+    functionFragment: "getEnergyGapHalvingPeriod",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getGapHalvingPeriod",
+    functionFragment: "getEnterprise",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getIndex", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getInfo", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getMaxLoanDuration",
+    functionFragment: "getMaxRentalPeriod",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -276,7 +260,7 @@ interface PowerTokenInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getMinLoanDuration",
+    functionFragment: "getMinRentalPeriod",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -290,25 +274,21 @@ interface PowerTokenInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "initialize2",
+    functionFragment: "isAllowedRentalPeriod",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "isAllowedLoanDuration",
+    functionFragment: "isSwappingEnabled",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "isTransferEnabled",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "isWrappingEnabled",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "notifyNewLoan",
+    functionFragment: "notifyNewRental",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -316,13 +296,15 @@ interface PowerTokenInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setLoanDurationLimits",
+    functionFragment: "setRentalPeriodLimits",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "setServiceFeePercent",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "swapIn", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "swapOut", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalSupply",
@@ -333,27 +315,24 @@ interface PowerTokenInterface extends ethers.utils.Interface {
     functionFragment: "transferFrom",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "unwrap", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "wrap", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "wrapTo", data: BytesLike): Result;
 
   events: {
     "Approval(address,address,uint256)": EventFragment;
     "BaseRateChanged(uint112,address,uint96)": EventFragment;
-    "LoanDurationLimitsChanged(uint32,uint32)": EventFragment;
+    "RentalPeriodLimitsChanged(uint32,uint32)": EventFragment;
     "ServiceFeePercentChanged(uint16)": EventFragment;
+    "SwappingEnabled()": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
     "TransferEnabled()": EventFragment;
-    "WrappingEnabled()": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BaseRateChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "LoanDurationLimitsChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RentalPeriodLimitsChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ServiceFeePercentChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SwappingEnabled"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TransferEnabled"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "WrappingEnabled"): EventFragment;
 }
 
 export type ApprovalEvent = TypedEvent<
@@ -372,21 +351,21 @@ export type BaseRateChangedEvent = TypedEvent<
   }
 >;
 
-export type LoanDurationLimitsChangedEvent = TypedEvent<
-  [number, number] & { minDuration: number; maxDuration: number }
+export type RentalPeriodLimitsChangedEvent = TypedEvent<
+  [number, number] & { minRentalPeriod: number; maxRentalPeriod: number }
 >;
 
 export type ServiceFeePercentChangedEvent = TypedEvent<
   [number] & { percent: number }
 >;
 
+export type SwappingEnabledEvent = TypedEvent<[] & {}>;
+
 export type TransferEvent = TypedEvent<
   [string, string, BigNumber] & { from: string; to: string; value: BigNumber }
 >;
 
 export type TransferEnabledEvent = TypedEvent<[] & {}>;
-
-export type WrappingEnabledEvent = TypedEvent<[] & {}>;
 
 export class PowerToken extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -465,11 +444,11 @@ export class PowerToken extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    enableTransferForever(
+    enableSwappingForever(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    enableWrappingForever(
+    enableTransferForever(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -479,21 +458,14 @@ export class PowerToken extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    estimateLoan(
+    estimateRentalFee(
       paymentToken: string,
-      amount: BigNumberish,
-      duration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    estimateLoanDetailed(
-      paymentToken: string,
-      amount: BigNumberish,
-      duration: BigNumberish,
+      rentalAmount: BigNumberish,
+      rentalPeriod: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber, BigNumber] & {
-        interest: BigNumber;
+        poolFee: BigNumber;
         serviceFee: BigNumber;
         gcFee: BigNumber;
       }
@@ -510,9 +482,9 @@ export class PowerToken extends BaseContract {
 
     getBaseToken(overrides?: CallOverrides): Promise<[string]>;
 
-    getEnterprise(overrides?: CallOverrides): Promise<[string]>;
+    getEnergyGapHalvingPeriod(overrides?: CallOverrides): Promise<[number]>;
 
-    getGapHalvingPeriod(overrides?: CallOverrides): Promise<[number]>;
+    getEnterprise(overrides?: CallOverrides): Promise<[string]>;
 
     getIndex(overrides?: CallOverrides): Promise<[number]>;
 
@@ -522,11 +494,11 @@ export class PowerToken extends BaseContract {
       [
         string,
         string,
-        BigNumber,
-        BigNumber,
-        number,
-        number,
         string,
+        BigNumber,
+        BigNumber,
+        number,
+        number,
         number,
         number,
         number,
@@ -535,24 +507,24 @@ export class PowerToken extends BaseContract {
       ] & {
         name: string;
         symbol: string;
+        baseToken: string;
         baseRate: BigNumber;
         minGCFee: BigNumber;
-        gapHalvingPeriod: number;
-        index: number;
-        baseToken: string;
-        minLoanDuration: number;
-        maxLoanDuration: number;
         serviceFeePercent: number;
-        wrappingEnabled: boolean;
+        energyGapHalvingPeriod: number;
+        index: number;
+        minRentalPeriod: number;
+        maxRentalPeriod: number;
+        swappingEnabled: boolean;
         transferEnabled: boolean;
       }
     >;
 
-    getMaxLoanDuration(overrides?: CallOverrides): Promise<[number]>;
+    getMaxRentalPeriod(overrides?: CallOverrides): Promise<[number]>;
 
     getMinGCFee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    getMinLoanDuration(overrides?: CallOverrides): Promise<[number]>;
+    getMinRentalPeriod(overrides?: CallOverrides): Promise<[number]>;
 
     getServiceFeePercent(overrides?: CallOverrides): Promise<[number]>;
 
@@ -582,13 +554,17 @@ export class PowerToken extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "initialize(address,uint112,uint96,uint32,uint16,address)"(
+    "initialize(address,address,uint112,uint96,uint16,uint32,uint16,uint32,uint32,bool)"(
       enterprise: string,
+      baseToken: string,
       baseRate: BigNumberish,
       minGCFee: BigNumberish,
-      gapHalvingPeriod: BigNumberish,
+      serviceFeePercent: BigNumberish,
+      energyGapHalvingPeriod: BigNumberish,
       index: BigNumberish,
-      baseToken: string,
+      minRentalPeriod: BigNumberish,
+      maxRentalPeriod: BigNumberish,
+      swappingEnabled: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -597,22 +573,14 @@ export class PowerToken extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    initialize2(
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
-      serviceFeePercent: BigNumberish,
-      wrappingEnabled: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    isAllowedLoanDuration(
-      duration: BigNumberish,
+    isAllowedRentalPeriod(
+      period: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    isTransferEnabled(overrides?: CallOverrides): Promise<[boolean]>;
+    isSwappingEnabled(overrides?: CallOverrides): Promise<[boolean]>;
 
-    isWrappingEnabled(overrides?: CallOverrides): Promise<[boolean]>;
+    isTransferEnabled(overrides?: CallOverrides): Promise<[boolean]>;
 
     mint(
       to: string,
@@ -622,8 +590,8 @@ export class PowerToken extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
-    notifyNewLoan(
-      borrowTokenId: BigNumberish,
+    notifyNewRental(
+      rentalTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -634,14 +602,24 @@ export class PowerToken extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setLoanDurationLimits(
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
+    setRentalPeriodLimits(
+      minRentalPeriod: BigNumberish,
+      maxRentalPeriod: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     setServiceFeePercent(
       newServiceFeePercent: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    swapIn(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    swapOut(
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -658,22 +636,6 @@ export class PowerToken extends BaseContract {
     transferFrom(
       sender: string,
       recipient: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    unwrap(
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    wrap(
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    wrapTo(
-      to: string,
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -712,11 +674,11 @@ export class PowerToken extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  enableTransferForever(
+  enableSwappingForever(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  enableWrappingForever(
+  enableTransferForever(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -726,21 +688,14 @@ export class PowerToken extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  estimateLoan(
+  estimateRentalFee(
     paymentToken: string,
-    amount: BigNumberish,
-    duration: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  estimateLoanDetailed(
-    paymentToken: string,
-    amount: BigNumberish,
-    duration: BigNumberish,
+    rentalAmount: BigNumberish,
+    rentalPeriod: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
     [BigNumber, BigNumber, BigNumber] & {
-      interest: BigNumber;
+      poolFee: BigNumber;
       serviceFee: BigNumber;
       gcFee: BigNumber;
     }
@@ -757,9 +712,9 @@ export class PowerToken extends BaseContract {
 
   getBaseToken(overrides?: CallOverrides): Promise<string>;
 
-  getEnterprise(overrides?: CallOverrides): Promise<string>;
+  getEnergyGapHalvingPeriod(overrides?: CallOverrides): Promise<number>;
 
-  getGapHalvingPeriod(overrides?: CallOverrides): Promise<number>;
+  getEnterprise(overrides?: CallOverrides): Promise<string>;
 
   getIndex(overrides?: CallOverrides): Promise<number>;
 
@@ -769,11 +724,11 @@ export class PowerToken extends BaseContract {
     [
       string,
       string,
-      BigNumber,
-      BigNumber,
-      number,
-      number,
       string,
+      BigNumber,
+      BigNumber,
+      number,
+      number,
       number,
       number,
       number,
@@ -782,24 +737,24 @@ export class PowerToken extends BaseContract {
     ] & {
       name: string;
       symbol: string;
+      baseToken: string;
       baseRate: BigNumber;
       minGCFee: BigNumber;
-      gapHalvingPeriod: number;
-      index: number;
-      baseToken: string;
-      minLoanDuration: number;
-      maxLoanDuration: number;
       serviceFeePercent: number;
-      wrappingEnabled: boolean;
+      energyGapHalvingPeriod: number;
+      index: number;
+      minRentalPeriod: number;
+      maxRentalPeriod: number;
+      swappingEnabled: boolean;
       transferEnabled: boolean;
     }
   >;
 
-  getMaxLoanDuration(overrides?: CallOverrides): Promise<number>;
+  getMaxRentalPeriod(overrides?: CallOverrides): Promise<number>;
 
   getMinGCFee(overrides?: CallOverrides): Promise<BigNumber>;
 
-  getMinLoanDuration(overrides?: CallOverrides): Promise<number>;
+  getMinRentalPeriod(overrides?: CallOverrides): Promise<number>;
 
   getServiceFeePercent(overrides?: CallOverrides): Promise<number>;
 
@@ -827,13 +782,17 @@ export class PowerToken extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "initialize(address,uint112,uint96,uint32,uint16,address)"(
+  "initialize(address,address,uint112,uint96,uint16,uint32,uint16,uint32,uint32,bool)"(
     enterprise: string,
+    baseToken: string,
     baseRate: BigNumberish,
     minGCFee: BigNumberish,
-    gapHalvingPeriod: BigNumberish,
+    serviceFeePercent: BigNumberish,
+    energyGapHalvingPeriod: BigNumberish,
     index: BigNumberish,
-    baseToken: string,
+    minRentalPeriod: BigNumberish,
+    maxRentalPeriod: BigNumberish,
+    swappingEnabled: boolean,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -842,22 +801,14 @@ export class PowerToken extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  initialize2(
-    minLoanDuration: BigNumberish,
-    maxLoanDuration: BigNumberish,
-    serviceFeePercent: BigNumberish,
-    wrappingEnabled: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  isAllowedLoanDuration(
-    duration: BigNumberish,
+  isAllowedRentalPeriod(
+    period: BigNumberish,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  isTransferEnabled(overrides?: CallOverrides): Promise<boolean>;
+  isSwappingEnabled(overrides?: CallOverrides): Promise<boolean>;
 
-  isWrappingEnabled(overrides?: CallOverrides): Promise<boolean>;
+  isTransferEnabled(overrides?: CallOverrides): Promise<boolean>;
 
   mint(
     to: string,
@@ -867,8 +818,8 @@ export class PowerToken extends BaseContract {
 
   name(overrides?: CallOverrides): Promise<string>;
 
-  notifyNewLoan(
-    borrowTokenId: BigNumberish,
+  notifyNewRental(
+    rentalTokenId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -879,14 +830,24 @@ export class PowerToken extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setLoanDurationLimits(
-    minLoanDuration: BigNumberish,
-    maxLoanDuration: BigNumberish,
+  setRentalPeriodLimits(
+    minRentalPeriod: BigNumberish,
+    maxRentalPeriod: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   setServiceFeePercent(
     newServiceFeePercent: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  swapIn(
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  swapOut(
+    amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -903,22 +864,6 @@ export class PowerToken extends BaseContract {
   transferFrom(
     sender: string,
     recipient: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  unwrap(
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  wrap(
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  wrapTo(
-    to: string,
     amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -957,9 +902,9 @@ export class PowerToken extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    enableTransferForever(overrides?: CallOverrides): Promise<void>;
+    enableSwappingForever(overrides?: CallOverrides): Promise<void>;
 
-    enableWrappingForever(overrides?: CallOverrides): Promise<void>;
+    enableTransferForever(overrides?: CallOverrides): Promise<void>;
 
     energyAt(
       who: string,
@@ -967,21 +912,14 @@ export class PowerToken extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    estimateLoan(
+    estimateRentalFee(
       paymentToken: string,
-      amount: BigNumberish,
-      duration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    estimateLoanDetailed(
-      paymentToken: string,
-      amount: BigNumberish,
-      duration: BigNumberish,
+      rentalAmount: BigNumberish,
+      rentalPeriod: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber, BigNumber] & {
-        interest: BigNumber;
+        poolFee: BigNumber;
         serviceFee: BigNumber;
         gcFee: BigNumber;
       }
@@ -998,9 +936,9 @@ export class PowerToken extends BaseContract {
 
     getBaseToken(overrides?: CallOverrides): Promise<string>;
 
-    getEnterprise(overrides?: CallOverrides): Promise<string>;
+    getEnergyGapHalvingPeriod(overrides?: CallOverrides): Promise<number>;
 
-    getGapHalvingPeriod(overrides?: CallOverrides): Promise<number>;
+    getEnterprise(overrides?: CallOverrides): Promise<string>;
 
     getIndex(overrides?: CallOverrides): Promise<number>;
 
@@ -1010,11 +948,11 @@ export class PowerToken extends BaseContract {
       [
         string,
         string,
-        BigNumber,
-        BigNumber,
-        number,
-        number,
         string,
+        BigNumber,
+        BigNumber,
+        number,
+        number,
         number,
         number,
         number,
@@ -1023,24 +961,24 @@ export class PowerToken extends BaseContract {
       ] & {
         name: string;
         symbol: string;
+        baseToken: string;
         baseRate: BigNumber;
         minGCFee: BigNumber;
-        gapHalvingPeriod: number;
-        index: number;
-        baseToken: string;
-        minLoanDuration: number;
-        maxLoanDuration: number;
         serviceFeePercent: number;
-        wrappingEnabled: boolean;
+        energyGapHalvingPeriod: number;
+        index: number;
+        minRentalPeriod: number;
+        maxRentalPeriod: number;
+        swappingEnabled: boolean;
         transferEnabled: boolean;
       }
     >;
 
-    getMaxLoanDuration(overrides?: CallOverrides): Promise<number>;
+    getMaxRentalPeriod(overrides?: CallOverrides): Promise<number>;
 
     getMinGCFee(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getMinLoanDuration(overrides?: CallOverrides): Promise<number>;
+    getMinRentalPeriod(overrides?: CallOverrides): Promise<number>;
 
     getServiceFeePercent(overrides?: CallOverrides): Promise<number>;
 
@@ -1068,13 +1006,17 @@ export class PowerToken extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "initialize(address,uint112,uint96,uint32,uint16,address)"(
+    "initialize(address,address,uint112,uint96,uint16,uint32,uint16,uint32,uint32,bool)"(
       enterprise: string,
+      baseToken: string,
       baseRate: BigNumberish,
       minGCFee: BigNumberish,
-      gapHalvingPeriod: BigNumberish,
+      serviceFeePercent: BigNumberish,
+      energyGapHalvingPeriod: BigNumberish,
       index: BigNumberish,
-      baseToken: string,
+      minRentalPeriod: BigNumberish,
+      maxRentalPeriod: BigNumberish,
+      swappingEnabled: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1083,22 +1025,14 @@ export class PowerToken extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    initialize2(
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
-      serviceFeePercent: BigNumberish,
-      wrappingEnabled: boolean,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    isAllowedLoanDuration(
-      duration: BigNumberish,
+    isAllowedRentalPeriod(
+      period: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    isTransferEnabled(overrides?: CallOverrides): Promise<boolean>;
+    isSwappingEnabled(overrides?: CallOverrides): Promise<boolean>;
 
-    isWrappingEnabled(overrides?: CallOverrides): Promise<boolean>;
+    isTransferEnabled(overrides?: CallOverrides): Promise<boolean>;
 
     mint(
       to: string,
@@ -1108,8 +1042,8 @@ export class PowerToken extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<string>;
 
-    notifyNewLoan(
-      borrowTokenId: BigNumberish,
+    notifyNewRental(
+      rentalTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1120,9 +1054,9 @@ export class PowerToken extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setLoanDurationLimits(
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
+    setRentalPeriodLimits(
+      minRentalPeriod: BigNumberish,
+      maxRentalPeriod: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1130,6 +1064,10 @@ export class PowerToken extends BaseContract {
       newServiceFeePercent: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    swapIn(amount: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
+
+    swapOut(amount: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
     symbol(overrides?: CallOverrides): Promise<string>;
 
@@ -1144,16 +1082,6 @@ export class PowerToken extends BaseContract {
     transferFrom(
       sender: string,
       recipient: string,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    unwrap(amount: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
-
-    wrap(amount: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
-
-    wrapTo(
-      to: string,
       amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
@@ -1196,20 +1124,20 @@ export class PowerToken extends BaseContract {
       { baseRate: BigNumber; baseToken: string; minGCFee: BigNumber }
     >;
 
-    "LoanDurationLimitsChanged(uint32,uint32)"(
-      minDuration?: null,
-      maxDuration?: null
+    "RentalPeriodLimitsChanged(uint32,uint32)"(
+      minRentalPeriod?: null,
+      maxRentalPeriod?: null
     ): TypedEventFilter<
       [number, number],
-      { minDuration: number; maxDuration: number }
+      { minRentalPeriod: number; maxRentalPeriod: number }
     >;
 
-    LoanDurationLimitsChanged(
-      minDuration?: null,
-      maxDuration?: null
+    RentalPeriodLimitsChanged(
+      minRentalPeriod?: null,
+      maxRentalPeriod?: null
     ): TypedEventFilter<
       [number, number],
-      { minDuration: number; maxDuration: number }
+      { minRentalPeriod: number; maxRentalPeriod: number }
     >;
 
     "ServiceFeePercentChanged(uint16)"(
@@ -1219,6 +1147,10 @@ export class PowerToken extends BaseContract {
     ServiceFeePercentChanged(
       percent?: null
     ): TypedEventFilter<[number], { percent: number }>;
+
+    "SwappingEnabled()"(): TypedEventFilter<[], {}>;
+
+    SwappingEnabled(): TypedEventFilter<[], {}>;
 
     "Transfer(address,address,uint256)"(
       from?: string | null,
@@ -1241,10 +1173,6 @@ export class PowerToken extends BaseContract {
     "TransferEnabled()"(): TypedEventFilter<[], {}>;
 
     TransferEnabled(): TypedEventFilter<[], {}>;
-
-    "WrappingEnabled()"(): TypedEventFilter<[], {}>;
-
-    WrappingEnabled(): TypedEventFilter<[], {}>;
   };
 
   estimateGas: {
@@ -1281,11 +1209,11 @@ export class PowerToken extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    enableTransferForever(
+    enableSwappingForever(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    enableWrappingForever(
+    enableTransferForever(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1295,17 +1223,10 @@ export class PowerToken extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    estimateLoan(
+    estimateRentalFee(
       paymentToken: string,
-      amount: BigNumberish,
-      duration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    estimateLoanDetailed(
-      paymentToken: string,
-      amount: BigNumberish,
-      duration: BigNumberish,
+      rentalAmount: BigNumberish,
+      rentalPeriod: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1320,19 +1241,19 @@ export class PowerToken extends BaseContract {
 
     getBaseToken(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getEnterprise(overrides?: CallOverrides): Promise<BigNumber>;
+    getEnergyGapHalvingPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getGapHalvingPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+    getEnterprise(overrides?: CallOverrides): Promise<BigNumber>;
 
     getIndex(overrides?: CallOverrides): Promise<BigNumber>;
 
     getInfo(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getMaxLoanDuration(overrides?: CallOverrides): Promise<BigNumber>;
+    getMaxRentalPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
     getMinGCFee(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getMinLoanDuration(overrides?: CallOverrides): Promise<BigNumber>;
+    getMinRentalPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
     getServiceFeePercent(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1351,13 +1272,17 @@ export class PowerToken extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "initialize(address,uint112,uint96,uint32,uint16,address)"(
+    "initialize(address,address,uint112,uint96,uint16,uint32,uint16,uint32,uint32,bool)"(
       enterprise: string,
+      baseToken: string,
       baseRate: BigNumberish,
       minGCFee: BigNumberish,
-      gapHalvingPeriod: BigNumberish,
+      serviceFeePercent: BigNumberish,
+      energyGapHalvingPeriod: BigNumberish,
       index: BigNumberish,
-      baseToken: string,
+      minRentalPeriod: BigNumberish,
+      maxRentalPeriod: BigNumberish,
+      swappingEnabled: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1366,22 +1291,14 @@ export class PowerToken extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    initialize2(
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
-      serviceFeePercent: BigNumberish,
-      wrappingEnabled: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    isAllowedLoanDuration(
-      duration: BigNumberish,
+    isAllowedRentalPeriod(
+      period: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    isTransferEnabled(overrides?: CallOverrides): Promise<BigNumber>;
+    isSwappingEnabled(overrides?: CallOverrides): Promise<BigNumber>;
 
-    isWrappingEnabled(overrides?: CallOverrides): Promise<BigNumber>;
+    isTransferEnabled(overrides?: CallOverrides): Promise<BigNumber>;
 
     mint(
       to: string,
@@ -1391,8 +1308,8 @@ export class PowerToken extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
-    notifyNewLoan(
-      borrowTokenId: BigNumberish,
+    notifyNewRental(
+      rentalTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1403,14 +1320,24 @@ export class PowerToken extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setLoanDurationLimits(
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
+    setRentalPeriodLimits(
+      minRentalPeriod: BigNumberish,
+      maxRentalPeriod: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     setServiceFeePercent(
       newServiceFeePercent: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    swapIn(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    swapOut(
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1427,22 +1354,6 @@ export class PowerToken extends BaseContract {
     transferFrom(
       sender: string,
       recipient: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    unwrap(
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    wrap(
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    wrapTo(
-      to: string,
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -1485,11 +1396,11 @@ export class PowerToken extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    enableTransferForever(
+    enableSwappingForever(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    enableWrappingForever(
+    enableTransferForever(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1499,17 +1410,10 @@ export class PowerToken extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    estimateLoan(
+    estimateRentalFee(
       paymentToken: string,
-      amount: BigNumberish,
-      duration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    estimateLoanDetailed(
-      paymentToken: string,
-      amount: BigNumberish,
-      duration: BigNumberish,
+      rentalAmount: BigNumberish,
+      rentalPeriod: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1524,23 +1428,23 @@ export class PowerToken extends BaseContract {
 
     getBaseToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getEnterprise(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getGapHalvingPeriod(
+    getEnergyGapHalvingPeriod(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    getEnterprise(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getIndex(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getInfo(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getMaxLoanDuration(
+    getMaxRentalPeriod(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getMinGCFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getMinLoanDuration(
+    getMinRentalPeriod(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1566,13 +1470,17 @@ export class PowerToken extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "initialize(address,uint112,uint96,uint32,uint16,address)"(
+    "initialize(address,address,uint112,uint96,uint16,uint32,uint16,uint32,uint32,bool)"(
       enterprise: string,
+      baseToken: string,
       baseRate: BigNumberish,
       minGCFee: BigNumberish,
-      gapHalvingPeriod: BigNumberish,
+      serviceFeePercent: BigNumberish,
+      energyGapHalvingPeriod: BigNumberish,
       index: BigNumberish,
-      baseToken: string,
+      minRentalPeriod: BigNumberish,
+      maxRentalPeriod: BigNumberish,
+      swappingEnabled: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1581,22 +1489,14 @@ export class PowerToken extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    initialize2(
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
-      serviceFeePercent: BigNumberish,
-      wrappingEnabled: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    isAllowedLoanDuration(
-      duration: BigNumberish,
+    isAllowedRentalPeriod(
+      period: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    isTransferEnabled(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    isSwappingEnabled(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    isWrappingEnabled(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    isTransferEnabled(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     mint(
       to: string,
@@ -1606,8 +1506,8 @@ export class PowerToken extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    notifyNewLoan(
-      borrowTokenId: BigNumberish,
+    notifyNewRental(
+      rentalTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1618,14 +1518,24 @@ export class PowerToken extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setLoanDurationLimits(
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
+    setRentalPeriodLimits(
+      minRentalPeriod: BigNumberish,
+      maxRentalPeriod: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     setServiceFeePercent(
       newServiceFeePercent: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    swapIn(
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    swapOut(
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1642,22 +1552,6 @@ export class PowerToken extends BaseContract {
     transferFrom(
       sender: string,
       recipient: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    unwrap(
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    wrap(
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    wrapTo(
-      to: string,
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

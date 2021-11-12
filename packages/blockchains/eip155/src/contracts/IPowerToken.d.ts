@@ -26,18 +26,16 @@ interface IPowerTokenInterface extends ethers.utils.Interface {
     "balanceOf(address)": FunctionFragment;
     "burnFrom(address,uint256)": FunctionFragment;
     "decimals()": FunctionFragment;
-    "estimateLoan(address,uint112,uint32)": FunctionFragment;
-    "estimateLoanDetailed(address,uint112,uint32)": FunctionFragment;
+    "estimateRentalFee(address,uint112,uint32)": FunctionFragment;
     "forceTransfer(address,address,uint256)": FunctionFragment;
     "getIndex()": FunctionFragment;
-    "initialize(address,uint112,uint96,uint32,uint16,address)": FunctionFragment;
-    "initialize2(uint32,uint32,uint16,bool)": FunctionFragment;
-    "isAllowedLoanDuration(uint32)": FunctionFragment;
+    "initialize(address,address,uint112,uint96,uint16,uint32,uint16,uint32,uint32,bool)": FunctionFragment;
+    "isAllowedRentalPeriod(uint32)": FunctionFragment;
+    "isSwappingEnabled()": FunctionFragment;
     "isTransferEnabled()": FunctionFragment;
-    "isWrappingEnabled()": FunctionFragment;
     "mint(address,uint256)": FunctionFragment;
     "name()": FunctionFragment;
-    "notifyNewLoan(uint256)": FunctionFragment;
+    "notifyNewRental(uint256)": FunctionFragment;
     "symbol()": FunctionFragment;
     "totalSupply()": FunctionFragment;
     "transfer(address,uint256)": FunctionFragment;
@@ -59,11 +57,7 @@ interface IPowerTokenInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "estimateLoan",
-    values: [string, BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "estimateLoanDetailed",
+    functionFragment: "estimateRentalFee",
     values: [string, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
@@ -75,27 +69,27 @@ interface IPowerTokenInterface extends ethers.utils.Interface {
     functionFragment: "initialize",
     values: [
       string,
+      string,
       BigNumberish,
       BigNumberish,
       BigNumberish,
       BigNumberish,
-      string
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      boolean
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "initialize2",
-    values: [BigNumberish, BigNumberish, BigNumberish, boolean]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "isAllowedLoanDuration",
+    functionFragment: "isAllowedRentalPeriod",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "isTransferEnabled",
+    functionFragment: "isSwappingEnabled",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "isWrappingEnabled",
+    functionFragment: "isTransferEnabled",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -104,7 +98,7 @@ interface IPowerTokenInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "notifyNewLoan",
+    functionFragment: "notifyNewRental",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
@@ -127,11 +121,7 @@ interface IPowerTokenInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "burnFrom", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "estimateLoan",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "estimateLoanDetailed",
+    functionFragment: "estimateRentalFee",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -141,25 +131,21 @@ interface IPowerTokenInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "getIndex", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "initialize2",
+    functionFragment: "isAllowedRentalPeriod",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "isAllowedLoanDuration",
+    functionFragment: "isSwappingEnabled",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "isTransferEnabled",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "isWrappingEnabled",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "notifyNewLoan",
+    functionFragment: "notifyNewRental",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
@@ -260,21 +246,14 @@ export class IPowerToken extends BaseContract {
 
     decimals(overrides?: CallOverrides): Promise<[number]>;
 
-    estimateLoan(
+    estimateRentalFee(
       paymentToken: string,
-      amount: BigNumberish,
-      duration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    estimateLoanDetailed(
-      paymentToken: string,
-      amount: BigNumberish,
-      duration: BigNumberish,
+      rentalAmount: BigNumberish,
+      rentalPeriod: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber, BigNumber] & {
-        interest: BigNumber;
+        poolFee: BigNumber;
         serviceFee: BigNumber;
         gcFee: BigNumber;
       }
@@ -291,30 +270,26 @@ export class IPowerToken extends BaseContract {
 
     initialize(
       enterprise: string,
+      baseToken: string,
       baseRate: BigNumberish,
       minGCFee: BigNumberish,
-      gapHalvingPeriod: BigNumberish,
-      index: BigNumberish,
-      baseToken: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    initialize2(
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
       serviceFeePercent: BigNumberish,
-      wrappingEnabled: boolean,
+      energyGapHalvingPeriod: BigNumberish,
+      index: BigNumberish,
+      minRentalPeriod: BigNumberish,
+      maxRentalPeriod: BigNumberish,
+      swappingEnabled: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    isAllowedLoanDuration(
-      duration: BigNumberish,
+    isAllowedRentalPeriod(
+      period: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    isTransferEnabled(overrides?: CallOverrides): Promise<[boolean]>;
+    isSwappingEnabled(overrides?: CallOverrides): Promise<[boolean]>;
 
-    isWrappingEnabled(overrides?: CallOverrides): Promise<[boolean]>;
+    isTransferEnabled(overrides?: CallOverrides): Promise<[boolean]>;
 
     mint(
       account: string,
@@ -324,8 +299,8 @@ export class IPowerToken extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
-    notifyNewLoan(
-      borrowTokenId: BigNumberish,
+    notifyNewRental(
+      rentalTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -369,21 +344,14 @@ export class IPowerToken extends BaseContract {
 
   decimals(overrides?: CallOverrides): Promise<number>;
 
-  estimateLoan(
+  estimateRentalFee(
     paymentToken: string,
-    amount: BigNumberish,
-    duration: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  estimateLoanDetailed(
-    paymentToken: string,
-    amount: BigNumberish,
-    duration: BigNumberish,
+    rentalAmount: BigNumberish,
+    rentalPeriod: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
     [BigNumber, BigNumber, BigNumber] & {
-      interest: BigNumber;
+      poolFee: BigNumber;
       serviceFee: BigNumber;
       gcFee: BigNumber;
     }
@@ -400,30 +368,26 @@ export class IPowerToken extends BaseContract {
 
   initialize(
     enterprise: string,
+    baseToken: string,
     baseRate: BigNumberish,
     minGCFee: BigNumberish,
-    gapHalvingPeriod: BigNumberish,
-    index: BigNumberish,
-    baseToken: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  initialize2(
-    minLoanDuration: BigNumberish,
-    maxLoanDuration: BigNumberish,
     serviceFeePercent: BigNumberish,
-    wrappingEnabled: boolean,
+    energyGapHalvingPeriod: BigNumberish,
+    index: BigNumberish,
+    minRentalPeriod: BigNumberish,
+    maxRentalPeriod: BigNumberish,
+    swappingEnabled: boolean,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  isAllowedLoanDuration(
-    duration: BigNumberish,
+  isAllowedRentalPeriod(
+    period: BigNumberish,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  isTransferEnabled(overrides?: CallOverrides): Promise<boolean>;
+  isSwappingEnabled(overrides?: CallOverrides): Promise<boolean>;
 
-  isWrappingEnabled(overrides?: CallOverrides): Promise<boolean>;
+  isTransferEnabled(overrides?: CallOverrides): Promise<boolean>;
 
   mint(
     account: string,
@@ -433,8 +397,8 @@ export class IPowerToken extends BaseContract {
 
   name(overrides?: CallOverrides): Promise<string>;
 
-  notifyNewLoan(
-    borrowTokenId: BigNumberish,
+  notifyNewRental(
+    rentalTokenId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -478,21 +442,14 @@ export class IPowerToken extends BaseContract {
 
     decimals(overrides?: CallOverrides): Promise<number>;
 
-    estimateLoan(
+    estimateRentalFee(
       paymentToken: string,
-      amount: BigNumberish,
-      duration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    estimateLoanDetailed(
-      paymentToken: string,
-      amount: BigNumberish,
-      duration: BigNumberish,
+      rentalAmount: BigNumberish,
+      rentalPeriod: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
       [BigNumber, BigNumber, BigNumber] & {
-        interest: BigNumber;
+        poolFee: BigNumber;
         serviceFee: BigNumber;
         gcFee: BigNumber;
       }
@@ -509,30 +466,26 @@ export class IPowerToken extends BaseContract {
 
     initialize(
       enterprise: string,
+      baseToken: string,
       baseRate: BigNumberish,
       minGCFee: BigNumberish,
-      gapHalvingPeriod: BigNumberish,
-      index: BigNumberish,
-      baseToken: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    initialize2(
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
       serviceFeePercent: BigNumberish,
-      wrappingEnabled: boolean,
+      energyGapHalvingPeriod: BigNumberish,
+      index: BigNumberish,
+      minRentalPeriod: BigNumberish,
+      maxRentalPeriod: BigNumberish,
+      swappingEnabled: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    isAllowedLoanDuration(
-      duration: BigNumberish,
+    isAllowedRentalPeriod(
+      period: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    isTransferEnabled(overrides?: CallOverrides): Promise<boolean>;
+    isSwappingEnabled(overrides?: CallOverrides): Promise<boolean>;
 
-    isWrappingEnabled(overrides?: CallOverrides): Promise<boolean>;
+    isTransferEnabled(overrides?: CallOverrides): Promise<boolean>;
 
     mint(
       account: string,
@@ -542,8 +495,8 @@ export class IPowerToken extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<string>;
 
-    notifyNewLoan(
-      borrowTokenId: BigNumberish,
+    notifyNewRental(
+      rentalTokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -626,17 +579,10 @@ export class IPowerToken extends BaseContract {
 
     decimals(overrides?: CallOverrides): Promise<BigNumber>;
 
-    estimateLoan(
+    estimateRentalFee(
       paymentToken: string,
-      amount: BigNumberish,
-      duration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    estimateLoanDetailed(
-      paymentToken: string,
-      amount: BigNumberish,
-      duration: BigNumberish,
+      rentalAmount: BigNumberish,
+      rentalPeriod: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -651,30 +597,26 @@ export class IPowerToken extends BaseContract {
 
     initialize(
       enterprise: string,
+      baseToken: string,
       baseRate: BigNumberish,
       minGCFee: BigNumberish,
-      gapHalvingPeriod: BigNumberish,
-      index: BigNumberish,
-      baseToken: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    initialize2(
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
       serviceFeePercent: BigNumberish,
-      wrappingEnabled: boolean,
+      energyGapHalvingPeriod: BigNumberish,
+      index: BigNumberish,
+      minRentalPeriod: BigNumberish,
+      maxRentalPeriod: BigNumberish,
+      swappingEnabled: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    isAllowedLoanDuration(
-      duration: BigNumberish,
+    isAllowedRentalPeriod(
+      period: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    isTransferEnabled(overrides?: CallOverrides): Promise<BigNumber>;
+    isSwappingEnabled(overrides?: CallOverrides): Promise<BigNumber>;
 
-    isWrappingEnabled(overrides?: CallOverrides): Promise<BigNumber>;
+    isTransferEnabled(overrides?: CallOverrides): Promise<BigNumber>;
 
     mint(
       account: string,
@@ -684,8 +626,8 @@ export class IPowerToken extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
-    notifyNewLoan(
-      borrowTokenId: BigNumberish,
+    notifyNewRental(
+      rentalTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -733,17 +675,10 @@ export class IPowerToken extends BaseContract {
 
     decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    estimateLoan(
+    estimateRentalFee(
       paymentToken: string,
-      amount: BigNumberish,
-      duration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    estimateLoanDetailed(
-      paymentToken: string,
-      amount: BigNumberish,
-      duration: BigNumberish,
+      rentalAmount: BigNumberish,
+      rentalPeriod: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -758,30 +693,26 @@ export class IPowerToken extends BaseContract {
 
     initialize(
       enterprise: string,
+      baseToken: string,
       baseRate: BigNumberish,
       minGCFee: BigNumberish,
-      gapHalvingPeriod: BigNumberish,
-      index: BigNumberish,
-      baseToken: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    initialize2(
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
       serviceFeePercent: BigNumberish,
-      wrappingEnabled: boolean,
+      energyGapHalvingPeriod: BigNumberish,
+      index: BigNumberish,
+      minRentalPeriod: BigNumberish,
+      maxRentalPeriod: BigNumberish,
+      swappingEnabled: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    isAllowedLoanDuration(
-      duration: BigNumberish,
+    isAllowedRentalPeriod(
+      period: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    isTransferEnabled(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    isSwappingEnabled(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    isWrappingEnabled(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    isTransferEnabled(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     mint(
       account: string,
@@ -791,8 +722,8 @@ export class IPowerToken extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    notifyNewLoan(
-      borrowTokenId: BigNumberish,
+    notifyNewRental(
+      rentalTokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

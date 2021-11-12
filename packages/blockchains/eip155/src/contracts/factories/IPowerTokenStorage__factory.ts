@@ -31,6 +31,11 @@ const _abi = [
         type: "address",
       },
       {
+        internalType: "contract IERC20Metadata",
+        name: "baseToken",
+        type: "address",
+      },
+      {
         internalType: "uint112",
         name: "baseRate",
         type: "uint112",
@@ -41,8 +46,13 @@ const _abi = [
         type: "uint96",
       },
       {
+        internalType: "uint16",
+        name: "serviceFeePercent",
+        type: "uint16",
+      },
+      {
         internalType: "uint32",
-        name: "gapHalvingPeriod",
+        name: "energyGapHalvingPeriod",
         type: "uint32",
       },
       {
@@ -51,9 +61,19 @@ const _abi = [
         type: "uint16",
       },
       {
-        internalType: "contract IERC20Metadata",
-        name: "baseToken",
-        type: "address",
+        internalType: "uint32",
+        name: "minRentalPeriod",
+        type: "uint32",
+      },
+      {
+        internalType: "uint32",
+        name: "maxRentalPeriod",
+        type: "uint32",
+      },
+      {
+        internalType: "bool",
+        name: "swappingEnabled",
+        type: "bool",
       },
     ],
     name: "initialize",
@@ -65,39 +85,24 @@ const _abi = [
     inputs: [
       {
         internalType: "uint32",
-        name: "minLoanDuration",
+        name: "period",
         type: "uint32",
       },
-      {
-        internalType: "uint32",
-        name: "maxLoanDuration",
-        type: "uint32",
-      },
-      {
-        internalType: "uint16",
-        name: "serviceFeePercent",
-        type: "uint16",
-      },
+    ],
+    name: "isAllowedRentalPeriod",
+    outputs: [
       {
         internalType: "bool",
-        name: "wrappingEnabled",
+        name: "",
         type: "bool",
       },
     ],
-    name: "initialize2",
-    outputs: [],
-    stateMutability: "nonpayable",
+    stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint32",
-        name: "duration",
-        type: "uint32",
-      },
-    ],
-    name: "isAllowedLoanDuration",
+    inputs: [],
+    name: "isSwappingEnabled",
     outputs: [
       {
         internalType: "bool",
@@ -111,19 +116,6 @@ const _abi = [
   {
     inputs: [],
     name: "isTransferEnabled",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "isWrappingEnabled",
     outputs: [
       {
         internalType: "bool",

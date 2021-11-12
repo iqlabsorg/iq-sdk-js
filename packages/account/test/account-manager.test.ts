@@ -1,5 +1,5 @@
+import { AccountId, ChainId } from 'caip';
 import { InMemoryStore } from '@iqprotocol/in-memory-storage';
-import { AccountId, ChainId } from '@iqprotocol/abstract-blockchain';
 import { Account, AccountOwnershipProof } from '@iqprotocol/abstract-storage';
 import { AccountManager, AccountOwnershipVerifier, MessageTypes } from '../src';
 import { normalize, signTypedMessage } from 'eth-sig-util';

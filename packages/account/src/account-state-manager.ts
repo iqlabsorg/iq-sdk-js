@@ -1,5 +1,6 @@
+import { AccountId } from 'caip';
 import { AccountState, AccountStateChangeResult, StorageProvider } from '@iqprotocol/abstract-storage';
-import { AccountId, AccountState as OnChainAccountState, BlockchainProvider } from '@iqprotocol/abstract-blockchain';
+import { AccountState as OnChainAccountState, BlockchainProvider } from '@iqprotocol/abstract-blockchain';
 import { calculateEffectiveEnergy } from '@iqprotocol/energy';
 
 export interface AccountStateManagerConfig {
@@ -19,7 +20,7 @@ export class AccountStateManager {
   async initAccountState({
     serviceId,
     accountId,
-    gapHalvingPeriod,
+    energyGapHalvingPeriod,
     power,
     lockedPower,
     energyCap,
@@ -33,7 +34,7 @@ export class AccountStateManager {
     return this.store.initAccountState({
       serviceId: serviceId.toString(),
       accountId: accountId.toString(),
-      gapHalvingPeriod,
+      energyGapHalvingPeriod,
       power,
       lockedPower,
       energyCap,
@@ -46,12 +47,12 @@ export class AccountStateManager {
     this.validateSameChain(serviceId, accountId);
     try {
       const { balance, energy, timestamp } = await this.getBlockchainAccountState(serviceId, accountId);
-      const { gapHalvingPeriod } = await this.blockchain.getServiceInfo(serviceId.address);
+      const { energyGapHalvingPeriod } = await this.blockchain.service(serviceId.address).getInfo();
 
       return await this.initAccountState({
         serviceId,
         accountId,
-        gapHalvingPeriod,
+        energyGapHalvingPeriod,
         power: balance.toBigInt(),
         lockedPower: 0n,
         energyCap: energy.toBigInt(),
@@ -65,7 +66,7 @@ export class AccountStateManager {
   }
 
   async getBlockchainAccountState(serviceId: AccountId, accountId: AccountId): Promise<OnChainAccountState> {
-    return this.blockchain.getAccountState(serviceId.address, accountId.address);
+    return this.blockchain.service(serviceId.address).getAccountState(accountId.address);
   }
 
   async getAccountState(serviceId: AccountId, accountId: AccountId): Promise<AccountState | null> {
@@ -152,7 +153,7 @@ export class AccountStateManager {
       energy: state.energy,
       energyCap: state.energyCap,
       power: effectivePower,
-      gapHalvingPeriod: state.gapHalvingPeriod,
+      gapHalvingPeriod: state.energyGapHalvingPeriod,
       t0: state.energyCalculatedAt,
       t1: stateChangeTime,
     });
@@ -174,7 +175,7 @@ export class AccountStateManager {
       energyCalculatedAt: stateChangeTime,
       serviceId: state.serviceId,
       accountId: state.accountId,
-      gapHalvingPeriod: state.gapHalvingPeriod,
+      energyGapHalvingPeriod: state.energyGapHalvingPeriod,
     };
 
     return this.store.changeAccountState(state, newState);

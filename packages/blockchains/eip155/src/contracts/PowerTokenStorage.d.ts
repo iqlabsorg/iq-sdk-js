@@ -21,34 +21,33 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface PowerTokenStorageInterface extends ethers.utils.Interface {
   functions: {
+    "enableSwappingForever()": FunctionFragment;
     "enableTransferForever()": FunctionFragment;
-    "enableWrappingForever()": FunctionFragment;
     "getBaseRate()": FunctionFragment;
     "getBaseToken()": FunctionFragment;
+    "getEnergyGapHalvingPeriod()": FunctionFragment;
     "getEnterprise()": FunctionFragment;
-    "getGapHalvingPeriod()": FunctionFragment;
     "getIndex()": FunctionFragment;
-    "getMaxLoanDuration()": FunctionFragment;
+    "getMaxRentalPeriod()": FunctionFragment;
     "getMinGCFee()": FunctionFragment;
-    "getMinLoanDuration()": FunctionFragment;
+    "getMinRentalPeriod()": FunctionFragment;
     "getServiceFeePercent()": FunctionFragment;
     "getState(address)": FunctionFragment;
-    "initialize(address,uint112,uint96,uint32,uint16,address)": FunctionFragment;
-    "initialize2(uint32,uint32,uint16,bool)": FunctionFragment;
-    "isAllowedLoanDuration(uint32)": FunctionFragment;
+    "initialize(address,address,uint112,uint96,uint16,uint32,uint16,uint32,uint32,bool)": FunctionFragment;
+    "isAllowedRentalPeriod(uint32)": FunctionFragment;
+    "isSwappingEnabled()": FunctionFragment;
     "isTransferEnabled()": FunctionFragment;
-    "isWrappingEnabled()": FunctionFragment;
     "setBaseRate(uint112,address,uint96)": FunctionFragment;
-    "setLoanDurationLimits(uint32,uint32)": FunctionFragment;
+    "setRentalPeriodLimits(uint32,uint32)": FunctionFragment;
     "setServiceFeePercent(uint16)": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "enableTransferForever",
+    functionFragment: "enableSwappingForever",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "enableWrappingForever",
+    functionFragment: "enableTransferForever",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -60,16 +59,16 @@ interface PowerTokenStorageInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getEnterprise",
+    functionFragment: "getEnergyGapHalvingPeriod",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getGapHalvingPeriod",
+    functionFragment: "getEnterprise",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "getIndex", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "getMaxLoanDuration",
+    functionFragment: "getMaxRentalPeriod",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -77,7 +76,7 @@ interface PowerTokenStorageInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getMinLoanDuration",
+    functionFragment: "getMinRentalPeriod",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -89,27 +88,27 @@ interface PowerTokenStorageInterface extends ethers.utils.Interface {
     functionFragment: "initialize",
     values: [
       string,
+      string,
       BigNumberish,
       BigNumberish,
       BigNumberish,
       BigNumberish,
-      string
+      BigNumberish,
+      BigNumberish,
+      BigNumberish,
+      boolean
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "initialize2",
-    values: [BigNumberish, BigNumberish, BigNumberish, boolean]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "isAllowedLoanDuration",
+    functionFragment: "isAllowedRentalPeriod",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "isTransferEnabled",
+    functionFragment: "isSwappingEnabled",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "isWrappingEnabled",
+    functionFragment: "isTransferEnabled",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -117,7 +116,7 @@ interface PowerTokenStorageInterface extends ethers.utils.Interface {
     values: [BigNumberish, string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "setLoanDurationLimits",
+    functionFragment: "setRentalPeriodLimits",
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
@@ -126,11 +125,11 @@ interface PowerTokenStorageInterface extends ethers.utils.Interface {
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "enableTransferForever",
+    functionFragment: "enableSwappingForever",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "enableWrappingForever",
+    functionFragment: "enableTransferForever",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -142,16 +141,16 @@ interface PowerTokenStorageInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getEnterprise",
+    functionFragment: "getEnergyGapHalvingPeriod",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getGapHalvingPeriod",
+    functionFragment: "getEnterprise",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getIndex", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getMaxLoanDuration",
+    functionFragment: "getMaxRentalPeriod",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -159,7 +158,7 @@ interface PowerTokenStorageInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getMinLoanDuration",
+    functionFragment: "getMinRentalPeriod",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -169,11 +168,11 @@ interface PowerTokenStorageInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "getState", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "initialize2",
+    functionFragment: "isAllowedRentalPeriod",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "isAllowedLoanDuration",
+    functionFragment: "isSwappingEnabled",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -181,15 +180,11 @@ interface PowerTokenStorageInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "isWrappingEnabled",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "setBaseRate",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setLoanDurationLimits",
+    functionFragment: "setRentalPeriodLimits",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -199,17 +194,17 @@ interface PowerTokenStorageInterface extends ethers.utils.Interface {
 
   events: {
     "BaseRateChanged(uint112,address,uint96)": EventFragment;
-    "LoanDurationLimitsChanged(uint32,uint32)": EventFragment;
+    "RentalPeriodLimitsChanged(uint32,uint32)": EventFragment;
     "ServiceFeePercentChanged(uint16)": EventFragment;
+    "SwappingEnabled()": EventFragment;
     "TransferEnabled()": EventFragment;
-    "WrappingEnabled()": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "BaseRateChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "LoanDurationLimitsChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RentalPeriodLimitsChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ServiceFeePercentChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SwappingEnabled"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TransferEnabled"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "WrappingEnabled"): EventFragment;
 }
 
 export type BaseRateChangedEvent = TypedEvent<
@@ -220,17 +215,17 @@ export type BaseRateChangedEvent = TypedEvent<
   }
 >;
 
-export type LoanDurationLimitsChangedEvent = TypedEvent<
-  [number, number] & { minDuration: number; maxDuration: number }
+export type RentalPeriodLimitsChangedEvent = TypedEvent<
+  [number, number] & { minRentalPeriod: number; maxRentalPeriod: number }
 >;
 
 export type ServiceFeePercentChangedEvent = TypedEvent<
   [number] & { percent: number }
 >;
 
-export type TransferEnabledEvent = TypedEvent<[] & {}>;
+export type SwappingEnabledEvent = TypedEvent<[] & {}>;
 
-export type WrappingEnabledEvent = TypedEvent<[] & {}>;
+export type TransferEnabledEvent = TypedEvent<[] & {}>;
 
 export class PowerTokenStorage extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -276,11 +271,11 @@ export class PowerTokenStorage extends BaseContract {
   interface: PowerTokenStorageInterface;
 
   functions: {
-    enableTransferForever(
+    enableSwappingForever(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    enableWrappingForever(
+    enableTransferForever(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -288,17 +283,17 @@ export class PowerTokenStorage extends BaseContract {
 
     getBaseToken(overrides?: CallOverrides): Promise<[string]>;
 
-    getEnterprise(overrides?: CallOverrides): Promise<[string]>;
+    getEnergyGapHalvingPeriod(overrides?: CallOverrides): Promise<[number]>;
 
-    getGapHalvingPeriod(overrides?: CallOverrides): Promise<[number]>;
+    getEnterprise(overrides?: CallOverrides): Promise<[string]>;
 
     getIndex(overrides?: CallOverrides): Promise<[number]>;
 
-    getMaxLoanDuration(overrides?: CallOverrides): Promise<[number]>;
+    getMaxRentalPeriod(overrides?: CallOverrides): Promise<[number]>;
 
     getMinGCFee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    getMinLoanDuration(overrides?: CallOverrides): Promise<[number]>;
+    getMinRentalPeriod(overrides?: CallOverrides): Promise<[number]>;
 
     getServiceFeePercent(overrides?: CallOverrides): Promise<[number]>;
 
@@ -315,13 +310,17 @@ export class PowerTokenStorage extends BaseContract {
       ]
     >;
 
-    "initialize(address,uint112,uint96,uint32,uint16,address)"(
+    "initialize(address,address,uint112,uint96,uint16,uint32,uint16,uint32,uint32,bool)"(
       enterprise: string,
+      baseToken: string,
       baseRate: BigNumberish,
       minGCFee: BigNumberish,
-      gapHalvingPeriod: BigNumberish,
+      serviceFeePercent: BigNumberish,
+      energyGapHalvingPeriod: BigNumberish,
       index: BigNumberish,
-      baseToken: string,
+      minRentalPeriod: BigNumberish,
+      maxRentalPeriod: BigNumberish,
+      swappingEnabled: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -330,22 +329,14 @@ export class PowerTokenStorage extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    initialize2(
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
-      serviceFeePercent: BigNumberish,
-      wrappingEnabled: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    isAllowedLoanDuration(
-      duration: BigNumberish,
+    isAllowedRentalPeriod(
+      period: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    isTransferEnabled(overrides?: CallOverrides): Promise<[boolean]>;
+    isSwappingEnabled(overrides?: CallOverrides): Promise<[boolean]>;
 
-    isWrappingEnabled(overrides?: CallOverrides): Promise<[boolean]>;
+    isTransferEnabled(overrides?: CallOverrides): Promise<[boolean]>;
 
     setBaseRate(
       baseRate: BigNumberish,
@@ -354,9 +345,9 @@ export class PowerTokenStorage extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setLoanDurationLimits(
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
+    setRentalPeriodLimits(
+      minRentalPeriod: BigNumberish,
+      maxRentalPeriod: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -366,11 +357,11 @@ export class PowerTokenStorage extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  enableTransferForever(
+  enableSwappingForever(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  enableWrappingForever(
+  enableTransferForever(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -378,17 +369,17 @@ export class PowerTokenStorage extends BaseContract {
 
   getBaseToken(overrides?: CallOverrides): Promise<string>;
 
-  getEnterprise(overrides?: CallOverrides): Promise<string>;
+  getEnergyGapHalvingPeriod(overrides?: CallOverrides): Promise<number>;
 
-  getGapHalvingPeriod(overrides?: CallOverrides): Promise<number>;
+  getEnterprise(overrides?: CallOverrides): Promise<string>;
 
   getIndex(overrides?: CallOverrides): Promise<number>;
 
-  getMaxLoanDuration(overrides?: CallOverrides): Promise<number>;
+  getMaxRentalPeriod(overrides?: CallOverrides): Promise<number>;
 
   getMinGCFee(overrides?: CallOverrides): Promise<BigNumber>;
 
-  getMinLoanDuration(overrides?: CallOverrides): Promise<number>;
+  getMinRentalPeriod(overrides?: CallOverrides): Promise<number>;
 
   getServiceFeePercent(overrides?: CallOverrides): Promise<number>;
 
@@ -403,13 +394,17 @@ export class PowerTokenStorage extends BaseContract {
     }
   >;
 
-  "initialize(address,uint112,uint96,uint32,uint16,address)"(
+  "initialize(address,address,uint112,uint96,uint16,uint32,uint16,uint32,uint32,bool)"(
     enterprise: string,
+    baseToken: string,
     baseRate: BigNumberish,
     minGCFee: BigNumberish,
-    gapHalvingPeriod: BigNumberish,
+    serviceFeePercent: BigNumberish,
+    energyGapHalvingPeriod: BigNumberish,
     index: BigNumberish,
-    baseToken: string,
+    minRentalPeriod: BigNumberish,
+    maxRentalPeriod: BigNumberish,
+    swappingEnabled: boolean,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -418,22 +413,14 @@ export class PowerTokenStorage extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  initialize2(
-    minLoanDuration: BigNumberish,
-    maxLoanDuration: BigNumberish,
-    serviceFeePercent: BigNumberish,
-    wrappingEnabled: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  isAllowedLoanDuration(
-    duration: BigNumberish,
+  isAllowedRentalPeriod(
+    period: BigNumberish,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  isTransferEnabled(overrides?: CallOverrides): Promise<boolean>;
+  isSwappingEnabled(overrides?: CallOverrides): Promise<boolean>;
 
-  isWrappingEnabled(overrides?: CallOverrides): Promise<boolean>;
+  isTransferEnabled(overrides?: CallOverrides): Promise<boolean>;
 
   setBaseRate(
     baseRate: BigNumberish,
@@ -442,9 +429,9 @@ export class PowerTokenStorage extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setLoanDurationLimits(
-    minLoanDuration: BigNumberish,
-    maxLoanDuration: BigNumberish,
+  setRentalPeriodLimits(
+    minRentalPeriod: BigNumberish,
+    maxRentalPeriod: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -454,25 +441,25 @@ export class PowerTokenStorage extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    enableTransferForever(overrides?: CallOverrides): Promise<void>;
+    enableSwappingForever(overrides?: CallOverrides): Promise<void>;
 
-    enableWrappingForever(overrides?: CallOverrides): Promise<void>;
+    enableTransferForever(overrides?: CallOverrides): Promise<void>;
 
     getBaseRate(overrides?: CallOverrides): Promise<BigNumber>;
 
     getBaseToken(overrides?: CallOverrides): Promise<string>;
 
-    getEnterprise(overrides?: CallOverrides): Promise<string>;
+    getEnergyGapHalvingPeriod(overrides?: CallOverrides): Promise<number>;
 
-    getGapHalvingPeriod(overrides?: CallOverrides): Promise<number>;
+    getEnterprise(overrides?: CallOverrides): Promise<string>;
 
     getIndex(overrides?: CallOverrides): Promise<number>;
 
-    getMaxLoanDuration(overrides?: CallOverrides): Promise<number>;
+    getMaxRentalPeriod(overrides?: CallOverrides): Promise<number>;
 
     getMinGCFee(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getMinLoanDuration(overrides?: CallOverrides): Promise<number>;
+    getMinRentalPeriod(overrides?: CallOverrides): Promise<number>;
 
     getServiceFeePercent(overrides?: CallOverrides): Promise<number>;
 
@@ -487,13 +474,17 @@ export class PowerTokenStorage extends BaseContract {
       }
     >;
 
-    "initialize(address,uint112,uint96,uint32,uint16,address)"(
+    "initialize(address,address,uint112,uint96,uint16,uint32,uint16,uint32,uint32,bool)"(
       enterprise: string,
+      baseToken: string,
       baseRate: BigNumberish,
       minGCFee: BigNumberish,
-      gapHalvingPeriod: BigNumberish,
+      serviceFeePercent: BigNumberish,
+      energyGapHalvingPeriod: BigNumberish,
       index: BigNumberish,
-      baseToken: string,
+      minRentalPeriod: BigNumberish,
+      maxRentalPeriod: BigNumberish,
+      swappingEnabled: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -502,22 +493,14 @@ export class PowerTokenStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    initialize2(
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
-      serviceFeePercent: BigNumberish,
-      wrappingEnabled: boolean,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    isAllowedLoanDuration(
-      duration: BigNumberish,
+    isAllowedRentalPeriod(
+      period: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    isTransferEnabled(overrides?: CallOverrides): Promise<boolean>;
+    isSwappingEnabled(overrides?: CallOverrides): Promise<boolean>;
 
-    isWrappingEnabled(overrides?: CallOverrides): Promise<boolean>;
+    isTransferEnabled(overrides?: CallOverrides): Promise<boolean>;
 
     setBaseRate(
       baseRate: BigNumberish,
@@ -526,9 +509,9 @@ export class PowerTokenStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setLoanDurationLimits(
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
+    setRentalPeriodLimits(
+      minRentalPeriod: BigNumberish,
+      maxRentalPeriod: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -557,20 +540,20 @@ export class PowerTokenStorage extends BaseContract {
       { baseRate: BigNumber; baseToken: string; minGCFee: BigNumber }
     >;
 
-    "LoanDurationLimitsChanged(uint32,uint32)"(
-      minDuration?: null,
-      maxDuration?: null
+    "RentalPeriodLimitsChanged(uint32,uint32)"(
+      minRentalPeriod?: null,
+      maxRentalPeriod?: null
     ): TypedEventFilter<
       [number, number],
-      { minDuration: number; maxDuration: number }
+      { minRentalPeriod: number; maxRentalPeriod: number }
     >;
 
-    LoanDurationLimitsChanged(
-      minDuration?: null,
-      maxDuration?: null
+    RentalPeriodLimitsChanged(
+      minRentalPeriod?: null,
+      maxRentalPeriod?: null
     ): TypedEventFilter<
       [number, number],
-      { minDuration: number; maxDuration: number }
+      { minRentalPeriod: number; maxRentalPeriod: number }
     >;
 
     "ServiceFeePercentChanged(uint16)"(
@@ -581,21 +564,21 @@ export class PowerTokenStorage extends BaseContract {
       percent?: null
     ): TypedEventFilter<[number], { percent: number }>;
 
+    "SwappingEnabled()"(): TypedEventFilter<[], {}>;
+
+    SwappingEnabled(): TypedEventFilter<[], {}>;
+
     "TransferEnabled()"(): TypedEventFilter<[], {}>;
 
     TransferEnabled(): TypedEventFilter<[], {}>;
-
-    "WrappingEnabled()"(): TypedEventFilter<[], {}>;
-
-    WrappingEnabled(): TypedEventFilter<[], {}>;
   };
 
   estimateGas: {
-    enableTransferForever(
+    enableSwappingForever(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    enableWrappingForever(
+    enableTransferForever(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -603,29 +586,33 @@ export class PowerTokenStorage extends BaseContract {
 
     getBaseToken(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getEnterprise(overrides?: CallOverrides): Promise<BigNumber>;
+    getEnergyGapHalvingPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getGapHalvingPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+    getEnterprise(overrides?: CallOverrides): Promise<BigNumber>;
 
     getIndex(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getMaxLoanDuration(overrides?: CallOverrides): Promise<BigNumber>;
+    getMaxRentalPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
     getMinGCFee(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getMinLoanDuration(overrides?: CallOverrides): Promise<BigNumber>;
+    getMinRentalPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
     getServiceFeePercent(overrides?: CallOverrides): Promise<BigNumber>;
 
     getState(account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    "initialize(address,uint112,uint96,uint32,uint16,address)"(
+    "initialize(address,address,uint112,uint96,uint16,uint32,uint16,uint32,uint32,bool)"(
       enterprise: string,
+      baseToken: string,
       baseRate: BigNumberish,
       minGCFee: BigNumberish,
-      gapHalvingPeriod: BigNumberish,
+      serviceFeePercent: BigNumberish,
+      energyGapHalvingPeriod: BigNumberish,
       index: BigNumberish,
-      baseToken: string,
+      minRentalPeriod: BigNumberish,
+      maxRentalPeriod: BigNumberish,
+      swappingEnabled: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -634,22 +621,14 @@ export class PowerTokenStorage extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    initialize2(
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
-      serviceFeePercent: BigNumberish,
-      wrappingEnabled: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    isAllowedLoanDuration(
-      duration: BigNumberish,
+    isAllowedRentalPeriod(
+      period: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    isTransferEnabled(overrides?: CallOverrides): Promise<BigNumber>;
+    isSwappingEnabled(overrides?: CallOverrides): Promise<BigNumber>;
 
-    isWrappingEnabled(overrides?: CallOverrides): Promise<BigNumber>;
+    isTransferEnabled(overrides?: CallOverrides): Promise<BigNumber>;
 
     setBaseRate(
       baseRate: BigNumberish,
@@ -658,9 +637,9 @@ export class PowerTokenStorage extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setLoanDurationLimits(
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
+    setRentalPeriodLimits(
+      minRentalPeriod: BigNumberish,
+      maxRentalPeriod: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -671,11 +650,11 @@ export class PowerTokenStorage extends BaseContract {
   };
 
   populateTransaction: {
-    enableTransferForever(
+    enableSwappingForever(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    enableWrappingForever(
+    enableTransferForever(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -683,21 +662,21 @@ export class PowerTokenStorage extends BaseContract {
 
     getBaseToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getEnterprise(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getGapHalvingPeriod(
+    getEnergyGapHalvingPeriod(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getEnterprise(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getIndex(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getMaxLoanDuration(
+    getMaxRentalPeriod(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getMinGCFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getMinLoanDuration(
+    getMinRentalPeriod(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -710,13 +689,17 @@ export class PowerTokenStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    "initialize(address,uint112,uint96,uint32,uint16,address)"(
+    "initialize(address,address,uint112,uint96,uint16,uint32,uint16,uint32,uint32,bool)"(
       enterprise: string,
+      baseToken: string,
       baseRate: BigNumberish,
       minGCFee: BigNumberish,
-      gapHalvingPeriod: BigNumberish,
+      serviceFeePercent: BigNumberish,
+      energyGapHalvingPeriod: BigNumberish,
       index: BigNumberish,
-      baseToken: string,
+      minRentalPeriod: BigNumberish,
+      maxRentalPeriod: BigNumberish,
+      swappingEnabled: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -725,22 +708,14 @@ export class PowerTokenStorage extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    initialize2(
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
-      serviceFeePercent: BigNumberish,
-      wrappingEnabled: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    isAllowedLoanDuration(
-      duration: BigNumberish,
+    isAllowedRentalPeriod(
+      period: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    isTransferEnabled(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    isSwappingEnabled(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    isWrappingEnabled(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    isTransferEnabled(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     setBaseRate(
       baseRate: BigNumberish,
@@ -749,9 +724,9 @@ export class PowerTokenStorage extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setLoanDurationLimits(
-      minLoanDuration: BigNumberish,
-      maxLoanDuration: BigNumberish,
+    setRentalPeriodLimits(
+      minRentalPeriod: BigNumberish,
+      maxRentalPeriod: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
