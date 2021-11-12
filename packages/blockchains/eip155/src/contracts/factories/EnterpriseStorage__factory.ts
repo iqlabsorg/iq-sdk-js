@@ -478,6 +478,31 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "getPaymentTokens",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "address",
+            name: "paymentToken",
+            type: "address",
+          },
+          {
+            internalType: "bool",
+            name: "enabled",
+            type: "bool",
+          },
+        ],
+        internalType: "struct EnterpriseStorage.PaymentTokenInfo[]",
+        name: "",
+        type: "tuple[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "getPowerTokens",
     outputs: [
       {

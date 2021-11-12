@@ -40,6 +40,7 @@ interface EnterpriseInterface extends ethers.utils.Interface {
     "getInfo()": FunctionFragment;
     "getPaymentToken(uint256)": FunctionFragment;
     "getPaymentTokenIndex(address)": FunctionFragment;
+    "getPaymentTokens()": FunctionFragment;
     "getPowerTokens()": FunctionFragment;
     "getProxyAdmin()": FunctionFragment;
     "getRentalAgreement(uint256)": FunctionFragment;
@@ -149,6 +150,10 @@ interface EnterpriseInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "getPaymentTokenIndex",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getPaymentTokens",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getPowerTokens",
@@ -358,6 +363,10 @@ interface EnterpriseInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getPaymentTokenIndex",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getPaymentTokens",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -824,6 +833,12 @@ export class Enterprise extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[number]>;
 
+    getPaymentTokens(
+      overrides?: CallOverrides
+    ): Promise<
+      [([string, boolean] & { paymentToken: string; enabled: boolean })[]]
+    >;
+
     getPowerTokens(overrides?: CallOverrides): Promise<[string[]]>;
 
     getProxyAdmin(overrides?: CallOverrides): Promise<[string]>;
@@ -1139,6 +1154,12 @@ export class Enterprise extends BaseContract {
     overrides?: CallOverrides
   ): Promise<number>;
 
+  getPaymentTokens(
+    overrides?: CallOverrides
+  ): Promise<
+    ([string, boolean] & { paymentToken: string; enabled: boolean })[]
+  >;
+
   getPowerTokens(overrides?: CallOverrides): Promise<string[]>;
 
   getProxyAdmin(overrides?: CallOverrides): Promise<string>;
@@ -1437,6 +1458,12 @@ export class Enterprise extends BaseContract {
       token: string,
       overrides?: CallOverrides
     ): Promise<number>;
+
+    getPaymentTokens(
+      overrides?: CallOverrides
+    ): Promise<
+      ([string, boolean] & { paymentToken: string; enabled: boolean })[]
+    >;
 
     getPowerTokens(overrides?: CallOverrides): Promise<string[]>;
 
@@ -2139,6 +2166,8 @@ export class Enterprise extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getPaymentTokens(overrides?: CallOverrides): Promise<BigNumber>;
+
     getPowerTokens(overrides?: CallOverrides): Promise<BigNumber>;
 
     getProxyAdmin(overrides?: CallOverrides): Promise<BigNumber>;
@@ -2402,6 +2431,8 @@ export class Enterprise extends BaseContract {
       token: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    getPaymentTokens(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getPowerTokens(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
