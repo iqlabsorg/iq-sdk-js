@@ -15,11 +15,11 @@ yarn add @iqprotocol/postgres-storage
 ## Usage
 
 ```ts
-import { PostgresStore, createPool, Account, AccountState } from '@iqprotocol/postgres-storage';
+import { PostgresAccountStore, createPool, Account, AccountState } from '@iqprotocol/postgres-storage';
 
 const connectionUri = 'postgresql://user:secret@localhost/mydb';
 const pool = createPool(connectionUri);
-const store = new PostgresStore({ pool });
+const store = new PostgresAccountStore({ pool });
 
 const account: Account = {
   id: 'test-id',
@@ -31,7 +31,7 @@ await store.saveAccount(account);
 const accountState: AccountState = {
   accountId: account.id,
   serviceId: 'test-service',
-  gapHalvingPeriod: 86400,
+  energyGapHalvingPeriod: 86400,
   power: 10n,
   lockedPower: 2n,
   energyCap: 5n,

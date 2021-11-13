@@ -13,7 +13,7 @@ const DEFAULT_SCHEMA = 'public';
 const DEFAULT_ACCOUNT_TABLE_NAME = 'account';
 const DEFAULT_STATE_TABLE_NAME = 'state';
 
-export type PostgresStoreConfig = {
+export type PostgresAccountStoreConfig = {
   pool: DatabasePoolType;
   dbSchema?: string;
   accountTable?: string;
@@ -21,12 +21,12 @@ export type PostgresStoreConfig = {
   validator?: AccountStateValidator;
 };
 
-export class PostgresStore extends AccountStore {
+export class PostgresAccountStore extends AccountStore {
   private readonly pool: DatabasePoolType;
   private readonly accountTableName: IdentifierSqlTokenType;
   private readonly stateTableName: IdentifierSqlTokenType;
 
-  constructor({ pool, validator, accountTable, stateTable, dbSchema }: PostgresStoreConfig) {
+  constructor({ pool, validator, accountTable, stateTable, dbSchema }: PostgresAccountStoreConfig) {
     super({ validator });
     this.pool = pool;
 
@@ -97,7 +97,7 @@ export class PostgresStore extends AccountStore {
         `,
       );
 
-      return row ? PostgresStore.rowToAccount(row) : null;
+      return row ? PostgresAccountStore.rowToAccount(row) : null;
     });
   }
 
@@ -114,7 +114,7 @@ export class PostgresStore extends AccountStore {
   async getAccountState(serviceId: string, accountId: string): Promise<AccountState | null> {
     return this.pool.connect(async connection => {
       const row = await this.readAccountStateRecord(connection, serviceId, accountId);
-      return row ? PostgresStore.rowToAccountState(row) : null;
+      return row ? PostgresAccountStore.rowToAccountState(row) : null;
     });
   }
 
@@ -146,7 +146,7 @@ export class PostgresStore extends AccountStore {
         `,
       );
 
-      return PostgresStore.rowToAccount(result.rows[0]);
+      return PostgresAccountStore.rowToAccount(result.rows[0]);
     });
   }
 
@@ -185,7 +185,7 @@ export class PostgresStore extends AccountStore {
         `,
       );
 
-      return PostgresStore.rowToAccountState(result.rows[0]);
+      return PostgresAccountStore.rowToAccountState(result.rows[0]);
     });
   }
 
@@ -222,7 +222,7 @@ export class PostgresStore extends AccountStore {
       const successful = result.rowCount !== 0;
       return <AccountStateChangeResult>{
         successful,
-        currentState: PostgresStore.rowToAccountState(successful ? result.rows[0] : currentState),
+        currentState: PostgresAccountStore.rowToAccountState(successful ? result.rows[0] : currentState),
       };
     });
   }

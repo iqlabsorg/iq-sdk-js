@@ -1,6 +1,6 @@
 /* eslint-disable sonarjs/no-duplicate-string,sonarjs/no-nested-template-literals */
 import { createPool, DatabasePoolType, sql } from 'slonik';
-import { PostgresStoreConfig } from '../../../src/postgres-store';
+import { PostgresAccountStoreConfig } from '../../../src/account-store';
 
 export const ensureEmptyDatabase = async (connectionUri: string, databaseName: string): Promise<void> => {
   const pool = createPool(connectionUri, {
@@ -40,7 +40,7 @@ export const expectCorrectDatabaseStructure = async (
     accountTable,
     stateTable,
     dbSchema,
-  }: Required<Pick<PostgresStoreConfig, 'accountTable' | 'stateTable' | 'dbSchema'>>,
+  }: Required<Pick<PostgresAccountStoreConfig, 'accountTable' | 'stateTable' | 'dbSchema'>>,
 ): Promise<void> => {
   await pool.connect(async connection => {
     const tableCount = await connection.oneFirst(

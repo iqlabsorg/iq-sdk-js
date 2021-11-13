@@ -1,11 +1,11 @@
 import { Account, AccountState, AccountStateChangeResult, AccountStateValidator } from '@iqprotocol/abstract-storage';
-import { InMemoryStore } from '../src';
+import { InMemoryAccountStore } from '../src';
 
 /**
  * @group unit
  */
-describe('InMemoryStore', () => {
-  let store: InMemoryStore;
+describe('InMemoryAccountStore', () => {
+  let store: InMemoryAccountStore;
 
   const account: Account = {
     id: 'test-id',
@@ -31,7 +31,7 @@ describe('InMemoryStore', () => {
 
   describe('When the store is empty', () => {
     beforeEach(() => {
-      store = new InMemoryStore();
+      store = new InMemoryAccountStore();
     });
 
     it('does not return account data', async () => {
@@ -63,7 +63,7 @@ describe('InMemoryStore', () => {
 
   describe('When account is stored', () => {
     beforeEach(() => {
-      store = new InMemoryStore({ accounts: [account] });
+      store = new InMemoryAccountStore({ accounts: [account] });
     });
 
     it('returns account data', async () => {
@@ -103,7 +103,7 @@ describe('InMemoryStore', () => {
 
     describe('When account state is initialized', () => {
       beforeEach(() => {
-        store = new InMemoryStore({ accounts: [account], states: [accountState] });
+        store = new InMemoryAccountStore({ accounts: [account], states: [accountState] });
       });
 
       it('throws error upon subsequent initialization', async () => {
@@ -169,7 +169,7 @@ describe('InMemoryStore', () => {
       validateAccountState: () => jest.fn(),
     };
     beforeEach(async () => {
-      store = new InMemoryStore({ validator });
+      store = new InMemoryAccountStore({ validator });
       await store.saveAccount(account);
     });
 
@@ -186,7 +186,7 @@ describe('InMemoryStore', () => {
     });
 
     it('uses custom validator to validate account state upon change', async () => {
-      store = new InMemoryStore({ validator, accounts: [account], states: [accountState] });
+      store = new InMemoryAccountStore({ validator, accounts: [account], states: [accountState] });
       const newState = { ...accountState, power: 20n };
       const spy = jest.spyOn(validator, 'validateAccountState');
       await store.changeAccountState(accountState, newState);

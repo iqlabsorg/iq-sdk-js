@@ -1,5 +1,5 @@
 import { AccountId, ChainId } from 'caip';
-import { InMemoryStore } from '@iqprotocol/in-memory-storage';
+import { InMemoryAccountStore } from '@iqprotocol/in-memory-storage';
 import { Account, AccountOwnershipProof } from '@iqprotocol/abstract-storage';
 import { AccountManager, AccountOwnershipVerifier, MessageTypes } from '../src';
 import { normalize, signTypedMessage } from 'eth-sig-util';
@@ -20,11 +20,11 @@ describe('AccountManager', () => {
     },
   };
 
-  let store: InMemoryStore;
+  let store: InMemoryAccountStore;
   let accountManager: AccountManager;
 
   beforeEach(() => {
-    store = new InMemoryStore();
+    store = new InMemoryAccountStore();
     accountManager = new AccountManager({ store });
   });
 

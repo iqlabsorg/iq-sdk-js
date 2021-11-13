@@ -7,7 +7,7 @@ import {
   AccountStateValidator,
 } from '@iqprotocol/abstract-storage';
 
-type InMemoryStoreConfig = Partial<{
+type InMemoryAccountStoreConfig = Partial<{
   accounts: Account[];
   states: AccountState[];
   validator: AccountStateValidator;
@@ -15,11 +15,11 @@ type InMemoryStoreConfig = Partial<{
 
 type AccountId = string;
 
-export class InMemoryStore extends AccountStore {
+export class InMemoryAccountStore extends AccountStore {
   private readonly accounts = new Map<AccountId, Account>();
   private readonly states = new Map<AccountId, Map<string, AccountState>>();
 
-  constructor(config?: InMemoryStoreConfig) {
+  constructor(config?: InMemoryAccountStoreConfig) {
     super({ validator: config?.validator });
 
     for (const account of config?.accounts ?? []) {
@@ -93,7 +93,7 @@ export class InMemoryStore extends AccountStore {
       throw new Error('State is not initialized');
     }
 
-    if (InMemoryStore.serializeState(currentState) !== InMemoryStore.serializeState(prevState)) {
+    if (InMemoryAccountStore.serializeState(currentState) !== InMemoryAccountStore.serializeState(prevState)) {
       return {
         successful: false,
         currentState,

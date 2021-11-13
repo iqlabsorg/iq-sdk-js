@@ -1,1 +1,1 @@
-export { InMemoryStore } from './in-memory-store';
+export { InMemoryAccountStore } from './account-store';

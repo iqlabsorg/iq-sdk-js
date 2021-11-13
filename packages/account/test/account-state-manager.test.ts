@@ -1,5 +1,5 @@
 import { AccountId, ChainId } from 'caip';
-import { InMemoryStore } from '@iqprotocol/in-memory-storage';
+import { InMemoryAccountStore } from '@iqprotocol/in-memory-storage';
 import { Account, AccountState, AccountStateChangeResult } from '@iqprotocol/abstract-storage';
 import { AccountState as OnChainAccountState, ServiceInfo } from '@iqprotocol/abstract-blockchain';
 import { EIP155BlockchainProvider } from '@iqprotocol/eip155';
@@ -60,11 +60,11 @@ describe('AccountStateManager', () => {
     energyCalculatedAt: timestamp,
   };
 
-  let store: InMemoryStore;
+  let store: InMemoryAccountStore;
   let accountStateManager: AccountStateManager;
 
   beforeEach(() => {
-    store = new InMemoryStore();
+    store = new InMemoryAccountStore();
     const signer = new VoidSigner('0x4429CeB244B101926b3780c6ee906139c0f0eEf1'); // random address
     const blockchainProvider = new EIP155BlockchainProvider({ signer });
     const blockchainService = new EIP155BlockchainService(serviceAddress, signer);

@@ -1,2 +1,2 @@
 export { createPool } from 'slonik';
-export { PostgresStore } from './postgres-store';
+export { PostgresAccountStore } from './account-store';
