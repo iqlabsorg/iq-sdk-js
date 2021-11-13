@@ -4,7 +4,7 @@ This package is part of [IQ Protocol JS SDK.](https://github.com/iqlabsorg/iq-sd
 | :exclamation: The package is in development and breaking changes should be expected. Use at your own risk! |
 |:------------------------------------------------------------------------------------------------------------------|
 
-The package includes [Storage Provider Interface](https://github.com/iqlabsorg/iq-sdk-js/tree/main/packages/abstract-storage) implementation for PostgreSQL.
+The package includes [Account Store Interface](https://github.com/iqlabsorg/iq-sdk-js/tree/main/packages/abstract-storage) implementation for PostgreSQL.
 
 ## Installation  
 ```bash

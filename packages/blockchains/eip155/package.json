@@ -28,7 +28,8 @@
   },
   "dependencies": {
     "@ethersproject/bignumber": "^5.3.0",
-    "@iqprotocol/abstract-blockchain": "^0.12.0"
+    "@iqprotocol/abstract-blockchain": "^0.12.0",
+    "caip": "^1.0.0"
   },
   "devDependencies": {
     "@iqprotocol/solidity-contracts": "https://github.com/iqlabsorg/iq-smart-contracts#476d0e4705ecb4d90938411f1e32533d7fcaa307",
