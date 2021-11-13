@@ -1,9 +1,12 @@
-export interface Account {
+export type Account = {
   id: string;
   data: AccountData;
-}
+};
 
-export type AccountOwnershipProof = { v: string; sig: string };
+export type AccountOwnershipProof = {
+  v: string;
+  sig: string;
+};
 
 export type AccountData = Serializable & {
   proof: AccountOwnershipProof;
@@ -20,7 +23,7 @@ type Serializable =
       [key: string]: Serializable | undefined;
     };
 
-export interface AccountState {
+export type AccountState = {
   serviceId: string;
   accountId: string;
   energyGapHalvingPeriod: number;
@@ -29,12 +32,17 @@ export interface AccountState {
   energyCap: bigint;
   energy: bigint;
   energyCalculatedAt: number;
-}
+};
 
 export type AccountStateChangeResult = {
   successful: boolean;
   currentState: AccountState;
 };
+
+export interface AccountStateValidator {
+  validateAccount(account: Account): void;
+  validateAccountState(accountState: AccountState): void;
+}
 
 export interface StorageProvider {
   saveAccount(account: Account): Promise<Account>;

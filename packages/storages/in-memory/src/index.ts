@@ -1,1 +1,1 @@
-export * from './in-memory-store';
+export { InMemoryStore } from './in-memory-store';

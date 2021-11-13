@@ -1,15 +1,15 @@
-import { Account, AccountState, AccountStateChangeResult, StorageProvider } from './types';
-import { AccountStateValidator, DefaultValidator } from './validator';
+import { Account, AccountState, AccountStateChangeResult, AccountStateValidator, StorageProvider } from './types';
+import { DefaultValidator } from './validator';
 
-export type AbstractStoreConfig = {
+type AbstractStoreConfig = {
   validator?: AccountStateValidator;
 };
 
-export abstract class AbstractStore implements StorageProvider {
+export abstract class AccountStore implements StorageProvider {
   private readonly validator: AccountStateValidator;
 
-  protected constructor(config: AbstractStoreConfig) {
-    this.validator = config.validator ?? new DefaultValidator();
+  protected constructor({ validator }: AbstractStoreConfig) {
+    this.validator = validator ?? new DefaultValidator();
   }
 
   async saveAccount(account: Account): Promise<Account> {

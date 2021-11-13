@@ -3,15 +3,15 @@ import { ChainId } from 'caip';
 
 export type Address = string;
 
-export interface EnterpriseParams {
+export type EnterpriseParams = {
   name: string;
   baseUri: string;
   gcFeePercent: BigNumberish;
   enterpriseTokenAddress: Address;
   converterAddress: Address;
-}
+};
 
-export interface EnterpriseInfo {
+export type EnterpriseInfo = {
   address: Address;
   name: string;
   baseUri: string;
@@ -25,9 +25,9 @@ export interface EnterpriseInfo {
   streamingReserve: BigNumber;
   streamingReserveTarget: BigNumber;
   streamingReserveUpdated: number;
-}
+};
 
-export interface ServiceParams {
+export type ServiceParams = {
   serviceName: string;
   serviceSymbol: string;
   energyGapHalvingPeriod: BigNumberish;
@@ -38,9 +38,9 @@ export interface ServiceParams {
   maxRentalPeriod: BigNumberish;
   minGCFee: BigNumberish;
   swappingEnabledForever: boolean;
-}
+};
 
-export interface ServiceInfo {
+export type ServiceInfo = {
   address: Address;
   name: string;
   symbol: string;
@@ -54,39 +54,39 @@ export interface ServiceInfo {
   maxRentalPeriod: number;
   swappingEnabled: boolean;
   transferEnabled: boolean;
-}
+};
 
-export interface AccountState {
+export type AccountState = {
   serviceAddress: Address;
   accountAddress: Address;
   balance: BigNumber;
   lockedBalance: BigNumber;
   energy: BigNumber;
   timestamp: number;
-}
+};
 
-export interface FungibleTokenMetadata {
+export type FungibleTokenMetadata = {
   address: Address;
   name: string;
   symbol: string;
   decimals: number;
-}
+};
 
-export interface NonFungibleTokenMetadata {
+export type NonFungibleTokenMetadata = {
   address: Address;
   name: string;
   symbol: string;
   tokenUri: string;
-}
+};
 
-export interface Stake {
+export type Stake = {
   tokenId: BigNumber;
   amount: BigNumber;
   shares: BigNumber;
   block: BigNumber;
-}
+};
 
-export interface RentalAgreement {
+export type RentalAgreement = {
   rentalTokenId: BigNumber;
   rentalAmount: BigNumber;
   powerTokenIndex: number;
@@ -96,7 +96,7 @@ export interface RentalAgreement {
   enterpriseOnlyCollectionTime: number;
   gcRewardAmount: BigNumber;
   gcRewardTokenIndex: number;
-}
+};
 
 export interface ChainAware {
   // https://github.com/ChainAgnostic/CAIPs/blob/master/CAIPs/caip-2.md

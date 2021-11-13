@@ -3,10 +3,10 @@ import { AccountState, AccountStateChangeResult, StorageProvider } from '@iqprot
 import { AccountState as OnChainAccountState, BlockchainProvider } from '@iqprotocol/abstract-blockchain';
 import { calculateEffectiveEnergy } from '@iqprotocol/energy';
 
-export interface AccountStateManagerConfig {
+type AccountStateManagerConfig = {
   blockchain: BlockchainProvider;
   store: StorageProvider;
-}
+};
 
 export class AccountStateManager {
   private readonly blockchain: BlockchainProvider;

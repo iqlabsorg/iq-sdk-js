@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/require-await */
 import {
-  AbstractStore,
+  AccountStore,
   Account,
   AccountState,
   AccountStateChangeResult,
   AccountStateValidator,
 } from '@iqprotocol/abstract-storage';
 
-export type InMemoryStoreConfig = Partial<{
+type InMemoryStoreConfig = Partial<{
   accounts: Account[];
   states: AccountState[];
   validator: AccountStateValidator;
@@ -15,7 +15,7 @@ export type InMemoryStoreConfig = Partial<{
 
 type AccountId = string;
 
-export class InMemoryStore extends AbstractStore {
+export class InMemoryStore extends AccountStore {
   private readonly accounts = new Map<AccountId, Account>();
   private readonly states = new Map<AccountId, Map<string, AccountState>>();
 

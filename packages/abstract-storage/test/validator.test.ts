@@ -1,5 +1,4 @@
-import { Account, AccountState, DefaultValidator } from '../src';
-import { AccountStateError } from '../src/errors';
+import { Account, AccountState, AccountStateError, DefaultValidator } from '../src';
 
 /**
  * @group unit

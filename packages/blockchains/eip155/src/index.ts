@@ -1,1 +1,1 @@
-export * from './provider';
+export { EIP155BlockchainProvider } from './provider';

@@ -1,4 +1,4 @@
 export * from './types';
-export * from './abstract-store';
-export * from './validator';
-export * from './errors';
+export { AccountStateError } from './errors';
+export { AccountStore } from './account-store';
+export { DefaultValidator } from './validator';

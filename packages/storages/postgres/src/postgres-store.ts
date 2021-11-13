@@ -1,5 +1,5 @@
 import {
-  AbstractStore,
+  AccountStore,
   Account,
   AccountData,
   AccountState,
@@ -21,7 +21,7 @@ export type PostgresStoreConfig = {
   validator?: AccountStateValidator;
 };
 
-export class PostgresStore extends AbstractStore {
+export class PostgresStore extends AccountStore {
   private readonly pool: DatabasePoolType;
   private readonly accountTableName: IdentifierSqlTokenType;
   private readonly stateTableName: IdentifierSqlTokenType;

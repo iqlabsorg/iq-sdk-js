@@ -11,7 +11,7 @@ import { BlockchainEntity } from './blockchain-entity';
 import { EIP155BlockchainEnterprise } from './enterprise';
 import { EIP155BlockchainService } from './service';
 
-export type EIP155BlockchainProviderConfig = {
+type EIP155BlockchainProviderConfig = {
   signer: Signer;
 };
 

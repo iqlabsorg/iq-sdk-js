@@ -1,22 +1,5 @@
-import { AbstractStore, Account, AccountState, AccountStateValidator, StorageProvider } from '../src';
-
-class DummyStore extends AbstractStore {
-  public getAccount = jest.fn();
-  public deleteAccount = jest.fn();
-  public getAccountState = jest.fn();
-  public deleteAccountState = jest.fn();
-  protected _saveAccount = jest.fn();
-  protected _initAccountState = jest.fn();
-  protected _changeAccountState = jest.fn();
-
-  public constructor(validator?: AccountStateValidator) {
-    super({ validator });
-  }
-}
-const defaultValidatorMock: AccountStateValidator = {
-  validateAccount: jest.fn(),
-  validateAccountState: jest.fn(),
-};
+import { Account, AccountState, AccountStateValidator, StorageProvider } from '../src';
+import { defaultValidatorMock, DummyStore } from './support/mocks';
 
 jest.mock('../src/validator', () => {
   return {
@@ -27,7 +10,7 @@ jest.mock('../src/validator', () => {
 /**
  * @group unit
  */
-describe('AbstractStore', () => {
+describe('AccountStore', () => {
   let store: StorageProvider;
 
   const account: Account = {

@@ -1,6 +1,6 @@
 /* eslint-disable sonarjs/no-duplicate-string,sonarjs/no-nested-template-literals */
 import { createPool, DatabasePoolType, sql } from 'slonik';
-import { PostgresStoreConfig } from '@iqprotocol/postgres-storage';
+import { PostgresStoreConfig } from '../../../src/postgres-store';
 
 export const ensureEmptyDatabase = async (connectionUri: string, databaseName: string): Promise<void> => {
   const pool = createPool(connectionUri, {

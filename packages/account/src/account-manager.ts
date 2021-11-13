@@ -1,14 +1,11 @@
 import { AccountId } from 'caip';
-import { Account, AccountData, AccountOwnershipProof, StorageProvider } from '@iqprotocol/abstract-storage';
+import { Account, AccountData, StorageProvider } from '@iqprotocol/abstract-storage';
 import { AccountOwnershipVerifier } from './account-ownership-verifier';
+import { AccountRegistrationParams } from './types';
 
-export interface AccountManagerConfig {
+type AccountManagerConfig = {
   store: StorageProvider;
-}
-
-export interface AccountRegistrationParams {
-  proof: AccountOwnershipProof;
-}
+};
 
 export class AccountManager {
   private readonly store: StorageProvider;

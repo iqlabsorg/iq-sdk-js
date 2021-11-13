@@ -1,3 +1,4 @@
-export * from './account-manager';
-export * from './account-state-manager';
-export * from './account-ownership-verifier';
+export * from './types';
+export { AccountManager } from './account-manager';
+export { AccountStateManager } from './account-state-manager';
+export { AccountOwnershipVerifier } from './account-ownership-verifier';

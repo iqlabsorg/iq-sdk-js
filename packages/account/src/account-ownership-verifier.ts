@@ -1,15 +1,6 @@
 import { AccountId } from 'caip';
 import { recoverTypedSignature_v4, TypedMessage } from 'eth-sig-util';
-
-interface MessageTypeProperty {
-  name: string;
-  type: string;
-}
-
-export interface MessageTypes {
-  [additionalProperties: string]: MessageTypeProperty[];
-  EIP712Domain: MessageTypeProperty[];
-}
+import { MessageTypes } from './types';
 
 export class AccountOwnershipVerifier {
   static generateAccountOwnershipClaim(accountId: AccountId, version = '1'): TypedMessage<MessageTypes> {

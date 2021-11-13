@@ -1,13 +1,8 @@
-import { Account, AccountState } from './types';
+import { Account, AccountState, AccountStateValidator } from './types';
 import { AccountStateError } from './errors';
 
 const isEmpty = (value: unknown): boolean =>
   typeof value === 'undefined' || value === null || !String(value).trim().length;
-
-export interface AccountStateValidator {
-  validateAccount(account: Account): void;
-  validateAccountState(accountState: AccountState): void;
-}
 
 export class DefaultValidator implements AccountStateValidator {
   validateAccount(account: Account): void {
