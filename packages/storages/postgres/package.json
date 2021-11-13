@@ -1,6 +1,6 @@
 {
   "name": "@iqprotocol/postgres-storage",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "homepage": "",
   "bugs": "https://github.com/iqlabsorg/iq-sdk-js/issues",
   "repository": {
@@ -25,7 +25,7 @@
     "test:integration": "jest --group=integration"
   },
   "dependencies": {
-    "@iqprotocol/abstract-storage": "^0.12.0",
+    "@iqprotocol/abstract-storage": "^0.13.0",
     "slonik": "^24.0.0"
   },
   "devDependencies": {
