@@ -26,6 +26,9 @@ export type RentalFeeEstimationRequest = {
 
 export type RentRequest = RentalFeeEstimationRequest & { maxPayment: BigNumberish };
 
+/**
+ * See [[@iqprotocol/abstract-blockchain.AccountState | OnChainAccountState]] for details.
+ */
 export type AccountState = Omit<OnChainAccountState, 'serviceAddress' | 'accountAddress'> & {
   serviceAccountId: AccountId;
   accountId: AccountId;
@@ -104,33 +107,50 @@ export interface ServiceConfigReader {
   isTransferEnabled(): Promise<boolean>;
 }
 
+/**
+ * Allows to communicate with the enterprise and use its services.
+ */
 export interface Enterprise<Transaction = unknown> extends EnterpriseConfigReader {
+  /**
+   *  Returns an instance of [[EnterpriseConfigWriter]].
+   */
   getConfigurator(): EnterpriseConfigWriter<Transaction>;
 
+  /**
+   * Returns enterprise account ID (CAIP-10).
+   */
   getAccountId(): AccountId;
 
+  /**
+   * Returns the enterprise connected chain ID (CAIP-2).
+   */
   getChainId(): ChainId;
 
+  /**
+   * Returns the enterprise information.
+   */
   getInfo(): Promise<EnterpriseInfo>;
 
+  /**
+   * Returns a list of enterprise services.
+   */
   findServices(): Promise<Service<Transaction>[]>;
 
+  /**
+   * Returns an instance of [[Service]].
+   *
+   * @param serviceAccountId
+   */
   getService(serviceAccountId: AccountId): Promise<Service<Transaction>>;
 
-  estimateRentalFee({
-    serviceAccountId,
-    paymentTokenAccountId,
-    rentalAmount,
-    rentalPeriod,
-  }: RentalFeeEstimationRequest): Promise<BigNumber>;
+  /**
+   * Estimates potential rental fee based on provided rental parameters.
+   *
+   * @param rentalFeeEstimationRequest
+   */
+  estimateRentalFee(rentalFeeEstimationRequest: RentalFeeEstimationRequest): Promise<BigNumber>;
 
-  rent({
-    serviceAccountId,
-    paymentTokenAccountId,
-    rentalAmount,
-    rentalPeriod,
-    maxPayment,
-  }: RentRequest): Promise<Transaction>;
+  rent(rentRequest: RentRequest): Promise<Transaction>;
 
   getStakingReward(stakeTokenId: AssetId): Promise<BigNumber>;
 

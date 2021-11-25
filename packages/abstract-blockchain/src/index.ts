@@ -1,3 +1,20 @@
+/**
+ * The main purpose of this package is to provide `BlockchainProvider` interface.
+ * The interface implementation will cover all the necessary functions to work with IQ Protocol smart contracts.
+ * An example of such implementation can be [[eip155.EIP155BlockchainProvider | `EIP155BlockchainProvider` ]]
+ * provided as a part of IQ Protocol JS SDK.
+ *
+ * Use this package when you want to implement a new blockchain provider.
+ *
+ * ```ts
+ * import { BlockchainProvider } from '@iqprotocol/abstract-blockchain';
+ *
+ * class CustomBlockchainProvider implements BlockchainProvider {}
+ * ```
+ *
+ * @module abstract-blockchain
+ */
+
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
 import { ChainId } from 'caip';
 
@@ -272,6 +289,11 @@ export interface BlockchainService<Transaction = unknown> extends ChainAware {
   ): Promise<{ poolFee: BigNumber; serviceFee: BigNumber; gcFee: BigNumber }>;
 }
 
+/**
+ *```ts
+ * class CustomBlockchainProvider implements BlockchainProvider {}
+ * ```
+ */
 export interface BlockchainProvider<Transaction = unknown> extends ChainAware {
   enterprise(enterpriseAddress: Address): BlockchainEnterprise<Transaction>;
 
