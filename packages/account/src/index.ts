@@ -27,6 +27,7 @@
  * @module account
  */
 
+export { AccountId, ChainId } from 'caip';
 export * from './types';
 export { AccountManager } from './account-manager';
 export { AccountStateManager } from './account-state-manager';

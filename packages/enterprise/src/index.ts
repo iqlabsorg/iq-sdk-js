@@ -27,6 +27,7 @@
  * @module enterprise
  */
 
+export { AccountId, AssetId, AssetType, ChainId } from 'caip';
 export * from './types';
 export { ServiceFactory } from './service-factory';
 export { EnterpriseFactory } from './enterprise-factory';
