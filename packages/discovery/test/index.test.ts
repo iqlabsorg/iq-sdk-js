@@ -7,7 +7,7 @@ import { getBlockchainInfo, getContractAddress, getContractAddresses } from '../
 import { ChainId } from 'caip';
 import { IQContractName } from '../src/types';
 
-const DEPLOYED_CHAINS = ['eip155:56', 'eip155:97', 'eip155:80001'];
+const DEPLOYED_CHAINS = ['eip155:56', 'eip155:97', 'eip155:80001', 'eip155:137'];
 
 describe('Discovery Utils', () => {
   test('all deployments have corresponding chain record', () => {
