@@ -3,6 +3,7 @@ import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
 import {
   AccountState as OnChainAccountState,
   EnterpriseInfo as OnChainEnterpriseInfo,
+  FungibleTokenMetadata,
   RentalAgreement as OnChainRentalAgreement,
   ServiceInfo as OnChainServiceInfo,
   Stake as OnChainStake,
@@ -153,6 +154,8 @@ export interface Enterprise<Transaction = unknown> extends EnterpriseConfigReade
   rent(rentRequest: RentRequest): Promise<Transaction>;
 
   getStakingReward(stakeTokenId: AssetId): Promise<BigNumber>;
+
+  getEnterpriseTokenMetadata(): Promise<FungibleTokenMetadata>;
 
   claimStakingReward(stakeTokenId: AssetId): Promise<Transaction>;
 

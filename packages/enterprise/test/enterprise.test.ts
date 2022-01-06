@@ -2,6 +2,7 @@ import { AccountId, AssetId, AssetType, ChainId } from 'caip';
 import { BigNumber } from '@ethersproject/bignumber';
 import {
   EnterpriseInfo as OnChainEnterpriseInfo,
+  FungibleTokenMetadata,
   RentalAgreement as OnChainRentalAgreement,
 } from '@iqprotocol/abstract-blockchain';
 import { blockchainEnterpriseMock, blockchainProviderMock, blockchainServiceMock } from './support/mocks';
@@ -145,6 +146,23 @@ describe('Enterprise', () => {
     );
     expect(getStakingReward).toHaveBeenCalledWith(stakeTokenId);
     expect(reward).toEqual(expectedReward);
+  });
+
+  it('retrieves enterprise token metadata', async () => {
+    const expectedTokenMetadata: FungibleTokenMetadata = {
+      address: '',
+      decimals: 18,
+      name: 'EnterpriseToken',
+      symbol: 'ENT',
+    };
+    const getStakingReward = jest
+      .spyOn(blockchainEnterpriseMock, 'getEnterpriseTokenMetadata')
+      .mockResolvedValueOnce(expectedTokenMetadata);
+
+    const tokenMetadata = await enterprise.getEnterpriseTokenMetadata();
+
+    expect(getStakingReward).toHaveBeenCalledTimes(1);
+    expect(tokenMetadata).toEqual(expectedTokenMetadata);
   });
 
   it('allows to claim staking reward', async () => {
