@@ -1,6 +1,6 @@
 import { AccountId, AssetId, AssetType, ChainId } from 'caip';
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
-import { Address, BlockchainProvider } from '@iqprotocol/abstract-blockchain';
+import { Address, BlockchainProvider, FungibleTokenMetadata } from '@iqprotocol/abstract-blockchain';
 import {
   Enterprise,
   EnterpriseConfigWriter,
@@ -117,6 +117,10 @@ export class EnterpriseImpl<Transaction = unknown>
 
   async getStakingReward(stakeTokenId: AssetId): Promise<BigNumber> {
     return this.blockchainEnterprise.getStakingReward(this.stakeAssetIdToTokenId(stakeTokenId));
+  }
+
+  async getEnterpriseTokenMetadata(): Promise<FungibleTokenMetadata> {
+    return this.blockchainEnterprise.getEnterpriseTokenMetadata();
   }
 
   async claimStakingReward(stakeTokenId: AssetId): Promise<Transaction> {
