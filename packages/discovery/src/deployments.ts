@@ -29,4 +29,13 @@ export const deployments: IQContractDeployments = {
     [IQContractName.StakeToken]: '0x9aF78eddD01b3dc1D800A16AB04Db0E6FD6824a2',
     [IQContractName.DefaultConverter]: '0x93Dc01F4C24698EaAF7777F391Cc75F8FcbbF5C5',
   },
+  // Polygon Mainnet
+  'eip155:137': {
+    [IQContractName.Enterprise]: '0x4ba78695845eb5e0a02cee3b51ffa214996032ce',
+    [IQContractName.EnterpriseFactory]: '0x908AC335219D13276D31Fa68449f7f63B1731BA6',
+    [IQContractName.PowerToken]: '0xcEeef2a276109DE31750519405fBaF66A5938A3E',
+    [IQContractName.RentalToken]: '0x7eB8D59514747e1d8A42519Ec08EbaB91cB8E1F2',
+    [IQContractName.StakeToken]: '0x27cdca6265B971D1aF8E46164F6E5494997dC449',
+    [IQContractName.DefaultConverter]: '0xf3e20Dc3F8df51bd608187dA09a649d081ee5B35',
+  },
 };

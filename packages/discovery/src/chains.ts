@@ -97,4 +97,34 @@ export const chains: IQChains = {
       },
     ],
   },
+  'eip155:137': {
+    name: 'Polygon Mainnet',
+    chain: 'Polygon',
+    network: 'mainnet',
+    rpc: [
+      'https://polygon-rpc.com/',
+      'https://rpc-mainnet.matic.network',
+      'https://matic-mainnet.chainstacklabs.com',
+      'https://rpc-mainnet.maticvigil.com',
+      'https://rpc-mainnet.matic.quiknode.pro',
+      'https://matic-mainnet-full-rpc.bwarelabs.com',
+    ],
+    faucets: [],
+    nativeCurrency: {
+      name: 'MATIC',
+      symbol: 'MATIC',
+      decimals: 18,
+    },
+    infoURL: 'https://polygon.technology/',
+    shortName: 'MATIC',
+    chainId: 137,
+    networkId: 137,
+    explorers: [
+      {
+        name: 'polygonscan',
+        url: 'https://polygonscan.com/',
+        standard: 'EIP3091',
+      },
+    ],
+  },
 };
