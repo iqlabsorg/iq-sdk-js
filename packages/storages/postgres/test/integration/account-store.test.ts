@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { Account, AccountState, AccountStateChangeResult, AccountStateValidator } from '@iqprotocol/abstract-storage';
 import { PostgresAccountStore } from '../../src';
-import { createPool, DatabasePoolType } from 'slonik';
+import { createPool, DatabasePool } from 'slonik';
 import { ensureEmptyDatabase, ensureSchema, expectCorrectDatabaseStructure, truncateTables } from './support/utils';
 import { DockerComposeEnvironment, StartedDockerComposeEnvironment } from 'testcontainers';
 
@@ -34,7 +34,7 @@ describe('PostgresAccountStore', () => {
 
   // see: https://github.com/testcontainers/testcontainers-node#docker-compose
   let environment: StartedDockerComposeEnvironment;
-  let pool: DatabasePoolType;
+  let pool: DatabasePool;
   let store: PostgresAccountStore;
 
   beforeAll(async () => {

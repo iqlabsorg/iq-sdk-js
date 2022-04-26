@@ -26,10 +26,10 @@
   },
   "dependencies": {
     "@iqprotocol/abstract-storage": "^0.13.1",
-    "slonik": "^24.0.0"
+    "slonik": "^28.1.0"
   },
   "devDependencies": {
-    "@types/pg": "^8.6.1"
+    "@types/pg": "^8.6.5"
   },
   "publishConfig": {
     "access": "public"

@@ -1,5 +1,5 @@
 /* eslint-disable sonarjs/no-duplicate-string,sonarjs/no-nested-template-literals */
-import { createPool, DatabasePoolType, sql } from 'slonik';
+import { createPool, DatabasePool, sql } from 'slonik';
 import { PostgresAccountStoreConfig } from '../../../src/account-store';
 
 export const ensureEmptyDatabase = async (connectionUri: string, databaseName: string): Promise<void> => {
@@ -20,13 +20,13 @@ export const ensureEmptyDatabase = async (connectionUri: string, databaseName: s
   await pool.end();
 };
 
-export const ensureSchema = async (pool: DatabasePoolType, dbSchema: string): Promise<void> => {
+export const ensureSchema = async (pool: DatabasePool, dbSchema: string): Promise<void> => {
   await pool.connect(async connection => {
     await connection.query(sql`CREATE SCHEMA IF NOT EXISTS ${sql.identifier([dbSchema])}`);
   });
 };
 
-export const truncateTables = async (pool: DatabasePoolType, tables: string[], dbSchema = 'public'): Promise<void> => {
+export const truncateTables = async (pool: DatabasePool, tables: string[], dbSchema = 'public'): Promise<void> => {
   await pool.transaction(async connection => {
     for (const tableName of tables) {
       await connection.query(sql`TRUNCATE TABLE ${sql.identifier([dbSchema, tableName])} CASCADE;`);
@@ -35,7 +35,7 @@ export const truncateTables = async (pool: DatabasePoolType, tables: string[], d
 };
 
 export const expectCorrectDatabaseStructure = async (
-  pool: DatabasePoolType,
+  pool: DatabasePool,
   {
     accountTable,
     stateTable,

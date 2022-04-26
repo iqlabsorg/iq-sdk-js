@@ -6,15 +6,14 @@ import {
   AccountStateChangeResult,
   AccountStateValidator,
 } from '@iqprotocol/abstract-storage';
-import { DatabasePoolType, IdentifierSqlTokenType, sql } from 'slonik';
-import { DatabasePoolConnectionType } from 'slonik/src/types';
+import { DatabasePool, DatabasePoolConnection, IdentifierSqlToken, sql } from 'slonik';
 
 const DEFAULT_SCHEMA = 'public';
 const DEFAULT_ACCOUNT_TABLE_NAME = 'account';
 const DEFAULT_STATE_TABLE_NAME = 'state';
 
 export type PostgresAccountStoreConfig = {
-  pool: DatabasePoolType;
+  pool: DatabasePool;
   dbSchema?: string;
   accountTable?: string;
   stateTable?: string;
@@ -22,9 +21,9 @@ export type PostgresAccountStoreConfig = {
 };
 
 export class PostgresAccountStore extends AccountStore {
-  private readonly pool: DatabasePoolType;
-  private readonly accountTableName: IdentifierSqlTokenType;
-  private readonly stateTableName: IdentifierSqlTokenType;
+  private readonly pool: DatabasePool;
+  private readonly accountTableName: IdentifierSqlToken;
+  private readonly stateTableName: IdentifierSqlToken;
 
   constructor({ pool, validator, accountTable, stateTable, dbSchema }: PostgresAccountStoreConfig) {
     super({ validator });
@@ -228,7 +227,7 @@ export class PostgresAccountStore extends AccountStore {
   }
 
   private async readAccountStateRecord(
-    connection: DatabasePoolConnectionType,
+    connection: DatabasePoolConnection,
     serviceId: string,
     accountId: string,
   ): Promise<Record<string, unknown> | null> {
