@@ -7,7 +7,7 @@
     "url": "https://github.com/iqlabsorg/iq-sdk-js"
   },
   "license": "MIT",
-  "author": "IQ Labs (https://iqlabs.org)",
+  "author": "IQ Labs (https://iq.space)",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "typings": "dist/esm/index.d.ts",
