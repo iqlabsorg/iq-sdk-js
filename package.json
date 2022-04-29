@@ -10,6 +10,7 @@
     ],
     "nohoist": [
       "**/@iqprotocol/solidity-contracts",
+      "**/@iqprotocol/solidity-contracts-nft",
       "**/hardhat",
       "**/hardhat-deploy"
     ]

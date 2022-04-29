@@ -1,0 +1,45 @@
+{
+  "name": "@iqprotocol/multiverse",
+  "version": "0.1.0",
+  "private": "true",
+  "bugs": "https://github.com/iqlabsorg/iq-sdk-js/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iqlabsorg/iq-sdk-js"
+  },
+  "license": "MIT",
+  "author": "IQ Labs (https://iq.space)",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "typings": "dist/esm/index.d.ts",
+  "files": [
+    "README.md",
+    "dist"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "build:clean": "rimraf dist",
+    "prepublish": "NODE_ENV=production run-s typechain build",
+    "start": "rollup -cw",
+    "test": "jest --group=unit",
+    "typechain": "run-s typechain:clean typechain:generate",
+    "typechain:clean": "rimraf src/contracts",
+    "typechain:generate": "typechain --target ethers-v5 --out-dir src/contracts './node_modules/@iqprotocol/solidity-contracts-nft/artifacts/contracts/**/*.json'"
+  },
+  "devDependencies": {
+    "@iqprotocol/solidity-contracts-nft": "https://github.com/iqlabsorg/iq-smart-contracts-nft#09c94ecf850d06678afa048ed8a8c35e166c813e",
+    "@typechain/ethers-v5": "^10.0.0",
+    "ethers": "^5.6.4",
+    "hardhat": "^2.9.3",
+    "hardhat-deploy": "^0.11.4",
+    "hardhat-deploy-ethers": "^0.3.0-beta.13",
+    "typechain": "^8.0.0"
+  },
+  "peerDependencies": {
+    "ethers": "^5.6.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "typedocMain": "src/index.ts"
+}
