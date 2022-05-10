@@ -439,7 +439,7 @@ export interface IWarperController extends BaseContract {
     ): Promise<
       [string, Assets.AssetStructOutput] & {
         collectionId: string;
-        warperAsset: Assets.AssetStructOutput;
+        warpedAsset: Assets.AssetStructOutput;
       }
     >;
   };

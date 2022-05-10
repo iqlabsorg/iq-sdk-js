@@ -14,6 +14,11 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
+        name: "account",
+        type: "address",
+      },
+      {
+        internalType: "address",
         name: "token",
         type: "address",
       },
@@ -30,7 +35,13 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
+    inputs: [
+      {
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+    ],
     name: "balances",
     outputs: [
       {

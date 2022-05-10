@@ -33,8 +33,8 @@ export declare namespace Accounts {
 
 export interface IPaymentManagerInterface extends utils.Interface {
   functions: {
-    "balance(address)": FunctionFragment;
-    "balances()": FunctionFragment;
+    "balance(address,address)": FunctionFragment;
+    "balances(address)": FunctionFragment;
     "protocolBalance(address)": FunctionFragment;
     "protocolBalances()": FunctionFragment;
     "universeBalance(uint256,address)": FunctionFragment;
@@ -57,8 +57,11 @@ export interface IPaymentManagerInterface extends utils.Interface {
       | "withdrawUniverseFunds"
   ): FunctionFragment;
 
-  encodeFunctionData(functionFragment: "balance", values: [string]): string;
-  encodeFunctionData(functionFragment: "balances", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "balance",
+    values: [string, string]
+  ): string;
+  encodeFunctionData(functionFragment: "balances", values: [string]): string;
   encodeFunctionData(
     functionFragment: "protocolBalance",
     values: [string]
@@ -149,9 +152,14 @@ export interface IPaymentManager extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    balance(token: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+    balance(
+      account: string,
+      token: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     balances(
+      account: string,
       overrides?: CallOverrides
     ): Promise<[Accounts.BalanceStructOutput[]]>;
 
@@ -198,9 +206,16 @@ export interface IPaymentManager extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  balance(token: string, overrides?: CallOverrides): Promise<BigNumber>;
+  balance(
+    account: string,
+    token: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
-  balances(overrides?: CallOverrides): Promise<Accounts.BalanceStructOutput[]>;
+  balances(
+    account: string,
+    overrides?: CallOverrides
+  ): Promise<Accounts.BalanceStructOutput[]>;
 
   protocolBalance(token: string, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -242,9 +257,14 @@ export interface IPaymentManager extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    balance(token: string, overrides?: CallOverrides): Promise<BigNumber>;
+    balance(
+      account: string,
+      token: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     balances(
+      account: string,
       overrides?: CallOverrides
     ): Promise<Accounts.BalanceStructOutput[]>;
 
@@ -294,9 +314,13 @@ export interface IPaymentManager extends BaseContract {
   filters: {};
 
   estimateGas: {
-    balance(token: string, overrides?: CallOverrides): Promise<BigNumber>;
+    balance(
+      account: string,
+      token: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    balances(overrides?: CallOverrides): Promise<BigNumber>;
+    balances(account: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     protocolBalance(
       token: string,
@@ -341,11 +365,15 @@ export interface IPaymentManager extends BaseContract {
 
   populateTransaction: {
     balance(
+      account: string,
       token: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    balances(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    balances(
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     protocolBalance(
       token: string,

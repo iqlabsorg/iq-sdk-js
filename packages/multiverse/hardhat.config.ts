@@ -8,8 +8,8 @@ const config: HardhatUserConfig = {
   },
   namedAccounts: {
     deployer: 0,
-    staker: 1,
-    renter: 2,
+    nftCreator: 1,
+    assetOwner: 2,
   },
   external: {
     contracts: [

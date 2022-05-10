@@ -577,7 +577,7 @@ const _abi = [
           },
         ],
         internalType: "struct Assets.Asset",
-        name: "warperAsset",
+        name: "warpedAsset",
         type: "tuple",
       },
     ],

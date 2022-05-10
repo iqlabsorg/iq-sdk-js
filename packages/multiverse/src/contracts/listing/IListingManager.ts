@@ -84,6 +84,8 @@ export declare namespace Listings {
 
 export interface IListingManagerInterface extends utils.Interface {
   functions: {
+    "assetListingCount(address)": FunctionFragment;
+    "assetListings(address,uint256,uint256)": FunctionFragment;
     "delistAsset(uint256)": FunctionFragment;
     "listAsset(((bytes4,bytes),uint256),(bytes4,bytes),uint32,bool)": FunctionFragment;
     "listingCount()": FunctionFragment;
@@ -98,6 +100,8 @@ export interface IListingManagerInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "assetListingCount"
+      | "assetListings"
       | "delistAsset"
       | "listAsset"
       | "listingCount"
@@ -110,6 +114,14 @@ export interface IListingManagerInterface extends utils.Interface {
       | "withdrawAsset"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "assetListingCount",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "assetListings",
+    values: [string, BigNumberish, BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "delistAsset",
     values: [BigNumberish]
@@ -151,6 +163,14 @@ export interface IListingManagerInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "assetListingCount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "assetListings",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "delistAsset",
     data: BytesLike
@@ -292,6 +312,18 @@ export interface IListingManager extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    assetListingCount(
+      original: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    assetListings(
+      original: string,
+      offset: BigNumberish,
+      limit: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[], Listings.ListingStructOutput[]]>;
+
     delistAsset(
       listingId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -345,6 +377,18 @@ export interface IListingManager extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
+
+  assetListingCount(
+    original: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  assetListings(
+    original: string,
+    offset: BigNumberish,
+    limit: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<[BigNumber[], Listings.ListingStructOutput[]]>;
 
   delistAsset(
     listingId: BigNumberish,
@@ -400,6 +444,18 @@ export interface IListingManager extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    assetListingCount(
+      original: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    assetListings(
+      original: string,
+      offset: BigNumberish,
+      limit: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[], Listings.ListingStructOutput[]]>;
+
     delistAsset(
       listingId: BigNumberish,
       overrides?: CallOverrides
@@ -506,6 +562,18 @@ export interface IListingManager extends BaseContract {
   };
 
   estimateGas: {
+    assetListingCount(
+      original: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    assetListings(
+      original: string,
+      offset: BigNumberish,
+      limit: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     delistAsset(
       listingId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -561,6 +629,18 @@ export interface IListingManager extends BaseContract {
   };
 
   populateTransaction: {
+    assetListingCount(
+      original: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    assetListings(
+      original: string,
+      offset: BigNumberish,
+      limit: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     delistAsset(
       listingId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
