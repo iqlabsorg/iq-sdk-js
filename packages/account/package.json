@@ -1,6 +1,6 @@
 {
   "name": "@iqprotocol/account",
-  "version": "0.16.1",
+  "version": "0.16.2",
   "bugs": "https://github.com/iqlabsorg/iq-sdk-js/issues",
   "repository": {
     "type": "git",
@@ -30,7 +30,7 @@
     "eth-sig-util": "^3.0.1"
   },
   "devDependencies": {
-    "@iqprotocol/eip155": "^0.20.0"
+    "@iqprotocol/eip155": "^0.20.1"
   },
   "publishConfig": {
     "access": "public"

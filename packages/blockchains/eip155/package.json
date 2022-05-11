@@ -1,6 +1,6 @@
 {
   "name": "@iqprotocol/eip155",
-  "version": "0.20.0",
+  "version": "0.20.1",
   "bugs": "https://github.com/iqlabsorg/iq-sdk-js/issues",
   "repository": {
     "type": "git",
