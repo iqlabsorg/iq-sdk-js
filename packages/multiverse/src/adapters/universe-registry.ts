@@ -2,11 +2,9 @@ import { AccountId } from 'caip';
 import { ContractResolver } from '../contract-resolver';
 import { BigNumberish, CallOverrides, ContractTransaction, Overrides } from 'ethers';
 import { AddressTranslator } from '../address-translator';
-import { IUniverseRegistry, UniverseRegistry } from '../contracts';
+import { UniverseRegistry } from '../contracts';
 import { Adapter } from '../adapter';
 import { pick } from '@iqprotocol/enterprise/src/utils';
-
-type UniverseParams = IUniverseRegistry.UniverseParamsStruct;
 
 export class UniverseRegistryAdapter extends Adapter {
   private readonly contract: UniverseRegistry;
@@ -20,7 +18,10 @@ export class UniverseRegistryAdapter extends Adapter {
     this.contract = contractResolver.resolveUniverseRegistry(accountId.address);
   }
 
-  async createUniverse(params: UniverseParams, overrides?: Overrides): Promise<ContractTransaction> {
+  async createUniverse(
+    params: { name: string; rentalFeePercent: BigNumberish },
+    overrides?: Overrides,
+  ): Promise<ContractTransaction> {
     return this.contract.createUniverse(params, overrides);
   }
 

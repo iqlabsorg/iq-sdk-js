@@ -30,12 +30,12 @@
   },
   "devDependencies": {
     "@iqprotocol/solidity-contracts-nft": "https://github.com/iqlabsorg/iq-smart-contracts-nft#db3aa77aa12045a7ed8ca23eb1511b25a029dd84",
-    "@typechain/ethers-v5": "^10.0.0",
+    "@typechain/ethers-v5": "^7.0.0",
     "ethers": "^5.6.4",
     "hardhat": "^2.9.3",
     "hardhat-deploy": "^0.11.4",
     "hardhat-deploy-ethers": "^0.3.0-beta.13",
-    "typechain": "^8.0.0"
+    "typechain": "^5.2.0"
   },
   "peerDependencies": {
     "ethers": "^5.6.4"
