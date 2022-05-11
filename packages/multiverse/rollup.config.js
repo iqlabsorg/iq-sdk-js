@@ -7,7 +7,8 @@ plugins.push(
   copy({
     targets: [
       // copy typechain declarations files
-      { src: 'src/contracts/*.d.ts', dest: 'dist' },
+      { src: 'src/contracts/*.d.ts', dest: 'dist/cjs' },
+      { src: 'src/contracts/*.d.ts', dest: 'dist/esm' },
     ]
   })
 );
