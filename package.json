@@ -19,7 +19,7 @@
     "start": "lerna run start --stream --parallel",
     "test": "lerna run test --",
     "test:integration": "lerna run test:integration --",
-    "lint": "eslint packages/**/*.ts",
+    "lint": "eslint packages/{**/*,*}.ts",
     "lint:fix": "yarn lint --fix",
     "build": "lerna run build",
     "build:clean": "lerna run build:clean",

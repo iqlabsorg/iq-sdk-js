@@ -1,4 +1,5 @@
 import { AccountId, AssetId, AssetType, ChainId } from 'caip';
+import { hexDataSlice, solidityKeccak256 } from 'ethers/lib.esm/utils';
 
 export const pick = <T, K extends keyof T>(obj: T, names: readonly K[]): Pick<T, K> => {
   const result = {} as Pick<T, K>;
@@ -12,7 +13,11 @@ export const pick = <T, K extends keyof T>(obj: T, names: readonly K[]): Pick<T,
   return result;
 };
 
-const assertSameChainId = (chainId: ChainId, expectedChainId: ChainId): void => {
+export const solidityId = (string: string): string => {
+  return hexDataSlice(solidityKeccak256(['string'], [string]), 0, 4);
+};
+
+export const assertSameChainId = (chainId: ChainId, expectedChainId: ChainId): void => {
   if (chainId.toString() !== expectedChainId.toString()) {
     throw new Error(`Chain ID mismatch! Expected chain ID: ${expectedChainId.toString()}`);
   }

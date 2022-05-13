@@ -1,6 +1,6 @@
 import { AccountId } from 'caip';
 import { ContractResolver } from '../contract-resolver';
-import { BigNumberish, CallOverrides, ContractTransaction, Overrides } from 'ethers';
+import { BigNumberish, ContractTransaction } from 'ethers';
 import { AddressTranslator } from '../address-translator';
 import { UniverseRegistry } from '../contracts';
 import { Adapter } from '../adapter';
@@ -18,55 +18,51 @@ export class UniverseRegistryAdapter extends Adapter {
     this.contract = contractResolver.resolveUniverseRegistry(accountId.address);
   }
 
-  async createUniverse(
-    params: { name: string; rentalFeePercent: BigNumberish },
-    overrides?: Overrides,
-  ): Promise<ContractTransaction> {
-    return this.contract.createUniverse(params, overrides);
+  async createUniverse(params: { name: string; rentalFeePercent: BigNumberish }): Promise<ContractTransaction> {
+    return this.contract.createUniverse(params);
   }
 
-  async isUniverseOwner(universeId: BigNumberish, accountId: AccountId, overrides?: CallOverrides): Promise<boolean> {
-    return this.contract.isUniverseOwner(universeId, this.accountIdToAddress(accountId), overrides);
+  async isUniverseOwner(universeId: BigNumberish, accountId: AccountId): Promise<boolean> {
+    return this.contract.isUniverseOwner(universeId, this.accountIdToAddress(accountId));
   }
 
-  async setUniverseName(universeId: BigNumberish, name: string, overrides?: Overrides): Promise<ContractTransaction> {
-    return this.contract.setUniverseName(universeId, name, overrides);
+  async setUniverseName(universeId: BigNumberish, name: string): Promise<ContractTransaction> {
+    return this.contract.setUniverseName(universeId, name);
   }
 
   async setUniverseRentalFeePercent(
     universeId: BigNumberish,
     rentalFeePercent: BigNumberish,
-    overrides?: Overrides,
   ): Promise<ContractTransaction> {
-    return this.contract.setUniverseRentalFeePercent(universeId, rentalFeePercent, overrides);
+    return this.contract.setUniverseRentalFeePercent(universeId, rentalFeePercent);
   }
 
-  async setUniverseTokenBaseURI(baseURI: string, overrides?: Overrides): Promise<ContractTransaction> {
-    return this.contract.setUniverseTokenBaseURI(baseURI, overrides);
+  async setUniverseTokenBaseURI(baseURI: string): Promise<ContractTransaction> {
+    return this.contract.setUniverseTokenBaseURI(baseURI);
   }
 
-  async info(universeId: BigNumberish, overrides?: CallOverrides): Promise<{ name: string; rentalFeePercent: number }> {
-    const info = await this.contract.universe(universeId, overrides);
+  async info(universeId: BigNumberish): Promise<{ name: string; rentalFeePercent: number }> {
+    const info = await this.contract.universe(universeId);
     return pick(info, ['name', 'rentalFeePercent']);
   }
 
-  async universeName(universeId: BigNumberish, overrides?: CallOverrides): Promise<string> {
-    return this.contract.universeName(universeId, overrides);
+  async universeName(universeId: BigNumberish): Promise<string> {
+    return this.contract.universeName(universeId);
   }
 
-  async universeOwner(universeId: BigNumberish, overrides?: CallOverrides): Promise<AccountId> {
-    return this.addressToAccountId(await this.contract.universeOwner(universeId, overrides));
+  async universeOwner(universeId: BigNumberish): Promise<AccountId> {
+    return this.addressToAccountId(await this.contract.universeOwner(universeId));
   }
 
-  async universeRentalFeePercent(universeId: BigNumberish, overrides?: CallOverrides): Promise<number> {
-    return this.contract.universeRentalFeePercent(universeId, overrides);
+  async universeRentalFeePercent(universeId: BigNumberish): Promise<number> {
+    return this.contract.universeRentalFeePercent(universeId);
   }
 
-  async universeToken(overrides?: CallOverrides): Promise<AccountId> {
-    return this.addressToAccountId(await this.contract.universeToken(overrides));
+  async universeToken(): Promise<AccountId> {
+    return this.addressToAccountId(await this.contract.universeToken());
   }
 
-  async universeTokenBaseURI(overrides?: CallOverrides): Promise<string> {
-    return this.contract.universeTokenBaseURI(overrides);
+  async universeTokenBaseURI(): Promise<string> {
+    return this.contract.universeTokenBaseURI();
   }
 }
