@@ -18,18 +18,14 @@
   "scripts": {
     "build": "rollup -c",
     "build:clean": "rimraf dist",
-    "prepublish": "NODE_ENV=production run-s typechain build",
     "start": "rollup -cw",
-    "test": "jest --group=unit",
-    "typechain": "run-s typechain:clean typechain:generate",
-    "typechain:clean": "rimraf src/contracts",
-    "typechain:generate": "typechain --target ethers-v5 --out-dir src/contracts './node_modules/@iqprotocol/solidity-contracts-nft/artifacts/contracts/**/*.json'"
+    "test": "jest --group=unit"
   },
   "dependencies": {
     "caip": "^1.0.0"
   },
   "devDependencies": {
-    "@iqprotocol/solidity-contracts-nft": "https://github.com/iqlabsorg/iq-smart-contracts-nft#db3aa77aa12045a7ed8ca23eb1511b25a029dd84",
+    "@iqprotocol/solidity-contracts-nft": "0.1.0",
     "@typechain/ethers-v5": "^10.0.0",
     "ethers": "^5.6.0",
     "hardhat": "^2.6.5",
