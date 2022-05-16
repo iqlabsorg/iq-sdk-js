@@ -1,4 +1,4 @@
-import { hexDataSlice, solidityKeccak256 } from 'ethers/lib.esm/utils';
+import { hexDataSlice, solidityKeccak256 } from 'ethers/lib/utils';
 import { BigNumber } from '@ethersproject/bignumber';
 import { AccountId, AssetId, AssetType, ChainId } from 'caip';
 

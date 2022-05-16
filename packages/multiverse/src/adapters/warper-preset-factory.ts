@@ -9,11 +9,7 @@ import { defaultAbiCoder, formatBytes32String } from 'ethers/lib/utils';
 export class WarperPresetFactoryAdapter extends Adapter {
   private readonly contract: WarperPresetFactory;
 
-  constructor(
-    accountId: AccountId,
-    protected contractResolver: ContractResolver,
-    protected addressTranslator: AddressTranslator,
-  ) {
+  constructor(accountId: AccountId, contractResolver: ContractResolver, addressTranslator: AddressTranslator) {
     super(contractResolver, addressTranslator);
     this.contract = contractResolver.resolveWarperPresetFactory(accountId.address);
   }

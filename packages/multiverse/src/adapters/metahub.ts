@@ -28,10 +28,6 @@ export class MetahubAdapter extends Adapter {
     warper: AssetType,
     params: IWarperManager.WarperRegistrationParamsStruct,
   ): Promise<ContractTransaction> {
-    // todo: use utility function to convert asset type to address and validate chain ID.
-    return this.contract.registerWarper(
-      this.accountIdToAddress(new AccountId({ chainId: warper.chainId, address: warper.assetName.reference })),
-      params,
-    );
+    return this.contract.registerWarper(this.assetTypeToAddress(warper), params);
   }
 }

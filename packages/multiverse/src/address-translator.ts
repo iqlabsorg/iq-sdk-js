@@ -1,5 +1,5 @@
-import { AccountId, ChainId } from 'caip';
-import { assertAccountChainId } from './utils';
+import { AccountId, AssetType, ChainId } from 'caip';
+import { assertAccountChainId, assertSameChainId } from './utils';
 import { Address } from './types';
 
 export class AddressTranslator {
@@ -16,5 +16,10 @@ export class AddressTranslator {
 
   optionalAccountIdToAddress(accountId?: AccountId): Address | undefined {
     return accountId ? this.accountIdToAddress(accountId) : undefined;
+  }
+
+  assetTypeToAddress(assetType: AssetType): Address {
+    assertSameChainId(assetType.chainId, this.chainId);
+    return assetType.assetName.reference;
   }
 }

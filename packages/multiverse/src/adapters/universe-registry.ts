@@ -9,11 +9,7 @@ import { pick } from '@iqprotocol/enterprise/src/utils';
 export class UniverseRegistryAdapter extends Adapter {
   private readonly contract: UniverseRegistry;
 
-  constructor(
-    accountId: AccountId,
-    protected contractResolver: ContractResolver,
-    protected addressTranslator: AddressTranslator,
-  ) {
+  constructor(accountId: AccountId, contractResolver: ContractResolver, addressTranslator: AddressTranslator) {
     super(contractResolver, addressTranslator);
     this.contract = contractResolver.resolveUniverseRegistry(accountId.address);
   }

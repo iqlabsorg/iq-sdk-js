@@ -1,5 +1,5 @@
 import { Address, ChainAware } from './types';
-import { AccountId, ChainId } from 'caip';
+import { AccountId, AssetType, ChainId } from 'caip';
 import { AddressTranslator } from './address-translator';
 import { ContractResolver } from './contract-resolver';
 
@@ -23,5 +23,9 @@ export abstract class Adapter implements ChainAware {
 
   protected optionalAccountIdToAddress(accountId?: AccountId): Address | undefined {
     return this.addressTranslator.optionalAccountIdToAddress(accountId);
+  }
+
+  protected assetTypeToAddress(assetType: AssetType): Address {
+    return this.addressTranslator.assetTypeToAddress(assetType);
   }
 }
