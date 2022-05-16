@@ -1,5 +1,6 @@
-import { AccountId, AssetId, AssetType, ChainId } from 'caip';
 import { hexDataSlice, solidityKeccak256 } from 'ethers/lib.esm/utils';
+import { BigNumber } from '@ethersproject/bignumber';
+import { AccountId, AssetId, AssetType, ChainId } from 'caip';
 
 export const pick = <T, K extends keyof T>(obj: T, names: readonly K[]): Pick<T, K> => {
   const result = {} as Pick<T, K>;
@@ -34,3 +35,6 @@ export const assertSameAssetType = (assetId: AssetId, assetType: AssetType): voi
     throw new Error(`Asset mismatch! Expected asset: ${assetName.toString()}`);
   }
 };
+
+export const createAssetId = ({ chainId, assetName }: AssetType, tokenId: BigNumber): AssetId =>
+  new AssetId({ chainId, assetName, tokenId: tokenId.toString() });
