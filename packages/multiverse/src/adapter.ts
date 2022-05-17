@@ -17,6 +17,10 @@ export abstract class Adapter implements ChainAware {
     return this.addressTranslator.addressToAccountId(address);
   }
 
+  protected addressToAssetType(address: Address, namespace: string): AssetType {
+    return this.addressTranslator.addressToAssetType(address, namespace);
+  }
+
   protected accountIdToAddress(accountId: AccountId): Address {
     return this.addressTranslator.accountIdToAddress(accountId);
   }

@@ -21,6 +21,27 @@ export class WarperPresetFactoryAdapter extends Adapter {
     return this.contract.deployPreset(formatBytes32String(presetId), this.encodePresetInitData(presetId, data));
   }
 
+  async findWarperByDeploymentTransaction(transactionHash: string): Promise<AssetType | undefined> {
+    const tx = await this.contract.provider.getTransaction(transactionHash);
+    if (!tx.blockHash) {
+      return undefined;
+    }
+
+    const event = (await this.contract.queryFilter(this.contract.filters.WarperPresetDeployed(), tx.blockHash)).find(
+      event => event.transactionHash === transactionHash,
+    );
+
+    if (!event) {
+      return undefined;
+    }
+
+    //todo: map solidity asset class to caip AssetName namespace
+    // const warper = this.contractResolver.resolveWarper(event.args.warper);
+    // const assetClass = await warper.__assetClass();
+
+    return this.addressToAssetType(event.args.warper, 'erc721');
+  }
+
   private encodePresetInitData(presetId: string, data: { metahub: AccountId; original: AssetType }): BytesLike {
     if (presetId !== 'ERC721PresetConfigurable') {
       throw new Error(`Unknown preset ID: "${presetId}"`);

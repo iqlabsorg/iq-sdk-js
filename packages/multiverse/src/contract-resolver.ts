@@ -5,6 +5,8 @@ import {
   ACL__factory,
   AssetClassRegistry,
   AssetClassRegistry__factory,
+  IWarper,
+  IWarper__factory,
   ListingStrategyRegistry,
   ListingStrategyRegistry__factory,
   Metahub,
@@ -52,5 +54,9 @@ export class ContractResolver implements ChainAware {
 
   resolveWarperPresetFactory(address: Address): WarperPresetFactory {
     return WarperPresetFactory__factory.connect(address, this.signer);
+  }
+
+  resolveWarper(address: Address): IWarper {
+    return IWarper__factory.connect(address, this.signer);
   }
 }

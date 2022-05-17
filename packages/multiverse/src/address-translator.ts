@@ -9,6 +9,16 @@ export class AddressTranslator {
     return new AccountId({ chainId: this.chainId, address });
   }
 
+  addressToAssetType(address: Address, namespace: string): AssetType {
+    return new AssetType({
+      chainId: this.chainId,
+      assetName: {
+        namespace,
+        reference: address,
+      },
+    });
+  }
+
   accountIdToAddress(accountId: AccountId): Address {
     assertAccountChainId(accountId, this.chainId);
     return accountId.address;
