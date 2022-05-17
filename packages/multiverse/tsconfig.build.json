@@ -1,6 +1,13 @@
 {
   "extends": "../../tsconfig.build.json",
+  "compilerOptions": {
+    "module": "CommonJS",
+  },
   "include": [
     "src",
+    "node_modules/@iqprotocol/solidity-contracts-nft"
   ],
+  "files": [
+    "node_modules/@iqprotocol/solidity-contracts-nft/tasks"
+  ]
 }

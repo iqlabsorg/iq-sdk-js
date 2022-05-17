@@ -1,7 +1,9 @@
-import { ethers } from 'hardhat';
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import hre, { ethers } from 'hardhat';
 import { ChainId } from 'caip';
 import { SignerWithAddress } from 'hardhat-deploy-ethers/signers';
 import { Multiverse } from '../src';
+import { Metahub } from '@iqprotocol/solidity-contracts-nft';
 
 /**
  * @group unit
@@ -27,5 +29,13 @@ describe('@iqprotocol/multiverse', () => {
 
   it('returns correct chain ID', async () => {
     await expect(multiverse.getChainId()).resolves.toEqual(chainId);
+  });
+
+  it('can call fixture deployment', async () => {
+    await hre.deployments.fixture();
+
+    const metahub = await hre.ethers.getContract<Metahub>('Metahub');
+    console.log(metahub.address);
+    console.log(await metahub.baseToken());
   });
 });

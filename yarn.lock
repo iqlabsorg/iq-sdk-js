@@ -810,10 +810,10 @@
   resolved "https://registry.yarnpkg.com/@hutson/parse-repository-url/-/parse-repository-url-3.0.2.tgz#98c23c950a3d9b6c8f0daed06da6c3af06981340"
   integrity sha512-H9XAx3hc0BQHY6l+IFSWHDySypcXsvsuLhgYLUGywmJ5pswRVQJUHpOsobnLYp2ZUaUlKiKDrgWWhosOwAEM8Q==
 
-"@iqprotocol/solidity-contracts-nft@0.1.0":
-  version "0.1.0"
-  resolved "http://localhost:4873/@iqprotocol%2fsolidity-contracts-nft/-/solidity-contracts-nft-0.1.0.tgz#b3effea80c4e1d14f9c7b3dd9dc083ba3c9a22e7"
-  integrity sha512-7oG5JcSoioQwLyhrfFfCaWlb6yQTYwx+jxNI23m/jytFHdlORSpUmHI/w22Il9bMiLGUC/Nc5T5E61C5JznFlA==
+"@iqprotocol/solidity-contracts-nft@0.1.4":
+  version "0.1.4"
+  resolved "http://localhost:4873/@iqprotocol%2fsolidity-contracts-nft/-/solidity-contracts-nft-0.1.4.tgz#8e8933e2cbecf9de526380a183045ccaef872ab9"
+  integrity sha512-fIEzdqCbAuqHbntFD0k5HoJyIohMwWc735I7eWWzH2g377g3wVRwEB2at2ajv+M8bYGvj3ktgRdKZ8mj0OvOvw==
 
 "@iqprotocol/solidity-contracts@https://github.com/iqlabsorg/iq-smart-contracts#476d0e4705ecb4d90938411f1e32533d7fcaa307":
   version "0.2.0"
@@ -1730,6 +1730,11 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
+"@nomiclabs/hardhat-ethers@npm:hardhat-deploy-ethers@latest":
+  version "0.3.0-beta.13"
+  resolved "http://localhost:4873/hardhat-deploy-ethers/-/hardhat-deploy-ethers-0.3.0-beta.13.tgz#b96086ff768ddf69928984d5eb0a8d78cfca9366"
+  integrity sha512-PdWVcKB9coqWV1L7JTpfXRCI91Cgwsm7KLmBcwZ8f0COSm1xtABHZTyz3fvF6p42cTnz1VM0QnfDvMFlIRkSNw==
+
 "@npmcli/ci-detect@^1.0.0":
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/@npmcli/ci-detect/-/ci-detect-1.3.0.tgz#6c1d2c625fb6ef1b9dea85ad0a5afcbef85ef22a"
@@ -1900,6 +1905,29 @@
   integrity sha512-RDxZBAFMtqs1ZPnbUu1e7ohPNfoNhTiep4fErY7tZs995BeHu369Vsh5woMIaFbllRWEZBfvTCS4hvDnMPiHrA==
   dependencies:
     "@octokit/openapi-types" "^10.0.0"
+
+"@openzeppelin/hardhat-upgrades@^1.17.0":
+  version "1.17.0"
+  resolved "http://localhost:4873/@openzeppelin%2fhardhat-upgrades/-/hardhat-upgrades-1.17.0.tgz#24ea0f366c3b2df985263cf8b1b796afd04d7e13"
+  integrity sha512-GNxR3/3fCKQsFpBi/r+5ib6U81UM9KCypmcOQxuCkVp9JKJ80/3hQdg1R+AQku/dlnhutPsfkCokH2LZFc5mNA==
+  dependencies:
+    "@openzeppelin/upgrades-core" "^1.14.1"
+    chalk "^4.1.0"
+    proper-lockfile "^4.1.1"
+
+"@openzeppelin/upgrades-core@^1.14.1":
+  version "1.14.2"
+  resolved "http://localhost:4873/@openzeppelin%2fupgrades-core/-/upgrades-core-1.14.2.tgz#1acf6560dbe42b5e68fdffe6e6979b90fa33bb56"
+  integrity sha512-JkrMcsB0v6vwX+fObY+y51L3tD3BcLjNpPnKkgtsEOC1Umwt6WzvI8Gq2brmNOzFLNQqeX2xySiJTGvypqUQow==
+  dependencies:
+    bn.js "^5.1.2"
+    cbor "^8.0.0"
+    chalk "^4.1.0"
+    compare-versions "^4.0.0"
+    debug "^4.1.1"
+    ethereumjs-util "^7.0.3"
+    proper-lockfile "^4.1.1"
+    solidity-ast "^0.4.15"
 
 "@rollup/plugin-commonjs@^21.1.0":
   version "21.1.0"
@@ -3242,6 +3270,13 @@ caseless@~0.12.0:
   resolved "https://registry.yarnpkg.com/caseless/-/caseless-0.12.0.tgz#1b681c21ff84033c826543090689420d187151dc"
   integrity sha1-G2gcIf+EAzyCZUMJBolCDRhxUdw=
 
+cbor@^8.0.0:
+  version "8.1.0"
+  resolved "http://localhost:4873/cbor/-/cbor-8.1.0.tgz#cfc56437e770b73417a2ecbfc9caf6b771af60d5"
+  integrity sha512-DwGjNW9omn6EwP70aXsn7FQJx5kO12tX0bZkaTjzdVFM6/7nhA4t0EENocKGx6D2Bch9PE2KzCUf5SceBdeijg==
+  dependencies:
+    nofilter "^3.1.0"
+
 chalk@4.1.2, chalk@^4.0.0, chalk@^4.1.0, chalk@^4.1.2:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/chalk/-/chalk-4.1.2.tgz#aac4e2b7734a740867aeb16bf02aad556a1e7a01"
@@ -3496,6 +3531,11 @@ compare-func@^2.0.0:
   dependencies:
     array-ify "^1.0.0"
     dot-prop "^5.1.0"
+
+compare-versions@^4.0.0:
+  version "4.1.3"
+  resolved "http://localhost:4873/compare-versions/-/compare-versions-4.1.3.tgz#8f7b8966aef7dc4282b45dfa6be98434fc18a1a4"
+  integrity sha512-WQfnbDcrYnGr55UwbxKiQKASnTtNnaAWVi8jZyy8NTpVAXWACSne8lMD1iaIo9AiU6mnuLvSVshCzewVuWxHUg==
 
 compatfactory@^0.0.13:
   version "0.0.13"
@@ -4517,7 +4557,7 @@ ethereumjs-util@^6.0.0, ethereumjs-util@^6.2.1:
     ethjs-util "0.1.6"
     rlp "^2.2.3"
 
-ethereumjs-util@^7.1.1, ethereumjs-util@^7.1.3, ethereumjs-util@^7.1.4:
+ethereumjs-util@^7.0.3, ethereumjs-util@^7.1.1, ethereumjs-util@^7.1.3, ethereumjs-util@^7.1.4:
   version "7.1.4"
   resolved "https://registry.yarnpkg.com/ethereumjs-util/-/ethereumjs-util-7.1.4.tgz#a6885bcdd92045b06f596c7626c3e89ab3312458"
   integrity sha512-p6KmuPCX4mZIqsQzXfmSx9Y0l2hqf+VkAiwSisW3UKUFdk8ZkAt+AYaor83z2nSi6CU2zSsXMlD80hAbNEGM0A==
@@ -5200,7 +5240,7 @@ graceful-fs@^4.1.11, graceful-fs@^4.1.15, graceful-fs@^4.2.2, graceful-fs@^4.2.3
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.8.tgz#e412b8d33f5e006593cbd3cee6df9f2cebbe802a"
   integrity sha512-qkIilPUYcNhJpd33n0GBXTB1MMPp14TxEsEs0pTrsSVucApsYzW5V+Q8Qxhik6KU3evy+qkAAowTByymK0avdg==
 
-graceful-fs@^4.1.2, graceful-fs@^4.1.6, graceful-fs@^4.1.9, graceful-fs@^4.2.0, graceful-fs@^4.2.9:
+graceful-fs@^4.1.2, graceful-fs@^4.1.6, graceful-fs@^4.1.9, graceful-fs@^4.2.0, graceful-fs@^4.2.4, graceful-fs@^4.2.9:
   version "4.2.10"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.10.tgz#147d3a006da4ca3ce14728c7aefc287c367d7a6c"
   integrity sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA==
@@ -7507,6 +7547,11 @@ node-releases@^2.0.2, node-releases@^2.0.3:
   resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-2.0.3.tgz#225ee7488e4a5e636da8da52854844f9d716ca96"
   integrity sha512-maHFz6OLqYxz+VQyCAtA3PTX4UP/53pa05fyDNc9CwjvJ0yEh6+xBwKsgCxMNhS8taUKBFYxfuiaD9U/55iFaw==
 
+nofilter@^3.1.0:
+  version "3.1.0"
+  resolved "http://localhost:4873/nofilter/-/nofilter-3.1.0.tgz#c757ba68801d41ff930ba2ec55bab52ca184aa66"
+  integrity sha512-l2NNj07e9afPnhAhvgVrCD/oy2Ai1yfLpuo3EpiO1jFTsB4sFz6oIfAfSZyQzVpkZQ9xS8ZS5g1jCBgq4Hwo0g==
+
 nopt@^4.0.1:
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/nopt/-/nopt-4.0.3.tgz#a375cad9d02fd921278d954c2254d5aa57e15e48"
@@ -8274,6 +8319,15 @@ promzard@^0.3.0:
   integrity sha1-JqXW7ox97kyxIggwWs+5O6OCqe4=
   dependencies:
     read "1"
+
+proper-lockfile@^4.1.1:
+  version "4.1.2"
+  resolved "http://localhost:4873/proper-lockfile/-/proper-lockfile-4.1.2.tgz#c8b9de2af6b2f1601067f98e01ac66baa223141f"
+  integrity sha512-TjNPblN4BwAWMXU8s9AEz4JmQxnD1NNL7bNOY/AKUzyamc379FWASUhc/K1pL2noVb+XmZKLL68cjzLsiOAMaA==
+  dependencies:
+    graceful-fs "^4.2.4"
+    retry "^0.12.0"
+    signal-exit "^3.0.2"
 
 properties-reader@^2.2.0:
   version "2.2.0"
@@ -9064,6 +9118,11 @@ solc@0.7.3:
     require-from-string "^2.0.0"
     semver "^5.5.0"
     tmp "0.0.33"
+
+solidity-ast@^0.4.15:
+  version "0.4.32"
+  resolved "http://localhost:4873/solidity-ast/-/solidity-ast-0.4.32.tgz#ba613ca24c7c79007798033e8a0f32a71285f09e"
+  integrity sha512-vCx17410X+NMnpLVyg6ix4NMCHFIkvWrJb1rPBBeQYEQChX93Zgb9WB9NaIY4zpsr3Q8IvAfohw+jmuBzGf8OQ==
 
 sort-keys@^2.0.0:
   version "2.0.0"

@@ -1,9 +1,8 @@
 import { ContractResolver } from '../contract-resolver';
-import { Metahub } from '../contracts';
+import { Metahub, IWarperManager } from '@iqprotocol/solidity-contracts-nft';
 import { BigNumberish, ContractTransaction } from 'ethers';
 import { Adapter } from '../adapter';
 import { AddressTranslator } from '../address-translator';
-import { IWarperManager } from '../contracts/metahub/Metahub';
 import { AccountId, AssetType } from 'caip';
 
 export class MetahubAdapter extends Adapter {

@@ -1,5 +1,5 @@
 import { Adapter } from '../adapter';
-import { ERC721PresetConfigurable__factory, WarperPresetFactory } from '../contracts';
+import { ERC721PresetConfigurable__factory, WarperPresetFactory } from '@iqprotocol/solidity-contracts-nft';
 import { AccountId, AssetType } from 'caip';
 import { ContractResolver } from '../contract-resolver';
 import { AddressTranslator } from '../address-translator';
