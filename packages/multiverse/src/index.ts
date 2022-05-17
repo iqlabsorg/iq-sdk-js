@@ -1,2 +1,2 @@
-export { asstClass, listingStrategy } from './constants';
+export { asstClasses, listingStrategies } from './constants';
 export { Multiverse } from './multiverse';

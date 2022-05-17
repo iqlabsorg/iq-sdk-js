@@ -4,7 +4,6 @@ import { AccountId, ChainId } from 'caip';
 import { MetahubAdapter } from './adapters/metahub';
 import { UniverseRegistryAdapter } from './adapters/universe-registry';
 import { AddressTranslator } from './address-translator';
-import { assertAccountChainId } from './utils';
 import { ChainAware } from './types';
 import { WarperPresetFactoryAdapter } from './adapters/warper-preset-factory';
 
@@ -31,17 +30,17 @@ export class Multiverse implements ChainAware {
   }
 
   universeRegistry(accountId: AccountId): UniverseRegistryAdapter {
-    assertAccountChainId(accountId, this.chainId);
+    this.addressTranslator.assertSameChainId(accountId.chainId);
     return new UniverseRegistryAdapter(accountId, this.contractResolver, this.addressTranslator);
   }
 
   metahub(accountId: AccountId): MetahubAdapter {
-    assertAccountChainId(accountId, this.chainId);
+    this.addressTranslator.assertSameChainId(accountId.chainId);
     return new MetahubAdapter(accountId, this.contractResolver, this.addressTranslator);
   }
 
   warperPresetFactory(accountId: AccountId): WarperPresetFactoryAdapter {
-    assertAccountChainId(accountId, this.chainId);
+    this.addressTranslator.assertSameChainId(accountId.chainId);
     return new WarperPresetFactoryAdapter(accountId, this.contractResolver, this.addressTranslator);
   }
 }

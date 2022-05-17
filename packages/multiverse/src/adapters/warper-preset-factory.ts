@@ -35,11 +35,11 @@ export class WarperPresetFactoryAdapter extends Adapter {
       return undefined;
     }
 
-    //todo: map solidity asset class to caip AssetName namespace
-    // const warper = this.contractResolver.resolveWarper(event.args.warper);
-    // const assetClass = await warper.__assetClass();
+    // Fetch warper asset class to assign correct caip-19 namespace.
+    const warper = this.contractResolver.resolveWarper(event.args.warper);
+    const assetClass = await warper.__assetClass();
 
-    return this.addressToAssetType(event.args.warper, 'erc721');
+    return this.addressToAssetType(event.args.warper, this.assetClassToNamespace(assetClass));
   }
 
   private encodePresetInitData(presetId: string, data: { metahub: AccountId; original: AssetType }): BytesLike {
