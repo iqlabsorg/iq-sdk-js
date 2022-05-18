@@ -810,10 +810,10 @@
   resolved "https://registry.yarnpkg.com/@hutson/parse-repository-url/-/parse-repository-url-3.0.2.tgz#98c23c950a3d9b6c8f0daed06da6c3af06981340"
   integrity sha512-H9XAx3hc0BQHY6l+IFSWHDySypcXsvsuLhgYLUGywmJ5pswRVQJUHpOsobnLYp2ZUaUlKiKDrgWWhosOwAEM8Q==
 
-"@iqprotocol/solidity-contracts-nft@0.1.4":
-  version "0.1.4"
-  resolved "http://localhost:4873/@iqprotocol%2fsolidity-contracts-nft/-/solidity-contracts-nft-0.1.4.tgz#8e8933e2cbecf9de526380a183045ccaef872ab9"
-  integrity sha512-fIEzdqCbAuqHbntFD0k5HoJyIohMwWc735I7eWWzH2g377g3wVRwEB2at2ajv+M8bYGvj3ktgRdKZ8mj0OvOvw==
+"@iqprotocol/solidity-contracts-nft@0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@iqprotocol/solidity-contracts-nft/-/solidity-contracts-nft-0.1.0.tgz#6462550af489178e144bc5936fb14c8a08fd4188"
+  integrity sha512-+2u9DYldbe325AhinHlW/00DPNOK+UMhxhRly+PG+LU9Fs/6Tkes+PsNuv4V+EM9HDCCwcqACqhHt+ZLKpkWUQ==
 
 "@iqprotocol/solidity-contracts@https://github.com/iqlabsorg/iq-smart-contracts#476d0e4705ecb4d90938411f1e32533d7fcaa307":
   version "0.2.0"
