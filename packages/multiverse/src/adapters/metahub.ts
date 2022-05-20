@@ -1,6 +1,6 @@
 import { ContractResolver } from '../contract-resolver';
 import { IWarperManager, Metahub } from '@iqprotocol/solidity-contracts-nft';
-import { BigNumberish, ContractTransaction } from 'ethers';
+import { BigNumber, BigNumberish, ContractTransaction } from 'ethers';
 import { Adapter } from '../adapter';
 import { AddressTranslator } from '../address-translator';
 import { AccountId, AssetType } from 'caip';
@@ -81,18 +81,7 @@ export class MetahubAdapter extends Adapter {
    * @param limit Max number of items.
    */
   async listings(offset: BigNumberish, limit: BigNumberish): Promise<Listing[]> {
-    const [listingIds, listings] = await this.contract.listings(offset, limit);
-
-    //todo: DRY!
-    return listings.map((listing: ListingStructOutput, i) => {
-      return {
-        ...pick(listing, ['maxLockPeriod', 'lockedTill', 'immediatePayout', 'delisted', 'paused']),
-        id: listingIds[i],
-        asset: this.decodeERC721AssetStruct(listing.asset),
-        strategy: this.decodeFixedPriceListingStrategy(listing.params),
-        listerAccountId: this.addressToAccountId(listing.lister),
-      };
-    });
+    return this.normalizeListings(this.contract.listings(offset, limit));
   }
 
   /**
@@ -102,23 +91,7 @@ export class MetahubAdapter extends Adapter {
    * @param limit
    */
   async userListings(listerAccountId: AccountId, offset: BigNumberish, limit: BigNumberish): Promise<Listing[]> {
-    const [listingIds, listings] = await this.contract.userListings(
-      this.accountIdToAddress(listerAccountId),
-      offset,
-      limit,
-    );
-
-    //todo: DRY!
-    //eslint-disable-next-line sonarjs/no-identical-functions
-    return listings.map((listing: ListingStructOutput, i) => {
-      return {
-        ...pick(listing, ['maxLockPeriod', 'lockedTill', 'immediatePayout', 'delisted', 'paused']),
-        id: listingIds[i],
-        asset: this.decodeERC721AssetStruct(listing.asset),
-        strategy: this.decodeFixedPriceListingStrategy(listing.params),
-        listerAccountId: this.addressToAccountId(listing.lister),
-      };
-    });
+    return this.normalizeListings(this.contract.userListings(this.accountIdToAddress(listerAccountId), offset, limit));
   }
 
   /**
@@ -128,23 +101,7 @@ export class MetahubAdapter extends Adapter {
    * @param limit
    */
   async assetListings(assetAccountId: AccountId, offset: BigNumberish, limit: BigNumberish): Promise<Listing[]> {
-    const [listingIds, listings] = await this.contract.assetListings(
-      this.accountIdToAddress(assetAccountId),
-      offset,
-      limit,
-    );
-
-    //todo: DRY!
-    //eslint-disable-next-line sonarjs/no-identical-functions
-    return listings.map((listing: ListingStructOutput, i) => {
-      return {
-        ...pick(listing, ['maxLockPeriod', 'lockedTill', 'immediatePayout', 'delisted', 'paused']),
-        id: listingIds[i],
-        asset: this.decodeERC721AssetStruct(listing.asset),
-        strategy: this.decodeFixedPriceListingStrategy(listing.params),
-        listerAccountId: this.addressToAccountId(listing.lister),
-      };
-    });
+    return this.normalizeListings(this.contract.assetListings(this.accountIdToAddress(assetAccountId), offset, limit));
   }
 
   /**
@@ -163,6 +120,19 @@ export class MetahubAdapter extends Adapter {
       ...pick(warper, ['name', 'universeId', 'paused']),
       accountId: this.addressToAccountId(addresses[i]),
       original: this.addressToAssetType(warper.original, 'erc721'), // todo: infer from blockchain
+    }));
+  }
+
+  private async normalizeListings(
+    listingsRequest: Promise<[BigNumber[], Listings.ListingStructOutput[]]>,
+  ): Promise<Listing[]> {
+    const [listingIds, listings] = await listingsRequest;
+    return listings.map((listing: ListingStructOutput, i) => ({
+      ...pick(listing, ['maxLockPeriod', 'lockedTill', 'immediatePayout', 'delisted', 'paused']),
+      id: listingIds[i],
+      asset: this.decodeERC721AssetStruct(listing.asset),
+      strategy: this.decodeFixedPriceListingStrategy(listing.params),
+      listerAccountId: this.addressToAccountId(listing.lister),
     }));
   }
 }

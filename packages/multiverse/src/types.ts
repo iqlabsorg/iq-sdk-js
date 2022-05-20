@@ -1,7 +1,7 @@
 import { AccountId, AssetId, AssetType, ChainId } from 'caip';
 import { BigNumber, Overrides as BaseOverrides } from 'ethers';
 import { BigNumberish } from '@ethersproject/bignumber';
-import { Listings, Warpers } from '@iqprotocol/solidity-contracts-nft/typechain/contracts/metahub/IMetahub';
+import { Listings, Warpers, Rentings } from '@iqprotocol/solidity-contracts-nft/typechain/contracts/metahub/IMetahub';
 import ListingStructOutput = Listings.ListingStructOutput;
 import WarperStructOutput = Warpers.WarperStructOutput;
 
@@ -46,4 +46,10 @@ export type Asset = {
 export type Warper = Pick<WarperStructOutput, 'name' | 'universeId' | 'paused'> & {
   accountId: AccountId;
   original: AssetType;
+};
+
+export type EstimateRentParams = Pick<Rentings.ParamsStruct, 'listingId' | 'rentalPeriod'> & {
+  warper: AssetType;
+  renter: AccountId;
+  paymentToken: AssetType;
 };
