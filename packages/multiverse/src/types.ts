@@ -1,7 +1,7 @@
 import { AccountId, AssetId, AssetType, ChainId } from 'caip';
 import { BigNumber, Overrides as BaseOverrides } from 'ethers';
 import { BigNumberish } from '@ethersproject/bignumber';
-import { Listings, Warpers, Rentings } from '@iqprotocol/solidity-contracts-nft/typechain/contracts/metahub/IMetahub';
+import { Listings, Warpers, Rentings } from './contracts/metahub/IMetahub';
 import ListingStructOutput = Listings.ListingStructOutput;
 import WarperStructOutput = Warpers.WarperStructOutput;
 

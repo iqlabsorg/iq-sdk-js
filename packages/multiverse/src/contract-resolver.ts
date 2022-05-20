@@ -17,7 +17,7 @@ import {
   UniverseToken__factory,
   WarperPresetFactory,
   WarperPresetFactory__factory,
-} from '@iqprotocol/solidity-contracts-nft';
+} from './contracts';
 import { ChainId } from 'caip';
 
 export class ContractResolver implements ChainAware {

@@ -2,9 +2,9 @@ import { AccountId } from 'caip';
 import { ContractResolver } from '../contract-resolver';
 import { BigNumberish, ContractTransaction } from 'ethers';
 import { AddressTranslator } from '../address-translator';
-import { UniverseRegistry } from '@iqprotocol/solidity-contracts-nft';
 import { Adapter } from '../adapter';
 import { pick } from '../utils';
+import { UniverseRegistry } from '../contracts';
 
 export class UniverseRegistryAdapter extends Adapter {
   private readonly contract: UniverseRegistry;

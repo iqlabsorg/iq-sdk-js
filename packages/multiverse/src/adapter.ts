@@ -2,7 +2,7 @@ import { Address, Asset, ChainAware, FixedPriceListingStrategyParams } from './t
 import { AccountId, AssetId, AssetType, ChainId } from 'caip';
 import { AddressTranslator } from './address-translator';
 import { ContractResolver } from './contract-resolver';
-import { Assets, Listings } from '@iqprotocol/solidity-contracts-nft/typechain/contracts/metahub/Metahub';
+import { Assets, Listings } from './contracts/metahub/Metahub';
 import { defaultAbiCoder } from 'ethers/lib/utils';
 import { BigNumber } from '@ethersproject/bignumber';
 import { listingStrategies } from './constants';

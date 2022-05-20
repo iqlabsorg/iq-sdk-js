@@ -1,14 +1,13 @@
 import { ContractResolver } from '../contract-resolver';
-import { IWarperManager, Metahub } from '@iqprotocol/solidity-contracts-nft';
 import { BigNumber, BigNumberish, ContractTransaction } from 'ethers';
 import { Adapter } from '../adapter';
 import { AddressTranslator } from '../address-translator';
 import { AccountId, AssetType } from 'caip';
-
 import { AssetListingParams, Listing, Warper } from '../types';
 import { encodeERC721Asset, encodeFixedPriceStrategy, pick } from '../utils';
-import { Listings } from '@iqprotocol/solidity-contracts-nft/typechain/contracts/metahub/IMetahub';
+import { Listings } from '../contracts/metahub/IMetahub';
 import ListingStructOutput = Listings.ListingStructOutput;
+import { IWarperManager, Metahub } from '../contracts';
 
 export class MetahubAdapter extends Adapter {
   private readonly contract: Metahub;
