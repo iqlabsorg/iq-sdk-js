@@ -195,7 +195,7 @@ describe('Enterprise', () => {
 
   it('allows to retrieve rental agreement', async () => {
     const tokenId = '27800435412689650177939536813617893929513777122578898467042797130853006610143';
-    const rentalTokenId = new AssetId({ ...assetTypes.rentalToken.toJson(), tokenId });
+    const rentalTokenId = new AssetId({ ...assetTypes.rentalToken.toJSON(), tokenId });
     const paymentTokenAddress = '0x2C368A2E9Bd1bf16eb3DfCd924CA7eF4969CBBD9';
     const gcRewardTokenIndex = 0;
     const partialRentalAgreement: Partial<OnChainRentalAgreement> = {

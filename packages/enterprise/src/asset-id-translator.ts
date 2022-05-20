@@ -7,7 +7,7 @@ export class AssetIdTranslator {
   tokenIdToAssetId(tokenId: BigNumber): AssetId {
     return new AssetId({
       tokenId: tokenId.toString(),
-      ...this.assetType.toJson(),
+      ...this.assetType.toJSON(),
     });
   }
 
