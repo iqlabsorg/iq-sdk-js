@@ -1,6 +1,9 @@
 import { AccountId, AssetId, AssetType, ChainId } from 'caip';
-import { Address } from './types';
-import { asstClasses } from './constants';
+import { Address, Asset } from './types';
+import { assetClasses } from './constants';
+import { Assets } from '@iqprotocol/solidity-contracts-nft/typechain/contracts/metahub/Metahub';
+import { defaultAbiCoder } from 'ethers/lib/utils';
+import { BigNumber } from '@ethersproject/bignumber';
 
 export class AddressTranslator {
   constructor(private readonly chainId: ChainId) {}
@@ -21,7 +24,7 @@ export class AddressTranslator {
   }
 
   assetClassToNamespace(assetClass: string): string {
-    return Object.values(asstClasses).find(({ id }) => assetClass === id)?.namespace ?? 'unknown';
+    return Object.values(assetClasses).find(({ id }) => assetClass === id)?.namespace ?? 'unknown';
   }
 
   assertSameChainId(chainId: ChainId): void {
@@ -54,5 +57,26 @@ export class AddressTranslator {
   assetTypeToAddress(assetType: AssetType): Address {
     this.assertSameChainId(assetType.chainId);
     return assetType.assetName.reference;
+  }
+
+  assetIdToAddress(assetId: AssetId): Address {
+    this.assertSameChainId(assetId.chainId);
+    return assetId.assetName.reference;
+  }
+
+  decodeERC721AssetStruct({ id, value }: Assets.AssetStructOutput): Asset {
+    const [address, tokenId] = defaultAbiCoder.decode(['address', 'uint256'], id.data) as [string, BigNumber];
+
+    return {
+      value,
+      id: new AssetId({
+        chainId: this.chainId,
+        assetName: {
+          namespace: this.assetClassToNamespace(id.class),
+          reference: address,
+        },
+        tokenId: tokenId.toString(),
+      }),
+    };
   }
 }

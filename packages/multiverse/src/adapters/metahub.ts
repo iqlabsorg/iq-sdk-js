@@ -1,9 +1,14 @@
 import { ContractResolver } from '../contract-resolver';
-import { Metahub, IWarperManager } from '@iqprotocol/solidity-contracts-nft';
+import { IWarperManager, Metahub } from '@iqprotocol/solidity-contracts-nft';
 import { BigNumberish, ContractTransaction } from 'ethers';
 import { Adapter } from '../adapter';
 import { AddressTranslator } from '../address-translator';
 import { AccountId, AssetType } from 'caip';
+
+import { AssetListingParams, Listing, Warper } from '../types';
+import { encodeERC721Asset, encodeFixedPriceStrategy, pick } from '../utils';
+import { Listings } from '@iqprotocol/solidity-contracts-nft/typechain/contracts/metahub/IMetahub';
+import ListingStructOutput = Listings.ListingStructOutput;
 
 export class MetahubAdapter extends Adapter {
   private readonly contract: Metahub;
@@ -28,5 +33,136 @@ export class MetahubAdapter extends Adapter {
     params: IWarperManager.WarperRegistrationParamsStruct,
   ): Promise<ContractTransaction> {
     return this.contract.registerWarper(this.assetTypeToAddress(warper), params);
+  }
+
+  /**
+   * Creates new asset listing.
+   * @param asset
+   * @param strategy
+   * @param maxLockPeriod
+   * @param immediatePayout
+   */
+  async listAsset({
+    asset,
+    strategy,
+    maxLockPeriod,
+    immediatePayout,
+  }: AssetListingParams): Promise<ContractTransaction> {
+    if (asset.id.assetName.namespace !== 'erc721') {
+      throw new Error('Invalid namespace');
+    }
+
+    const address = this.assetIdToAddress(asset.id);
+    const encodedAsset = encodeERC721Asset(address, asset.id.tokenId, asset.value);
+    const listingParams = encodeFixedPriceStrategy(strategy.data.price);
+
+    return this.contract.listAsset(encodedAsset, listingParams, maxLockPeriod, immediatePayout);
+  }
+
+  /**
+   * Delists asset.
+   * @param listingId
+   */
+  async delistAsset(listingId: BigNumberish): Promise<ContractTransaction> {
+    return this.contract.delistAsset(listingId);
+  }
+
+  /**
+   * Withdraws listed asset.
+   * @param listingId
+   */
+  async withdrawAsset(listingId: BigNumberish): Promise<ContractTransaction> {
+    return this.contract.withdrawAsset(listingId);
+  }
+
+  /**
+   * Returns the paginated list of currently registered listings.
+   * @param offset Starting index.
+   * @param limit Max number of items.
+   */
+  async listings(offset: BigNumberish, limit: BigNumberish): Promise<Listing[]> {
+    const [listingIds, listings] = await this.contract.listings(offset, limit);
+
+    //todo: DRY!
+    return listings.map((listing: ListingStructOutput, i) => {
+      return {
+        ...pick(listing, ['maxLockPeriod', 'lockedTill', 'immediatePayout', 'delisted', 'paused']),
+        id: listingIds[i],
+        asset: this.decodeERC721AssetStruct(listing.asset),
+        strategy: this.decodeFixedPriceListingStrategy(listing.params),
+        listerAccountId: this.addressToAccountId(listing.lister),
+      };
+    });
+  }
+
+  /**
+   * Returns user listings.
+   * @param listerAccountId
+   * @param offset
+   * @param limit
+   */
+  async userListings(listerAccountId: AccountId, offset: BigNumberish, limit: BigNumberish): Promise<Listing[]> {
+    const [listingIds, listings] = await this.contract.userListings(
+      this.accountIdToAddress(listerAccountId),
+      offset,
+      limit,
+    );
+
+    //todo: DRY!
+    //eslint-disable-next-line sonarjs/no-identical-functions
+    return listings.map((listing: ListingStructOutput, i) => {
+      return {
+        ...pick(listing, ['maxLockPeriod', 'lockedTill', 'immediatePayout', 'delisted', 'paused']),
+        id: listingIds[i],
+        asset: this.decodeERC721AssetStruct(listing.asset),
+        strategy: this.decodeFixedPriceListingStrategy(listing.params),
+        listerAccountId: this.addressToAccountId(listing.lister),
+      };
+    });
+  }
+
+  /**
+   * Returns asset listings.
+   * @param assetAccountId
+   * @param offset
+   * @param limit
+   */
+  async assetListings(assetAccountId: AccountId, offset: BigNumberish, limit: BigNumberish): Promise<Listing[]> {
+    const [listingIds, listings] = await this.contract.assetListings(
+      this.accountIdToAddress(assetAccountId),
+      offset,
+      limit,
+    );
+
+    //todo: DRY!
+    //eslint-disable-next-line sonarjs/no-identical-functions
+    return listings.map((listing: ListingStructOutput, i) => {
+      return {
+        ...pick(listing, ['maxLockPeriod', 'lockedTill', 'immediatePayout', 'delisted', 'paused']),
+        id: listingIds[i],
+        asset: this.decodeERC721AssetStruct(listing.asset),
+        strategy: this.decodeFixedPriceListingStrategy(listing.params),
+        listerAccountId: this.addressToAccountId(listing.lister),
+      };
+    });
+  }
+
+  /**
+   * Returns the list of supported assets.
+   * @param offset
+   * @param limit
+   */
+  async supportedAssets(offset: BigNumberish, limit: BigNumberish): Promise<AccountId[]> {
+    const addresses = await this.contract.supportedAssets(offset, limit);
+    return addresses.map(address => this.addressToAccountId(address));
+  }
+
+  async universeWarpers(universeId: BigNumberish, offset: BigNumberish, limit: BigNumberish): Promise<Warper[]> {
+    const [addresses, warpers] = await this.contract.universeWarpers(universeId, offset, limit);
+    return warpers.map((warper, i) => ({
+      ...pick(warper, ['name', 'universeId', 'paused']),
+      accountId: this.addressToAccountId(addresses[i]),
+      original: this.addressToAssetType(warper.original, 'erc721'), // todo: infer from blockchain
+    }));
   }
 }

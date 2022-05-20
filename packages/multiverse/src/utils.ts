@@ -1,4 +1,8 @@
-import { hexDataSlice, solidityKeccak256 } from 'ethers/lib/utils';
+import { defaultAbiCoder } from 'ethers/lib/utils';
+import { assetClasses, listingStrategies } from './constants';
+import { BigNumberish } from '@ethersproject/bignumber';
+import { Address } from './types';
+import { Assets } from '@iqprotocol/solidity-contracts-nft/typechain/contracts/metahub/Metahub';
 
 export const pick = <T, K extends keyof T>(obj: T, names: readonly K[]): Pick<T, K> => {
   const result = {} as Pick<T, K>;
@@ -12,7 +16,30 @@ export const pick = <T, K extends keyof T>(obj: T, names: readonly K[]): Pick<T,
   return result;
 };
 
-// TODO: use IQ NFT repos exports for this!
-export const solidityId = (string: string): string => {
-  return hexDataSlice(solidityKeccak256(['string'], [string]), 0, 4);
+/**
+ * Creates ERC721 Asset structure.
+ * @param token
+ * @param tokenId
+ * @param value
+ */
+export const encodeERC721Asset = (
+  token: Address,
+  tokenId: BigNumberish,
+  value: BigNumberish = 1,
+): Assets.AssetStruct => {
+  return {
+    id: { class: assetClasses.ERC721.id, data: defaultAbiCoder.encode(['address', 'uint256'], [token, tokenId]) },
+    value,
+  };
+};
+
+/**
+ * Creates Fixed Price listing strategy params structure.
+ * @param baseRate
+ */
+export const encodeFixedPriceStrategy = (baseRate: BigNumberish): { strategy: string; data: string } => {
+  return {
+    strategy: listingStrategies.FIXED_PRICE.id,
+    data: defaultAbiCoder.encode(['uint256'], [baseRate]),
+  };
 };

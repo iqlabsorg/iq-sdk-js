@@ -1,7 +1,11 @@
-import { Address, ChainAware } from './types';
-import { AccountId, AssetType, ChainId } from 'caip';
+import { Address, Asset, ChainAware, FixedPriceListingStrategyParams } from './types';
+import { AccountId, AssetId, AssetType, ChainId } from 'caip';
 import { AddressTranslator } from './address-translator';
 import { ContractResolver } from './contract-resolver';
+import { Assets, Listings } from '@iqprotocol/solidity-contracts-nft/typechain/contracts/metahub/Metahub';
+import { defaultAbiCoder } from 'ethers/lib/utils';
+import { BigNumber } from '@ethersproject/bignumber';
+import { listingStrategies } from './constants';
 
 export abstract class Adapter implements ChainAware {
   protected constructor(
@@ -13,12 +17,12 @@ export abstract class Adapter implements ChainAware {
     return this.contractResolver.getChainId();
   }
 
-  protected addressToAccountId(address: Address): AccountId {
-    return this.addressTranslator.addressToAccountId(address);
-  }
-
   protected assetClassToNamespace(assetClass: string): string {
     return this.addressTranslator.assetClassToNamespace(assetClass);
+  }
+
+  protected addressToAccountId(address: Address): AccountId {
+    return this.addressTranslator.addressToAccountId(address);
   }
 
   protected addressToAssetType(address: Address, namespace: string): AssetType {
@@ -35,5 +39,23 @@ export abstract class Adapter implements ChainAware {
 
   protected assetTypeToAddress(assetType: AssetType): Address {
     return this.addressTranslator.assetTypeToAddress(assetType);
+  }
+
+  protected assetIdToAddress(assetId: AssetId): Address {
+    return this.addressTranslator.assetIdToAddress(assetId);
+  }
+
+  protected decodeERC721AssetStruct(asset: Assets.AssetStructOutput): Asset {
+    return this.addressTranslator.decodeERC721AssetStruct(asset);
+  }
+
+  protected decodeFixedPriceListingStrategy(params: Listings.ParamsStruct): FixedPriceListingStrategyParams {
+    const [price] = defaultAbiCoder.decode(['uint256'], params.data) as [BigNumber];
+    return {
+      name: listingStrategies.FIXED_PRICE.name,
+      data: {
+        price,
+      },
+    };
   }
 }
