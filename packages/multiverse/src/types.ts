@@ -35,7 +35,7 @@ export type Listing = Pick<
   id: BigNumber;
   asset: Asset;
   strategy: FixedPriceListingStrategyParams;
-  listerAccountId: AccountId;
+  lister: AccountId;
 };
 
 export type Asset = {
@@ -44,7 +44,7 @@ export type Asset = {
 };
 
 export type Warper = Pick<WarperStructOutput, 'name' | 'universeId' | 'paused'> & {
-  accountId: AccountId;
+  self: AssetType;
   original: AssetType;
 };
 

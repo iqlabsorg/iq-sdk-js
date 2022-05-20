@@ -5,6 +5,7 @@ import { ContractResolver } from '../contract-resolver';
 import { AddressTranslator } from '../address-translator';
 import { BytesLike, ContractTransaction } from 'ethers';
 import { defaultAbiCoder, formatBytes32String } from 'ethers/lib/utils';
+import { assetClasses } from '../constants';
 
 export class WarperPresetFactoryAdapter extends Adapter {
   private readonly contract: WarperPresetFactory;
@@ -48,7 +49,7 @@ export class WarperPresetFactoryAdapter extends Adapter {
     }
 
     const { namespace, reference } = data.original.assetName;
-    if (namespace !== 'erc721') {
+    if (namespace !== assetClasses.ERC721.namespace) {
       throw new Error(`Invalid asset type: "${namespace}"! Expected: "erc721"`);
     }
 

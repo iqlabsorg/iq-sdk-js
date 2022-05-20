@@ -8,6 +8,7 @@ import { encodeERC721Asset, encodeFixedPriceStrategy, pick } from '../utils';
 import { Listings } from '../contracts/metahub/IMetahub';
 import ListingStructOutput = Listings.ListingStructOutput;
 import { IWarperManager, Metahub } from '../contracts';
+import { assetClasses } from '../constants';
 
 export class MetahubAdapter extends Adapter {
   private readonly contract: Metahub;
@@ -47,7 +48,7 @@ export class MetahubAdapter extends Adapter {
     maxLockPeriod,
     immediatePayout,
   }: AssetListingParams): Promise<ContractTransaction> {
-    if (asset.id.assetName.namespace !== 'erc721') {
+    if (asset.id.assetName.namespace !== assetClasses.ERC721.namespace) {
       throw new Error('Invalid namespace');
     }
 
@@ -108,17 +109,17 @@ export class MetahubAdapter extends Adapter {
    * @param offset
    * @param limit
    */
-  async supportedAssets(offset: BigNumberish, limit: BigNumberish): Promise<AccountId[]> {
+  async supportedAssets(offset: BigNumberish, limit: BigNumberish): Promise<AssetType[]> {
     const addresses = await this.contract.supportedAssets(offset, limit);
-    return addresses.map(address => this.addressToAccountId(address));
+    return addresses.map(address => this.addressToAssetType(address, assetClasses.ERC721.namespace));
   }
 
   async universeWarpers(universeId: BigNumberish, offset: BigNumberish, limit: BigNumberish): Promise<Warper[]> {
     const [addresses, warpers] = await this.contract.universeWarpers(universeId, offset, limit);
     return warpers.map((warper, i) => ({
       ...pick(warper, ['name', 'universeId', 'paused']),
-      accountId: this.addressToAccountId(addresses[i]),
-      original: this.addressToAssetType(warper.original, 'erc721'), // todo: infer from blockchain
+      self: this.addressToAssetType(addresses[i], assetClasses.ERC721.namespace), // todo: infer from blockchain
+      original: this.addressToAssetType(warper.original, assetClasses.ERC721.namespace), // todo: infer from blockchain
     }));
   }
 
@@ -131,7 +132,7 @@ export class MetahubAdapter extends Adapter {
       id: listingIds[i],
       asset: this.decodeERC721AssetStruct(listing.asset),
       strategy: this.decodeFixedPriceListingStrategy(listing.params),
-      listerAccountId: this.addressToAccountId(listing.lister),
+      lister: this.addressToAccountId(listing.lister),
     }));
   }
 }
