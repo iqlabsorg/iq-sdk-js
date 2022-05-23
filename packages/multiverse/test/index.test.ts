@@ -1,20 +1,21 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import hre, { ethers } from 'hardhat';
-import { ChainId } from 'caip';
+import { deployments, ethers } from 'hardhat';
+import { AccountId, ChainId } from 'caip';
 import { SignerWithAddress } from 'hardhat-deploy-ethers/signers';
 import { Multiverse } from '../src';
-import { Metahub } from '@iqprotocol/solidity-contracts-nft';
+import { MetahubAdapter } from '../src/adapters/metahub';
 
 /**
  * @group unit
  */
-describe('@iqprotocol/multiverse', () => {
+describe('Metahub Adapter', () => {
   let chainId: ChainId;
   let deployer: SignerWithAddress;
   let multiverse: Multiverse;
+  let metahub: MetahubAdapter;
 
   beforeAll(async () => {
-    //await deployments.fixture();
+    await deployments.fixture();
     deployer = await ethers.getNamedSigner('deployer');
 
     chainId = new ChainId({
@@ -23,19 +24,12 @@ describe('@iqprotocol/multiverse', () => {
     });
 
     multiverse = await Multiverse.init({ signer: deployer });
-  });
 
-  test.todo('some test to be written in the future');
+    const metahubContract = await ethers.getContract('Metahub');
+    metahub = multiverse.metahub(new AccountId({ chainId, address: metahubContract.address }));
+  });
 
   it('returns correct chain ID', async () => {
-    await expect(multiverse.getChainId()).resolves.toEqual(chainId);
-  });
-
-  it('can call fixture deployment', async () => {
-    await hre.deployments.fixture();
-
-    const metahub = await hre.ethers.getContract<Metahub>('Metahub');
-    console.log(metahub.address);
-    console.log(await metahub.baseToken());
+    await expect(metahub.getChainId()).resolves.toEqual(chainId);
   });
 });

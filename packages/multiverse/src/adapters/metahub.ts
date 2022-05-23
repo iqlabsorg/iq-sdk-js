@@ -18,9 +18,25 @@ export class MetahubAdapter extends Adapter {
     this.contract = contractResolver.resolveMetahub(accountId.address);
   }
 
-  async pauseListing(listingId: BigNumberish): Promise<ContractTransaction> {
-    return this.contract.pauseListing(listingId);
+  // Protocol Configuration
+
+  /**
+   * Returns the base token that's used for stable price denomination.
+   */
+  async baseToken(): Promise<AssetType> {
+    return this.addressToAssetType(await this.contract.baseToken(), 'erc20');
   }
+
+  /**
+   * Returns the protocol rental fee percentage.
+   */
+  async protocolRentalFeePercent(): Promise<number> {
+    return this.contract.protocolRentalFeePercent();
+  }
+
+  // Payment Management
+
+  // Warper Management
 
   /**
    * Registers a new warper.
@@ -36,11 +52,38 @@ export class MetahubAdapter extends Adapter {
   }
 
   /**
+   * Returns the list of all supported assets.
+   * @param offset Starting index.
+   * @param limit Max number of items.
+   */
+  async supportedAssets(offset: BigNumberish, limit: BigNumberish): Promise<AssetType[]> {
+    const addresses = await this.contract.supportedAssets(offset, limit);
+    return addresses.map(address => this.addressToAssetType(address, assetClasses.ERC721.namespace));
+  }
+
+  /**
+   * Returns the list of warpers belonging to the particular universe.
+   * @param universeId The universe ID.
+   * @param offset Starting index.
+   * @param limit Max number of items.
+   */
+  async universeWarpers(universeId: BigNumberish, offset: BigNumberish, limit: BigNumberish): Promise<Warper[]> {
+    const [addresses, warpers] = await this.contract.universeWarpers(universeId, offset, limit);
+    return warpers.map((warper, i) => ({
+      ...pick(warper, ['name', 'universeId', 'paused']),
+      self: this.addressToAssetType(addresses[i], assetClasses.ERC721.namespace), // todo: infer from blockchain
+      original: this.addressToAssetType(warper.original, assetClasses.ERC721.namespace), // todo: infer from blockchain
+    }));
+  }
+
+  // Listing Management
+
+  /**
    * Creates new asset listing.
-   * @param asset
-   * @param strategy
-   * @param maxLockPeriod
-   * @param immediatePayout
+   * @param asset Asset to be listed.
+   * @param strategy Listing strategy parameters.
+   * @param maxLockPeriod The maximum amount of time the original asset owner can wait before getting the asset back.
+   * @param immediatePayout Indicates whether the rental fee must be transferred to the lister on every renting.
    */
   async listAsset({
     asset,
@@ -60,19 +103,28 @@ export class MetahubAdapter extends Adapter {
   }
 
   /**
-   * Delists asset.
-   * @param listingId
+   * Marks the asset as being delisted. This operation in irreversible.
+   * After delisting, the asset can only be withdrawn when it has no active rentals.
+   * @param listingId Listing ID.
    */
   async delistAsset(listingId: BigNumberish): Promise<ContractTransaction> {
     return this.contract.delistAsset(listingId);
   }
 
   /**
-   * Withdraws listed asset.
-   * @param listingId
+   * Returns the asset back to the lister.
+   * @param listingId Listing ID.
    */
   async withdrawAsset(listingId: BigNumberish): Promise<ContractTransaction> {
     return this.contract.withdrawAsset(listingId);
+  }
+
+  /**
+   * Puts the listing on pause.
+   * @param listingId Listing ID.
+   */
+  async pauseListing(listingId: BigNumberish): Promise<ContractTransaction> {
+    return this.contract.pauseListing(listingId);
   }
 
   /**
@@ -85,42 +137,23 @@ export class MetahubAdapter extends Adapter {
   }
 
   /**
-   * Returns user listings.
-   * @param listerAccountId
-   * @param offset
-   * @param limit
+   * Returns the paginated list of currently registered listings for the particular lister account.
+   * @param lister Lister account ID.
+   * @param offset Starting index.
+   * @param limit Max number of items.
    */
-  async userListings(listerAccountId: AccountId, offset: BigNumberish, limit: BigNumberish): Promise<Listing[]> {
-    return this.normalizeListings(this.contract.userListings(this.accountIdToAddress(listerAccountId), offset, limit));
+  async userListings(lister: AccountId, offset: BigNumberish, limit: BigNumberish): Promise<Listing[]> {
+    return this.normalizeListings(this.contract.userListings(this.accountIdToAddress(lister), offset, limit));
   }
 
   /**
-   * Returns asset listings.
-   * @param assetAccountId
-   * @param offset
-   * @param limit
+   * Returns the paginated list of currently registered listings for the particular original asset address.
+   * @param asset Original asset.
+   * @param offset Starting index.
+   * @param limit Max number of items.
    */
-  async assetListings(assetAccountId: AccountId, offset: BigNumberish, limit: BigNumberish): Promise<Listing[]> {
-    return this.normalizeListings(this.contract.assetListings(this.accountIdToAddress(assetAccountId), offset, limit));
-  }
-
-  /**
-   * Returns the list of supported assets.
-   * @param offset
-   * @param limit
-   */
-  async supportedAssets(offset: BigNumberish, limit: BigNumberish): Promise<AssetType[]> {
-    const addresses = await this.contract.supportedAssets(offset, limit);
-    return addresses.map(address => this.addressToAssetType(address, assetClasses.ERC721.namespace));
-  }
-
-  async universeWarpers(universeId: BigNumberish, offset: BigNumberish, limit: BigNumberish): Promise<Warper[]> {
-    const [addresses, warpers] = await this.contract.universeWarpers(universeId, offset, limit);
-    return warpers.map((warper, i) => ({
-      ...pick(warper, ['name', 'universeId', 'paused']),
-      self: this.addressToAssetType(addresses[i], assetClasses.ERC721.namespace), // todo: infer from blockchain
-      original: this.addressToAssetType(warper.original, assetClasses.ERC721.namespace), // todo: infer from blockchain
-    }));
+  async assetListings(asset: AssetType, offset: BigNumberish, limit: BigNumberish): Promise<Listing[]> {
+    return this.normalizeListings(this.contract.assetListings(this.assetTypeToAddress(asset), offset, limit));
   }
 
   private async normalizeListings(
@@ -135,4 +168,6 @@ export class MetahubAdapter extends Adapter {
       lister: this.addressToAccountId(listing.lister),
     }));
   }
+
+  // Renting Management
 }
