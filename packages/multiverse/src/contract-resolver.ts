@@ -19,6 +19,8 @@ import {
   WarperPresetFactory__factory,
 } from './contracts';
 import { ChainId } from 'caip';
+import { IERC721__factory } from './contracts/factories/@openzeppelin/contracts/token/ERC721';
+import { IERC721 } from './contracts/@openzeppelin/contracts/token/ERC721';
 
 export class ContractResolver implements ChainAware {
   constructor(private readonly signer: Signer) {}
@@ -58,5 +60,9 @@ export class ContractResolver implements ChainAware {
 
   resolveWarper(address: Address): IWarper {
     return IWarper__factory.connect(address, this.signer);
+  }
+
+  resolveERC721Asset(address: Address): IERC721 {
+    return IERC721__factory.connect(address, this.signer);
   }
 }

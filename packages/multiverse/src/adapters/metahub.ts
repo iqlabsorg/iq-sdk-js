@@ -4,6 +4,7 @@ import { Adapter } from '../adapter';
 import { AddressTranslator } from '../address-translator';
 import { AccountId, AssetType } from 'caip';
 import {
+  Asset,
   AssetListingParams,
   Listing,
   RentalAgreement,
@@ -84,6 +85,21 @@ export class MetahubAdapter extends Adapter {
   }
 
   // Listing Management
+
+  /**
+   * Approves Metahub to take an asset from lister account during listing process.
+   * @param asset
+   */
+  async approveListing(asset: Asset): Promise<ContractTransaction> {
+    // todo: DRY! Use util function to check asset support and encode it.
+    if (asset.id.assetName.namespace !== assetClasses.ERC721.namespace) {
+      throw new Error('Invalid namespace');
+    }
+
+    return this.contractResolver
+      .resolveERC721Asset(this.assetIdToAddress(asset.id))
+      .approve(this.contract.address, asset.id.tokenId);
+  }
 
   /**
    * Creates new asset listing.
