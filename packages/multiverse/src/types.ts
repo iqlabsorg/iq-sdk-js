@@ -1,9 +1,7 @@
 import { AccountId, AssetId, AssetType, ChainId } from 'caip';
 import { BigNumber, Overrides as BaseOverrides } from 'ethers';
 import { BigNumberish } from '@ethersproject/bignumber';
-import { Listings, Warpers, Rentings } from './contracts/metahub/IMetahub';
-import ListingStructOutput = Listings.ListingStructOutput;
-import WarperStructOutput = Warpers.WarperStructOutput;
+import { Listings, Rentings, Warpers } from './contracts/metahub/IMetahub';
 
 export type Address = string;
 
@@ -29,7 +27,7 @@ export type FixedPriceListingStrategyParams = {
 };
 
 export type Listing = Pick<
-  ListingStructOutput,
+  Listings.ListingStructOutput,
   'maxLockPeriod' | 'lockedTill' | 'immediatePayout' | 'delisted' | 'paused'
 > & {
   id: BigNumber;
@@ -43,13 +41,29 @@ export type Asset = {
   value: BigNumberish;
 };
 
-export type Warper = Pick<WarperStructOutput, 'name' | 'universeId' | 'paused'> & {
+export type Warper = Pick<Warpers.WarperStructOutput, 'name' | 'universeId' | 'paused'> & {
   self: AssetType;
   original: AssetType;
 };
 
-export type EstimateRentParams = Pick<Rentings.ParamsStruct, 'listingId' | 'rentalPeriod'> & {
+export type RentingEstimationParams = Pick<Rentings.ParamsStruct, 'listingId' | 'rentalPeriod'> & {
   warper: AssetType;
   renter: AccountId;
   paymentToken: AssetType;
+};
+
+export type RentingParams = RentingEstimationParams & { maxPaymentAmount: BigNumberish };
+
+export type RentalFees = Pick<
+  Rentings.RentalFeesStructOutput,
+  'total' | 'protocolFee' | 'listerBaseFee' | 'listerPremium' | 'universeBaseFee' | 'universePremium'
+>;
+
+export type RentalAgreement = Pick<
+  Rentings.AgreementStructOutput,
+  'collectionId' | 'listingId' | 'startTime' | 'endTime'
+> & {
+  id: BigNumber;
+  warpedAsset: Asset;
+  renter: AccountId;
 };

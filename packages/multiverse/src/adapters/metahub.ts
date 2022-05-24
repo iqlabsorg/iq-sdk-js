@@ -3,10 +3,17 @@ import { BigNumber, BigNumberish, ContractTransaction } from 'ethers';
 import { Adapter } from '../adapter';
 import { AddressTranslator } from '../address-translator';
 import { AccountId, AssetType } from 'caip';
-import { AssetListingParams, Listing, Warper } from '../types';
+import {
+  AssetListingParams,
+  Listing,
+  RentalAgreement,
+  RentalFees,
+  RentingEstimationParams,
+  RentingParams,
+  Warper,
+} from '../types';
 import { encodeERC721Asset, encodeFixedPriceStrategy, pick } from '../utils';
 import { Listings } from '../contracts/metahub/IMetahub';
-import ListingStructOutput = Listings.ListingStructOutput;
 import { IWarperManager, Metahub } from '../contracts';
 import { assetClasses } from '../constants';
 
@@ -80,17 +87,10 @@ export class MetahubAdapter extends Adapter {
 
   /**
    * Creates new asset listing.
-   * @param asset Asset to be listed.
-   * @param strategy Listing strategy parameters.
-   * @param maxLockPeriod The maximum amount of time the original asset owner can wait before getting the asset back.
-   * @param immediatePayout Indicates whether the rental fee must be transferred to the lister on every renting.
+   * @param params Listing params.
    */
-  async listAsset({
-    asset,
-    strategy,
-    maxLockPeriod,
-    immediatePayout,
-  }: AssetListingParams): Promise<ContractTransaction> {
+  async listAsset(params: AssetListingParams): Promise<ContractTransaction> {
+    const { asset, strategy, maxLockPeriod, immediatePayout } = params;
     if (asset.id.assetName.namespace !== assetClasses.ERC721.namespace) {
       throw new Error('Invalid namespace');
     }
@@ -156,11 +156,69 @@ export class MetahubAdapter extends Adapter {
     return this.normalizeListings(this.contract.assetListings(this.assetTypeToAddress(asset), offset, limit));
   }
 
+  // Renting Management
+
+  /**
+   * Evaluates renting params and returns rental fee breakdown.
+   * @param params
+   */
+  async estimateRent(params: RentingEstimationParams): Promise<RentalFees> {
+    const { listingId, paymentToken, rentalPeriod, renter, warper } = params;
+    const fees = await this.contract.estimateRent({
+      listingId,
+      rentalPeriod,
+      warper: this.assetTypeToAddress(warper),
+      renter: this.accountIdToAddress(renter),
+      paymentToken: this.assetTypeToAddress(paymentToken),
+    });
+
+    return pick(fees, ['total', 'protocolFee', 'listerBaseFee', 'listerPremium', 'universeBaseFee', 'universePremium']);
+  }
+
+  /**
+   * Performs renting operation.
+   * @param params Renting parameters.
+   */
+  async rent(params: RentingParams): Promise<ContractTransaction> {
+    const { listingId, paymentToken, rentalPeriod, renter, warper, maxPaymentAmount } = params;
+    return this.contract.rent(
+      {
+        listingId,
+        rentalPeriod,
+        warper: this.assetTypeToAddress(warper),
+        renter: this.accountIdToAddress(renter),
+        paymentToken: this.assetTypeToAddress(paymentToken),
+      },
+      maxPaymentAmount,
+    );
+  }
+
+  /**
+   * Returns the paginated list of currently registered rental agreements for particular renter account.
+   * @param renter Renter account ID.
+   * @param offset Starting index.
+   * @param limit Max number of items.
+   */
+  async userRentalAgreements(renter: AccountId, offset: BigNumberish, limit: BigNumberish): Promise<RentalAgreement[]> {
+    const [agreementIds, agreements] = await this.contract.userRentalAgreements(
+      this.accountIdToAddress(renter),
+      offset,
+      limit,
+    );
+
+    return agreements.map((agreement, i) => ({
+      ...pick(agreement, ['collectionId', 'listingId', 'startTime', 'endTime']),
+      id: agreementIds[i],
+      warpedAsset: this.decodeERC721AssetStruct(agreement.warpedAsset),
+      renter: this.addressToAccountId(agreement.renter),
+    }));
+  }
+
   private async normalizeListings(
     listingsRequest: Promise<[BigNumber[], Listings.ListingStructOutput[]]>,
   ): Promise<Listing[]> {
     const [listingIds, listings] = await listingsRequest;
-    return listings.map((listing: ListingStructOutput, i) => ({
+    return listings.map((listing, i) => ({
       ...pick(listing, ['maxLockPeriod', 'lockedTill', 'immediatePayout', 'delisted', 'paused']),
       id: listingIds[i],
       asset: this.decodeERC721AssetStruct(listing.asset),
@@ -168,6 +226,4 @@ export class MetahubAdapter extends Adapter {
       lister: this.addressToAccountId(listing.lister),
     }));
   }
-
-  // Renting Management
 }
