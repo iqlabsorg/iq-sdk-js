@@ -26,7 +26,7 @@
     "prepublish": "lerna run prepublish",
     "prepare": "husky install",
     "docs": "run-s docs:clean docs:generate",
-    "docs:generate": "typedoc --options typedoc.js --entryPointStrategy packages . --out docs && touch docs/.nojekyll",
+    "docs:generate": "NODE_OPTIONS=--max_old_space_size=8192 typedoc --options typedoc.js --entryPointStrategy packages . --out docs && touch docs/.nojekyll",
     "docs:clean": "rimraf docs"
   },
   "lint-staged": {

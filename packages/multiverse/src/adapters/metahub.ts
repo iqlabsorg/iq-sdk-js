@@ -4,6 +4,7 @@ import { Adapter } from '../adapter';
 import { AddressTranslator } from '../address-translator';
 import { AccountId, AssetType } from 'caip';
 import {
+  AccountBalance,
   Asset,
   AssetListingParams,
   Listing,
@@ -43,6 +44,83 @@ export class MetahubAdapter extends Adapter {
   }
 
   // Payment Management
+
+  /**
+   * Returns the amount of `token`, currently accumulated by the user.
+   * @param account The account to query the balance for.
+   * @param token The token in which the balance is nominated.
+   * @return Balance of `token`.
+   */
+  async balance(account: AccountId, token: AssetType): Promise<BigNumber> {
+    return this.contract.balance(this.accountIdToAddress(account), this.assetTypeToAddress(token));
+  }
+
+  /**
+   * Returns the list of user balances in various tokens.
+   * @param account The account to query the balance for.
+   * @return List of balances.
+   */
+  async balances(account: AccountId): Promise<AccountBalance[]> {
+    const balances = await this.contract.balances(this.accountIdToAddress(account));
+    return balances.map(balance => ({
+      amount: balance.amount,
+      token: this.addressToAssetType(balance.token, 'erc20'),
+    }));
+  }
+
+  /**
+   * Returns the amount of `token`, currently accumulated by the universe.
+   * @param universeId The universe ID.
+   * @param token The token address.
+   * @return Balance of `token`.
+   */
+  async universeBalance(universeId: BigNumberish, token: AssetType): Promise<BigNumber> {
+    return this.contract.universeBalance(universeId, this.assetTypeToAddress(token));
+  }
+
+  /**
+   * Returns the list of universe balances in various tokens.
+   * @param universeId The universe ID.
+   * @return List of balances.
+   */
+  async universeBalances(universeId: BigNumberish): Promise<AccountBalance[]> {
+    const balances = await this.contract.universeBalances(universeId);
+    return balances.map(balance => ({
+      amount: balance.amount,
+      token: this.addressToAssetType(balance.token, 'erc20'),
+    }));
+  }
+
+  /**
+   * Transfers the specific `amount` of `token` from a user balance to an arbitrary address.
+   * @param token The balance token.
+   * @param amount The amount to be withdrawn.
+   * @param to The payee account.
+   */
+  async withdrawFunds(token: AssetType, amount: BigNumberish, to: AccountId): Promise<ContractTransaction> {
+    return this.contract.withdrawFunds(this.assetTypeToAddress(token), amount, this.accountIdToAddress(to));
+  }
+
+  /**
+   * Transfers the specific `amount` of `token` from a universe balance to an arbitrary address.
+   * @param universeId The universe ID.
+   * @param token The balance token.
+   * @param amount The amount to be withdrawn.
+   * @param to The payee account.
+   */
+  async withdrawUniverseFunds(
+    universeId: BigNumberish,
+    token: AssetType,
+    amount: BigNumberish,
+    to: AccountId,
+  ): Promise<ContractTransaction> {
+    return this.contract.withdrawUniverseFunds(
+      universeId,
+      this.assetTypeToAddress(token),
+      amount,
+      this.accountIdToAddress(to),
+    );
+  }
 
   // Warper Management
 

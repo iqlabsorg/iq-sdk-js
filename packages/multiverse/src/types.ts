@@ -2,6 +2,7 @@ import { AccountId, AssetId, AssetType, ChainId } from 'caip';
 import { BigNumber, Overrides as BaseOverrides } from 'ethers';
 import { BigNumberish } from '@ethersproject/bignumber';
 import { Listings, Rentings, Warpers } from './contracts/metahub/IMetahub';
+import { Accounts } from './contracts/accounting/IPaymentManager';
 
 export type Address = string;
 
@@ -66,4 +67,8 @@ export type RentalAgreement = Pick<
   id: BigNumber;
   warpedAsset: Asset;
   renter: AccountId;
+};
+
+export type AccountBalance = Pick<Accounts.BalanceStructOutput, 'amount'> & {
+  token: AssetType;
 };
