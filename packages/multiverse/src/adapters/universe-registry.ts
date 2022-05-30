@@ -1,10 +1,11 @@
-import { AccountId } from 'caip';
+import { AccountId, AssetType } from 'caip';
 import { ContractResolver } from '../contract-resolver';
 import { BigNumberish, ContractTransaction } from 'ethers';
 import { AddressTranslator } from '../address-translator';
 import { Adapter } from '../adapter';
 import { pick } from '../utils';
 import { UniverseRegistry } from '../contracts';
+import { assetClasses } from '../constants';
 
 export class UniverseRegistryAdapter extends Adapter {
   private readonly contract: UniverseRegistry;
@@ -75,8 +76,8 @@ export class UniverseRegistryAdapter extends Adapter {
   /**
    * Returns the Universe token address.
    */
-  async universeToken(): Promise<AccountId> {
-    return this.addressToAccountId(await this.contract.universeToken());
+  async universeToken(): Promise<AssetType> {
+    return this.addressToAssetType(await this.contract.universeToken(), assetClasses.ERC721.namespace);
   }
 
   /**
