@@ -139,6 +139,7 @@ export interface AssetClassRegistryInterface extends utils.Interface {
     "AssetClassRegistered(bytes4,address,address)": EventFragment;
     "AssetClassVaultChanged(bytes4,address)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
+    "Initialized(uint8)": EventFragment;
     "Upgraded(address)": EventFragment;
   };
 
@@ -149,6 +150,7 @@ export interface AssetClassRegistryInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "AssetClassRegistered"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "AssetClassVaultChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
 }
 
@@ -209,6 +211,13 @@ export type BeaconUpgradedEvent = TypedEvent<
 >;
 
 export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
+
+export interface InitializedEventObject {
+  version: number;
+}
+export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
+
+export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
 export interface UpgradedEventObject {
   implementation: string;
@@ -440,6 +449,9 @@ export interface AssetClassRegistry extends BaseContract {
       beacon?: string | null
     ): BeaconUpgradedEventFilter;
     BeaconUpgraded(beacon?: string | null): BeaconUpgradedEventFilter;
+
+    "Initialized(uint8)"(version?: null): InitializedEventFilter;
+    Initialized(version?: null): InitializedEventFilter;
 
     "Upgraded(address)"(implementation?: string | null): UpgradedEventFilter;
     Upgraded(implementation?: string | null): UpgradedEventFilter;

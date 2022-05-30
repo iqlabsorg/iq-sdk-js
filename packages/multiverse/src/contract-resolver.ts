@@ -5,6 +5,14 @@ import {
   ACL__factory,
   AssetClassRegistry,
   AssetClassRegistry__factory,
+  IERC20,
+  IERC20__factory,
+  IERC20Metadata,
+  IERC20Metadata__factory,
+  IERC721,
+  IERC721__factory,
+  IERC721Metadata,
+  IERC721Metadata__factory,
   IWarper,
   IWarper__factory,
   ListingStrategyRegistry,
@@ -19,14 +27,6 @@ import {
   WarperPresetFactory__factory,
 } from './contracts';
 import { ChainId } from 'caip';
-import { IERC721__factory } from './contracts/factories/@openzeppelin/contracts/token/ERC721';
-import { IERC721 } from './contracts/@openzeppelin/contracts/token/ERC721';
-import { IERC20 } from './contracts/@openzeppelin/contracts/token/ERC20';
-import { IERC20__factory } from './contracts/factories/@openzeppelin/contracts/token/ERC20';
-import { IERC20Metadata__factory } from './contracts/factories/@openzeppelin/contracts/token/ERC20/extensions';
-import { IERC20Metadata } from './contracts/@openzeppelin/contracts/token/ERC20/extensions';
-import { IERC721Metadata } from './contracts/@openzeppelin/contracts/token/ERC721/extensions';
-import { IERC721Metadata__factory } from './contracts/factories/@openzeppelin/contracts/token/ERC721/extensions';
 
 export class ContractResolver implements ChainAware {
   constructor(private readonly signer: Signer) {}

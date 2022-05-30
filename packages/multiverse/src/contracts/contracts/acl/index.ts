@@ -2,5 +2,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { ACL } from "./ACL";
+export type { AccessControlledUpgradeable } from "./AccessControlledUpgradeable";
 export type { IACL } from "./IACL";
 export type { Roles } from "./Roles";

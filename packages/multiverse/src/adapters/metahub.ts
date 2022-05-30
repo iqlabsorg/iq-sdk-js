@@ -16,7 +16,7 @@ import {
   Warper,
 } from '../types';
 import { encodeERC721Asset, encodeFixedPriceStrategy, pick } from '../utils';
-import { Listings } from '../contracts/metahub/IMetahub';
+import { Listings } from '../contracts/contracts/metahub/IMetahub';
 import { IWarperManager, Metahub } from '../contracts';
 import { assetClasses } from '../constants';
 
@@ -146,8 +146,10 @@ export class MetahubAdapter extends Adapter {
    * @param limit Max number of items.
    */
   async supportedAssets(offset: BigNumberish, limit: BigNumberish): Promise<AssetType[]> {
-    const addresses = await this.contract.supportedAssets(offset, limit);
-    return addresses.map(address => this.addressToAssetType(address, assetClasses.ERC721.namespace));
+    const [addresses, assetConfigs] = await this.contract.supportedAssets(offset, limit);
+    return assetConfigs.map((assetConfig, i) =>
+      this.addressToAssetType(addresses[i], this.assetClassToNamespace(assetConfig.assetClass)),
+    );
   }
 
   /**
@@ -158,11 +160,14 @@ export class MetahubAdapter extends Adapter {
    */
   async universeWarpers(universeId: BigNumberish, offset: BigNumberish, limit: BigNumberish): Promise<Warper[]> {
     const [addresses, warpers] = await this.contract.universeWarpers(universeId, offset, limit);
-    return warpers.map((warper, i) => ({
-      ...pick(warper, ['name', 'universeId', 'paused']),
-      self: this.addressToAssetType(addresses[i], assetClasses.ERC721.namespace), // todo: infer from blockchain
-      original: this.addressToAssetType(warper.original, assetClasses.ERC721.namespace), // todo: infer from blockchain
-    }));
+    return warpers.map((warper, i) => {
+      const namespace = this.assetClassToNamespace(warper.assetClass);
+      return {
+        ...pick(warper, ['name', 'universeId', 'paused']),
+        self: this.addressToAssetType(addresses[i], namespace),
+        original: this.addressToAssetType(warper.original, namespace),
+      };
+    });
   }
 
   // Listing Management

@@ -16,11 +16,6 @@ const _abi = [
     type: "error",
   },
   {
-    inputs: [],
-    name: "RentalFeeSlippage",
-    type: "error",
-  },
-  {
     anonymous: false,
     inputs: [
       {

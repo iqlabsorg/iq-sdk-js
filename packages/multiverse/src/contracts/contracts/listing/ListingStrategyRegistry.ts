@@ -133,6 +133,7 @@ export interface ListingStrategyRegistryInterface extends utils.Interface {
   events: {
     "AdminChanged(address,address)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
+    "Initialized(uint8)": EventFragment;
     "ListingStrategyControllerChanged(bytes4,address)": EventFragment;
     "ListingStrategyRegistered(bytes4,address)": EventFragment;
     "Upgraded(address)": EventFragment;
@@ -140,6 +141,7 @@ export interface ListingStrategyRegistryInterface extends utils.Interface {
 
   getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(
     nameOrSignatureOrTopic: "ListingStrategyControllerChanged"
   ): EventFragment;
@@ -167,6 +169,13 @@ export type BeaconUpgradedEvent = TypedEvent<
 >;
 
 export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
+
+export interface InitializedEventObject {
+  version: number;
+}
+export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
+
+export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
 export interface ListingStrategyControllerChangedEventObject {
   strategyId: string;
@@ -390,6 +399,9 @@ export interface ListingStrategyRegistry extends BaseContract {
       beacon?: string | null
     ): BeaconUpgradedEventFilter;
     BeaconUpgraded(beacon?: string | null): BeaconUpgradedEventFilter;
+
+    "Initialized(uint8)"(version?: null): InitializedEventFilter;
+    Initialized(version?: null): InitializedEventFilter;
 
     "ListingStrategyControllerChanged(bytes4,address)"(
       strategyId?: BytesLike | null,

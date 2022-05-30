@@ -2,7 +2,7 @@ import { defaultAbiCoder } from 'ethers/lib/utils';
 import { assetClasses, listingStrategies } from './constants';
 import { BigNumberish } from '@ethersproject/bignumber';
 import { Address } from './types';
-import { Assets } from './contracts/metahub/Metahub';
+import { Assets } from './contracts/contracts/metahub/Metahub';
 
 export const pick = <T, K extends keyof T>(obj: T, names: readonly K[]): Pick<T, K> => {
   const result = {} as Pick<T, K>;

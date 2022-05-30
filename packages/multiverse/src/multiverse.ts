@@ -1,11 +1,9 @@
 import { Signer } from 'ethers';
 import { ContractResolver } from './contract-resolver';
 import { AccountId, ChainId } from 'caip';
-import { MetahubAdapter } from './adapters/metahub';
-import { UniverseRegistryAdapter } from './adapters/universe-registry';
 import { AddressTranslator } from './address-translator';
 import { ChainAware } from './types';
-import { WarperPresetFactoryAdapter } from './adapters/warper-preset-factory';
+import { MetahubAdapter, UniverseRegistryAdapter, WarperPresetFactoryAdapter } from './adapters';
 
 type MultiverseParams = {
   signer: Signer;

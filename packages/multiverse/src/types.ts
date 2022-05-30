@@ -1,8 +1,7 @@
 import { AccountId, AssetId, AssetType, ChainId } from 'caip';
 import { BigNumber, Overrides as BaseOverrides } from 'ethers';
 import { BigNumberish } from '@ethersproject/bignumber';
-import { Listings, Rentings, Warpers } from './contracts/metahub/IMetahub';
-import { Accounts } from './contracts/accounting/IPaymentManager';
+import { Accounts, Listings, Rentings, Warpers } from './contracts/contracts/metahub/IMetahub';
 
 export type Address = string;
 

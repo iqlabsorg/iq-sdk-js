@@ -2,5 +2,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export { ACL__factory } from "./ACL__factory";
+export { AccessControlledUpgradeable__factory } from "./AccessControlledUpgradeable__factory";
 export { IACL__factory } from "./IACL__factory";
 export { Roles__factory } from "./Roles__factory";

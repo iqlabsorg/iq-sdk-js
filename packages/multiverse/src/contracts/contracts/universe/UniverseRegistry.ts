@@ -197,6 +197,7 @@ export interface UniverseRegistryInterface extends utils.Interface {
   events: {
     "AdminChanged(address,address)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
+    "Initialized(uint8)": EventFragment;
     "UniverseCreated(uint256,string)": EventFragment;
     "UniverseNameChanged(uint256,string)": EventFragment;
     "UniverseRentalFeeChanged(uint256,uint16)": EventFragment;
@@ -205,6 +206,7 @@ export interface UniverseRegistryInterface extends utils.Interface {
 
   getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "UniverseCreated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "UniverseNameChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "UniverseRentalFeeChanged"): EventFragment;
@@ -231,6 +233,13 @@ export type BeaconUpgradedEvent = TypedEvent<
 >;
 
 export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
+
+export interface InitializedEventObject {
+  version: number;
+}
+export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
+
+export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
 export interface UniverseCreatedEventObject {
   universeId: BigNumber;
@@ -543,6 +552,9 @@ export interface UniverseRegistry extends BaseContract {
       beacon?: string | null
     ): BeaconUpgradedEventFilter;
     BeaconUpgraded(beacon?: string | null): BeaconUpgradedEventFilter;
+
+    "Initialized(uint8)"(version?: null): InitializedEventFilter;
+    Initialized(version?: null): InitializedEventFilter;
 
     "UniverseCreated(uint256,string)"(
       universeId?: BigNumberish | null,

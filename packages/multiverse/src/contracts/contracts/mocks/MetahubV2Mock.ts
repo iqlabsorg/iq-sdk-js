@@ -41,6 +41,18 @@ export declare namespace Assets {
     id: Assets.AssetIdStructOutput;
     value: BigNumber;
   };
+
+  export type AssetConfigStruct = {
+    controller: string;
+    assetClass: BytesLike;
+    vault: string;
+  };
+
+  export type AssetConfigStructOutput = [string, string, string] & {
+    controller: string;
+    assetClass: string;
+    vault: string;
+  };
 }
 
 export declare namespace Listings {
@@ -85,25 +97,28 @@ export declare namespace Listings {
 
 export declare namespace Warpers {
   export type WarperStruct = {
+    assetClass: BytesLike;
     original: string;
+    paused: boolean;
     controller: string;
     name: string;
     universeId: BigNumberish;
-    paused: boolean;
   };
 
   export type WarperStructOutput = [
     string,
     string,
+    boolean,
     string,
-    BigNumber,
-    boolean
+    string,
+    BigNumber
   ] & {
+    assetClass: string;
     original: string;
+    paused: boolean;
     controller: string;
     name: string;
     universeId: BigNumber;
-    paused: boolean;
   };
 }
 
@@ -703,6 +718,7 @@ export interface MetahubV2MockInterface extends utils.Interface {
     "AssetRented(uint256,address,uint256,tuple,uint32,uint32)": EventFragment;
     "AssetWithdrawn(uint256,address,tuple)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
+    "Initialized(uint8)": EventFragment;
     "ListingPaused(uint256)": EventFragment;
     "ListingUnpaused(uint256)": EventFragment;
     "ProtocolEarned(address,uint256)": EventFragment;
@@ -712,7 +728,7 @@ export interface MetahubV2MockInterface extends utils.Interface {
     "UserEarned(address,uint8,address,uint256)": EventFragment;
     "WarperDeregistered(address)": EventFragment;
     "WarperPaused(address)": EventFragment;
-    "WarperRegistered(uint256,address,address)": EventFragment;
+    "WarperRegistered(uint256,address,address,bytes4)": EventFragment;
     "WarperUnpaused(address)": EventFragment;
   };
 
@@ -722,6 +738,7 @@ export interface MetahubV2MockInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "AssetRented"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "AssetWithdrawn"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ListingPaused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ListingUnpaused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ProtocolEarned"): EventFragment;
@@ -814,6 +831,13 @@ export type BeaconUpgradedEvent = TypedEvent<
 >;
 
 export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
+
+export interface InitializedEventObject {
+  version: number;
+}
+export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
+
+export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
 export interface ListingPausedEventObject {
   listingId: BigNumber;
@@ -911,9 +935,10 @@ export interface WarperRegisteredEventObject {
   universeId: BigNumber;
   warper: string;
   original: string;
+  assetClass: string;
 }
 export type WarperRegisteredEvent = TypedEvent<
-  [BigNumber, string, string],
+  [BigNumber, string, string, string],
   WarperRegisteredEventObject
 >;
 
@@ -1103,7 +1128,7 @@ export interface MetahubV2Mock extends BaseContract {
       offset: BigNumberish,
       limit: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[string[]]>;
+    ): Promise<[string[], Assets.AssetConfigStructOutput[]]>;
 
     universeBalance(
       universeId: BigNumberish,
@@ -1358,7 +1383,7 @@ export interface MetahubV2Mock extends BaseContract {
     offset: BigNumberish,
     limit: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<string[]>;
+  ): Promise<[string[], Assets.AssetConfigStructOutput[]]>;
 
   universeBalance(
     universeId: BigNumberish,
@@ -1607,7 +1632,7 @@ export interface MetahubV2Mock extends BaseContract {
       offset: BigNumberish,
       limit: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<string[]>;
+    ): Promise<[string[], Assets.AssetConfigStructOutput[]]>;
 
     universeBalance(
       universeId: BigNumberish,
@@ -1785,6 +1810,9 @@ export interface MetahubV2Mock extends BaseContract {
     ): BeaconUpgradedEventFilter;
     BeaconUpgraded(beacon?: string | null): BeaconUpgradedEventFilter;
 
+    "Initialized(uint8)"(version?: null): InitializedEventFilter;
+    Initialized(version?: null): InitializedEventFilter;
+
     "ListingPaused(uint256)"(
       listingId?: BigNumberish | null
     ): ListingPausedEventFilter;
@@ -1848,15 +1876,17 @@ export interface MetahubV2Mock extends BaseContract {
     "WarperPaused(address)"(warper?: string | null): WarperPausedEventFilter;
     WarperPaused(warper?: string | null): WarperPausedEventFilter;
 
-    "WarperRegistered(uint256,address,address)"(
+    "WarperRegistered(uint256,address,address,bytes4)"(
       universeId?: BigNumberish | null,
       warper?: string | null,
-      original?: string | null
+      original?: string | null,
+      assetClass?: null
     ): WarperRegisteredEventFilter;
     WarperRegistered(
       universeId?: BigNumberish | null,
       warper?: string | null,
-      original?: string | null
+      original?: string | null,
+      assetClass?: null
     ): WarperRegisteredEventFilter;
 
     "WarperUnpaused(address)"(

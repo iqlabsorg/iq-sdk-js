@@ -31,11 +31,6 @@ const _abi = [
     type: "error",
   },
   {
-    inputs: [],
-    name: "RentalFeeSlippage",
-    type: "error",
-  },
-  {
     inputs: [
       {
         internalType: "address",
@@ -426,6 +421,12 @@ const _abi = [
         name: "original",
         type: "address",
       },
+      {
+        indexed: false,
+        internalType: "bytes4",
+        name: "assetClass",
+        type: "bytes4",
+      },
     ],
     name: "WarperRegistered",
     type: "event",
@@ -652,9 +653,19 @@ const _abi = [
       {
         components: [
           {
+            internalType: "bytes4",
+            name: "assetClass",
+            type: "bytes4",
+          },
+          {
             internalType: "address",
             name: "original",
             type: "address",
+          },
+          {
+            internalType: "bool",
+            name: "paused",
+            type: "bool",
           },
           {
             internalType: "contract IWarperController",
@@ -670,11 +681,6 @@ const _abi = [
             internalType: "uint256",
             name: "universeId",
             type: "uint256",
-          },
-          {
-            internalType: "bool",
-            name: "paused",
-            type: "bool",
           },
         ],
         internalType: "struct Warpers.Warper[]",
@@ -1482,6 +1488,28 @@ const _abi = [
         name: "",
         type: "address[]",
       },
+      {
+        components: [
+          {
+            internalType: "contract IAssetController",
+            name: "controller",
+            type: "address",
+          },
+          {
+            internalType: "bytes4",
+            name: "assetClass",
+            type: "bytes4",
+          },
+          {
+            internalType: "contract IAssetVault",
+            name: "vault",
+            type: "address",
+          },
+        ],
+        internalType: "struct Assets.AssetConfig[]",
+        name: "",
+        type: "tuple[]",
+      },
     ],
     stateMutability: "view",
     type: "function",
@@ -1588,9 +1616,19 @@ const _abi = [
       {
         components: [
           {
+            internalType: "bytes4",
+            name: "assetClass",
+            type: "bytes4",
+          },
+          {
             internalType: "address",
             name: "original",
             type: "address",
+          },
+          {
+            internalType: "bool",
+            name: "paused",
+            type: "bool",
           },
           {
             internalType: "contract IWarperController",
@@ -1606,11 +1644,6 @@ const _abi = [
             internalType: "uint256",
             name: "universeId",
             type: "uint256",
-          },
-          {
-            internalType: "bool",
-            name: "paused",
-            type: "bool",
           },
         ],
         internalType: "struct Warpers.Warper[]",
@@ -1919,9 +1952,19 @@ const _abi = [
       {
         components: [
           {
+            internalType: "bytes4",
+            name: "assetClass",
+            type: "bytes4",
+          },
+          {
             internalType: "address",
             name: "original",
             type: "address",
+          },
+          {
+            internalType: "bool",
+            name: "paused",
+            type: "bool",
           },
           {
             internalType: "contract IWarperController",
@@ -1937,11 +1980,6 @@ const _abi = [
             internalType: "uint256",
             name: "universeId",
             type: "uint256",
-          },
-          {
-            internalType: "bool",
-            name: "paused",
-            type: "bool",
           },
         ],
         internalType: "struct Warpers.Warper",

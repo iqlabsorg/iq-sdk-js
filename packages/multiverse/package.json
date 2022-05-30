@@ -18,15 +18,18 @@
   "scripts": {
     "build": "rollup -c",
     "build:clean": "rimraf dist",
-    "prepublish": "NODE_ENV=production yarn build",
+    "prepublish": "NODE_ENV=production run-s typechain build",
     "start": "rollup -cw",
-    "test": "jest --group=unit"
+    "test": "jest --group=unit",
+    "typechain": "run-s typechain:clean typechain:generate",
+    "typechain:clean": "rimraf src/contracts",
+    "typechain:generate": "typechain --target ethers-v5 --out-dir src/contracts './node_modules/@iqprotocol/solidity-contracts-nft/artifacts/**/*.json'"
   },
   "dependencies": {
     "caip": "^1.1.0"
   },
   "devDependencies": {
-    "@iqprotocol/solidity-contracts-nft": "0.1.1",
+    "@iqprotocol/solidity-contracts-nft": "0.1.3",
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@latest",
     "@openzeppelin/hardhat-upgrades": "^1.17.0",
     "@typechain/ethers-v5": "^10.0.0",

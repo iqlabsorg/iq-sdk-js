@@ -1,7 +1,7 @@
 import { AccountId, AssetId, AssetType, ChainId } from 'caip';
 import { Address, Asset } from './types';
 import { assetClasses } from './constants';
-import { Assets } from './contracts/metahub/Metahub';
+import { Assets } from './contracts/contracts/metahub/IMetahub';
 import { defaultAbiCoder } from 'ethers/lib/utils';
 import { BigNumber } from '@ethersproject/bignumber';
 
