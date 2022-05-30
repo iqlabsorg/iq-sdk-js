@@ -225,6 +225,23 @@ export class MetahubAdapter extends Adapter {
   }
 
   /**
+   * Lifts the listing pause.
+   * @param listingId Listing ID.
+   */
+  async unpauseListing(listingId: BigNumberish): Promise<ContractTransaction> {
+    return this.contract.unpauseListing(listingId);
+  }
+
+  /**
+   * Returns the listing details by the listing ID.
+   * @param listingId Listing ID.
+   * @return Listing details.
+   */
+  async listing(listingId: BigNumberish): Promise<Listing> {
+    return this.normalizeListing(listingId, await this.contract.listingInfo(listingId));
+  }
+
+  /**
    * Returns the paginated list of currently registered listings.
    * @param offset Starting index.
    * @param limit Max number of items.
@@ -311,16 +328,31 @@ export class MetahubAdapter extends Adapter {
     }));
   }
 
+  /**
+   * Resolves listings and normalizes them.
+   * @param listingsRequest
+   * @private
+   */
   private async normalizeListings(
     listingsRequest: Promise<[BigNumber[], Listings.ListingStructOutput[]]>,
   ): Promise<Listing[]> {
     const [listingIds, listings] = await listingsRequest;
-    return listings.map((listing, i) => ({
+    return listings.map((listing, i) => this.normalizeListing(listingIds[i], listing));
+  }
+
+  /**
+   * Normalises listing structure.
+   * @param listingId
+   * @param listing
+   * @private
+   */
+  private normalizeListing(listingId: BigNumberish, listing: Listings.ListingStructOutput): Listing {
+    return {
       ...pick(listing, ['maxLockPeriod', 'lockedTill', 'immediatePayout', 'delisted', 'paused']),
-      id: listingIds[i],
+      id: BigNumber.from(listingId),
       asset: this.decodeERC721AssetStruct(listing.asset),
       strategy: this.decodeFixedPriceListingStrategy(listing.params),
       lister: this.addressToAccountId(listing.lister),
-    }));
+    };
   }
 }
