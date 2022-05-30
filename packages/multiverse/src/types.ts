@@ -72,3 +72,10 @@ export type RentalAgreement = Pick<
 export type AccountBalance = Pick<Accounts.BalanceStructOutput, 'amount'> & {
   token: AssetType;
 };
+
+export type BaseToken = {
+  type: AssetType;
+  name: string;
+  symbol: string;
+  decimals: number;
+};

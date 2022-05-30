@@ -21,6 +21,12 @@ import {
 import { ChainId } from 'caip';
 import { IERC721__factory } from './contracts/factories/@openzeppelin/contracts/token/ERC721';
 import { IERC721 } from './contracts/@openzeppelin/contracts/token/ERC721';
+import { IERC20 } from './contracts/@openzeppelin/contracts/token/ERC20';
+import { IERC20__factory } from './contracts/factories/@openzeppelin/contracts/token/ERC20';
+import { IERC20Metadata__factory } from './contracts/factories/@openzeppelin/contracts/token/ERC20/extensions';
+import { IERC20Metadata } from './contracts/@openzeppelin/contracts/token/ERC20/extensions';
+import { IERC721Metadata } from './contracts/@openzeppelin/contracts/token/ERC721/extensions';
+import { IERC721Metadata__factory } from './contracts/factories/@openzeppelin/contracts/token/ERC721/extensions';
 
 export class ContractResolver implements ChainAware {
   constructor(private readonly signer: Signer) {}
@@ -64,5 +70,17 @@ export class ContractResolver implements ChainAware {
 
   resolveERC721Asset(address: Address): IERC721 {
     return IERC721__factory.connect(address, this.signer);
+  }
+
+  resolveERC721Metadata(address: Address): IERC721Metadata {
+    return IERC721Metadata__factory.connect(address, this.signer);
+  }
+
+  resolveERC20Asset(address: Address): IERC20 {
+    return IERC20__factory.connect(address, this.signer);
+  }
+
+  resolveERC20Metadata(address: Address): IERC20Metadata {
+    return IERC20Metadata__factory.connect(address, this.signer);
   }
 }

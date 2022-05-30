@@ -58,4 +58,19 @@ export abstract class Adapter implements ChainAware {
       },
     };
   }
+
+  protected async getERC20AssetMetadata(assetType: AssetType): Promise<{
+    name: string;
+    symbol: string;
+    decimals: number;
+  }> {
+    const metadata = this.contractResolver.resolveERC20Metadata(this.assetTypeToAddress(assetType));
+    const [name, symbol, decimals]: [string, string, number] = await Promise.all([
+      metadata.name(),
+      metadata.symbol(),
+      metadata.decimals(),
+    ]);
+
+    return { name, symbol, decimals };
+  }
 }

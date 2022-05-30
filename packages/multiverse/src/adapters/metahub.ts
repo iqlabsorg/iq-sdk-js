@@ -7,6 +7,7 @@ import {
   AccountBalance,
   Asset,
   AssetListingParams,
+  BaseToken,
   Listing,
   RentalAgreement,
   RentalFees,
@@ -32,8 +33,10 @@ export class MetahubAdapter extends Adapter {
   /**
    * Returns the base token that's used for stable price denomination.
    */
-  async baseToken(): Promise<AssetType> {
-    return this.addressToAssetType(await this.contract.baseToken(), 'erc20');
+  async baseToken(): Promise<BaseToken> {
+    const type = this.addressToAssetType(await this.contract.baseToken(), 'erc20');
+    const metadata = await this.getERC20AssetMetadata(type);
+    return { type, ...metadata };
   }
 
   /**
