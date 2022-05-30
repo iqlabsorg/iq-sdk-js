@@ -35,7 +35,7 @@ export class MetahubAdapter extends Adapter {
    */
   async baseToken(): Promise<BaseToken> {
     const type = this.addressToAssetType(await this.contract.baseToken(), 'erc20');
-    const metadata = await this.getERC20AssetMetadata(type);
+    const metadata = await this.erc20AssetMetadata(type);
     return { type, ...metadata };
   }
 
@@ -171,15 +171,39 @@ export class MetahubAdapter extends Adapter {
    * Approves Metahub to take an asset from lister account during listing process.
    * @param asset
    */
-  async approveListing(asset: Asset): Promise<ContractTransaction> {
+  async approveForListing(asset: Asset): Promise<ContractTransaction> {
     // todo: DRY! Use util function to check asset support and encode it.
     if (asset.id.assetName.namespace !== assetClasses.ERC721.namespace) {
+      //eslint-disable-next-line sonarjs/no-duplicate-string
       throw new Error('Invalid namespace');
     }
 
     return this.contractResolver
       .resolveERC721Asset(this.assetIdToAddress(asset.id))
       .approve(this.contract.address, asset.id.tokenId);
+  }
+
+  /**
+   * Checks whether the asset is approved for listing by the owner.
+   * Returns `true` if the asset can be listed, and `false` if the required approval is missing.
+   * @param asset
+   */
+  async isApprovedForListing(asset: Asset): Promise<boolean> {
+    // todo: DRY! Use util function to check asset support and encode it.
+    if (asset.id.assetName.namespace !== assetClasses.ERC721.namespace) {
+      throw new Error('Invalid namespace');
+    }
+
+    // Check particular token allowance.
+    const assetContract = this.contractResolver.resolveERC721Asset(this.assetIdToAddress(asset.id));
+    //eslint-disable-next-line no-extra-parens
+    if ((await assetContract.getApproved(asset.id.tokenId)) === this.contract.address) {
+      return true;
+    }
+
+    // Check operator.
+    const assumedOwner = await this.signerAddress();
+    return assetContract.isApprovedForAll(assumedOwner, this.contract.address);
   }
 
   /**

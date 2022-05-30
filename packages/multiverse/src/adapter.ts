@@ -59,7 +59,7 @@ export abstract class Adapter implements ChainAware {
     };
   }
 
-  protected async getERC20AssetMetadata(assetType: AssetType): Promise<{
+  protected async erc20AssetMetadata(assetType: AssetType): Promise<{
     name: string;
     symbol: string;
     decimals: number;
@@ -72,5 +72,9 @@ export abstract class Adapter implements ChainAware {
     ]);
 
     return { name, symbol, decimals };
+  }
+
+  protected async signerAddress(): Promise<Address> {
+    return this.contractResolver.signerAddress();
   }
 }
