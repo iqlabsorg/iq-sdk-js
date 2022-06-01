@@ -5,6 +5,7 @@ import { AddressTranslator } from '../address-translator';
 import { AccountId, AssetType } from 'caip';
 import {
   AccountBalance,
+  Address,
   Asset,
   AssetListingParams,
   BaseToken,
@@ -16,7 +17,7 @@ import {
   Warper,
 } from '../types';
 import { encodeERC721Asset, encodeFixedPriceStrategy, pick } from '../utils';
-import { Listings, Rentings } from '../contracts/contracts/metahub/IMetahub';
+import { Listings, Rentings, Warpers } from '../contracts/contracts/metahub/IMetahub';
 import { IWarperManager, Metahub } from '../contracts';
 import { assetClasses } from '../constants';
 
@@ -141,6 +142,39 @@ export class MetahubAdapter extends Adapter {
   }
 
   /**
+   * Deletes warper registration information.
+   * All current rental agreements with the warper will stay intact, but the new rentals won't be possible.
+   * @param warper Warper reference.
+   */
+  async deregisterWarper(warper: AssetType): Promise<ContractTransaction> {
+    return this.contract.deregisterWarper(this.assetTypeToAddress(warper));
+  }
+
+  /**
+   * Puts the warper on pause.
+   * @param warper Warper reference.
+   */
+  async pauseWarper(warper: AssetType): Promise<ContractTransaction> {
+    return this.contract.pauseWarper(this.assetTypeToAddress(warper));
+  }
+
+  /**
+   * Lifts the warper pause.
+   * @param warper Warper reference.
+   */
+  async unpauseWarper(warper: AssetType): Promise<ContractTransaction> {
+    return this.contract.unpauseWarper(this.assetTypeToAddress(warper));
+  }
+
+  /**
+   * Returns the number of currently supported assets.
+   * @return Asset count.
+   */
+  async supportedAssetCount(): Promise<BigNumber> {
+    return this.contract.supportedAssetCount();
+  }
+
+  /**
    * Returns the list of all supported assets.
    * @param offset Starting index.
    * @param limit Max number of items.
@@ -153,6 +187,15 @@ export class MetahubAdapter extends Adapter {
   }
 
   /**
+   * Returns the number of warpers belonging to the particular universe.
+   * @param universeId The universe ID.
+   * @return Warper count.
+   */
+  async universeWarperCount(universeId: BigNumberish): Promise<BigNumber> {
+    return this.contract.universeWarperCount(universeId);
+  }
+
+  /**
    * Returns the list of warpers belonging to the particular universe.
    * @param universeId The universe ID.
    * @param offset Starting index.
@@ -160,14 +203,38 @@ export class MetahubAdapter extends Adapter {
    */
   async universeWarpers(universeId: BigNumberish, offset: BigNumberish, limit: BigNumberish): Promise<Warper[]> {
     const [addresses, warpers] = await this.contract.universeWarpers(universeId, offset, limit);
-    return warpers.map((warper, i) => {
-      const namespace = this.assetClassToNamespace(warper.assetClass);
-      return {
-        ...pick(warper, ['name', 'universeId', 'paused']),
-        self: this.addressToAssetType(addresses[i], namespace),
-        original: this.addressToAssetType(warper.original, namespace),
-      };
-    });
+    return warpers.map((warper, i) => this.normalizeWarper(addresses[i], warper));
+  }
+
+  /**
+   * Returns the number of warpers associated with the particular original asset.
+   * @param asset Original asset reference.
+   * @return Warper count.
+   */
+  async assetWarperCount(asset: AssetType): Promise<BigNumber> {
+    return this.contract.assetWarperCount(this.assetTypeToAddress(asset));
+  }
+
+  /**
+   * Returns the list of warpers associated with the particular original asset.
+   * @param original Original asset reference.
+   * @param offset Starting index.
+   * @param limit Max number of items.
+   */
+  async assetWarpers(original: AssetType, offset: BigNumberish, limit: BigNumberish): Promise<Warper[]> {
+    const [addresses, warpers] = await this.contract.assetWarpers(this.assetTypeToAddress(original), offset, limit);
+    return warpers.map((warper, i) => this.normalizeWarper(addresses[i], warper));
+  }
+
+  /**
+   * Returns registered warper details.
+   * @param warper Warper reference.
+   * @return Warper details.
+   */
+  async warper(warper: AssetType): Promise<Warper> {
+    const warperAddress = this.assetTypeToAddress(warper);
+    const warperInfo = await this.contract.warperInfo(warperAddress);
+    return this.normalizeWarper(warperAddress, warperInfo);
   }
 
   // Listing Management
@@ -291,8 +358,8 @@ export class MetahubAdapter extends Adapter {
   }
 
   /**
-   * Returns the paginated list of currently registered listings for the particular original asset address.
-   * @param asset Original asset.
+   * Returns the paginated list of currently registered listings for the particular original asset.
+   * @param asset Original asset reference.
    * @param offset Starting index.
    * @param limit Max number of items.
    */
@@ -372,6 +439,12 @@ export class MetahubAdapter extends Adapter {
     return agreements.map((agreement, i) => this.normalizeRentalAgreement(rentalIds[i], agreement));
   }
 
+  /**
+   * Normalizes rental agreement structure.
+   * @param rentalId
+   * @param agreement
+   * @private
+   */
   private normalizeRentalAgreement(rentalId: BigNumberish, agreement: Rentings.AgreementStructOutput): RentalAgreement {
     return {
       ...pick(agreement, ['collectionId', 'listingId', 'startTime', 'endTime']),
@@ -394,7 +467,7 @@ export class MetahubAdapter extends Adapter {
   }
 
   /**
-   * Normalises listing structure.
+   * Normalizes listing structure.
    * @param listingId
    * @param listing
    * @private
@@ -406,6 +479,21 @@ export class MetahubAdapter extends Adapter {
       asset: this.decodeERC721AssetStruct(listing.asset),
       strategy: this.decodeFixedPriceListingStrategy(listing.params),
       lister: this.addressToAccountId(listing.lister),
+    };
+  }
+
+  /**
+   * Normalizes warper structure.
+   * @param warperAddress
+   * @param warper
+   * @private
+   */
+  private normalizeWarper(warperAddress: Address, warper: Warpers.WarperStructOutput): Warper {
+    const namespace = this.assetClassToNamespace(warper.assetClass);
+    return {
+      ...pick(warper, ['name', 'universeId', 'paused']),
+      self: this.addressToAssetType(warperAddress, namespace),
+      original: this.addressToAssetType(warper.original, namespace),
     };
   }
 }
