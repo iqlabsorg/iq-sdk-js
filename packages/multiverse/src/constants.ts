@@ -9,10 +9,10 @@ export const solidityId = (string: string): string => {
 export type AssetClassNamespace = 'erc721';
 export type AssetClass = 'ERC721';
 export const assetClasses: Record<AssetClass, { id: string; namespace: AssetClassNamespace }> = {
-  ERC721: { id: solidityId('ERC721'), namespace: 'erc721' },
+  ERC721: { id: solidityId('ERC721'), namespace: 'erc721' }, // id: 0x73ad2146
 };
 
 export type ListingStrategyName = 'FIXED_PRICE';
 export const listingStrategies: Record<ListingStrategyName, { id: string; name: ListingStrategyName }> = {
-  FIXED_PRICE: { id: solidityId('FIXED_PRICE'), name: 'FIXED_PRICE' },
+  FIXED_PRICE: { id: solidityId('FIXED_PRICE'), name: 'FIXED_PRICE' }, // id: 0xce977739
 };

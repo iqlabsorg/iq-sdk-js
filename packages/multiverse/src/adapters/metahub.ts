@@ -16,7 +16,7 @@ import {
   Warper,
 } from '../types';
 import { encodeERC721Asset, encodeFixedPriceStrategy, pick } from '../utils';
-import { Listings } from '../contracts/contracts/metahub/IMetahub';
+import { Listings, Rentings } from '../contracts/contracts/metahub/IMetahub';
 import { IWarperManager, Metahub } from '../contracts';
 import { assetClasses } from '../constants';
 
@@ -267,7 +267,8 @@ export class MetahubAdapter extends Adapter {
    * @return Listing details.
    */
   async listing(listingId: BigNumberish): Promise<Listing> {
-    return this.normalizeListing(listingId, await this.contract.listingInfo(listingId));
+    const listing = await this.contract.listingInfo(listingId);
+    return this.normalizeListing(listingId, listing);
   }
 
   /**
@@ -337,24 +338,47 @@ export class MetahubAdapter extends Adapter {
   }
 
   /**
+   * Returns the rental agreement details.
+   * @param rentalId Rental agreement ID.
+   * @return Rental agreement details.
+   */
+  async rentalAgreement(rentalId: BigNumberish): Promise<RentalAgreement> {
+    const rentalAgreement = await this.contract.rentalAgreementInfo(rentalId);
+    return this.normalizeRentalAgreement(rentalId, rentalAgreement);
+  }
+
+  /**
+   * Returns the number of currently registered rental agreements for particular renter account.
+   * @param renter Renter account ID.
+   * @return Rental agreement count.
+   */
+  async userRentalCount(renter: AccountId): Promise<BigNumber> {
+    return this.contract.userRentalCount(this.accountIdToAddress(renter));
+  }
+
+  /**
    * Returns the paginated list of currently registered rental agreements for particular renter account.
    * @param renter Renter account ID.
    * @param offset Starting index.
    * @param limit Max number of items.
    */
   async userRentalAgreements(renter: AccountId, offset: BigNumberish, limit: BigNumberish): Promise<RentalAgreement[]> {
-    const [agreementIds, agreements] = await this.contract.userRentalAgreements(
+    const [rentalIds, agreements] = await this.contract.userRentalAgreements(
       this.accountIdToAddress(renter),
       offset,
       limit,
     );
 
-    return agreements.map((agreement, i) => ({
+    return agreements.map((agreement, i) => this.normalizeRentalAgreement(rentalIds[i], agreement));
+  }
+
+  private normalizeRentalAgreement(rentalId: BigNumberish, agreement: Rentings.AgreementStructOutput): RentalAgreement {
+    return {
       ...pick(agreement, ['collectionId', 'listingId', 'startTime', 'endTime']),
-      id: agreementIds[i],
+      id: BigNumber.from(rentalId),
       warpedAsset: this.decodeERC721AssetStruct(agreement.warpedAsset),
       renter: this.addressToAccountId(agreement.renter),
-    }));
+    };
   }
 
   /**
