@@ -4,12 +4,13 @@ export type {
   FixedPriceListingStrategyParams,
   Listing,
   Asset,
-  Warper,
+  RegisteredWarper,
   RentingEstimationParams,
   RentingParams,
   RentalFees,
   RentalAgreement,
   AccountBalance,
+  BaseToken,
 } from './types';
 export { assetClasses, listingStrategies } from './constants';
 export { Multiverse } from './multiverse';

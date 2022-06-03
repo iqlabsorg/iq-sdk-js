@@ -41,7 +41,7 @@ export type Asset = {
   value: BigNumberish;
 };
 
-export type Warper = Pick<Warpers.WarperStructOutput, 'name' | 'universeId' | 'paused'> & {
+export type RegisteredWarper = Pick<Warpers.WarperStructOutput, 'name' | 'universeId' | 'paused'> & {
   self: AssetType;
   original: AssetType;
 };

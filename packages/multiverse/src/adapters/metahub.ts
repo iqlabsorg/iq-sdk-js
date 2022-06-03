@@ -10,11 +10,11 @@ import {
   AssetListingParams,
   BaseToken,
   Listing,
+  RegisteredWarper,
   RentalAgreement,
   RentalFees,
   RentingEstimationParams,
   RentingParams,
-  Warper,
 } from '../types';
 import { encodeERC721Asset, encodeFixedPriceStrategy, pick } from '../utils';
 import { Listings, Rentings, Warpers } from '../contracts/contracts/metahub/IMetahub';
@@ -201,7 +201,11 @@ export class MetahubAdapter extends Adapter {
    * @param offset Starting index.
    * @param limit Max number of items.
    */
-  async universeWarpers(universeId: BigNumberish, offset: BigNumberish, limit: BigNumberish): Promise<Warper[]> {
+  async universeWarpers(
+    universeId: BigNumberish,
+    offset: BigNumberish,
+    limit: BigNumberish,
+  ): Promise<RegisteredWarper[]> {
     const [addresses, warpers] = await this.contract.universeWarpers(universeId, offset, limit);
     return warpers.map((warper, i) => this.normalizeWarper(addresses[i], warper));
   }
@@ -217,13 +221,30 @@ export class MetahubAdapter extends Adapter {
 
   /**
    * Returns the list of warpers associated with the particular original asset.
-   * @param original Original asset reference.
+   * @param asset Original asset reference.
    * @param offset Starting index.
    * @param limit Max number of items.
    */
-  async assetWarpers(original: AssetType, offset: BigNumberish, limit: BigNumberish): Promise<Warper[]> {
-    const [addresses, warpers] = await this.contract.assetWarpers(this.assetTypeToAddress(original), offset, limit);
+  async assetWarpers(asset: AssetType, offset: BigNumberish, limit: BigNumberish): Promise<RegisteredWarper[]> {
+    const [addresses, warpers] = await this.contract.assetWarpers(this.assetTypeToAddress(asset), offset, limit);
     return warpers.map((warper, i) => this.normalizeWarper(addresses[i], warper));
+  }
+
+  /**
+   * @dev Returns warper preset factory address.
+   */
+  async warperPresetFactory(): Promise<AccountId> {
+    return this.addressToAccountId(await this.contract.warperPresetFactory());
+  }
+
+  /**
+   * Checks whether `account` is the `warper` admin.
+   * @param warper Warper reference.
+   * @param account Admin account ID.
+   * @return True if the `account` is the admin of the `warper` and false otherwise.
+   */
+  async isWarperAdmin(warper: AssetType, account: AccountId): Promise<boolean> {
+    return this.contract.isWarperAdmin(this.assetTypeToAddress(warper), this.accountIdToAddress(account));
   }
 
   /**
@@ -231,7 +252,7 @@ export class MetahubAdapter extends Adapter {
    * @param warper Warper reference.
    * @return Warper details.
    */
-  async warper(warper: AssetType): Promise<Warper> {
+  async warper(warper: AssetType): Promise<RegisteredWarper> {
     const warperAddress = this.assetTypeToAddress(warper);
     const warperInfo = await this.contract.warperInfo(warperAddress);
     return this.normalizeWarper(warperAddress, warperInfo);
@@ -339,12 +360,29 @@ export class MetahubAdapter extends Adapter {
   }
 
   /**
+   * Returns the number of currently registered listings.
+   * @return Listing count.
+   */
+  async listingCount(): Promise<BigNumber> {
+    return this.contract.listingCount();
+  }
+
+  /**
    * Returns the paginated list of currently registered listings.
    * @param offset Starting index.
    * @param limit Max number of items.
    */
   async listings(offset: BigNumberish, limit: BigNumberish): Promise<Listing[]> {
     return this.normalizeListings(this.contract.listings(offset, limit));
+  }
+
+  /**
+   * Returns the number of currently registered listings for the particular lister account.
+   * @param lister Lister account ID.
+   * @return Listing count.
+   */
+  async userListingCount(lister: AccountId): Promise<BigNumber> {
+    return this.contract.userListingCount(this.accountIdToAddress(lister));
   }
 
   /**
@@ -355,6 +393,15 @@ export class MetahubAdapter extends Adapter {
    */
   async userListings(lister: AccountId, offset: BigNumberish, limit: BigNumberish): Promise<Listing[]> {
     return this.normalizeListings(this.contract.userListings(this.accountIdToAddress(lister), offset, limit));
+  }
+
+  /**
+   * Returns the number of currently registered listings for the particular original asset.
+   * @param asset Original asset reference.
+   * @return Listing count.
+   */
+  async assetListingCount(asset: AssetType): Promise<BigNumber> {
+    return this.contract.assetListingCount(this.assetTypeToAddress(asset));
   }
 
   /**
@@ -488,7 +535,7 @@ export class MetahubAdapter extends Adapter {
    * @param warper
    * @private
    */
-  private normalizeWarper(warperAddress: Address, warper: Warpers.WarperStructOutput): Warper {
+  private normalizeWarper(warperAddress: Address, warper: Warpers.WarperStructOutput): RegisteredWarper {
     const namespace = this.assetClassToNamespace(warper.assetClass);
     return {
       ...pick(warper, ['name', 'universeId', 'paused']),
