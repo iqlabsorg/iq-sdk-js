@@ -13,6 +13,7 @@ The SDK is modular, meaning application developers can select specific packages 
 
 | Package                                                                                            |                                                                                                 |
 |:---------------------------------------------------------------------------------------------------|:------------------------------------------------------------------------------------------------|
+| [`@iqprotocol/multiverse`](https://www.npmjs.com/package/@iqprotocol/multiverse)                   | ![npm (scoped)](https://img.shields.io/npm/v/@iqprotocol/multiverse?style=flat-square)          |
 | [`@iqprotocol/enterprise`](https://www.npmjs.com/package/@iqprotocol/enterprise)                   | ![npm (scoped)](https://img.shields.io/npm/v/@iqprotocol/enterprise?style=flat-square)          |
 | [`@iqprotocol/account`](https://www.npmjs.com/package/@iqprotocol/account)                         | ![npm (scoped)](https://img.shields.io/npm/v/@iqprotocol/account?style=flat-square)             |
 | [`@iqprotocol/discovery`](https://www.npmjs.com/package/@iqprotocol/discovery)                     | ![npm (scoped)](https://img.shields.io/npm/v/@iqprotocol/discovery?style=flat-square)           |
