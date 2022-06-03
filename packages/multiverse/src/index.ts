@@ -1,3 +1,6 @@
+/**
+ * @module multiverse
+ */
 export type {
   Address,
   AssetListingParams,

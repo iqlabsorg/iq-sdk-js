@@ -18,7 +18,12 @@ export class Multiverse implements ChainAware {
     this.addressTranslator = new AddressTranslator(chainId);
   }
 
-  static async init({ signer }: MultiverseParams): Promise<Multiverse> {
+  /**
+   * Multiverse connection initializer.
+   * @param params
+   */
+  static async init(params: MultiverseParams): Promise<Multiverse> {
+    const { signer } = params;
     const chainId = await signer.getChainId();
     return new Multiverse(signer, new ChainId({ namespace: 'eip155', reference: chainId.toString() }));
   }
@@ -27,16 +32,28 @@ export class Multiverse implements ChainAware {
     return Promise.resolve(this.chainId);
   }
 
+  /**
+   * Resolves the universe registry adapter.
+   * @param accountId Universe registry account ID.
+   */
   universeRegistry(accountId: AccountId): UniverseRegistryAdapter {
     this.addressTranslator.assertSameChainId(accountId.chainId);
     return new UniverseRegistryAdapter(accountId, this.contractResolver, this.addressTranslator);
   }
 
+  /**
+   * Resolves the metahub registry adapter.
+   * @param accountId Metahub account ID.
+   */
   metahub(accountId: AccountId): MetahubAdapter {
     this.addressTranslator.assertSameChainId(accountId.chainId);
     return new MetahubAdapter(accountId, this.contractResolver, this.addressTranslator);
   }
 
+  /**
+   * Resolves the warper preset factory adapter.
+   * @param accountId Warper preset factory account ID.
+   */
   warperPresetFactory(accountId: AccountId): WarperPresetFactoryAdapter {
     this.addressTranslator.assertSameChainId(accountId.chainId);
     return new WarperPresetFactoryAdapter(accountId, this.contractResolver, this.addressTranslator);
