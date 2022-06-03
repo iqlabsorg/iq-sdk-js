@@ -1,5 +1,4 @@
 import { deployments, ethers } from 'hardhat';
-import 'hardhat-deploy-ethers';
 import { formatUnits, parseUnits } from 'ethers/lib/utils';
 import {
   AccountState,

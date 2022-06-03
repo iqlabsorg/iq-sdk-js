@@ -1,6 +1,5 @@
 import { HardhatUserConfig } from 'hardhat/types';
 import 'hardhat-deploy';
-import 'hardhat-deploy-ethers';
 import '@iqprotocol/solidity-contracts-nft/tasks';
 import '@openzeppelin/hardhat-upgrades';
 import '@nomiclabs/hardhat-ethers';

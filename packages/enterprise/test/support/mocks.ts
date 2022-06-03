@@ -78,7 +78,7 @@ export const blockchainServiceMock: jest.Mocked<BlockchainService> = {
   swapOut: jest.fn(),
 };
 
-export const blockchainProviderMock: jest.Mocked<BlockchainProvider> = {
+export const blockchainProviderMock: jest.Mocked<BlockchainProvider<unknown>> = {
   service: jest.fn().mockReturnValue(blockchainServiceMock),
   enterprise: jest.fn().mockReturnValue(blockchainEnterpriseMock),
   deployEnterprise: jest.fn(),

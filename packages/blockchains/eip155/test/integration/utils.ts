@@ -1,4 +1,4 @@
-import hre from 'hardhat';
+import { ethers } from 'hardhat';
 import { ContractReceipt, ContractTransaction } from 'ethers';
 import { Address, BlockchainProvider } from '@iqprotocol/abstract-blockchain';
 import { BigNumberish } from '@ethersproject/bignumber';
@@ -13,13 +13,13 @@ export const getEnterprise = async (
     deploymentBlockNumber,
   );
   const enterpriseAddress = events[0].args.deployed;
-  return (await hre.ethers.getContractFactory('Enterprise')).attach(enterpriseAddress) as Enterprise;
+  return (await ethers.getContractFactory('Enterprise')).attach(enterpriseAddress) as Enterprise;
 };
 
 export const getPowerToken = async (enterprise: Enterprise, deploymentBlockNumber: number): Promise<PowerToken> => {
   const events = await enterprise.queryFilter(enterprise.filters.ServiceRegistered(null), deploymentBlockNumber);
   const powerTokenAddress = events[0].args.powerToken;
-  return (await hre.ethers.getContractFactory('PowerToken')).attach(powerTokenAddress) as PowerToken;
+  return (await ethers.getContractFactory('PowerToken')).attach(powerTokenAddress) as PowerToken;
 };
 
 export const baseRate = (
@@ -42,10 +42,9 @@ export const wait = async (txPromise: Promise<ContractTransaction>): Promise<Con
   (await txPromise).wait();
 
 export const mineBlock = async (timestamp = 0): Promise<unknown> =>
-  hre.ethers.provider.send('evm_mine', timestamp > 0 ? [timestamp] : []);
+  ethers.provider.send('evm_mine', timestamp > 0 ? [timestamp] : []);
 
-export const latestBlockTimestamp = async (): Promise<number> =>
-  (await hre.ethers.provider.getBlock('latest')).timestamp;
+export const latestBlockTimestamp = async (): Promise<number> => (await ethers.provider.getBlock('latest')).timestamp;
 
 export const waitBlockchainTime = async (seconds: number): Promise<void> => {
   const time = await latestBlockTimestamp();

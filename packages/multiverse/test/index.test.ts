@@ -1,9 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { deployments, ethers } from 'hardhat';
 import { AccountId, ChainId } from 'caip';
-import { SignerWithAddress } from 'hardhat-deploy-ethers/signers';
-import { Multiverse } from '../src';
-import { MetahubAdapter } from '../src/adapters/metahub';
+import { Multiverse, MetahubAdapter } from '../src';
+import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 
 /**
  * @group unit

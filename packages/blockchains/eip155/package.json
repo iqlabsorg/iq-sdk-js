@@ -33,11 +33,11 @@
   },
   "devDependencies": {
     "@iqprotocol/solidity-contracts": "https://github.com/iqlabsorg/iq-smart-contracts#476d0e4705ecb4d90938411f1e32533d7fcaa307",
+    "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@latest",
     "@typechain/ethers-v5": "^10.0.0",
     "ethers": "^5.6.0",
     "hardhat": "^2.6.5",
-    "hardhat-deploy": "^0.9.3",
-    "hardhat-deploy-ethers": "^0.3.0-beta.13",
+    "hardhat-deploy": "^0.11.10",
     "typechain": "^8.0.0"
   },
   "peerDependencies": {
