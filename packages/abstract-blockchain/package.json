@@ -1,13 +1,13 @@
 {
   "name": "@iqprotocol/abstract-blockchain",
-  "version": "0.13.1",
+  "version": "0.15.0",
   "bugs": "https://github.com/iqlabsorg/iq-sdk-js/issues",
   "repository": {
     "type": "git",
     "url": "https://github.com/iqlabsorg/iq-sdk-js"
   },
   "license": "MIT",
-  "author": "IQ Labs (https://iqlabs.org)",
+  "author": "IQ Labs (https://iq.space)",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "typings": "dist/esm/index.d.ts",
@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@ethersproject/bignumber": "^5.3.0",
-    "caip": "^1.0.0"
+    "caip": "^1.1.0"
   },
   "publishConfig": {
     "access": "public"

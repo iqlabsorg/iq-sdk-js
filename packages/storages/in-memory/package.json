@@ -1,13 +1,13 @@
 {
   "name": "@iqprotocol/in-memory-storage",
-  "version": "0.13.1",
+  "version": "0.14.0",
   "bugs": "https://github.com/iqlabsorg/iq-sdk-js/issues",
   "repository": {
     "type": "git",
     "url": "https://github.com/iqlabsorg/iq-sdk-js"
   },
   "license": "MIT",
-  "author": "IQ Labs (https://iqlabs.org)",
+  "author": "IQ Labs (https://iq.space)",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "typings": "dist/esm/index.d.ts",
@@ -23,7 +23,7 @@
     "test": "jest --group=unit"
   },
   "dependencies": {
-    "@iqprotocol/abstract-storage": "^0.13.1"
+    "@iqprotocol/abstract-storage": "^0.14.0"
   },
   "publishConfig": {
     "access": "public"

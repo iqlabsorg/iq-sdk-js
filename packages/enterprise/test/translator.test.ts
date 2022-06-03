@@ -50,7 +50,7 @@ describe('Translators', () => {
     const reference = '0x6A1f07F09952851fB0AEF2b37e502347688Ea074';
     const assetName = { namespace: 'erc721', reference };
     const assetType = new AssetType({ chainId, assetName });
-    const assetId = new AssetId({ ...assetType.toJson(), tokenId });
+    const assetId = new AssetId({ ...assetType.toJSON(), tokenId });
     const assetMismatchError = new Error(`Asset mismatch! Expected asset: ${assetType.assetName.toString()}`);
 
     beforeAll(() => {

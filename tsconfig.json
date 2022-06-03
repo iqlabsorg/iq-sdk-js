@@ -12,6 +12,7 @@
       "@iqprotocol/eip155": ["blockchains/eip155/src"],
       "@iqprotocol/energy": ["energy/src"],
       "@iqprotocol/enterprise": ["enterprise/src"],
+      "@iqprotocol/multiverse": ["multiverse/src"],
       "@iqprotocol/in-memory-storage": ["storages/in-memory/src"],
       "@iqprotocol/postgres-storage": ["storages/postgres/src"]
     }

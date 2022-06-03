@@ -277,7 +277,7 @@ export interface BlockchainService<Transaction = unknown> extends ChainAware {
  * class CustomBlockchainProvider implements BlockchainProvider {}
  * ```
  */
-export interface BlockchainProvider<Transaction = unknown> extends ChainAware {
+export interface BlockchainProvider<Transaction> extends ChainAware {
   enterprise(enterpriseAddress: Address): BlockchainEnterprise<Transaction>;
 
   service(serviceAddress: Address): BlockchainService<Transaction>;
