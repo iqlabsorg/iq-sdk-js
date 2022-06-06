@@ -27,8 +27,11 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
 
-      - name: Install deps and build (with cache)
+      - name: Install dependencies (with cache)
         uses: bahmutov/npm-install@v1
+
+      - name: Build packages
+        run: yarn build
 
       - name: Unit tests
         run: yarn test
@@ -51,7 +54,7 @@ jobs:
         with:
           node-version: '16'
 
-      - name: Install deps and build (with cache)
+      - name: Install dependencies (with cache)
         uses: bahmutov/npm-install@v1
 
       - name: Generate docs

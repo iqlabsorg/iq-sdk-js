@@ -16,9 +16,9 @@
     "dist"
   ],
   "scripts": {
-    "build": "rollup -c",
+    "build": "typechain && rollup -c",
     "build:clean": "rimraf dist",
-    "prepublish": "NODE_ENV=production run-s typechain build",
+    "prepublish": "NODE_ENV=production build",
     "start": "rollup -cw",
     "test": "jest --group=unit",
     "test:integration": "jest --group=integration",
