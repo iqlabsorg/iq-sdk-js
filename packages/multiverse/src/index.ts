@@ -1,6 +1,7 @@
 /**
  * @module multiverse
  */
+export { AccountId, ChainId, AssetType, AssetId } from 'caip';
 export type {
   Address,
   AssetListingParams,
