@@ -261,6 +261,28 @@ export class MetahubAdapter extends Adapter {
   // Listing Management
 
   /**
+   * Sets payment token allowance. Allows Metahub to spend specified tokens to cover rental fees.
+   * @param paymentToken ERC20 payment token.
+   * @param amount Allowance amount.
+   */
+  async approveForRentalPayment(paymentToken: AssetType, amount: BigNumberish): Promise<ContractTransaction> {
+    return this.contractResolver
+      .resolveERC20Asset(this.assetTypeToAddress(paymentToken))
+      .approve(this.contract.address, amount);
+  }
+
+  /**
+   * Returns current Metahub allowance in specified payment tokens for specific payer account.
+   * @param paymentToken ERC20 payment token.
+   * @param payer Payer account ID.
+   */
+  async paymentTokenAllowance(paymentToken: AssetType, payer: AccountId): Promise<BigNumber> {
+    return this.contractResolver
+      .resolveERC20Asset(this.assetTypeToAddress(paymentToken))
+      .allowance(this.accountIdToAddress(payer), this.contract.address);
+  }
+
+  /**
    * Approves Metahub to take an asset from lister account during listing process.
    * @param asset
    */
