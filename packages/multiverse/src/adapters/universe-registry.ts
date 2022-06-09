@@ -6,6 +6,7 @@ import { Adapter } from '../adapter';
 import { pick } from '../utils';
 import { UniverseRegistry } from '../contracts';
 import { assetClasses } from '../constants';
+import { UniverseCreatedEventObject } from '../contracts/contracts/universe/UniverseRegistry';
 
 export class UniverseRegistryAdapter extends Adapter {
   private readonly contract: UniverseRegistry;
@@ -22,6 +23,23 @@ export class UniverseRegistryAdapter extends Adapter {
    */
   async createUniverse(params: { name: string; rentalFeePercent: BigNumberish }): Promise<ContractTransaction> {
     return this.contract.createUniverse(params);
+  }
+
+  /**
+   * Retrieves the universe details form creation transaction.
+   * @param transactionHash
+   */
+  async findUniverseByCreationTransaction(transactionHash: string): Promise<UniverseCreatedEventObject | undefined> {
+    const tx = await this.contract.provider.getTransaction(transactionHash);
+    if (!tx.blockHash) {
+      return undefined;
+    }
+
+    const event = (await this.contract.queryFilter(this.contract.filters.UniverseCreated(), tx.blockHash)).find(
+      event => event.transactionHash === transactionHash,
+    );
+
+    return event ? event.args : undefined;
   }
 
   /**

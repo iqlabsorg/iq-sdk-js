@@ -15,6 +15,11 @@ export class WarperPresetFactoryAdapter extends Adapter {
     this.contract = contractResolver.resolveWarperPresetFactory(accountId.address);
   }
 
+  /**
+   * Deploys new instance of warper form preset.
+   * @param presetId
+   * @param data Preset specific configuration.
+   */
   async deployPreset(
     presetId: 'ERC721PresetConfigurable',
     data: { metahub: AccountId; original: AssetType },
@@ -22,6 +27,10 @@ export class WarperPresetFactoryAdapter extends Adapter {
     return this.contract.deployPreset(formatBytes32String(presetId), this.encodePresetInitData(presetId, data));
   }
 
+  /**
+   * Retrieves the warper reference from deployment transaction.
+   * @param transactionHash
+   */
   async findWarperByDeploymentTransaction(transactionHash: string): Promise<AssetType | undefined> {
     const tx = await this.contract.provider.getTransaction(transactionHash);
     if (!tx.blockHash) {
