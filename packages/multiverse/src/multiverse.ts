@@ -1,9 +1,11 @@
 import { Signer } from 'ethers';
 import { ContractResolver } from './contract-resolver';
-import { AccountId, ChainId } from 'caip';
+import { AccountId, AssetType, ChainId } from 'caip';
 import { AddressTranslator } from './address-translator';
 import { ChainAware } from './types';
 import { MetahubAdapter, UniverseRegistryAdapter, WarperPresetFactoryAdapter } from './adapters';
+import { assetClasses } from './constants';
+import { ERC721WarperAdapter } from './adapters/erc721-warper';
 
 type MultiverseParams = {
   signer: Signer;
@@ -30,6 +32,15 @@ export class Multiverse implements ChainAware {
 
   async getChainId(): Promise<ChainId> {
     return Promise.resolve(this.chainId);
+  }
+
+  warper(assetType: AssetType): ERC721WarperAdapter {
+    const { namespace } = assetType.assetName;
+    if (namespace !== assetClasses.ERC721.namespace) {
+      throw new Error(`Invalid asset type: "${namespace}"! Expected: "erc721"`);
+    }
+
+    return new ERC721WarperAdapter(assetType, this.contractResolver, this.addressTranslator);
   }
 
   /**

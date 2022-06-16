@@ -78,3 +78,14 @@ export type BaseToken = {
   symbol: string;
   decimals: number;
 };
+
+export type WarperRentingConstraints = {
+  availabilityPeriod?: {
+    start: number;
+    end: number;
+  };
+  rentalPeriod?: {
+    min: number;
+    max: number;
+  };
+};

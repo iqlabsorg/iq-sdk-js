@@ -15,6 +15,7 @@ export type {
   RentalAgreement,
   AccountBalance,
   BaseToken,
+  WarperRentingConstraints,
 } from './types';
 export { assetClasses, listingStrategies } from './constants';
 export { Multiverse } from './multiverse';

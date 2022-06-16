@@ -13,6 +13,8 @@ import {
   IERC721__factory,
   IERC721Metadata,
   IERC721Metadata__factory,
+  IERC721Warper,
+  IERC721Warper__factory,
   IWarper,
   IWarper__factory,
   ListingStrategyRegistry,
@@ -70,6 +72,10 @@ export class ContractResolver implements ChainAware {
 
   resolveWarper(address: Address): IWarper {
     return IWarper__factory.connect(address, this.signer);
+  }
+
+  resolveERC721Warper(address: Address): IERC721Warper {
+    return IERC721Warper__factory.connect(address, this.signer);
   }
 
   resolveERC721Asset(address: Address): IERC721 {
