@@ -1,5 +1,7 @@
 # Multiverse NFT Renting
 
+[![CI](https://github.com/iqlabsorg/iq-sdk-js/actions/workflows/main.yml/badge.svg)](https://github.com/iqlabsorg/iq-sdk-js/actions/workflows/main.yml)
+
 This package is part of [IQ Protocol JS SDK.](https://github.com/iqlabsorg/iq-sdk-js)
 
 | :exclamation: The package is in development and breaking changes should be expected. Use at your own risk! |
@@ -220,20 +222,95 @@ const tx = await metahub.listAsset({
   },
   // The maximum amount of time the asset owner can wait before getting the asset back.
   maxLockPeriod: BigNumber.from(99604800),
-  // Whether or not the lister will receive the funds immediately on rent, or will let the funds accumulate on the protocol before withdrawing them.
+  // Whether or not the lister will receive the funds immediately on rent, or
+  // will let the funds accumulate on the protocol before withdrawing them.
   immediatePayout: true,
 });
 console.log(`Tx ${tx.hash}`);
 ```
 
+#### View listings
+
+After an asset has been listed, you can view the listings of the asset.
+
+```ts
+// If we know the ID of a listing, we can retrieve the whole Listing structure
+const listing = await metahub.listing(15);
+
+// If we want to enumerate ALL listings, then we can use the `listings` method to paginate it.
+// The following code will fetch the first 20 listings.
+const listings = await metahub.listings(0, 20);
+
+// If we want to see all listings for a specific asset, we can use the `listingsForAsset` method.
+// The following code will fetch the 20 listings with an offset of 5 initial ones for the given user.
+const userListings = await metahub.userListings(
+  new AccountId({
+    chainId,
+    address: deployer.address,
+  }),
+  5,
+  20,
+);
+
+// If we want to see all listings for a specific asset, we can use the `listingsForAsset` method.
+// The following code will fetch the 20 listings with an offset of 4 initial ones for the given user.
+const assetListings = await metahub.assetListings(
+  new AssetType({
+    chainId,
+    assetName: {
+      namespace: 'erc721',
+      reference: deployer.address,
+    },
+  }),
+  4,
+  20,
+);
+```
+
 #### Delist asset
+
+To be able to delist an asset, we need to know the listing ID beforehand.
+
+
+```ts
+const listingId = 15;
+await metahub.delistAsset(listingId);
+```
 
 #### Pause Warper
 
+To pause a warper, the warper, of course needs to be registered and NOT PAUSED.
+
+```ts
+const warperAddress = '0x0...';
+await metahub.pauseWarper(
+  new AssetType({
+    chainId,
+    assetName: {
+      namespace: 'erc721',
+      reference: warperAddress,
+    },
+  }),
+);
+```
+
+
 #### Unpause Warper
 
-#### View listings
+To unpause a warper, the warper, of course needs to be registered and PAUSED.
 
+```ts
+const warperAddress = '0x0...';
+await metahub.unpauseWarper(
+  new AssetType({
+    chainId,
+    assetName: {
+      namespace: 'erc721',
+      reference: warperAddress,
+    },
+  }),
+);
+```
 #### Rent
 
 #### View rentals
