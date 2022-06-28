@@ -311,7 +311,41 @@ await metahub.unpauseWarper(
   }),
 );
 ```
+
 #### Rent
+
+```ts
+// Retrieve the base token used as a rent payment.
+const baseToken = await metahub.baseToken();
+// Estimate the rental costs
+const listingId = 15; // Assume that this is the listing ID of the asset we want to rent.
+// Prepare asset types and account structures.
+const renter = new AccountId({ chainId, address: renterSigner.address });
+const warperA = new AssetType({
+  chainId,
+  assetName: {
+    namespace: 'erc721',
+    reference: warper.address,
+  },
+});
+
+// Estimate rental costs.
+const rentalParams = {
+  listingId: listingId,
+  rentalPeriod: rentalPeriod,
+  paymentToken: baseToken.type,
+  renter: renter,
+  warper: warperA,
+};
+const estimation = await metahub.estimateRent(rentalParams);
+
+// Perform the actual rental
+const estimation = await metahubSDK.estimateRent(rentalParams);
+tx = await metahub.rent({ ...rentalParams, maxPaymentAmount: estimation.total });
+
+// Wait for the rental transaction to succeed
+await tx.wait()
+```
 
 #### View rentals
 
