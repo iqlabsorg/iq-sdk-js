@@ -191,8 +191,8 @@ import { BigNumber } from 'ethers';
 import { ERC721__factory } from '../typechain';
 
 // Set Metahub as the operator of the token.
-const nftAddress = '0x0...'
-const nft = new ERC721__factory(signer).attach(nftAddress);
+const originalNftAddress = '0x0...'
+const nft = new ERC721__factory(signer).attach(originalNftAddress);
 const setApprovalTx = await nft.setApprovalForAll(args.metahub, true);
 console.log(`Setting Metahub approvals. Tx: ${setApprovalTx.hash}`);
 await setApprovalTx.wait();
@@ -206,7 +206,7 @@ const tx = await metahub.listAsset({
       chainId,
       assetName: {
         namespace: 'erc721',
-        reference: nftAddress,
+        reference: originalNftAddress,
       },
       tokenId: tokenId.toString(),
     }),
@@ -234,6 +234,7 @@ console.log(`Tx ${tx.hash}`);
 After an asset has been listed, you can view the listings of the asset.
 
 ```ts
+
 // If we know the ID of a listing, we can retrieve the whole Listing structure
 const listing = await metahub.listing(15);
 
@@ -243,23 +244,25 @@ const listings = await metahub.listings(0, 20);
 
 // If we want to see all listings for a specific asset, we can use the `listingsForAsset` method.
 // The following code will fetch the 20 listings with an offset of 5 initial ones for the given user.
+const listerAddress = '0x0...';
 const userListings = await metahub.userListings(
   new AccountId({
     chainId,
-    address: deployer.address,
+    address: listerAddress,
   }),
   5,
   20,
 );
 
 // If we want to see all listings for a specific asset, we can use the `listingsForAsset` method.
-// The following code will fetch the 20 listings with an offset of 4 initial ones for the given user.
+// The following code will fetch the 20 listings with an offset of 4 initial ones for the given asset.
+const originalAssetAddress = '0x0...';
 const assetListings = await metahub.assetListings(
   new AssetType({
     chainId,
     assetName: {
       namespace: 'erc721',
-      reference: deployer.address,
+      reference: originalAssetAddress,
     },
   }),
   4,
@@ -275,6 +278,14 @@ To be able to delist an asset, we need to know the listing ID beforehand.
 ```ts
 const listingId = 15;
 await metahub.delistAsset(listingId);
+```
+#### Withdraw asset
+
+To be able to withdraw an asset, we need to know the listing ID beforehand, and the asset needs to be delisted beforehand.
+
+```ts
+const listingId = 15;
+await metahub.withdrawAsset(listingId);
 ```
 
 #### Pause Warper
@@ -317,15 +328,20 @@ await metahub.unpauseWarper(
 ```ts
 // Retrieve the base token used as a rent payment.
 const baseToken = await metahub.baseToken();
+
 // Estimate the rental costs
 const listingId = 15; // Assume that this is the listing ID of the asset we want to rent.
+
 // Prepare asset types and account structures.
-const renter = new AccountId({ chainId, address: renterSigner.address });
-const warperA = new AssetType({
+const renterAddress = '0x0...';
+const renter = new AccountId({ chainId, address: renterAddress });
+
+const warperAddress = '0x0...';
+const warperAsset = new AssetType({
   chainId,
   assetName: {
     namespace: 'erc721',
-    reference: warper.address,
+    reference: warperAddress,
   },
 });
 
@@ -335,12 +351,11 @@ const rentalParams = {
   rentalPeriod: rentalPeriod,
   paymentToken: baseToken.type,
   renter: renter,
-  warper: warperA,
+  warper: warperAsset,
 };
 const estimation = await metahub.estimateRent(rentalParams);
 
 // Perform the actual rental
-const estimation = await metahubSDK.estimateRent(rentalParams);
 tx = await metahub.rent({ ...rentalParams, maxPaymentAmount: estimation.total });
 
 // Wait for the rental transaction to succeed
@@ -349,8 +364,88 @@ await tx.wait()
 
 #### View rentals
 
+```ts
+// To get an individual rental, we can use the `rentalAgreement` method.
+// The rental Id needs to be known beforehand.
+const rentalId = 15;
+const rentalAgreement = await metahub.rentalAgreement(rentalId);
+
+// To get all rentals for a specific user, we can use the `userRentalAgreements` method.
+// The function takes an account ID and an offset and a limit to paginate the results.
+const renterAddress = '0x0...';
+const renter = new AccountId({ chainId, address: renterAddress });
+const userRentalAgreement = await metahub.userRentalAgreements(renter, 0, 20);
+```
+
 #### View warpers
+
+```ts
+// if the Warper is already known, we can use the `warper` method.
+const warperAddress = '0x0...';
+const warperAsset = new AssetType({
+  chainId,
+  assetName: {
+    namespace: 'erc721',
+    reference: warper.address,
+  },
+});
+const registeredWarper = await metahub.warper(warperAsset);
+
+// If we want to enumerate all warpers and we know the original asset, we can use the `assetWarpers` method.
+const originalAddress = '0x0...';
+const originalAsset = new AssetType({
+  chainId,
+  assetName: {
+    namespace: 'erc721',
+    reference: originalAddress,
+  },
+});
+const registeredWarpersForAsset = await metahub.assetWarpers(originalAsset, 0, 20);
+
+// If we want to enumerate all warpers and we know the universe ID, we can use the `universeWarpers` method.
+const universeId = 1;
+const registeredWarpersForUniverse = await metahub.universeWarpers(universeId, 0, 20);
+```
 
 #### Withdraw user earnings
 
+Withdrawing funds is only possible if the user has earned some, and the listing DID NOT specify `immediatePayout` (meaning that funds had accumulated on the actual contract).
+
+
+```ts
+// the token we want to withdraw
+const baseToken = await metahub.baseToken();
+
+// The amount we want to withdraw
+const amount = 100;
+
+// The account we want to withdraw TO
+const toAddress = '0x0...';
+const to = new AccountId({ chainId, address: toAddress });
+
+// Perform the withdrawal
+await metahub.withdrawFunds(baseToken.type, amount, to);
+
+```
+
 #### Withdraw universe earnings
+
+When rentals happen in a given universe, part of the rental fee actually goes to the said IQverse.
+
+```ts
+// Assume we know the universe ID.
+const universeId = 1;
+
+// the token we want to withdraw
+const baseToken = await metahub.baseToken();
+
+// The amount we want to withdraw
+const amount = 100;
+
+// The account we want to withdraw TO
+const toAddress = '0x0...';
+const to = new AccountId({ chainId, address: toAddress });
+
+// Perform the withdrawal
+await metahub.withdrawUniverseFunds(universeId, baseToken.type, amount, to);
+```
