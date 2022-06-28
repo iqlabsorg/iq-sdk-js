@@ -407,6 +407,31 @@ const universeId = 1;
 const registeredWarpersForUniverse = await metahub.universeWarpers(universeId, 0, 20);
 ```
 
+#### Get accumulated user balance
+
+```ts
+const userAddress = '0x0...';
+const user = new AccountId({ chainId, address: userAddress });
+const baseToken = await metahub.baseToken();
+
+// Get accumulated user balance for a single token.
+const userBalance = await metahub.balance(user, baseToken.type);
+// Get accumulated user balance for all tokens.
+const userBalances = await metahub.balances(user);
+```
+
+#### Get accumulated user balance
+
+```ts
+const universeId = 1;
+const baseToken = await metahub.baseToken();
+
+// Get accumulated universe balance for a single token.
+const universeBalance = await metahub.universeBalance(universeId, baseToken.type);
+// Get accumulated universe balance for all tokens.
+const universeBalances = await metahub.universeBalances(universeId);
+```
+
 #### Withdraw user earnings
 
 Withdrawing funds is only possible if the user has earned some, and the listing DID NOT specify `immediatePayout` (meaning that funds had accumulated on the actual contract).
@@ -430,7 +455,7 @@ await metahub.withdrawFunds(baseToken.type, amount, to);
 
 #### Withdraw universe earnings
 
-When rentals happen in a given universe, part of the rental fee actually goes to the said IQverse.
+When rentals happen in a given universe, part of the rental fee actually goes to the said IQVerse.
 
 ```ts
 // Assume we know the universe ID.
