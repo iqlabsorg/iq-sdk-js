@@ -1,103 +1,122 @@
 # Multiverse NFT Renting
+
 This package is part of [IQ Protocol JS SDK.](https://github.com/iqlabsorg/iq-sdk-js)
 
-| :exclamation: The package is in development and breaking changes should be expected. Use at your own risk!  |
-|:------------------------------------------------------------------------------------------------------------|
+| :exclamation: The package is in development and breaking changes should be expected. Use at your own risk! |
+| :--------------------------------------------------------------------------------------------------------- |
 
-This package provides higher level abstraction over IQ Protocol smart contracts, allowing application developers to 
-work with IQ NFT renting platform regardless of the underlying blockchain.
+This package provides higher level abstraction over IQ Protocol smart contracts, allowing application developers to work with IQ NFT renting platform regardless of the underlying blockchain.
 
-Use this package to create IQVerse, deploy Warper and communicate with Metahub to implement NFT listing & renting 
+Use this package to create IQVerse, deploy Warper and communicate with Metahub to implement NFT listing & renting
 functionality.
 
-## Installation  
+## Installation
+
 This package requires [ethers.js](https://github.com/ethers-io/ethers.js) peer dependency, so it needs to be installed too.
+
 ```bash
 yarn add @iqprotocol/multiverse ethers
 ```
 
 ## Usage
 
-Start with `Multiverse` client initialization. Then you can use the client to resolve adapters for various 
+Start with `Multiverse` client initialization. Then you can use the client to resolve adapters for various
 contracts.
 
 ### Multiverse
 
+The architecture consists of the main entrypoint, which we call `Multiverse`. To be able to interact with the rest of the SDK, one needs to instantiate the `Multiverse` instance.
+
 #### Initialization
-You need to provide a [Signer](https://docs.ethers.io/v5/api/signer/#Signer) which suits your use-case. For example, 
-`VoidSigner` will be enough for reading data, but for listing, renting and other state-changing operations you need a 
-signer, with private key.
+
+You need to provide a [Signer](https://docs.ethers.io/v5/api/signer/#Signer) which suits your use-case. For example, `VoidSigner` will be enough for reading data, but for listing, renting and other state-changing operations you need a signer, with private key.
 
 ```ts
 import { Multiverse } from '@iqprotocol/multiverse';
 import { ethers } from 'ethers';
 
 const provider = new ethers.providers.JsonRpcProvider('<RPC URL>');
-const accountAddress = '0x...'
+const accountAddress = '0x...';
 
 const multiverse = await Multiverse.init({
   signer: new VoidSigner(accountAddress, provider),
 });
+```
 
+After the Multiverse has been instantiated, it can be used to resolve other crucial adapters of the SDK.
+
+```mermaid
+  graph LR;
+      Multiverse-->Metahub;
+      Multiverse-->UniverseRegistry;
+      Multiverse-->WarperPresetFactory;
+      Multiverse-->WarperAdapter;
 ```
 
 #### Chain ID
-Since IQ Protocol SDK is made to be used for interacting with contracts deployed on various blockchains,
-it is crucial to make sure the correct contract addresses and asset identifiers are used. Therefor the SDK relies on
-[CAIP](https://www.npmjs.com/package/caip) standard identifiers for referencing accounts and assets. 
-Often you will need to know the chain ID to construct such identifiers.
+
+Since IQ Protocol SDK is made to be used for interacting with contracts deployed on various blockchains, it is crucial to make sure the correct contract addresses and asset identifiers are used. Therefor the SDK relies on [CAIP](https://www.npmjs.com/package/caip) standard identifiers for referencing accounts and assets. Often you will need to know the chain ID to construct such identifiers.
 
 ```ts
 const chainId = await multiverse.getChainId();
 ```
 
-
-
 ### Universe (IQVerse)
 
 In order to create and manage your IQVerse you will need to use the `UniverseRegistryAdapter`.
+
 ```ts
-import { AccountId, ChainId } from '@iqprotocol/multiverse'; 
+import { AccountId, ChainId } from '@iqprotocol/multiverse';
 
 const universeRegistryAddress = '0x...';
 const universeRegistry = multiverse.universeRegistry(
-    new AccountId({
-        chainId,
-        address: universeRegistryAddress 
-    })
+  new AccountId({
+    chainId,
+    address: universeRegistryAddress,
+  }),
 );
 ```
 
-
 #### Creation
 
+A crucial part of the IQProtocol ecosystem is the ability to create and manage your own IQVerse. Each IQVerse has its own unique identifier, which is used to reference it in the universe registry. It is important for you to make sure that you do not _forget_ the universe ID.
+
 ```ts
-await universeRegistry.createUniverse({
+// Create a new universe
+const tx = await universeRegistry.createUniverse({
   name: 'My IQVerse',
   rentalFeePercent: 500, // NOTE: 100 is 1%, 10_000 is 100%.
 });
-```
 
-#### Universe ID
-TODO
+// Retrieve the event that has encoded the universe ID
+const universeCreatedEvent = await universeRegistry.findUniverseByCreationTransaction(tx.hash);
+
+// Log the universe ID
+const universeId = universe!.universeId;
+```
 
 ### Warper
 
-#### Warper preset deployment
-
 In order to deploy a warper from a preset you will need to use the `WarperPresetFactoryAdapter`.
+
 ```ts
-import { AccountId, ChainId } from '@iqprotocol/multiverse'; 
+import { AccountId, ChainId } from '@iqprotocol/multiverse';
 
 // Resolve WarperPresetFactoryAdapter.
 const warperPresetFactoryAddress = '0x...';
 const warperPresetFactory = multiverse.warperPresetFactory(
-    new AccountId({ 
-      chainId,
-      address: warperPresetFactoryAddress
-    })
+  new AccountId({
+    chainId,
+    address: warperPresetFactoryAddress,
+  }),
 );
+```
 
+#### Warper preset deployment
+
+"Preset factories" allow you to easily deploy warpers from presets. These presets are created and maintained by the IQ Protocol team.
+
+```ts
 // Deploy ERC721PresetConfigurable preset.
 const presetId = 'ERC721PresetConfigurable';
 const metahubAddress = '0x...';
@@ -121,25 +140,106 @@ const tx = await warperPresetFactory.deployPreset(presetId, {
 await tx.wait();
 
 // Find out the deployed warper reference.
-const warperAssetType = await warperPresetFactory.findWarperByDeploymentTransaction(tx); 
-const warperAddress = warperAssetType.assetName.reference;
-
+const warperAssetType = await warperPresetFactory.findWarperByDeploymentTransaction(tx);
+const warperAddress = warperAssetType!.assetName.reference;
 ```
 
-#### Warper registration 
-```ts
+### Metahub
 
+In order to interact with the Metahub, it will need to be resolved from the Multiverse.
+
+```ts
+import { AccountId, ChainId } from '@iqprotocol/multiverse';
+
+const metahub = multiverse.metahub(
+  new AccountId({
+    chainId,
+    address: metahub.address,
+  }),
+);
+```
+
+#### Custom Warper registration
+
+Anyone can create a custom warper and register it in the Metahub. Please refer to the code snippet below for more details for how to exactly register a custom warper to Metahub. The code snippet assumes that the custom Warper has already been deployed.
+
+
+```ts
 const warperAddress = '0x...';
+
 await metahub.registerWarper(
   new AssetType({
     chainId,
-    assetName: { namespace: 'erc721', reference: warperAddress }
+    assetName: { namespace: 'erc721', reference: warperAddress },
   }),
   {
     universeId: '<your universe ID>',
     name: 'My Warper',
     paused: false,
-  }
+  },
 );
 ```
 
+#### List asset
+
+To list an asset for rent, there must be at least one IQVerse with a registered Warper for the given Original:
+
+```ts
+import { BigNumber } from 'ethers';
+import { ERC721__factory } from '../typechain';
+
+// Set Metahub as the operator of the token.
+const nftAddress = '0x0...'
+const nft = new ERC721__factory(signer).attach(nftAddress);
+const setApprovalTx = await nft.setApprovalForAll(args.metahub, true);
+console.log(`Setting Metahub approvals. Tx: ${setApprovalTx.hash}`);
+await setApprovalTx.wait();
+console.log(`Metahub is now the original collection operator.`);
+
+// List the token
+const tokenId = 42;
+const tx = await metahub.listAsset({
+  asset: {
+    id: new AssetId({
+      chainId,
+      assetName: {
+        namespace: 'erc721',
+        reference: nftAddress,
+      },
+      tokenId: tokenId.toString(),
+    }),
+    // The amount of tokens. For ERC721 this is always 1. For other token standards - it can differ.
+    value: 1,
+  },
+  strategy: {
+    // One of the listing strategies must be chosen. The simplest one - 'FIXED_PRICE'
+    name: 'FIXED_PRICE',
+    data: {
+      price: BigNumber.from(777),
+    },
+  },
+  // The maximum amount of time the asset owner can wait before getting the asset back.
+  maxLockPeriod: BigNumber.from(99604800),
+  // Whether or not the lister will receive the funds immediately on rent, or will let the funds accumulate on the protocol before withdrawing them.
+  immediatePayout: true,
+});
+console.log(`Tx ${tx.hash}`);
+```
+
+#### Delist asset
+
+#### Pause Warper
+
+#### Unpause Warper
+
+#### View listings
+
+#### Rent
+
+#### View rentals
+
+#### View warpers
+
+#### Withdraw user earnings
+
+#### Withdraw universe earnings
