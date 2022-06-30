@@ -190,16 +190,17 @@ To list an asset for rent, there must be at least one IQVerse with a registered 
 import { BigNumber } from 'ethers';
 import { ERC721__factory } from '../typechain';
 
-// Set Metahub as the operator of the token.
+// Allow Metahub to take custody of the asset.
 const originalNftAddress = '0x0...'
+const metahubAddress = '0x0...'
+const tokenId = 42;
 const nft = new ERC721__factory(signer).attach(originalNftAddress);
-const setApprovalTx = await nft.setApprovalForAll(args.metahub, true);
+const setApprovalTx = await nft.approve(metahubAddress, tokenId);
 console.log(`Setting Metahub approvals. Tx: ${setApprovalTx.hash}`);
 await setApprovalTx.wait();
 console.log(`Metahub is now the original collection operator.`);
 
 // List the token
-const tokenId = 42;
 const tx = await metahub.listAsset({
   asset: {
     id: new AssetId({
