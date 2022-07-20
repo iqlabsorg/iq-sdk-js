@@ -1,6 +1,6 @@
 {
   "name": "@iqprotocol/account",
-  "version": "0.19.0",
+  "version": "0.19.1",
   "bugs": "https://github.com/iqlabsorg/iq-sdk-js/issues",
   "repository": {
     "type": "git",
@@ -23,14 +23,14 @@
     "test": "jest --group=unit"
   },
   "dependencies": {
-    "@iqprotocol/abstract-blockchain": "^0.16.0",
-    "@iqprotocol/abstract-storage": "^0.15.0",
-    "@iqprotocol/energy": "^0.10.0",
+    "@iqprotocol/abstract-blockchain": "^0.16.1",
+    "@iqprotocol/abstract-storage": "^0.15.1",
+    "@iqprotocol/energy": "^0.10.1",
     "caip": "^1.1.0",
     "eth-sig-util": "^3.0.1"
   },
   "devDependencies": {
-    "@iqprotocol/eip155": "^0.23.0"
+    "@iqprotocol/eip155": "^0.23.1"
   },
   "publishConfig": {
     "access": "public"
