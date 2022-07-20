@@ -64,6 +64,84 @@ export declare namespace Rentings {
     rentalPeriod: number;
     paymentToken: string;
   };
+
+  export type AgreementStruct = {
+    warpedAsset: Assets.AssetStruct;
+    collectionId: BytesLike;
+    listingId: BigNumberish;
+    renter: string;
+    startTime: BigNumberish;
+    endTime: BigNumberish;
+    listingParams: Listings.ParamsStruct;
+  };
+
+  export type AgreementStructOutput = [
+    Assets.AssetStructOutput,
+    string,
+    BigNumber,
+    string,
+    number,
+    number,
+    Listings.ParamsStructOutput
+  ] & {
+    warpedAsset: Assets.AssetStructOutput;
+    collectionId: string;
+    listingId: BigNumber;
+    renter: string;
+    startTime: number;
+    endTime: number;
+    listingParams: Listings.ParamsStructOutput;
+  };
+}
+
+export declare namespace Listings {
+  export type ParamsStruct = { strategy: BytesLike; data: BytesLike };
+
+  export type ParamsStructOutput = [string, string] & {
+    strategy: string;
+    data: string;
+  };
+}
+
+export declare namespace Accounts {
+  export type UserEarningStruct = {
+    earningType: BigNumberish;
+    account: string;
+    value: BigNumberish;
+    token: string;
+  };
+
+  export type UserEarningStructOutput = [number, string, BigNumber, string] & {
+    earningType: number;
+    account: string;
+    value: BigNumber;
+    token: string;
+  };
+
+  export type RentalEarningsStruct = {
+    userEarnings: Accounts.UserEarningStruct[];
+    universeId: BigNumberish;
+    universeEarningValue: BigNumberish;
+    universeEarningToken: string;
+    protocolEarningValue: BigNumberish;
+    protocolEarningToken: string;
+  };
+
+  export type RentalEarningsStructOutput = [
+    Accounts.UserEarningStructOutput[],
+    BigNumber,
+    BigNumber,
+    string,
+    BigNumber,
+    string
+  ] & {
+    userEarnings: Accounts.UserEarningStructOutput[];
+    universeId: BigNumber;
+    universeEarningValue: BigNumber;
+    universeEarningToken: string;
+    protocolEarningValue: BigNumber;
+    protocolEarningToken: string;
+  };
 }
 
 export interface IERC721WarperControllerInterface extends utils.Interface {
@@ -72,6 +150,7 @@ export interface IERC721WarperControllerInterface extends utils.Interface {
     "calculatePremiums(((bytes4,bytes),uint256),(uint256,address,address,uint32,address),uint256,uint256)": FunctionFragment;
     "checkCompatibleWarper(address)": FunctionFragment;
     "collectionId((bytes4,bytes))": FunctionFragment;
+    "executeRentingHooks(uint256,(((bytes4,bytes),uint256),bytes32,uint256,address,uint32,uint32,(bytes4,bytes)),((uint8,address,uint256,address)[],uint256,uint256,address,uint256,address))": FunctionFragment;
     "isCompatibleWarper(address)": FunctionFragment;
     "rentalBalance(address,address,address)": FunctionFragment;
     "rentalStatus(address,address,uint256)": FunctionFragment;
@@ -89,6 +168,7 @@ export interface IERC721WarperControllerInterface extends utils.Interface {
       | "calculatePremiums"
       | "checkCompatibleWarper"
       | "collectionId"
+      | "executeRentingHooks"
       | "isCompatibleWarper"
       | "rentalBalance"
       | "rentalStatus"
@@ -120,6 +200,14 @@ export interface IERC721WarperControllerInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "collectionId",
     values: [Assets.AssetIdStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "executeRentingHooks",
+    values: [
+      BigNumberish,
+      Rentings.AgreementStruct,
+      Accounts.RentalEarningsStruct
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "isCompatibleWarper",
@@ -169,6 +257,10 @@ export interface IERC721WarperControllerInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "collectionId",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "executeRentingHooks",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -274,6 +366,13 @@ export interface IERC721WarperController extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    executeRentingHooks(
+      rentalId: BigNumberish,
+      rentalAgreement: Rentings.AgreementStruct,
+      rentalEarnings: Accounts.RentalEarningsStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     isCompatibleWarper(
       warper: string,
       overrides?: CallOverrides
@@ -357,6 +456,13 @@ export interface IERC721WarperController extends BaseContract {
     assetId: Assets.AssetIdStruct,
     overrides?: CallOverrides
   ): Promise<string>;
+
+  executeRentingHooks(
+    rentalId: BigNumberish,
+    rentalAgreement: Rentings.AgreementStruct,
+    rentalEarnings: Accounts.RentalEarningsStruct,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   isCompatibleWarper(
     warper: string,
@@ -442,6 +548,13 @@ export interface IERC721WarperController extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
+    executeRentingHooks(
+      rentalId: BigNumberish,
+      rentalAgreement: Rentings.AgreementStruct,
+      rentalEarnings: Accounts.RentalEarningsStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     isCompatibleWarper(
       warper: string,
       overrides?: CallOverrides
@@ -500,7 +613,7 @@ export interface IERC721WarperController extends BaseContract {
       overrides?: CallOverrides
     ): Promise<
       [string, Assets.AssetStructOutput] & {
-        collectionId: string;
+        warpedCollectionId: string;
         warpedAsset: Assets.AssetStructOutput;
       }
     >;
@@ -540,6 +653,13 @@ export interface IERC721WarperController extends BaseContract {
     collectionId(
       assetId: Assets.AssetIdStruct,
       overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    executeRentingHooks(
+      rentalId: BigNumberish,
+      rentalAgreement: Rentings.AgreementStruct,
+      rentalEarnings: Accounts.RentalEarningsStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     isCompatibleWarper(
@@ -620,6 +740,13 @@ export interface IERC721WarperController extends BaseContract {
     collectionId(
       assetId: Assets.AssetIdStruct,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    executeRentingHooks(
+      rentalId: BigNumberish,
+      rentalAgreement: Rentings.AgreementStruct,
+      rentalEarnings: Accounts.RentalEarningsStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     isCompatibleWarper(

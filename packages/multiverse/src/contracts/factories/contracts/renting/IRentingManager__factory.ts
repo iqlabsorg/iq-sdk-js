@@ -332,6 +332,23 @@ const _abi = [
             name: "endTime",
             type: "uint32",
           },
+          {
+            components: [
+              {
+                internalType: "bytes4",
+                name: "strategy",
+                type: "bytes4",
+              },
+              {
+                internalType: "bytes",
+                name: "data",
+                type: "bytes",
+              },
+            ],
+            internalType: "struct Listings.Params",
+            name: "listingParams",
+            type: "tuple",
+          },
         ],
         internalType: "struct Rentings.Agreement",
         name: "",
@@ -421,6 +438,23 @@ const _abi = [
             internalType: "uint32",
             name: "endTime",
             type: "uint32",
+          },
+          {
+            components: [
+              {
+                internalType: "bytes4",
+                name: "strategy",
+                type: "bytes4",
+              },
+              {
+                internalType: "bytes",
+                name: "data",
+                type: "bytes",
+              },
+            ],
+            internalType: "struct Listings.Params",
+            name: "listingParams",
+            type: "tuple",
           },
         ],
         internalType: "struct Rentings.Agreement[]",

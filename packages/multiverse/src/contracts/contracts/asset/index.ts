@@ -11,4 +11,5 @@ export type { AssetVault } from "./AssetVault";
 export type { Assets } from "./Assets";
 export type { IAssetClassRegistry } from "./IAssetClassRegistry";
 export type { IAssetController } from "./IAssetController";
+export type { IAssetManager } from "./IAssetManager";
 export type { IAssetVault } from "./IAssetVault";

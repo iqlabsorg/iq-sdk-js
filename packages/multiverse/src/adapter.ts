@@ -1,11 +1,10 @@
-import { Address, Asset, ChainAware, FixedPriceListingStrategyParams } from './types';
+import { Address, Asset, ChainAware, ListingStrategyParams } from './types';
 import { AccountId, AssetId, AssetType, ChainId } from 'caip';
 import { AddressTranslator } from './address-translator';
 import { ContractResolver } from './contract-resolver';
-import { defaultAbiCoder } from 'ethers/lib/utils';
-import { BigNumber } from '@ethersproject/bignumber';
-import { listingStrategies } from './constants';
 import { Assets, Listings } from './contracts/contracts/metahub/IMetahub';
+import { ListingStrategyCoder } from './coders/listing-strategy-coder';
+import { AssetCoder } from './coders/asset-coder';
 
 export abstract class Adapter implements ChainAware {
   protected constructor(
@@ -15,10 +14,6 @@ export abstract class Adapter implements ChainAware {
 
   async getChainId(): Promise<ChainId> {
     return this.contractResolver.getChainId();
-  }
-
-  protected assetClassToNamespace(assetClass: string): string {
-    return this.addressTranslator.assetClassToNamespace(assetClass);
   }
 
   protected addressToAccountId(address: Address): AccountId {
@@ -45,18 +40,21 @@ export abstract class Adapter implements ChainAware {
     return this.addressTranslator.assetIdToAddress(assetId);
   }
 
-  protected decodeERC721AssetStruct(asset: Assets.AssetStructOutput): Asset {
-    return this.addressTranslator.decodeERC721AssetStruct(asset);
+  protected encodeAsset(asset: Asset): Assets.AssetStruct {
+    this.addressTranslator.assertSameChainId(asset.id.chainId);
+    return AssetCoder.encode(asset);
   }
 
-  protected decodeFixedPriceListingStrategy(params: Listings.ParamsStruct): FixedPriceListingStrategyParams {
-    const [price] = defaultAbiCoder.decode(['uint256'], params.data) as [BigNumber];
-    return {
-      name: listingStrategies.FIXED_PRICE.name,
-      data: {
-        price,
-      },
-    };
+  protected decodeAsset(asset: Assets.AssetStructOutput): Asset {
+    return AssetCoder.decode(asset, this.addressTranslator.chainId);
+  }
+
+  protected encodeListingParams(params: ListingStrategyParams): Listings.ParamsStruct {
+    return ListingStrategyCoder.encode(params);
+  }
+
+  protected decodeListingParams(params: Listings.ParamsStruct): ListingStrategyParams {
+    return ListingStrategyCoder.decode(params);
   }
 
   protected async erc20AssetMetadata(assetType: AssetType): Promise<{

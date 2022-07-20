@@ -11,6 +11,11 @@ import type {
 
 const _abi = [
   {
+    inputs: [],
+    name: "CallerIsNotWarperManager",
+    type: "error",
+  },
+  {
     anonymous: false,
     inputs: [
       {
@@ -60,6 +65,25 @@ const _abi = [
     name: "setProtocolRentalFeePercent",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "warper",
+        type: "address",
+      },
+    ],
+    name: "warperController",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
 ];

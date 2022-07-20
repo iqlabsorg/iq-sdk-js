@@ -27,23 +27,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "InvalidWarperInterface",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "provided",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "required",
-        type: "address",
-      },
-    ],
-    name: "WarperHasIncorrectMetahubReference",
+    name: "CallerIsNotWarperManager",
     type: "error",
   },
   {
@@ -78,6 +62,12 @@ const _abi = [
         indexed: true,
         internalType: "uint256",
         name: "listingId",
+        type: "uint256",
+      },
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "listingGroupId",
         type: "uint256",
       },
       {
@@ -375,74 +365,23 @@ const _abi = [
     type: "event",
   },
   {
-    anonymous: false,
     inputs: [
       {
-        indexed: true,
-        internalType: "address",
-        name: "warper",
-        type: "address",
-      },
-    ],
-    name: "WarperDeregistered",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "warper",
-        type: "address",
-      },
-    ],
-    name: "WarperPaused",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "uint256",
-        name: "universeId",
-        type: "uint256",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "warper",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "original",
-        type: "address",
-      },
-      {
-        indexed: false,
         internalType: "bytes4",
         name: "assetClass",
         type: "bytes4",
       },
     ],
-    name: "WarperRegistered",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
+    name: "assetClassController",
+    outputs: [
       {
-        indexed: true,
         internalType: "address",
-        name: "warper",
+        name: "",
         type: "address",
       },
     ],
-    name: "WarperUnpaused",
-    type: "event",
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [
@@ -566,6 +505,11 @@ const _abi = [
             name: "paused",
             type: "bool",
           },
+          {
+            internalType: "uint256",
+            name: "groupId",
+            type: "uint256",
+          },
         ],
         internalType: "struct Listings.Listing[]",
         name: "",
@@ -601,91 +545,6 @@ const _abi = [
         internalType: "enum Rentings.RentalStatus",
         name: "",
         type: "uint8",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "original",
-        type: "address",
-      },
-    ],
-    name: "assetWarperCount",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "original",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "offset",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "limit",
-        type: "uint256",
-      },
-    ],
-    name: "assetWarpers",
-    outputs: [
-      {
-        internalType: "address[]",
-        name: "",
-        type: "address[]",
-      },
-      {
-        components: [
-          {
-            internalType: "bytes4",
-            name: "assetClass",
-            type: "bytes4",
-          },
-          {
-            internalType: "address",
-            name: "original",
-            type: "address",
-          },
-          {
-            internalType: "bool",
-            name: "paused",
-            type: "bool",
-          },
-          {
-            internalType: "contract IWarperController",
-            name: "controller",
-            type: "address",
-          },
-          {
-            internalType: "string",
-            name: "name",
-            type: "string",
-          },
-          {
-            internalType: "uint256",
-            name: "universeId",
-            type: "uint256",
-          },
-        ],
-        internalType: "struct Warpers.Warper[]",
-        name: "",
-        type: "tuple[]",
       },
     ],
     stateMutability: "view",
@@ -792,19 +651,6 @@ const _abi = [
       },
     ],
     name: "delistAsset",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "warper",
-        type: "address",
-      },
-    ],
-    name: "deregisterWarper",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -974,11 +820,35 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "",
+        name: "listingId",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "listingGroupId",
         type: "uint256",
       },
     ],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes4",
+        name: "strategyId",
+        type: "bytes4",
+      },
+    ],
+    name: "listingController",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -1081,6 +951,11 @@ const _abi = [
             internalType: "bool",
             name: "paused",
             type: "bool",
+          },
+          {
+            internalType: "uint256",
+            name: "groupId",
+            type: "uint256",
           },
         ],
         internalType: "struct Listings.Listing",
@@ -1189,6 +1064,11 @@ const _abi = [
             name: "paused",
             type: "bool",
           },
+          {
+            internalType: "uint256",
+            name: "groupId",
+            type: "uint256",
+          },
         ],
         internalType: "struct Listings.Listing[]",
         name: "",
@@ -1207,19 +1087,6 @@ const _abi = [
       },
     ],
     name: "pauseListing",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "warper",
-        type: "address",
-      },
-    ],
-    name: "pauseWarper",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1284,34 +1151,17 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "warper",
-        type: "address",
+        internalType: "bytes4",
+        name: "assetClass",
+        type: "bytes4",
       },
       {
-        components: [
-          {
-            internalType: "string",
-            name: "name",
-            type: "string",
-          },
-          {
-            internalType: "uint256",
-            name: "universeId",
-            type: "uint256",
-          },
-          {
-            internalType: "bool",
-            name: "paused",
-            type: "bool",
-          },
-        ],
-        internalType: "struct IWarperManager.WarperRegistrationParams",
-        name: "params",
-        type: "tuple",
+        internalType: "address",
+        name: "original",
+        type: "address",
       },
     ],
-    name: "registerWarper",
+    name: "registerAsset",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1432,6 +1282,23 @@ const _abi = [
             internalType: "uint32",
             name: "endTime",
             type: "uint32",
+          },
+          {
+            components: [
+              {
+                internalType: "bytes4",
+                name: "strategy",
+                type: "bytes4",
+              },
+              {
+                internalType: "bytes",
+                name: "data",
+                type: "bytes",
+              },
+            ],
+            internalType: "struct Listings.Params",
+            name: "listingParams",
+            type: "tuple",
           },
         ],
         internalType: "struct Rentings.Agreement",
@@ -1573,109 +1440,11 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "universeId",
-        type: "uint256",
-      },
-    ],
-    name: "universeWarperCount",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "universeId",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "offset",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "limit",
-        type: "uint256",
-      },
-    ],
-    name: "universeWarpers",
-    outputs: [
-      {
-        internalType: "address[]",
-        name: "",
-        type: "address[]",
-      },
-      {
-        components: [
-          {
-            internalType: "bytes4",
-            name: "assetClass",
-            type: "bytes4",
-          },
-          {
-            internalType: "address",
-            name: "original",
-            type: "address",
-          },
-          {
-            internalType: "bool",
-            name: "paused",
-            type: "bool",
-          },
-          {
-            internalType: "contract IWarperController",
-            name: "controller",
-            type: "address",
-          },
-          {
-            internalType: "string",
-            name: "name",
-            type: "string",
-          },
-          {
-            internalType: "uint256",
-            name: "universeId",
-            type: "uint256",
-          },
-        ],
-        internalType: "struct Warpers.Warper[]",
-        name: "",
-        type: "tuple[]",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
         name: "listingId",
         type: "uint256",
       },
     ],
     name: "unpauseListing",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "warper",
-        type: "address",
-      },
-    ],
-    name: "unpauseWarper",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1802,6 +1571,11 @@ const _abi = [
             name: "paused",
             type: "bool",
           },
+          {
+            internalType: "uint256",
+            name: "groupId",
+            type: "uint256",
+          },
         ],
         internalType: "struct Listings.Listing[]",
         name: "",
@@ -1892,6 +1666,23 @@ const _abi = [
             name: "endTime",
             type: "uint32",
           },
+          {
+            components: [
+              {
+                internalType: "bytes4",
+                name: "strategy",
+                type: "bytes4",
+              },
+              {
+                internalType: "bytes",
+                name: "data",
+                type: "bytes",
+              },
+            ],
+            internalType: "struct Listings.Params",
+            name: "listingParams",
+            type: "tuple",
+          },
         ],
         internalType: "struct Rentings.Agreement[]",
         name: "",
@@ -1929,70 +1720,6 @@ const _abi = [
       },
     ],
     name: "warperController",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "warper",
-        type: "address",
-      },
-    ],
-    name: "warperInfo",
-    outputs: [
-      {
-        components: [
-          {
-            internalType: "bytes4",
-            name: "assetClass",
-            type: "bytes4",
-          },
-          {
-            internalType: "address",
-            name: "original",
-            type: "address",
-          },
-          {
-            internalType: "bool",
-            name: "paused",
-            type: "bool",
-          },
-          {
-            internalType: "contract IWarperController",
-            name: "controller",
-            type: "address",
-          },
-          {
-            internalType: "string",
-            name: "name",
-            type: "string",
-          },
-          {
-            internalType: "uint256",
-            name: "universeId",
-            type: "uint256",
-          },
-        ],
-        internalType: "struct Warpers.Warper",
-        name: "",
-        type: "tuple",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "warperPresetFactory",
     outputs: [
       {
         internalType: "address",

@@ -22,13 +22,13 @@ import type {
 
 export interface IRentalFeePremiumMechanicsInterface extends utils.Interface {
   functions: {
-    "calculatePremiums(address,uint256,uint256,uint32,uint256,uint256)": FunctionFragment;
+    "__calculatePremiums(address,uint256,uint256,uint32,uint256,uint256)": FunctionFragment;
   };
 
-  getFunction(nameOrSignatureOrTopic: "calculatePremiums"): FunctionFragment;
+  getFunction(nameOrSignatureOrTopic: "__calculatePremiums"): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "calculatePremiums",
+    functionFragment: "__calculatePremiums",
     values: [
       string,
       BigNumberish,
@@ -40,7 +40,7 @@ export interface IRentalFeePremiumMechanicsInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "calculatePremiums",
+    functionFragment: "__calculatePremiums",
     data: BytesLike
   ): Result;
 
@@ -74,7 +74,7 @@ export interface IRentalFeePremiumMechanics extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    calculatePremiums(
+    __calculatePremiums(
       renter: string,
       tokenId: BigNumberish,
       amount: BigNumberish,
@@ -90,7 +90,7 @@ export interface IRentalFeePremiumMechanics extends BaseContract {
     >;
   };
 
-  calculatePremiums(
+  __calculatePremiums(
     renter: string,
     tokenId: BigNumberish,
     amount: BigNumberish,
@@ -106,7 +106,7 @@ export interface IRentalFeePremiumMechanics extends BaseContract {
   >;
 
   callStatic: {
-    calculatePremiums(
+    __calculatePremiums(
       renter: string,
       tokenId: BigNumberish,
       amount: BigNumberish,
@@ -125,7 +125,7 @@ export interface IRentalFeePremiumMechanics extends BaseContract {
   filters: {};
 
   estimateGas: {
-    calculatePremiums(
+    __calculatePremiums(
       renter: string,
       tokenId: BigNumberish,
       amount: BigNumberish,
@@ -137,7 +137,7 @@ export interface IRentalFeePremiumMechanics extends BaseContract {
   };
 
   populateTransaction: {
-    calculatePremiums(
+    __calculatePremiums(
       renter: string,
       tokenId: BigNumberish,
       amount: BigNumberish,

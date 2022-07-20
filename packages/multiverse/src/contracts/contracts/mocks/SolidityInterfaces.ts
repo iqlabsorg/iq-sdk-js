@@ -19,37 +19,35 @@ import type {
   OnEvent,
 } from "../../common";
 
-export interface InterfacePrinterInterface extends utils.Interface {
+export declare namespace SolidityInterfaces {
+  export type InterfaceStruct = { name: string; id: BytesLike };
+
+  export type InterfaceStructOutput = [string, string] & {
+    name: string;
+    id: string;
+  };
+}
+
+export interface SolidityInterfacesInterface extends utils.Interface {
   functions: {
-    "erc721()": FunctionFragment;
-    "universeToken()": FunctionFragment;
+    "list()": FunctionFragment;
   };
 
-  getFunction(
-    nameOrSignatureOrTopic: "erc721" | "universeToken"
-  ): FunctionFragment;
+  getFunction(nameOrSignatureOrTopic: "list"): FunctionFragment;
 
-  encodeFunctionData(functionFragment: "erc721", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "universeToken",
-    values?: undefined
-  ): string;
+  encodeFunctionData(functionFragment: "list", values?: undefined): string;
 
-  decodeFunctionResult(functionFragment: "erc721", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "universeToken",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "list", data: BytesLike): Result;
 
   events: {};
 }
 
-export interface InterfacePrinter extends BaseContract {
+export interface SolidityInterfaces extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: InterfacePrinterInterface;
+  interface: SolidityInterfacesInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -71,32 +69,28 @@ export interface InterfacePrinter extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    erc721(overrides?: CallOverrides): Promise<[string]>;
-
-    universeToken(overrides?: CallOverrides): Promise<[string]>;
+    list(
+      overrides?: CallOverrides
+    ): Promise<[SolidityInterfaces.InterfaceStructOutput[]]>;
   };
 
-  erc721(overrides?: CallOverrides): Promise<string>;
-
-  universeToken(overrides?: CallOverrides): Promise<string>;
+  list(
+    overrides?: CallOverrides
+  ): Promise<SolidityInterfaces.InterfaceStructOutput[]>;
 
   callStatic: {
-    erc721(overrides?: CallOverrides): Promise<string>;
-
-    universeToken(overrides?: CallOverrides): Promise<string>;
+    list(
+      overrides?: CallOverrides
+    ): Promise<SolidityInterfaces.InterfaceStructOutput[]>;
   };
 
   filters: {};
 
   estimateGas: {
-    erc721(overrides?: CallOverrides): Promise<BigNumber>;
-
-    universeToken(overrides?: CallOverrides): Promise<BigNumber>;
+    list(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    erc721(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    universeToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    list(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

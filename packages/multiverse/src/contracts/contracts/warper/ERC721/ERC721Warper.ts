@@ -263,13 +263,13 @@ export interface ERC721Warper extends BaseContract {
     balanceOf(owner: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getApproved(
-      arg0: BigNumberish,
+      tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
     isApprovedForAll(
       arg0: string,
-      arg1: string,
+      operator: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
@@ -343,11 +343,14 @@ export interface ERC721Warper extends BaseContract {
 
   balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-  getApproved(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+  getApproved(
+    tokenId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   isApprovedForAll(
     arg0: string,
-    arg1: string,
+    operator: string,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
@@ -418,11 +421,14 @@ export interface ERC721Warper extends BaseContract {
 
     balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    getApproved(arg0: BigNumberish, overrides?: CallOverrides): Promise<string>;
+    getApproved(
+      tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     isApprovedForAll(
       arg0: string,
-      arg1: string,
+      operator: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -527,13 +533,13 @@ export interface ERC721Warper extends BaseContract {
     balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     getApproved(
-      arg0: BigNumberish,
+      tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     isApprovedForAll(
       arg0: string,
-      arg1: string,
+      operator: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -612,13 +618,13 @@ export interface ERC721Warper extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getApproved(
-      arg0: BigNumberish,
+      tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     isApprovedForAll(
       arg0: string,
-      arg1: string,
+      operator: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

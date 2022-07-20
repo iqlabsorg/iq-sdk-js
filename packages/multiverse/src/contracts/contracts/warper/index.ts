@@ -13,5 +13,6 @@ export type { IWarperManager } from "./IWarperManager";
 export type { IWarperPreset } from "./IWarperPreset";
 export type { IWarperPresetFactory } from "./IWarperPresetFactory";
 export type { Warper } from "./Warper";
+export type { WarperManager } from "./WarperManager";
 export type { WarperPresetFactory } from "./WarperPresetFactory";
 export type { Warpers } from "./Warpers";

@@ -59,6 +59,7 @@ export declare namespace Listings {
     immediatePayout: boolean;
     delisted: boolean;
     paused: boolean;
+    groupId: BigNumberish;
   };
 
   export type ListingStructOutput = [
@@ -69,7 +70,8 @@ export declare namespace Listings {
     number,
     boolean,
     boolean,
-    boolean
+    boolean,
+    BigNumber
   ] & {
     asset: Assets.AssetStructOutput;
     params: Listings.ParamsStructOutput;
@@ -79,6 +81,7 @@ export declare namespace Listings {
     immediatePayout: boolean;
     delisted: boolean;
     paused: boolean;
+    groupId: BigNumber;
   };
 }
 
@@ -88,6 +91,7 @@ export interface IListingManagerInterface extends utils.Interface {
     "assetListings(address,uint256,uint256)": FunctionFragment;
     "delistAsset(uint256)": FunctionFragment;
     "listAsset(((bytes4,bytes),uint256),(bytes4,bytes),uint32,bool)": FunctionFragment;
+    "listingController(bytes4)": FunctionFragment;
     "listingCount()": FunctionFragment;
     "listingInfo(uint256)": FunctionFragment;
     "listings(uint256,uint256)": FunctionFragment;
@@ -104,6 +108,7 @@ export interface IListingManagerInterface extends utils.Interface {
       | "assetListings"
       | "delistAsset"
       | "listAsset"
+      | "listingController"
       | "listingCount"
       | "listingInfo"
       | "listings"
@@ -129,6 +134,10 @@ export interface IListingManagerInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "listAsset",
     values: [Assets.AssetStruct, Listings.ParamsStruct, BigNumberish, boolean]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "listingController",
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "listingCount",
@@ -177,6 +186,10 @@ export interface IListingManagerInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "listAsset", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "listingController",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "listingCount",
     data: BytesLike
   ): Result;
@@ -208,7 +221,7 @@ export interface IListingManagerInterface extends utils.Interface {
 
   events: {
     "AssetDelisted(uint256,address,uint32)": EventFragment;
-    "AssetListed(uint256,address,tuple,tuple,uint32)": EventFragment;
+    "AssetListed(uint256,uint256,address,tuple,tuple,uint32)": EventFragment;
     "AssetWithdrawn(uint256,address,tuple)": EventFragment;
     "ListingPaused(uint256)": EventFragment;
     "ListingUnpaused(uint256)": EventFragment;
@@ -235,6 +248,7 @@ export type AssetDelistedEventFilter = TypedEventFilter<AssetDelistedEvent>;
 
 export interface AssetListedEventObject {
   listingId: BigNumber;
+  listingGroupId: BigNumber;
   lister: string;
   asset: Assets.AssetStructOutput;
   params: Listings.ParamsStructOutput;
@@ -242,6 +256,7 @@ export interface AssetListedEventObject {
 }
 export type AssetListedEvent = TypedEvent<
   [
+    BigNumber,
     BigNumber,
     string,
     Assets.AssetStructOutput,
@@ -337,6 +352,11 @@ export interface IListingManager extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    listingController(
+      strategyId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     listingCount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     listingInfo(
@@ -403,6 +423,11 @@ export interface IListingManager extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  listingController(
+    strategyId: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   listingCount(overrides?: CallOverrides): Promise<BigNumber>;
 
   listingInfo(
@@ -467,7 +492,17 @@ export interface IListingManager extends BaseContract {
       maxLockPeriod: BigNumberish,
       immediatePayout: boolean,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<
+      [BigNumber, BigNumber] & {
+        listingId: BigNumber;
+        listingGroupId: BigNumber;
+      }
+    >;
+
+    listingController(
+      strategyId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     listingCount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -522,8 +557,9 @@ export interface IListingManager extends BaseContract {
       unlocksAt?: null
     ): AssetDelistedEventFilter;
 
-    "AssetListed(uint256,address,tuple,tuple,uint32)"(
+    "AssetListed(uint256,uint256,address,tuple,tuple,uint32)"(
       listingId?: BigNumberish | null,
+      listingGroupId?: BigNumberish | null,
       lister?: string | null,
       asset?: null,
       params?: null,
@@ -531,6 +567,7 @@ export interface IListingManager extends BaseContract {
     ): AssetListedEventFilter;
     AssetListed(
       listingId?: BigNumberish | null,
+      listingGroupId?: BigNumberish | null,
       lister?: string | null,
       asset?: null,
       params?: null,
@@ -585,6 +622,11 @@ export interface IListingManager extends BaseContract {
       maxLockPeriod: BigNumberish,
       immediatePayout: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    listingController(
+      strategyId: BytesLike,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     listingCount(overrides?: CallOverrides): Promise<BigNumber>;
@@ -652,6 +694,11 @@ export interface IListingManager extends BaseContract {
       maxLockPeriod: BigNumberish,
       immediatePayout: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    listingController(
+      strategyId: BytesLike,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     listingCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;

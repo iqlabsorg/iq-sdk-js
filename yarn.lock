@@ -745,10 +745,13 @@
   resolved "https://registry.yarnpkg.com/@hutson/parse-repository-url/-/parse-repository-url-3.0.2.tgz#98c23c950a3d9b6c8f0daed06da6c3af06981340"
   integrity sha512-H9XAx3hc0BQHY6l+IFSWHDySypcXsvsuLhgYLUGywmJ5pswRVQJUHpOsobnLYp2ZUaUlKiKDrgWWhosOwAEM8Q==
 
-"@iqprotocol/solidity-contracts-nft@0.1.4":
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/@iqprotocol/solidity-contracts-nft/-/solidity-contracts-nft-0.1.4.tgz#0252edb97a2a19240a38e05ded847dcdcf58d9a5"
-  integrity sha512-d2n2bZiUp3n+kplka1XDZ2/nGkW4aZGE1auUg7fVpdgvLhuD5TOCEAUITFc+YfjbyM6b9pDyXCFrtCtJbZpguQ==
+"@iqprotocol/solidity-contracts-nft@0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@iqprotocol/solidity-contracts-nft/-/solidity-contracts-nft-0.2.0.tgz#efa8930cd572ec71d0ef31ac1b807560517d1afe"
+  integrity sha512-xU78H+n8ssAtNNwg8Kj8d5GVrXIjd2Bg+A9jw3CU9xkNwbM1ObpvRBOgsf57nl0yaOOFHZmn7e1hb/nJ8un5Gw==
+  dependencies:
+    "@openzeppelin/contracts" "4.6.0"
+    "@openzeppelin/contracts-upgradeable" "4.6.0"
 
 "@iqprotocol/solidity-contracts@https://github.com/iqlabsorg/iq-smart-contracts#476d0e4705ecb4d90938411f1e32533d7fcaa307":
   version "0.2.0"
@@ -2022,6 +2025,16 @@
   integrity sha512-s1zLBjWhdEI2zwaoSgyOFoKSl109CUcVBCc7biPJ3aAf6LGLU6szDvi31JPU7bxfla2lqfhjbbg/5DdFNxOwHw==
   dependencies:
     "@octokit/openapi-types" "^11.2.0"
+
+"@openzeppelin/contracts-upgradeable@4.6.0":
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts-upgradeable/-/contracts-upgradeable-4.6.0.tgz#1bf55f230f008554d4c6fe25eb165b85112108b0"
+  integrity sha512-5OnVuO4HlkjSCJO165a4i2Pu1zQGzMs//o54LPrwUgxvEO2P3ax1QuaSI0cEHHTveA77guS0PnNugpR2JMsPfA==
+
+"@openzeppelin/contracts@4.6.0":
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-4.6.0.tgz#c91cf64bc27f573836dba4122758b4743418c1b3"
+  integrity sha512-8vi4d50NNya/bQqCmaVzvHNmwHvS0OBKb7HNtuNwEE3scXWrP31fKQoGxNMT+KbzmrNZzatE3QK5p2gFONI/hg==
 
 "@openzeppelin/hardhat-upgrades@^1.17.0":
   version "1.18.0"

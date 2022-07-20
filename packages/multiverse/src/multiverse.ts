@@ -3,7 +3,7 @@ import { ContractResolver } from './contract-resolver';
 import { AccountId, AssetType, ChainId } from 'caip';
 import { AddressTranslator } from './address-translator';
 import { ChainAware } from './types';
-import { MetahubAdapter, UniverseRegistryAdapter, WarperPresetFactoryAdapter } from './adapters';
+import { MetahubAdapter, UniverseRegistryAdapter, WarperManagerAdapter, WarperPresetFactoryAdapter } from './adapters';
 import { assetClasses } from './constants';
 import { ERC721WarperAdapter } from './adapters/erc721-warper';
 
@@ -68,5 +68,14 @@ export class Multiverse implements ChainAware {
   warperPresetFactory(accountId: AccountId): WarperPresetFactoryAdapter {
     this.addressTranslator.assertSameChainId(accountId.chainId);
     return new WarperPresetFactoryAdapter(accountId, this.contractResolver, this.addressTranslator);
+  }
+
+  /**
+   * Resolves the warper manager adapter.
+   * @param accountId Warper manager account ID.
+   */
+  warperManager(accountId: AccountId): WarperManagerAdapter {
+    this.addressTranslator.assertSameChainId(accountId.chainId);
+    return new WarperManagerAdapter(accountId, this.contractResolver, this.addressTranslator);
   }
 }

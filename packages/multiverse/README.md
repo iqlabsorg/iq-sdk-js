@@ -49,9 +49,10 @@ After the Multiverse has been instantiated, it can be used to resolve other cruc
 
 ```mermaid
   graph LR;
-      Multiverse-->Metahub;
-      Multiverse-->UniverseRegistry;
-      Multiverse-->WarperPresetFactory;
+      Multiverse-->MetahubAdapter;
+      Multiverse-->UniverseRegistryAdapter;
+      Multiverse-->WarperPresetFactoryAdapter;
+      Multiverse-->WarperManagerAdapter;
       Multiverse-->WarperAdapter;
 ```
 
@@ -116,7 +117,8 @@ const warperPresetFactory = multiverse.warperPresetFactory(
 
 #### Warper preset deployment
 
-"Preset factories" allow you to easily deploy warpers from presets. These presets are created and maintained by the IQ Protocol team.
+The Preset Factory allows you to easily deploy warpers from presets. These presets are created and maintained by the 
+IQ Protocol team.
 
 ```ts
 // Deploy ERC721PresetConfigurable preset.
@@ -146,6 +148,107 @@ const warperAssetType = await warperPresetFactory.findWarperByDeploymentTransact
 const warperAddress = warperAssetType!.assetName.reference;
 ```
 
+### Warper Manager
+In order to manage your warpers, you will need to use `WarperManagerAdapter`.
+
+```ts
+import { AccountId, ChainId } from '@iqprotocol/multiverse';
+
+const warperManagerAddress = '0x...';
+const warperManager = multiverse.warperManager(
+  new AccountId({
+    chainId,
+    address: warperManagerAddress,
+  }),
+);
+```
+
+#### Custom Warper registration
+
+Anyone can create a custom warper and register it with Warper Manager.
+Please refer to the code snippet below for more details for how to exactly register a custom warper.
+The code snippet assumes that the custom Warper has already been deployed.
+
+```ts
+const warperAddress = '0x...';
+
+await warperManager.registerWarper(
+  new AssetType({
+    chainId,
+    assetName: { namespace: 'erc721', reference: warperAddress },
+  }),
+  {
+    universeId: '<your universe ID>',
+    name: 'My Warper',
+    paused: false,
+  },
+);
+```
+
+#### Pause Warper
+
+To pause a warper, the warper, of course needs to be registered and NOT PAUSED.
+
+```ts
+const warperAddress = '0x0...';
+await warperManager.pauseWarper(
+  new AssetType({
+    chainId,
+    assetName: {
+      namespace: 'erc721',
+      reference: warperAddress,
+    },
+  }),
+);
+```
+
+#### Unpause Warper
+
+To unpause a warper, the warper, of course needs to be registered and PAUSED.
+
+```ts
+const warperAddress = '0x0...';
+await warperManager.unpauseWarper(
+  new AssetType({
+    chainId,
+    assetName: {
+      namespace: 'erc721',
+      reference: warperAddress,
+    },
+  }),
+);
+```
+
+#### View warpers
+
+```ts
+// if the Warper is already known, we can use the `warper` method.
+const warperAddress = '0x0...';
+const warper = new AssetType({
+  chainId,
+  assetName: {
+    namespace: 'erc721',
+    reference: warperAddress,
+  },
+});
+const registeredWarper = await warperManager.warper(warper);
+
+// If we want to enumerate all warpers and we know the original asset, we can use the `assetWarpers` method.
+const originalAddress = '0x0...';
+const originalAsset = new AssetType({
+  chainId,
+  assetName: {
+    namespace: 'erc721',
+    reference: originalAddress,
+  },
+});
+const registeredWarpersForAsset = await warperManager.assetWarpers(originalAsset, 0, 20);
+
+// If we want to enumerate all warpers and we know the universe ID, we can use the `universeWarpers` method.
+const universeId = 1;
+const registeredWarpersForUniverse = await warperManager.universeWarpers(universeId, 0, 20);
+```
+
 ### Metahub
 
 In order to interact with the Metahub, it will need to be resolved from the Multiverse.
@@ -161,59 +264,36 @@ const metahub = multiverse.metahub(
 );
 ```
 
-#### Custom Warper registration
-
-Anyone can create a custom warper and register it in the Metahub. Please refer to the code snippet below for more details for how to exactly register a custom warper to Metahub. The code snippet assumes that the custom Warper has already been deployed.
-
-
-```ts
-const warperAddress = '0x...';
-
-await metahub.registerWarper(
-  new AssetType({
-    chainId,
-    assetName: { namespace: 'erc721', reference: warperAddress },
-  }),
-  {
-    universeId: '<your universe ID>',
-    name: 'My Warper',
-    paused: false,
-  },
-);
-```
-
 #### List asset
 
 To list an asset for rent, there must be at least one IQVerse with a registered Warper for the given Original:
 
 ```ts
 import { BigNumber } from 'ethers';
-import { ERC721__factory } from '../typechain';
 
-// Allow Metahub to take custody of the asset.
-const originalNftAddress = '0x0...'
-const metahubAddress = '0x0...'
-const tokenId = 42;
-const nft = new ERC721__factory(signer).attach(originalNftAddress);
-const setApprovalTx = await nft.approve(metahubAddress, tokenId);
-console.log(`Setting Metahub approvals. Tx: ${setApprovalTx.hash}`);
-await setApprovalTx.wait();
-console.log(`Metahub is now the original collection operator.`);
+const originalAssetAddress = '0x0...'
+
+// Encode the asset
+const asset = {
+  id: new AssetId({
+    chainId,
+    assetName: {
+      namespace: 'erc721',
+      reference: originalAssetAddress,
+    },
+    tokenId: "42",
+  }),
+  // The amount of tokens. For ERC721 this is always 1. For other token standards - it may differ.
+  value: 1,
+};
+
+// Allow Metahub to take custody of the asset
+const approvalTx = await metahub.approveForListing(asset);
+await approvalTx.wait();
 
 // List the token
 const tx = await metahub.listAsset({
-  asset: {
-    id: new AssetId({
-      chainId,
-      assetName: {
-        namespace: 'erc721',
-        reference: originalNftAddress,
-      },
-      tokenId: tokenId.toString(),
-    }),
-    // The amount of tokens. For ERC721 this is always 1. For other token standards - it can differ.
-    value: 1,
-  },
+  asset,
   strategy: {
     // One of the listing strategies must be chosen. The simplest one - 'FIXED_PRICE'
     name: 'FIXED_PRICE',
@@ -280,6 +360,7 @@ To be able to delist an asset, we need to know the listing ID beforehand.
 const listingId = 15;
 await metahub.delistAsset(listingId);
 ```
+
 #### Withdraw asset
 
 To be able to withdraw an asset, we need to know the listing ID beforehand, and the asset needs to be delisted beforehand.
@@ -287,41 +368,6 @@ To be able to withdraw an asset, we need to know the listing ID beforehand, and 
 ```ts
 const listingId = 15;
 await metahub.withdrawAsset(listingId);
-```
-
-#### Pause Warper
-
-To pause a warper, the warper, of course needs to be registered and NOT PAUSED.
-
-```ts
-const warperAddress = '0x0...';
-await metahub.pauseWarper(
-  new AssetType({
-    chainId,
-    assetName: {
-      namespace: 'erc721',
-      reference: warperAddress,
-    },
-  }),
-);
-```
-
-
-#### Unpause Warper
-
-To unpause a warper, the warper, of course needs to be registered and PAUSED.
-
-```ts
-const warperAddress = '0x0...';
-await metahub.unpauseWarper(
-  new AssetType({
-    chainId,
-    assetName: {
-      namespace: 'erc721',
-      reference: warperAddress,
-    },
-  }),
-);
 ```
 
 #### Rent
@@ -376,36 +422,6 @@ const rentalAgreement = await metahub.rentalAgreement(rentalId);
 const renterAddress = '0x0...';
 const renter = new AccountId({ chainId, address: renterAddress });
 const userRentalAgreement = await metahub.userRentalAgreements(renter, 0, 20);
-```
-
-#### View warpers
-
-```ts
-// if the Warper is already known, we can use the `warper` method.
-const warperAddress = '0x0...';
-const warperAsset = new AssetType({
-  chainId,
-  assetName: {
-    namespace: 'erc721',
-    reference: warper.address,
-  },
-});
-const registeredWarper = await metahub.warper(warperAsset);
-
-// If we want to enumerate all warpers and we know the original asset, we can use the `assetWarpers` method.
-const originalAddress = '0x0...';
-const originalAsset = new AssetType({
-  chainId,
-  assetName: {
-    namespace: 'erc721',
-    reference: originalAddress,
-  },
-});
-const registeredWarpersForAsset = await metahub.assetWarpers(originalAsset, 0, 20);
-
-// If we want to enumerate all warpers and we know the universe ID, we can use the `universeWarpers` method.
-const universeId = 1;
-const registeredWarpersForUniverse = await metahub.universeWarpers(universeId, 0, 20);
 ```
 
 #### Get accumulated user balance

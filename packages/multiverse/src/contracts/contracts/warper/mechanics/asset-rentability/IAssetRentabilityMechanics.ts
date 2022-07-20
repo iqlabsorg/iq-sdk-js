@@ -22,18 +22,18 @@ import type {
 
 export interface IAssetRentabilityMechanicsInterface extends utils.Interface {
   functions: {
-    "isRentableAsset(address,uint256,uint256)": FunctionFragment;
+    "__isRentableAsset(address,uint256,uint256)": FunctionFragment;
   };
 
-  getFunction(nameOrSignatureOrTopic: "isRentableAsset"): FunctionFragment;
+  getFunction(nameOrSignatureOrTopic: "__isRentableAsset"): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "isRentableAsset",
+    functionFragment: "__isRentableAsset",
     values: [string, BigNumberish, BigNumberish]
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "isRentableAsset",
+    functionFragment: "__isRentableAsset",
     data: BytesLike
   ): Result;
 
@@ -67,7 +67,7 @@ export interface IAssetRentabilityMechanics extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    isRentableAsset(
+    __isRentableAsset(
       renter: string,
       tokenId: BigNumberish,
       amount: BigNumberish,
@@ -77,7 +77,7 @@ export interface IAssetRentabilityMechanics extends BaseContract {
     >;
   };
 
-  isRentableAsset(
+  __isRentableAsset(
     renter: string,
     tokenId: BigNumberish,
     amount: BigNumberish,
@@ -85,7 +85,7 @@ export interface IAssetRentabilityMechanics extends BaseContract {
   ): Promise<[boolean, string] & { isRentable: boolean; errorMessage: string }>;
 
   callStatic: {
-    isRentableAsset(
+    __isRentableAsset(
       renter: string,
       tokenId: BigNumberish,
       amount: BigNumberish,
@@ -98,7 +98,7 @@ export interface IAssetRentabilityMechanics extends BaseContract {
   filters: {};
 
   estimateGas: {
-    isRentableAsset(
+    __isRentableAsset(
       renter: string,
       tokenId: BigNumberish,
       amount: BigNumberish,
@@ -107,7 +107,7 @@ export interface IAssetRentabilityMechanics extends BaseContract {
   };
 
   populateTransaction: {
-    isRentableAsset(
+    __isRentableAsset(
       renter: string,
       tokenId: BigNumberish,
       amount: BigNumberish,

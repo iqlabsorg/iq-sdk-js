@@ -9,4 +9,5 @@ export { AssetVault__factory } from "./AssetVault__factory";
 export { Assets__factory } from "./Assets__factory";
 export { IAssetClassRegistry__factory } from "./IAssetClassRegistry__factory";
 export { IAssetController__factory } from "./IAssetController__factory";
+export { IAssetManager__factory } from "./IAssetManager__factory";
 export { IAssetVault__factory } from "./IAssetVault__factory";

@@ -25,6 +25,8 @@ import {
   UniverseRegistry__factory,
   UniverseToken,
   UniverseToken__factory,
+  WarperManager,
+  WarperManager__factory,
   WarperPresetFactory,
   WarperPresetFactory__factory,
 } from './contracts';
@@ -68,6 +70,10 @@ export class ContractResolver implements ChainAware {
 
   resolveWarperPresetFactory(address: Address): WarperPresetFactory {
     return WarperPresetFactory__factory.connect(address, this.signer);
+  }
+
+  resolveWarperManager(address: Address): WarperManager {
+    return WarperManager__factory.connect(address, this.signer);
   }
 
   resolveWarper(address: Address): IWarper {

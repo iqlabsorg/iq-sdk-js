@@ -22,17 +22,28 @@ import type {
 export interface ListingsInterface extends utils.Interface {
   functions: {
     "FIXED_PRICE()": FunctionFragment;
+    "FIXED_PRICE_WITH_REWARD()": FunctionFragment;
   };
 
-  getFunction(nameOrSignatureOrTopic: "FIXED_PRICE"): FunctionFragment;
+  getFunction(
+    nameOrSignatureOrTopic: "FIXED_PRICE" | "FIXED_PRICE_WITH_REWARD"
+  ): FunctionFragment;
 
   encodeFunctionData(
     functionFragment: "FIXED_PRICE",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "FIXED_PRICE_WITH_REWARD",
+    values?: undefined
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "FIXED_PRICE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "FIXED_PRICE_WITH_REWARD",
     data: BytesLike
   ): Result;
 
@@ -67,21 +78,33 @@ export interface Listings extends BaseContract {
 
   functions: {
     FIXED_PRICE(overrides?: CallOverrides): Promise<[string]>;
+
+    FIXED_PRICE_WITH_REWARD(overrides?: CallOverrides): Promise<[string]>;
   };
 
   FIXED_PRICE(overrides?: CallOverrides): Promise<string>;
 
+  FIXED_PRICE_WITH_REWARD(overrides?: CallOverrides): Promise<string>;
+
   callStatic: {
     FIXED_PRICE(overrides?: CallOverrides): Promise<string>;
+
+    FIXED_PRICE_WITH_REWARD(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {};
 
   estimateGas: {
     FIXED_PRICE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    FIXED_PRICE_WITH_REWARD(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
     FIXED_PRICE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    FIXED_PRICE_WITH_REWARD(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
   };
 }

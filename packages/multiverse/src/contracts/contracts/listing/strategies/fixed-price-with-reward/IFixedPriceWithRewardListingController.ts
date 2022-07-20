@@ -18,7 +18,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
-} from "../../../common";
+} from "../../../../common";
 
 export declare namespace Listings {
   export type ParamsStruct = { strategy: BytesLike; data: BytesLike };
@@ -53,9 +53,11 @@ export declare namespace Rentings {
   };
 }
 
-export interface FixedPriceListingControllerInterface extends utils.Interface {
+export interface IFixedPriceWithRewardListingControllerInterface
+  extends utils.Interface {
   functions: {
     "calculateRentalFee((bytes4,bytes),(uint256,address,address,uint32,address))": FunctionFragment;
+    "decodeStrategyParams((bytes4,bytes))": FunctionFragment;
     "strategyId()": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
   };
@@ -63,6 +65,7 @@ export interface FixedPriceListingControllerInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "calculateRentalFee"
+      | "decodeStrategyParams"
       | "strategyId"
       | "supportsInterface"
   ): FunctionFragment;
@@ -70,6 +73,10 @@ export interface FixedPriceListingControllerInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "calculateRentalFee",
     values: [Listings.ParamsStruct, Rentings.ParamsStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "decodeStrategyParams",
+    values: [Listings.ParamsStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "strategyId",
@@ -84,6 +91,10 @@ export interface FixedPriceListingControllerInterface extends utils.Interface {
     functionFragment: "calculateRentalFee",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "decodeStrategyParams",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "strategyId", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
@@ -93,12 +104,12 @@ export interface FixedPriceListingControllerInterface extends utils.Interface {
   events: {};
 }
 
-export interface FixedPriceListingController extends BaseContract {
+export interface IFixedPriceWithRewardListingController extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: FixedPriceListingControllerInterface;
+  interface: IFixedPriceWithRewardListingControllerInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -121,10 +132,17 @@ export interface FixedPriceListingController extends BaseContract {
 
   functions: {
     calculateRentalFee(
-      strategyParams: Listings.ParamsStruct,
+      listingParams: Listings.ParamsStruct,
       rentingParams: Rentings.ParamsStruct,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    decodeStrategyParams(
+      params: Listings.ParamsStruct,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, number] & { baseRate: BigNumber; baseRewardPercent: number }
+    >;
 
     strategyId(overrides?: CallOverrides): Promise<[string]>;
 
@@ -135,10 +153,17 @@ export interface FixedPriceListingController extends BaseContract {
   };
 
   calculateRentalFee(
-    strategyParams: Listings.ParamsStruct,
+    listingParams: Listings.ParamsStruct,
     rentingParams: Rentings.ParamsStruct,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  decodeStrategyParams(
+    params: Listings.ParamsStruct,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, number] & { baseRate: BigNumber; baseRewardPercent: number }
+  >;
 
   strategyId(overrides?: CallOverrides): Promise<string>;
 
@@ -149,10 +174,17 @@ export interface FixedPriceListingController extends BaseContract {
 
   callStatic: {
     calculateRentalFee(
-      strategyParams: Listings.ParamsStruct,
+      listingParams: Listings.ParamsStruct,
       rentingParams: Rentings.ParamsStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    decodeStrategyParams(
+      params: Listings.ParamsStruct,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, number] & { baseRate: BigNumber; baseRewardPercent: number }
+    >;
 
     strategyId(overrides?: CallOverrides): Promise<string>;
 
@@ -166,8 +198,13 @@ export interface FixedPriceListingController extends BaseContract {
 
   estimateGas: {
     calculateRentalFee(
-      strategyParams: Listings.ParamsStruct,
+      listingParams: Listings.ParamsStruct,
       rentingParams: Rentings.ParamsStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    decodeStrategyParams(
+      params: Listings.ParamsStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -181,8 +218,13 @@ export interface FixedPriceListingController extends BaseContract {
 
   populateTransaction: {
     calculateRentalFee(
-      strategyParams: Listings.ParamsStruct,
+      listingParams: Listings.ParamsStruct,
       rentingParams: Rentings.ParamsStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    decodeStrategyParams(
+      params: Listings.ParamsStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

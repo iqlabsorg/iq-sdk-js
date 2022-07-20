@@ -11,27 +11,6 @@ import type {
 
 const _abi = [
   {
-    inputs: [],
-    name: "InvalidWarperInterface",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "provided",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "required",
-        type: "address",
-      },
-    ],
-    name: "WarperHasIncorrectMetahubReference",
-    type: "error",
-  },
-  {
     anonymous: false,
     inputs: [
       {
@@ -194,6 +173,32 @@ const _abi = [
         type: "address",
       },
     ],
+    name: "checkRegisteredWarper",
+    outputs: [],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "asset",
+        type: "address",
+      },
+    ],
+    name: "checkSupportedAsset",
+    outputs: [],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "warper",
+        type: "address",
+      },
+    ],
     name: "deregisterWarper",
     outputs: [],
     stateMutability: "nonpayable",
@@ -218,6 +223,19 @@ const _abi = [
         internalType: "bool",
         name: "",
         type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "metahub",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
       },
     ],
     stateMutability: "view",
@@ -272,62 +290,21 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "supportedAssetCount",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
     inputs: [
       {
-        internalType: "uint256",
-        name: "offset",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "limit",
-        type: "uint256",
-      },
-    ],
-    name: "supportedAssets",
-    outputs: [
-      {
         internalType: "address[]",
-        name: "",
+        name: "warpers",
         type: "address[]",
       },
       {
-        components: [
-          {
-            internalType: "contract IAssetController",
-            name: "controller",
-            type: "address",
-          },
-          {
-            internalType: "bytes4",
-            name: "assetClass",
-            type: "bytes4",
-          },
-          {
-            internalType: "contract IAssetVault",
-            name: "vault",
-            type: "address",
-          },
-        ],
-        internalType: "struct Assets.AssetConfig[]",
-        name: "",
-        type: "tuple[]",
+        internalType: "address",
+        name: "controller",
+        type: "address",
       },
     ],
-    stateMutability: "view",
+    name: "setWarperController",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {

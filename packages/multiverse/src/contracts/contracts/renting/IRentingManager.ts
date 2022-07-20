@@ -97,6 +97,7 @@ export declare namespace Rentings {
     renter: string;
     startTime: BigNumberish;
     endTime: BigNumberish;
+    listingParams: Listings.ParamsStruct;
   };
 
   export type AgreementStructOutput = [
@@ -105,7 +106,8 @@ export declare namespace Rentings {
     BigNumber,
     string,
     number,
-    number
+    number,
+    Listings.ParamsStructOutput
   ] & {
     warpedAsset: Assets.AssetStructOutput;
     collectionId: string;
@@ -113,6 +115,16 @@ export declare namespace Rentings {
     renter: string;
     startTime: number;
     endTime: number;
+    listingParams: Listings.ParamsStructOutput;
+  };
+}
+
+export declare namespace Listings {
+  export type ParamsStruct = { strategy: BytesLike; data: BytesLike };
+
+  export type ParamsStructOutput = [string, string] & {
+    strategy: string;
+    data: string;
   };
 }
 

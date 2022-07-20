@@ -9,3 +9,5 @@ import type * as rentalFeePremium from "./rental-fee-premium";
 export type { rentalFeePremium };
 import type * as rentalPeriod from "./rental-period";
 export type { rentalPeriod };
+import type * as rentingHook from "./renting-hook";
+export type { rentingHook };

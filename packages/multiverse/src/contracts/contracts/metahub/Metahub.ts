@@ -72,6 +72,7 @@ export declare namespace Listings {
     immediatePayout: boolean;
     delisted: boolean;
     paused: boolean;
+    groupId: BigNumberish;
   };
 
   export type ListingStructOutput = [
@@ -82,7 +83,8 @@ export declare namespace Listings {
     number,
     boolean,
     boolean,
-    boolean
+    boolean,
+    BigNumber
   ] & {
     asset: Assets.AssetStructOutput;
     params: Listings.ParamsStructOutput;
@@ -92,33 +94,7 @@ export declare namespace Listings {
     immediatePayout: boolean;
     delisted: boolean;
     paused: boolean;
-  };
-}
-
-export declare namespace Warpers {
-  export type WarperStruct = {
-    assetClass: BytesLike;
-    original: string;
-    paused: boolean;
-    controller: string;
-    name: string;
-    universeId: BigNumberish;
-  };
-
-  export type WarperStructOutput = [
-    string,
-    string,
-    boolean,
-    string,
-    string,
-    BigNumber
-  ] & {
-    assetClass: string;
-    original: string;
-    paused: boolean;
-    controller: string;
-    name: string;
-    universeId: BigNumber;
+    groupId: BigNumber;
   };
 }
 
@@ -186,6 +162,7 @@ export declare namespace Rentings {
     renter: string;
     startTime: BigNumberish;
     endTime: BigNumberish;
+    listingParams: Listings.ParamsStruct;
   };
 
   export type AgreementStructOutput = [
@@ -194,7 +171,8 @@ export declare namespace Rentings {
     BigNumber,
     string,
     number,
-    number
+    number,
+    Listings.ParamsStructOutput
   ] & {
     warpedAsset: Assets.AssetStructOutput;
     collectionId: string;
@@ -202,15 +180,16 @@ export declare namespace Rentings {
     renter: string;
     startTime: number;
     endTime: number;
+    listingParams: Listings.ParamsStructOutput;
   };
 }
 
 export declare namespace Metahub {
   export type MetahubInitParamsStruct = {
-    warperPresetFactory: string;
-    assetClassRegistry: string;
+    warperManager: string;
     listingStrategyRegistry: string;
     universeRegistry: string;
+    assetClassRegistry: string;
     acl: string;
     baseToken: string;
     rentalFeePercent: BigNumberish;
@@ -225,57 +204,41 @@ export declare namespace Metahub {
     string,
     number
   ] & {
-    warperPresetFactory: string;
-    assetClassRegistry: string;
+    warperManager: string;
     listingStrategyRegistry: string;
     universeRegistry: string;
+    assetClassRegistry: string;
     acl: string;
     baseToken: string;
     rentalFeePercent: number;
   };
 }
 
-export declare namespace IWarperManager {
-  export type WarperRegistrationParamsStruct = {
-    name: string;
-    universeId: BigNumberish;
-    paused: boolean;
-  };
-
-  export type WarperRegistrationParamsStructOutput = [
-    string,
-    BigNumber,
-    boolean
-  ] & { name: string; universeId: BigNumber; paused: boolean };
-}
-
 export interface MetahubInterface extends utils.Interface {
   functions: {
+    "assetClassController(bytes4)": FunctionFragment;
     "assetListingCount(address)": FunctionFragment;
     "assetListings(address,uint256,uint256)": FunctionFragment;
     "assetRentalStatus((bytes4,bytes))": FunctionFragment;
-    "assetWarperCount(address)": FunctionFragment;
-    "assetWarpers(address,uint256,uint256)": FunctionFragment;
     "balance(address,address)": FunctionFragment;
     "balances(address)": FunctionFragment;
     "baseToken()": FunctionFragment;
     "collectionRentedValue(bytes32,address)": FunctionFragment;
     "delistAsset(uint256)": FunctionFragment;
-    "deregisterWarper(address)": FunctionFragment;
     "estimateRent((uint256,address,address,uint32,address))": FunctionFragment;
     "initialize((address,address,address,address,address,address,uint16))": FunctionFragment;
     "isWarperAdmin(address,address)": FunctionFragment;
     "listAsset(((bytes4,bytes),uint256),(bytes4,bytes),uint32,bool)": FunctionFragment;
+    "listingController(bytes4)": FunctionFragment;
     "listingCount()": FunctionFragment;
     "listingInfo(uint256)": FunctionFragment;
     "listings(uint256,uint256)": FunctionFragment;
     "pauseListing(uint256)": FunctionFragment;
-    "pauseWarper(address)": FunctionFragment;
     "protocolBalance(address)": FunctionFragment;
     "protocolBalances()": FunctionFragment;
     "protocolRentalFeePercent()": FunctionFragment;
     "proxiableUUID()": FunctionFragment;
-    "registerWarper(address,(string,uint256,bool))": FunctionFragment;
+    "registerAsset(bytes4,address)": FunctionFragment;
     "rent((uint256,address,address,uint32,address),uint256)": FunctionFragment;
     "rentalAgreementInfo(uint256)": FunctionFragment;
     "setProtocolRentalFeePercent(uint16)": FunctionFragment;
@@ -283,10 +246,7 @@ export interface MetahubInterface extends utils.Interface {
     "supportedAssets(uint256,uint256)": FunctionFragment;
     "universeBalance(uint256,address)": FunctionFragment;
     "universeBalances(uint256)": FunctionFragment;
-    "universeWarperCount(uint256)": FunctionFragment;
-    "universeWarpers(uint256,uint256,uint256)": FunctionFragment;
     "unpauseListing(uint256)": FunctionFragment;
-    "unpauseWarper(address)": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
     "upgradeToAndCall(address,bytes)": FunctionFragment;
     "userListingCount(address)": FunctionFragment;
@@ -294,8 +254,6 @@ export interface MetahubInterface extends utils.Interface {
     "userRentalAgreements(address,uint256,uint256)": FunctionFragment;
     "userRentalCount(address)": FunctionFragment;
     "warperController(address)": FunctionFragment;
-    "warperInfo(address)": FunctionFragment;
-    "warperPresetFactory()": FunctionFragment;
     "withdrawAsset(uint256)": FunctionFragment;
     "withdrawFunds(address,uint256,address)": FunctionFragment;
     "withdrawProtocolFunds(address,uint256,address)": FunctionFragment;
@@ -304,31 +262,29 @@ export interface MetahubInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "assetClassController"
       | "assetListingCount"
       | "assetListings"
       | "assetRentalStatus"
-      | "assetWarperCount"
-      | "assetWarpers"
       | "balance"
       | "balances"
       | "baseToken"
       | "collectionRentedValue"
       | "delistAsset"
-      | "deregisterWarper"
       | "estimateRent"
       | "initialize"
       | "isWarperAdmin"
       | "listAsset"
+      | "listingController"
       | "listingCount"
       | "listingInfo"
       | "listings"
       | "pauseListing"
-      | "pauseWarper"
       | "protocolBalance"
       | "protocolBalances"
       | "protocolRentalFeePercent"
       | "proxiableUUID"
-      | "registerWarper"
+      | "registerAsset"
       | "rent"
       | "rentalAgreementInfo"
       | "setProtocolRentalFeePercent"
@@ -336,10 +292,7 @@ export interface MetahubInterface extends utils.Interface {
       | "supportedAssets"
       | "universeBalance"
       | "universeBalances"
-      | "universeWarperCount"
-      | "universeWarpers"
       | "unpauseListing"
-      | "unpauseWarper"
       | "upgradeTo"
       | "upgradeToAndCall"
       | "userListingCount"
@@ -347,14 +300,16 @@ export interface MetahubInterface extends utils.Interface {
       | "userRentalAgreements"
       | "userRentalCount"
       | "warperController"
-      | "warperInfo"
-      | "warperPresetFactory"
       | "withdrawAsset"
       | "withdrawFunds"
       | "withdrawProtocolFunds"
       | "withdrawUniverseFunds"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "assetClassController",
+    values: [BytesLike]
+  ): string;
   encodeFunctionData(
     functionFragment: "assetListingCount",
     values: [string]
@@ -366,14 +321,6 @@ export interface MetahubInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "assetRentalStatus",
     values: [Assets.AssetIdStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "assetWarperCount",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "assetWarpers",
-    values: [string, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "balance",
@@ -388,10 +335,6 @@ export interface MetahubInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "delistAsset",
     values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "deregisterWarper",
-    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "estimateRent",
@@ -410,6 +353,10 @@ export interface MetahubInterface extends utils.Interface {
     values: [Assets.AssetStruct, Listings.ParamsStruct, BigNumberish, boolean]
   ): string;
   encodeFunctionData(
+    functionFragment: "listingController",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "listingCount",
     values?: undefined
   ): string;
@@ -425,7 +372,6 @@ export interface MetahubInterface extends utils.Interface {
     functionFragment: "pauseListing",
     values: [BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "pauseWarper", values: [string]): string;
   encodeFunctionData(
     functionFragment: "protocolBalance",
     values: [string]
@@ -443,8 +389,8 @@ export interface MetahubInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "registerWarper",
-    values: [string, IWarperManager.WarperRegistrationParamsStruct]
+    functionFragment: "registerAsset",
+    values: [BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "rent",
@@ -475,20 +421,8 @@ export interface MetahubInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "universeWarperCount",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "universeWarpers",
-    values: [BigNumberish, BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "unpauseListing",
     values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "unpauseWarper",
-    values: [string]
   ): string;
   encodeFunctionData(functionFragment: "upgradeTo", values: [string]): string;
   encodeFunctionData(
@@ -515,11 +449,6 @@ export interface MetahubInterface extends utils.Interface {
     functionFragment: "warperController",
     values: [string]
   ): string;
-  encodeFunctionData(functionFragment: "warperInfo", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "warperPresetFactory",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "withdrawAsset",
     values: [BigNumberish]
@@ -538,6 +467,10 @@ export interface MetahubInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(
+    functionFragment: "assetClassController",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "assetListingCount",
     data: BytesLike
   ): Result;
@@ -547,14 +480,6 @@ export interface MetahubInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "assetRentalStatus",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "assetWarperCount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "assetWarpers",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "balance", data: BytesLike): Result;
@@ -569,10 +494,6 @@ export interface MetahubInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "deregisterWarper",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "estimateRent",
     data: BytesLike
   ): Result;
@@ -582,6 +503,10 @@ export interface MetahubInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "listAsset", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "listingController",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "listingCount",
     data: BytesLike
@@ -593,10 +518,6 @@ export interface MetahubInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "listings", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "pauseListing",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "pauseWarper",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -616,7 +537,7 @@ export interface MetahubInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "registerWarper",
+    functionFragment: "registerAsset",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "rent", data: BytesLike): Result;
@@ -645,19 +566,7 @@ export interface MetahubInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "universeWarperCount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "universeWarpers",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "unpauseListing",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "unpauseWarper",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
@@ -685,11 +594,6 @@ export interface MetahubInterface extends utils.Interface {
     functionFragment: "warperController",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "warperInfo", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "warperPresetFactory",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "withdrawAsset",
     data: BytesLike
@@ -710,7 +614,7 @@ export interface MetahubInterface extends utils.Interface {
   events: {
     "AdminChanged(address,address)": EventFragment;
     "AssetDelisted(uint256,address,uint32)": EventFragment;
-    "AssetListed(uint256,address,tuple,tuple,uint32)": EventFragment;
+    "AssetListed(uint256,uint256,address,tuple,tuple,uint32)": EventFragment;
     "AssetRented(uint256,address,uint256,tuple,uint32,uint32)": EventFragment;
     "AssetWithdrawn(uint256,address,tuple)": EventFragment;
     "BeaconUpgraded(address)": EventFragment;
@@ -722,10 +626,6 @@ export interface MetahubInterface extends utils.Interface {
     "UniverseEarned(uint256,address,uint256)": EventFragment;
     "Upgraded(address)": EventFragment;
     "UserEarned(address,uint8,address,uint256)": EventFragment;
-    "WarperDeregistered(address)": EventFragment;
-    "WarperPaused(address)": EventFragment;
-    "WarperRegistered(uint256,address,address,bytes4)": EventFragment;
-    "WarperUnpaused(address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
@@ -742,10 +642,6 @@ export interface MetahubInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "UniverseEarned"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "UserEarned"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "WarperDeregistered"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "WarperPaused"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "WarperRegistered"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "WarperUnpaused"): EventFragment;
 }
 
 export interface AdminChangedEventObject {
@@ -773,6 +669,7 @@ export type AssetDelistedEventFilter = TypedEventFilter<AssetDelistedEvent>;
 
 export interface AssetListedEventObject {
   listingId: BigNumber;
+  listingGroupId: BigNumber;
   lister: string;
   asset: Assets.AssetStructOutput;
   params: Listings.ParamsStructOutput;
@@ -780,6 +677,7 @@ export interface AssetListedEventObject {
 }
 export type AssetListedEvent = TypedEvent<
   [
+    BigNumber,
     BigNumber,
     string,
     Assets.AssetStructOutput,
@@ -909,48 +807,6 @@ export type UserEarnedEvent = TypedEvent<
 
 export type UserEarnedEventFilter = TypedEventFilter<UserEarnedEvent>;
 
-export interface WarperDeregisteredEventObject {
-  warper: string;
-}
-export type WarperDeregisteredEvent = TypedEvent<
-  [string],
-  WarperDeregisteredEventObject
->;
-
-export type WarperDeregisteredEventFilter =
-  TypedEventFilter<WarperDeregisteredEvent>;
-
-export interface WarperPausedEventObject {
-  warper: string;
-}
-export type WarperPausedEvent = TypedEvent<[string], WarperPausedEventObject>;
-
-export type WarperPausedEventFilter = TypedEventFilter<WarperPausedEvent>;
-
-export interface WarperRegisteredEventObject {
-  universeId: BigNumber;
-  warper: string;
-  original: string;
-  assetClass: string;
-}
-export type WarperRegisteredEvent = TypedEvent<
-  [BigNumber, string, string, string],
-  WarperRegisteredEventObject
->;
-
-export type WarperRegisteredEventFilter =
-  TypedEventFilter<WarperRegisteredEvent>;
-
-export interface WarperUnpausedEventObject {
-  warper: string;
-}
-export type WarperUnpausedEvent = TypedEvent<
-  [string],
-  WarperUnpausedEventObject
->;
-
-export type WarperUnpausedEventFilter = TypedEventFilter<WarperUnpausedEvent>;
-
 export interface Metahub extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
@@ -978,6 +834,11 @@ export interface Metahub extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    assetClassController(
+      assetClass: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     assetListingCount(
       original: string,
       overrides?: CallOverrides
@@ -994,18 +855,6 @@ export interface Metahub extends BaseContract {
       warpedAssetId: Assets.AssetIdStruct,
       overrides?: CallOverrides
     ): Promise<[number]>;
-
-    assetWarperCount(
-      original: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    assetWarpers(
-      original: string,
-      offset: BigNumberish,
-      limit: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string[], Warpers.WarperStructOutput[]]>;
 
     balance(
       account: string,
@@ -1028,11 +877,6 @@ export interface Metahub extends BaseContract {
 
     delistAsset(
       listingId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    deregisterWarper(
-      warper: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -1060,6 +904,11 @@ export interface Metahub extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    listingController(
+      strategyId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     listingCount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     listingInfo(
@@ -1078,11 +927,6 @@ export interface Metahub extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    pauseWarper(
-      warper: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     protocolBalance(
       token: string,
       overrides?: CallOverrides
@@ -1096,9 +940,9 @@ export interface Metahub extends BaseContract {
 
     proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
 
-    registerWarper(
-      warper: string,
-      params: IWarperManager.WarperRegistrationParamsStruct,
+    registerAsset(
+      assetClass: BytesLike,
+      original: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -1137,25 +981,8 @@ export interface Metahub extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[Accounts.BalanceStructOutput[]]>;
 
-    universeWarperCount(
-      universeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    universeWarpers(
-      universeId: BigNumberish,
-      offset: BigNumberish,
-      limit: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string[], Warpers.WarperStructOutput[]]>;
-
     unpauseListing(
       listingId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    unpauseWarper(
-      warper: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -1199,13 +1026,6 @@ export interface Metahub extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    warperInfo(
-      warper: string,
-      overrides?: CallOverrides
-    ): Promise<[Warpers.WarperStructOutput]>;
-
-    warperPresetFactory(overrides?: CallOverrides): Promise<[string]>;
-
     withdrawAsset(
       listingId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1234,6 +1054,11 @@ export interface Metahub extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
+  assetClassController(
+    assetClass: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   assetListingCount(
     original: string,
     overrides?: CallOverrides
@@ -1250,18 +1075,6 @@ export interface Metahub extends BaseContract {
     warpedAssetId: Assets.AssetIdStruct,
     overrides?: CallOverrides
   ): Promise<number>;
-
-  assetWarperCount(
-    original: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  assetWarpers(
-    original: string,
-    offset: BigNumberish,
-    limit: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<[string[], Warpers.WarperStructOutput[]]>;
 
   balance(
     account: string,
@@ -1284,11 +1097,6 @@ export interface Metahub extends BaseContract {
 
   delistAsset(
     listingId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  deregisterWarper(
-    warper: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1316,6 +1124,11 @@ export interface Metahub extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  listingController(
+    strategyId: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   listingCount(overrides?: CallOverrides): Promise<BigNumber>;
 
   listingInfo(
@@ -1334,11 +1147,6 @@ export interface Metahub extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  pauseWarper(
-    warper: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   protocolBalance(token: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   protocolBalances(
@@ -1349,9 +1157,9 @@ export interface Metahub extends BaseContract {
 
   proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
-  registerWarper(
-    warper: string,
-    params: IWarperManager.WarperRegistrationParamsStruct,
+  registerAsset(
+    assetClass: BytesLike,
+    original: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1390,25 +1198,8 @@ export interface Metahub extends BaseContract {
     overrides?: CallOverrides
   ): Promise<Accounts.BalanceStructOutput[]>;
 
-  universeWarperCount(
-    universeId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  universeWarpers(
-    universeId: BigNumberish,
-    offset: BigNumberish,
-    limit: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<[string[], Warpers.WarperStructOutput[]]>;
-
   unpauseListing(
     listingId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  unpauseWarper(
-    warper: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1449,13 +1240,6 @@ export interface Metahub extends BaseContract {
 
   warperController(warper: string, overrides?: CallOverrides): Promise<string>;
 
-  warperInfo(
-    warper: string,
-    overrides?: CallOverrides
-  ): Promise<Warpers.WarperStructOutput>;
-
-  warperPresetFactory(overrides?: CallOverrides): Promise<string>;
-
   withdrawAsset(
     listingId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -1484,6 +1268,11 @@ export interface Metahub extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    assetClassController(
+      assetClass: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     assetListingCount(
       original: string,
       overrides?: CallOverrides
@@ -1500,18 +1289,6 @@ export interface Metahub extends BaseContract {
       warpedAssetId: Assets.AssetIdStruct,
       overrides?: CallOverrides
     ): Promise<number>;
-
-    assetWarperCount(
-      original: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    assetWarpers(
-      original: string,
-      offset: BigNumberish,
-      limit: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string[], Warpers.WarperStructOutput[]]>;
 
     balance(
       account: string,
@@ -1537,8 +1314,6 @@ export interface Metahub extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    deregisterWarper(warper: string, overrides?: CallOverrides): Promise<void>;
-
     estimateRent(
       rentingParams: Rentings.ParamsStruct,
       overrides?: CallOverrides
@@ -1561,7 +1336,17 @@ export interface Metahub extends BaseContract {
       maxLockPeriod: BigNumberish,
       immediatePayout: boolean,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<
+      [BigNumber, BigNumber] & {
+        listingId: BigNumber;
+        listingGroupId: BigNumber;
+      }
+    >;
+
+    listingController(
+      strategyId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     listingCount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1581,8 +1366,6 @@ export interface Metahub extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    pauseWarper(warper: string, overrides?: CallOverrides): Promise<void>;
-
     protocolBalance(
       token: string,
       overrides?: CallOverrides
@@ -1596,9 +1379,9 @@ export interface Metahub extends BaseContract {
 
     proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
-    registerWarper(
-      warper: string,
-      params: IWarperManager.WarperRegistrationParamsStruct,
+    registerAsset(
+      assetClass: BytesLike,
+      original: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1637,24 +1420,10 @@ export interface Metahub extends BaseContract {
       overrides?: CallOverrides
     ): Promise<Accounts.BalanceStructOutput[]>;
 
-    universeWarperCount(
-      universeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    universeWarpers(
-      universeId: BigNumberish,
-      offset: BigNumberish,
-      limit: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string[], Warpers.WarperStructOutput[]]>;
-
     unpauseListing(
       listingId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    unpauseWarper(warper: string, overrides?: CallOverrides): Promise<void>;
 
     upgradeTo(
       newImplementation: string,
@@ -1695,13 +1464,6 @@ export interface Metahub extends BaseContract {
       warper: string,
       overrides?: CallOverrides
     ): Promise<string>;
-
-    warperInfo(
-      warper: string,
-      overrides?: CallOverrides
-    ): Promise<Warpers.WarperStructOutput>;
-
-    warperPresetFactory(overrides?: CallOverrides): Promise<string>;
 
     withdrawAsset(
       listingId: BigNumberish,
@@ -1752,8 +1514,9 @@ export interface Metahub extends BaseContract {
       unlocksAt?: null
     ): AssetDelistedEventFilter;
 
-    "AssetListed(uint256,address,tuple,tuple,uint32)"(
+    "AssetListed(uint256,uint256,address,tuple,tuple,uint32)"(
       listingId?: BigNumberish | null,
+      listingGroupId?: BigNumberish | null,
       lister?: string | null,
       asset?: null,
       params?: null,
@@ -1761,6 +1524,7 @@ export interface Metahub extends BaseContract {
     ): AssetListedEventFilter;
     AssetListed(
       listingId?: BigNumberish | null,
+      listingGroupId?: BigNumberish | null,
       lister?: string | null,
       asset?: null,
       params?: null,
@@ -1857,35 +1621,14 @@ export interface Metahub extends BaseContract {
       paymentToken?: string | null,
       amount?: null
     ): UserEarnedEventFilter;
-
-    "WarperDeregistered(address)"(
-      warper?: string | null
-    ): WarperDeregisteredEventFilter;
-    WarperDeregistered(warper?: string | null): WarperDeregisteredEventFilter;
-
-    "WarperPaused(address)"(warper?: string | null): WarperPausedEventFilter;
-    WarperPaused(warper?: string | null): WarperPausedEventFilter;
-
-    "WarperRegistered(uint256,address,address,bytes4)"(
-      universeId?: BigNumberish | null,
-      warper?: string | null,
-      original?: string | null,
-      assetClass?: null
-    ): WarperRegisteredEventFilter;
-    WarperRegistered(
-      universeId?: BigNumberish | null,
-      warper?: string | null,
-      original?: string | null,
-      assetClass?: null
-    ): WarperRegisteredEventFilter;
-
-    "WarperUnpaused(address)"(
-      warper?: string | null
-    ): WarperUnpausedEventFilter;
-    WarperUnpaused(warper?: string | null): WarperUnpausedEventFilter;
   };
 
   estimateGas: {
+    assetClassController(
+      assetClass: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     assetListingCount(
       original: string,
       overrides?: CallOverrides
@@ -1900,18 +1643,6 @@ export interface Metahub extends BaseContract {
 
     assetRentalStatus(
       warpedAssetId: Assets.AssetIdStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    assetWarperCount(
-      original: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    assetWarpers(
-      original: string,
-      offset: BigNumberish,
-      limit: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1933,11 +1664,6 @@ export interface Metahub extends BaseContract {
 
     delistAsset(
       listingId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    deregisterWarper(
-      warper: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1965,6 +1691,11 @@ export interface Metahub extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    listingController(
+      strategyId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     listingCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     listingInfo(
@@ -1983,11 +1714,6 @@ export interface Metahub extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    pauseWarper(
-      warper: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     protocolBalance(
       token: string,
       overrides?: CallOverrides
@@ -1999,9 +1725,9 @@ export interface Metahub extends BaseContract {
 
     proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
 
-    registerWarper(
-      warper: string,
-      params: IWarperManager.WarperRegistrationParamsStruct,
+    registerAsset(
+      assetClass: BytesLike,
+      original: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -2040,25 +1766,8 @@ export interface Metahub extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    universeWarperCount(
-      universeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    universeWarpers(
-      universeId: BigNumberish,
-      offset: BigNumberish,
-      limit: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     unpauseListing(
       listingId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    unpauseWarper(
-      warper: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -2102,10 +1811,6 @@ export interface Metahub extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    warperInfo(warper: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    warperPresetFactory(overrides?: CallOverrides): Promise<BigNumber>;
-
     withdrawAsset(
       listingId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -2135,6 +1840,11 @@ export interface Metahub extends BaseContract {
   };
 
   populateTransaction: {
+    assetClassController(
+      assetClass: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     assetListingCount(
       original: string,
       overrides?: CallOverrides
@@ -2149,18 +1859,6 @@ export interface Metahub extends BaseContract {
 
     assetRentalStatus(
       warpedAssetId: Assets.AssetIdStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    assetWarperCount(
-      original: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    assetWarpers(
-      original: string,
-      offset: BigNumberish,
-      limit: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2188,11 +1886,6 @@ export interface Metahub extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    deregisterWarper(
-      warper: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     estimateRent(
       rentingParams: Rentings.ParamsStruct,
       overrides?: CallOverrides
@@ -2217,6 +1910,11 @@ export interface Metahub extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    listingController(
+      strategyId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     listingCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     listingInfo(
@@ -2235,11 +1933,6 @@ export interface Metahub extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    pauseWarper(
-      warper: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     protocolBalance(
       token: string,
       overrides?: CallOverrides
@@ -2253,9 +1946,9 @@ export interface Metahub extends BaseContract {
 
     proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    registerWarper(
-      warper: string,
-      params: IWarperManager.WarperRegistrationParamsStruct,
+    registerAsset(
+      assetClass: BytesLike,
+      original: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2296,25 +1989,8 @@ export interface Metahub extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    universeWarperCount(
-      universeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    universeWarpers(
-      universeId: BigNumberish,
-      offset: BigNumberish,
-      limit: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     unpauseListing(
       listingId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    unpauseWarper(
-      warper: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2355,15 +2031,6 @@ export interface Metahub extends BaseContract {
 
     warperController(
       warper: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    warperInfo(
-      warper: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    warperPresetFactory(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

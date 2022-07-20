@@ -31,6 +31,7 @@ export interface IProtocolConfigManagerInterface extends utils.Interface {
     "baseToken()": FunctionFragment;
     "protocolRentalFeePercent()": FunctionFragment;
     "setProtocolRentalFeePercent(uint16)": FunctionFragment;
+    "warperController(address)": FunctionFragment;
   };
 
   getFunction(
@@ -38,6 +39,7 @@ export interface IProtocolConfigManagerInterface extends utils.Interface {
       | "baseToken"
       | "protocolRentalFeePercent"
       | "setProtocolRentalFeePercent"
+      | "warperController"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "baseToken", values?: undefined): string;
@@ -49,6 +51,10 @@ export interface IProtocolConfigManagerInterface extends utils.Interface {
     functionFragment: "setProtocolRentalFeePercent",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "warperController",
+    values: [string]
+  ): string;
 
   decodeFunctionResult(functionFragment: "baseToken", data: BytesLike): Result;
   decodeFunctionResult(
@@ -57,6 +63,10 @@ export interface IProtocolConfigManagerInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "setProtocolRentalFeePercent",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "warperController",
     data: BytesLike
   ): Result;
 
@@ -113,6 +123,11 @@ export interface IProtocolConfigManager extends BaseContract {
       rentalFeePercent: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    warperController(
+      warper: string,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
   };
 
   baseToken(overrides?: CallOverrides): Promise<string>;
@@ -124,6 +139,8 @@ export interface IProtocolConfigManager extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  warperController(warper: string, overrides?: CallOverrides): Promise<string>;
+
   callStatic: {
     baseToken(overrides?: CallOverrides): Promise<string>;
 
@@ -133,6 +150,11 @@ export interface IProtocolConfigManager extends BaseContract {
       rentalFeePercent: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    warperController(
+      warper: string,
+      overrides?: CallOverrides
+    ): Promise<string>;
   };
 
   filters: {
@@ -153,6 +175,11 @@ export interface IProtocolConfigManager extends BaseContract {
       rentalFeePercent: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    warperController(
+      warper: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -165,6 +192,11 @@ export interface IProtocolConfigManager extends BaseContract {
     setProtocolRentalFeePercent(
       rentalFeePercent: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    warperController(
+      warper: string,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

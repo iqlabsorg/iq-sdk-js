@@ -6,13 +6,11 @@ export const solidityId = (string: string): string => {
 };
 
 // The `namespace` value must be a correct CAIP-19 asset type namespace.
-export type AssetClassNamespace = 'erc721';
-export type AssetClass = 'ERC721';
-export const assetClasses: Record<AssetClass, { id: string; namespace: AssetClassNamespace }> = {
+export const assetClasses = {
   ERC721: { id: solidityId('ERC721'), namespace: 'erc721' }, // id: 0x73ad2146
-};
+} as const;
 
-export type ListingStrategyName = 'FIXED_PRICE';
-export const listingStrategies: Record<ListingStrategyName, { id: string; name: ListingStrategyName }> = {
+export const listingStrategies = {
   FIXED_PRICE: { id: solidityId('FIXED_PRICE'), name: 'FIXED_PRICE' }, // id: 0xce977739
-};
+  FIXED_PRICE_WITH_REWARD: { id: solidityId('FIXED_PRICE_WITH_REWARD'), name: 'FIXED_PRICE_WITH_REWARD' }, // 0xa7832972
+} as const;

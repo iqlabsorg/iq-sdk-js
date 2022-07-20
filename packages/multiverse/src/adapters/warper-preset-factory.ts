@@ -6,6 +6,7 @@ import { AddressTranslator } from '../address-translator';
 import { BytesLike, ContractTransaction } from 'ethers';
 import { defaultAbiCoder, formatBytes32String } from 'ethers/lib/utils';
 import { assetClasses } from '../constants';
+import { assetClassToNamespace } from '../utils';
 
 export class WarperPresetFactoryAdapter extends Adapter {
   private readonly contract: WarperPresetFactory;
@@ -49,7 +50,7 @@ export class WarperPresetFactoryAdapter extends Adapter {
     const warper = this.contractResolver.resolveWarper(event.args.warper);
     const assetClass = await warper.__assetClass();
 
-    return this.addressToAssetType(event.args.warper, this.assetClassToNamespace(assetClass));
+    return this.addressToAssetType(event.args.warper, assetClassToNamespace(assetClass));
   }
 
   private encodePresetInitData(presetId: string, data: { metahub: AccountId; original: AssetType }): BytesLike {

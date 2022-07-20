@@ -56,6 +56,12 @@ const _abi = [
       },
       {
         indexed: true,
+        internalType: "uint256",
+        name: "listingGroupId",
+        type: "uint256",
+      },
+      {
+        indexed: true,
         internalType: "address",
         name: "lister",
         type: "address",
@@ -315,6 +321,11 @@ const _abi = [
             name: "paused",
             type: "bool",
           },
+          {
+            internalType: "uint256",
+            name: "groupId",
+            type: "uint256",
+          },
         ],
         internalType: "struct Listings.Listing[]",
         name: "",
@@ -400,11 +411,35 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "",
+        name: "listingId",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "listingGroupId",
         type: "uint256",
       },
     ],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes4",
+        name: "strategyId",
+        type: "bytes4",
+      },
+    ],
+    name: "listingController",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -507,6 +542,11 @@ const _abi = [
             internalType: "bool",
             name: "paused",
             type: "bool",
+          },
+          {
+            internalType: "uint256",
+            name: "groupId",
+            type: "uint256",
           },
         ],
         internalType: "struct Listings.Listing",
@@ -614,6 +654,11 @@ const _abi = [
             internalType: "bool",
             name: "paused",
             type: "bool",
+          },
+          {
+            internalType: "uint256",
+            name: "groupId",
+            type: "uint256",
           },
         ],
         internalType: "struct Listings.Listing[]",
@@ -771,6 +816,11 @@ const _abi = [
             internalType: "bool",
             name: "paused",
             type: "bool",
+          },
+          {
+            internalType: "uint256",
+            name: "groupId",
+            type: "uint256",
           },
         ],
         internalType: "struct Listings.Listing[]",

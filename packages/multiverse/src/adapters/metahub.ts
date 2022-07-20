@@ -5,20 +5,18 @@ import { AddressTranslator } from '../address-translator';
 import { AccountId, AssetType } from 'caip';
 import {
   AccountBalance,
-  Address,
   Asset,
   AssetListingParams,
   BaseToken,
   Listing,
-  RegisteredWarper,
   RentalAgreement,
   RentalFees,
   RentingEstimationParams,
   RentingParams,
 } from '../types';
-import { encodeERC721Asset, encodeFixedPriceStrategy, pick } from '../utils';
-import { Listings, Rentings, Warpers } from '../contracts/contracts/metahub/IMetahub';
-import { IWarperManager, Metahub } from '../contracts';
+import { assetClassToNamespace, pick } from '../utils';
+import { Listings, Rentings } from '../contracts/contracts/metahub/IMetahub';
+import { Metahub } from '../contracts';
 import { assetClasses } from '../constants';
 
 export class MetahubAdapter extends Adapter {
@@ -126,45 +124,7 @@ export class MetahubAdapter extends Adapter {
     );
   }
 
-  // Warper Management
-
-  /**
-   * Registers a new warper.
-   * The warper must be deployed and configured prior to registration, since it becomes available for renting immediately.
-   * @param warper Warper reference.
-   * @param params Warper registration params.
-   */
-  async registerWarper(
-    warper: AssetType,
-    params: IWarperManager.WarperRegistrationParamsStruct,
-  ): Promise<ContractTransaction> {
-    return this.contract.registerWarper(this.assetTypeToAddress(warper), params);
-  }
-
-  /**
-   * Deletes warper registration information.
-   * All current rental agreements with the warper will stay intact, but the new rentals won't be possible.
-   * @param warper Warper reference.
-   */
-  async deregisterWarper(warper: AssetType): Promise<ContractTransaction> {
-    return this.contract.deregisterWarper(this.assetTypeToAddress(warper));
-  }
-
-  /**
-   * Puts the warper on pause.
-   * @param warper Warper reference.
-   */
-  async pauseWarper(warper: AssetType): Promise<ContractTransaction> {
-    return this.contract.pauseWarper(this.assetTypeToAddress(warper));
-  }
-
-  /**
-   * Lifts the warper pause.
-   * @param warper Warper reference.
-   */
-  async unpauseWarper(warper: AssetType): Promise<ContractTransaction> {
-    return this.contract.unpauseWarper(this.assetTypeToAddress(warper));
-  }
+  // Asset Management
 
   /**
    * Returns the number of currently supported assets.
@@ -182,59 +142,8 @@ export class MetahubAdapter extends Adapter {
   async supportedAssets(offset: BigNumberish, limit: BigNumberish): Promise<AssetType[]> {
     const [addresses, assetConfigs] = await this.contract.supportedAssets(offset, limit);
     return assetConfigs.map((assetConfig, i) =>
-      this.addressToAssetType(addresses[i], this.assetClassToNamespace(assetConfig.assetClass)),
+      this.addressToAssetType(addresses[i], assetClassToNamespace(assetConfig.assetClass)),
     );
-  }
-
-  /**
-   * Returns the number of warpers belonging to the particular universe.
-   * @param universeId The universe ID.
-   * @return Warper count.
-   */
-  async universeWarperCount(universeId: BigNumberish): Promise<BigNumber> {
-    return this.contract.universeWarperCount(universeId);
-  }
-
-  /**
-   * Returns the list of warpers belonging to the particular universe.
-   * @param universeId The universe ID.
-   * @param offset Starting index.
-   * @param limit Max number of items.
-   */
-  async universeWarpers(
-    universeId: BigNumberish,
-    offset: BigNumberish,
-    limit: BigNumberish,
-  ): Promise<RegisteredWarper[]> {
-    const [addresses, warpers] = await this.contract.universeWarpers(universeId, offset, limit);
-    return warpers.map((warper, i) => this.normalizeWarper(addresses[i], warper));
-  }
-
-  /**
-   * Returns the number of warpers associated with the particular original asset.
-   * @param asset Original asset reference.
-   * @return Warper count.
-   */
-  async assetWarperCount(asset: AssetType): Promise<BigNumber> {
-    return this.contract.assetWarperCount(this.assetTypeToAddress(asset));
-  }
-
-  /**
-   * Returns the list of warpers associated with the particular original asset.
-   * @param asset Original asset reference.
-   * @param offset Starting index.
-   * @param limit Max number of items.
-   */
-  async assetWarpers(asset: AssetType, offset: BigNumberish, limit: BigNumberish): Promise<RegisteredWarper[]> {
-    const [addresses, warpers] = await this.contract.assetWarpers(this.assetTypeToAddress(asset), offset, limit);
-    return warpers.map((warper, i) => this.normalizeWarper(addresses[i], warper));
-  }
-
-  /**
-   * @dev Returns warper preset factory address.
-   */
-  async warperPresetFactory(): Promise<AccountId> {
-    return this.addressToAccountId(await this.contract.warperPresetFactory());
   }
 
   /**
@@ -245,17 +154,6 @@ export class MetahubAdapter extends Adapter {
    */
   async isWarperAdmin(warper: AssetType, account: AccountId): Promise<boolean> {
     return this.contract.isWarperAdmin(this.assetTypeToAddress(warper), this.accountIdToAddress(account));
-  }
-
-  /**
-   * Returns registered warper details.
-   * @param warper Warper reference.
-   * @return Warper details.
-   */
-  async warper(warper: AssetType): Promise<RegisteredWarper> {
-    const warperAddress = this.assetTypeToAddress(warper);
-    const warperInfo = await this.contract.warperInfo(warperAddress);
-    return this.normalizeWarper(warperAddress, warperInfo);
   }
 
   // Listing Management
@@ -327,13 +225,9 @@ export class MetahubAdapter extends Adapter {
    */
   async listAsset(params: AssetListingParams): Promise<ContractTransaction> {
     const { asset, strategy, maxLockPeriod, immediatePayout } = params;
-    if (asset.id.assetName.namespace !== assetClasses.ERC721.namespace) {
-      throw new Error('Invalid namespace');
-    }
 
-    const address = this.assetIdToAddress(asset.id);
-    const encodedAsset = encodeERC721Asset(address, asset.id.tokenId, asset.value);
-    const listingParams = encodeFixedPriceStrategy(strategy.data.price);
+    const encodedAsset = this.encodeAsset(asset);
+    const listingParams = this.encodeListingParams(strategy);
 
     return this.contract.listAsset(encodedAsset, listingParams, maxLockPeriod, immediatePayout);
   }
@@ -518,8 +412,9 @@ export class MetahubAdapter extends Adapter {
     return {
       ...pick(agreement, ['collectionId', 'listingId', 'startTime', 'endTime']),
       id: BigNumber.from(rentalId),
-      warpedAsset: this.decodeERC721AssetStruct(agreement.warpedAsset),
+      warpedAsset: this.decodeAsset(agreement.warpedAsset),
       renter: this.addressToAccountId(agreement.renter),
+      listingParams: this.decodeListingParams(agreement.listingParams),
     };
   }
 
@@ -543,26 +438,11 @@ export class MetahubAdapter extends Adapter {
    */
   private normalizeListing(listingId: BigNumberish, listing: Listings.ListingStructOutput): Listing {
     return {
-      ...pick(listing, ['maxLockPeriod', 'lockedTill', 'immediatePayout', 'delisted', 'paused']),
+      ...pick(listing, ['maxLockPeriod', 'lockedTill', 'immediatePayout', 'delisted', 'paused', 'groupId']),
       id: BigNumber.from(listingId),
-      asset: this.decodeERC721AssetStruct(listing.asset),
-      strategy: this.decodeFixedPriceListingStrategy(listing.params),
+      asset: this.decodeAsset(listing.asset),
+      strategy: this.decodeListingParams(listing.params),
       lister: this.addressToAccountId(listing.lister),
-    };
-  }
-
-  /**
-   * Normalizes warper structure.
-   * @param warperAddress
-   * @param warper
-   * @private
-   */
-  private normalizeWarper(warperAddress: Address, warper: Warpers.WarperStructOutput): RegisteredWarper {
-    const namespace = this.assetClassToNamespace(warper.assetClass);
-    return {
-      ...pick(warper, ['name', 'universeId', 'paused']),
-      self: this.addressToAssetType(warperAddress, namespace),
-      original: this.addressToAssetType(warper.original, namespace),
     };
   }
 }

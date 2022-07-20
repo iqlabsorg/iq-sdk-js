@@ -2,11 +2,13 @@
 /* tslint:disable */
 /* eslint-disable */
 export * as erc721ReceiverSol from "./ERC721Receiver.sol";
+export * as warperRentalHookSol from "./WarperRentalHook.sol";
 export { ERC20Mock__factory } from "./ERC20Mock__factory";
 export { ERC721AssetVaultMock__factory } from "./ERC721AssetVaultMock__factory";
 export { ERC721InternalTest__factory } from "./ERC721InternalTest__factory";
 export { ERC721Mock__factory } from "./ERC721Mock__factory";
 export { ERC721WarperControllerMock__factory } from "./ERC721WarperControllerMock__factory";
-export { InterfacePrinter__factory } from "./InterfacePrinter__factory";
 export { MetahubV2Mock__factory } from "./MetahubV2Mock__factory";
+export { SolidityInterfaces__factory } from "./SolidityInterfaces__factory";
+export { WarperExtendingPreset__factory } from "./WarperExtendingPreset__factory";
 export { WarperPresetMock__factory } from "./WarperPresetMock__factory";

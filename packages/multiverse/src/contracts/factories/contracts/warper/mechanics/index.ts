@@ -5,3 +5,4 @@ export * as assetRentability from "./asset-rentability";
 export * as availabilityPeriod from "./availability-period";
 export * as rentalFeePremium from "./rental-fee-premium";
 export * as rentalPeriod from "./rental-period";
+export * as rentingHook from "./renting-hook";

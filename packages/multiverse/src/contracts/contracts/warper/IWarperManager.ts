@@ -67,30 +67,18 @@ export declare namespace IWarperManager {
   ] & { name: string; universeId: BigNumber; paused: boolean };
 }
 
-export declare namespace Assets {
-  export type AssetConfigStruct = {
-    controller: string;
-    assetClass: BytesLike;
-    vault: string;
-  };
-
-  export type AssetConfigStructOutput = [string, string, string] & {
-    controller: string;
-    assetClass: string;
-    vault: string;
-  };
-}
-
 export interface IWarperManagerInterface extends utils.Interface {
   functions: {
     "assetWarperCount(address)": FunctionFragment;
     "assetWarpers(address,uint256,uint256)": FunctionFragment;
+    "checkRegisteredWarper(address)": FunctionFragment;
+    "checkSupportedAsset(address)": FunctionFragment;
     "deregisterWarper(address)": FunctionFragment;
     "isWarperAdmin(address,address)": FunctionFragment;
+    "metahub()": FunctionFragment;
     "pauseWarper(address)": FunctionFragment;
     "registerWarper(address,(string,uint256,bool))": FunctionFragment;
-    "supportedAssetCount()": FunctionFragment;
-    "supportedAssets(uint256,uint256)": FunctionFragment;
+    "setWarperController(address[],address)": FunctionFragment;
     "universeWarperCount(uint256)": FunctionFragment;
     "universeWarpers(uint256,uint256,uint256)": FunctionFragment;
     "unpauseWarper(address)": FunctionFragment;
@@ -103,12 +91,14 @@ export interface IWarperManagerInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "assetWarperCount"
       | "assetWarpers"
+      | "checkRegisteredWarper"
+      | "checkSupportedAsset"
       | "deregisterWarper"
       | "isWarperAdmin"
+      | "metahub"
       | "pauseWarper"
       | "registerWarper"
-      | "supportedAssetCount"
-      | "supportedAssets"
+      | "setWarperController"
       | "universeWarperCount"
       | "universeWarpers"
       | "unpauseWarper"
@@ -126,6 +116,14 @@ export interface IWarperManagerInterface extends utils.Interface {
     values: [string, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "checkRegisteredWarper",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "checkSupportedAsset",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "deregisterWarper",
     values: [string]
   ): string;
@@ -133,18 +131,15 @@ export interface IWarperManagerInterface extends utils.Interface {
     functionFragment: "isWarperAdmin",
     values: [string, string]
   ): string;
+  encodeFunctionData(functionFragment: "metahub", values?: undefined): string;
   encodeFunctionData(functionFragment: "pauseWarper", values: [string]): string;
   encodeFunctionData(
     functionFragment: "registerWarper",
     values: [string, IWarperManager.WarperRegistrationParamsStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "supportedAssetCount",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "supportedAssets",
-    values: [BigNumberish, BigNumberish]
+    functionFragment: "setWarperController",
+    values: [string[], string]
   ): string;
   encodeFunctionData(
     functionFragment: "universeWarperCount",
@@ -177,6 +172,14 @@ export interface IWarperManagerInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "checkRegisteredWarper",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "checkSupportedAsset",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "deregisterWarper",
     data: BytesLike
   ): Result;
@@ -184,6 +187,7 @@ export interface IWarperManagerInterface extends utils.Interface {
     functionFragment: "isWarperAdmin",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "metahub", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "pauseWarper",
     data: BytesLike
@@ -193,11 +197,7 @@ export interface IWarperManagerInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "supportedAssetCount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "supportedAssets",
+    functionFragment: "setWarperController",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -316,6 +316,16 @@ export interface IWarperManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string[], Warpers.WarperStructOutput[]]>;
 
+    checkRegisteredWarper(
+      warper: string,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    checkSupportedAsset(
+      asset: string,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
     deregisterWarper(
       warper: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -326,6 +336,8 @@ export interface IWarperManager extends BaseContract {
       account: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    metahub(overrides?: CallOverrides): Promise<[string]>;
 
     pauseWarper(
       warper: string,
@@ -338,13 +350,11 @@ export interface IWarperManager extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    supportedAssetCount(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    supportedAssets(
-      offset: BigNumberish,
-      limit: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string[], Assets.AssetConfigStructOutput[]]>;
+    setWarperController(
+      warpers: string[],
+      controller: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     universeWarperCount(
       universeId: BigNumberish,
@@ -388,6 +398,13 @@ export interface IWarperManager extends BaseContract {
     overrides?: CallOverrides
   ): Promise<[string[], Warpers.WarperStructOutput[]]>;
 
+  checkRegisteredWarper(
+    warper: string,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  checkSupportedAsset(asset: string, overrides?: CallOverrides): Promise<void>;
+
   deregisterWarper(
     warper: string,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -398,6 +415,8 @@ export interface IWarperManager extends BaseContract {
     account: string,
     overrides?: CallOverrides
   ): Promise<boolean>;
+
+  metahub(overrides?: CallOverrides): Promise<string>;
 
   pauseWarper(
     warper: string,
@@ -410,13 +429,11 @@ export interface IWarperManager extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  supportedAssetCount(overrides?: CallOverrides): Promise<BigNumber>;
-
-  supportedAssets(
-    offset: BigNumberish,
-    limit: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<[string[], Assets.AssetConfigStructOutput[]]>;
+  setWarperController(
+    warpers: string[],
+    controller: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   universeWarperCount(
     universeId: BigNumberish,
@@ -457,6 +474,16 @@ export interface IWarperManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string[], Warpers.WarperStructOutput[]]>;
 
+    checkRegisteredWarper(
+      warper: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    checkSupportedAsset(
+      asset: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     deregisterWarper(warper: string, overrides?: CallOverrides): Promise<void>;
 
     isWarperAdmin(
@@ -464,6 +491,8 @@ export interface IWarperManager extends BaseContract {
       account: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    metahub(overrides?: CallOverrides): Promise<string>;
 
     pauseWarper(warper: string, overrides?: CallOverrides): Promise<void>;
 
@@ -473,13 +502,11 @@ export interface IWarperManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    supportedAssetCount(overrides?: CallOverrides): Promise<BigNumber>;
-
-    supportedAssets(
-      offset: BigNumberish,
-      limit: BigNumberish,
+    setWarperController(
+      warpers: string[],
+      controller: string,
       overrides?: CallOverrides
-    ): Promise<[string[], Assets.AssetConfigStructOutput[]]>;
+    ): Promise<void>;
 
     universeWarperCount(
       universeId: BigNumberish,
@@ -549,6 +576,16 @@ export interface IWarperManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    checkRegisteredWarper(
+      warper: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    checkSupportedAsset(
+      asset: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     deregisterWarper(
       warper: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -559,6 +596,8 @@ export interface IWarperManager extends BaseContract {
       account: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    metahub(overrides?: CallOverrides): Promise<BigNumber>;
 
     pauseWarper(
       warper: string,
@@ -571,12 +610,10 @@ export interface IWarperManager extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    supportedAssetCount(overrides?: CallOverrides): Promise<BigNumber>;
-
-    supportedAssets(
-      offset: BigNumberish,
-      limit: BigNumberish,
-      overrides?: CallOverrides
+    setWarperController(
+      warpers: string[],
+      controller: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     universeWarperCount(
@@ -619,6 +656,16 @@ export interface IWarperManager extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    checkRegisteredWarper(
+      warper: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    checkSupportedAsset(
+      asset: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     deregisterWarper(
       warper: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -629,6 +676,8 @@ export interface IWarperManager extends BaseContract {
       account: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    metahub(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     pauseWarper(
       warper: string,
@@ -641,14 +690,10 @@ export interface IWarperManager extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    supportedAssetCount(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    supportedAssets(
-      offset: BigNumberish,
-      limit: BigNumberish,
-      overrides?: CallOverrides
+    setWarperController(
+      warpers: string[],
+      controller: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     universeWarperCount(

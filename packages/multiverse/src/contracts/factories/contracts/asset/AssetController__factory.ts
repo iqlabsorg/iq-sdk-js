@@ -82,6 +82,10 @@ const _abi = [
     type: "event",
   },
   {
+    stateMutability: "nonpayable",
+    type: "fallback",
+  },
+  {
     inputs: [],
     name: "assetClass",
     outputs: [

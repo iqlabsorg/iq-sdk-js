@@ -1,7 +1,9 @@
 import { AccountId, AssetId, AssetType, ChainId } from 'caip';
 import { BigNumber, Overrides as BaseOverrides } from 'ethers';
 import { BigNumberish } from '@ethersproject/bignumber';
-import { Accounts, Listings, Rentings, Warpers } from './contracts/contracts/metahub/IMetahub';
+import { Accounts, Listings, Rentings } from './contracts/contracts/metahub/IMetahub';
+import { Warpers } from './contracts/contracts/warper/IWarperManager';
+import { listingStrategies } from './constants';
 
 export type Address = string;
 
@@ -12,27 +14,37 @@ export interface ChainAware {
   getChainId(): Promise<ChainId>;
 }
 
-export type AssetListingParams = {
-  asset: Asset;
-  strategy: FixedPriceListingStrategyParams;
-  maxLockPeriod: BigNumberish;
-  immediatePayout: boolean;
-};
+export type ListingStrategyParams = FixedPriceListingStrategyParams | FixedPriceWithRewardListingStrategyParams;
 
 export type FixedPriceListingStrategyParams = {
-  name: 'FIXED_PRICE';
+  name: typeof listingStrategies.FIXED_PRICE.name;
   data: {
     price: BigNumberish;
   };
 };
 
+export type FixedPriceWithRewardListingStrategyParams = {
+  name: typeof listingStrategies.FIXED_PRICE_WITH_REWARD.name;
+  data: {
+    price: BigNumberish;
+    rewardPercent: BigNumberish;
+  };
+};
+
+export type AssetListingParams = {
+  asset: Asset;
+  strategy: ListingStrategyParams;
+  maxLockPeriod: BigNumberish;
+  immediatePayout: boolean;
+};
+
 export type Listing = Pick<
   Listings.ListingStructOutput,
-  'maxLockPeriod' | 'lockedTill' | 'immediatePayout' | 'delisted' | 'paused'
+  'maxLockPeriod' | 'lockedTill' | 'immediatePayout' | 'delisted' | 'paused' | 'groupId'
 > & {
   id: BigNumber;
   asset: Asset;
-  strategy: FixedPriceListingStrategyParams;
+  strategy: ListingStrategyParams;
   lister: AccountId;
 };
 
@@ -66,6 +78,7 @@ export type RentalAgreement = Pick<
   id: BigNumber;
   warpedAsset: Asset;
   renter: AccountId;
+  listingParams: ListingStrategyParams;
 };
 
 export type AccountBalance = Pick<Accounts.BalanceStructOutput, 'amount'> & {

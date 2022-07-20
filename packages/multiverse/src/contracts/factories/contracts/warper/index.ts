@@ -10,5 +10,6 @@ export { IWarperManager__factory } from "./IWarperManager__factory";
 export { IWarperPreset__factory } from "./IWarperPreset__factory";
 export { IWarperPresetFactory__factory } from "./IWarperPresetFactory__factory";
 export { Warper__factory } from "./Warper__factory";
+export { WarperManager__factory } from "./WarperManager__factory";
 export { WarperPresetFactory__factory } from "./WarperPresetFactory__factory";
 export { Warpers__factory } from "./Warpers__factory";

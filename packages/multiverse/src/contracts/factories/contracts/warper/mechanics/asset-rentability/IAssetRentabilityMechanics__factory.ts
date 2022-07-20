@@ -39,7 +39,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "isRentableAsset",
+    name: "__isRentableAsset",
     outputs: [
       {
         internalType: "bool",

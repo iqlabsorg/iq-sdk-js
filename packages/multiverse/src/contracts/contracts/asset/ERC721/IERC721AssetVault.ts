@@ -37,6 +37,7 @@ export interface IERC721AssetVaultInterface extends utils.Interface {
     "supportsInterface(bytes4)": FunctionFragment;
     "switchToRecoveryMode()": FunctionFragment;
     "unpause()": FunctionFragment;
+    "withdrawERC20Tokens(address,address,uint256)": FunctionFragment;
   };
 
   getFunction(
@@ -50,6 +51,7 @@ export interface IERC721AssetVaultInterface extends utils.Interface {
       | "supportsInterface"
       | "switchToRecoveryMode"
       | "unpause"
+      | "withdrawERC20Tokens"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -79,6 +81,10 @@ export interface IERC721AssetVaultInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "withdrawERC20Tokens",
+    values: [string, string, BigNumberish]
+  ): string;
 
   decodeFunctionResult(functionFragment: "assetClass", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "isRecovery", data: BytesLike): Result;
@@ -101,6 +107,10 @@ export interface IERC721AssetVaultInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "withdrawERC20Tokens",
+    data: BytesLike
+  ): Result;
 
   events: {
     "RecoveryModeActivated(address)": EventFragment;
@@ -183,6 +193,13 @@ export interface IERC721AssetVault extends BaseContract {
     unpause(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    withdrawERC20Tokens(
+      token: string,
+      to: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
   assetClass(overrides?: CallOverrides): Promise<string>;
@@ -222,6 +239,13 @@ export interface IERC721AssetVault extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  withdrawERC20Tokens(
+    token: string,
+    to: string,
+    amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     assetClass(overrides?: CallOverrides): Promise<string>;
 
@@ -253,6 +277,13 @@ export interface IERC721AssetVault extends BaseContract {
     switchToRecoveryMode(overrides?: CallOverrides): Promise<void>;
 
     unpause(overrides?: CallOverrides): Promise<void>;
+
+    withdrawERC20Tokens(
+      token: string,
+      to: string,
+      amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {
@@ -299,6 +330,13 @@ export interface IERC721AssetVault extends BaseContract {
     unpause(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    withdrawERC20Tokens(
+      token: string,
+      to: string,
+      amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -336,6 +374,13 @@ export interface IERC721AssetVault extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     unpause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    withdrawERC20Tokens(
+      token: string,
+      to: string,
+      amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

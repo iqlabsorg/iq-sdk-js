@@ -43,7 +43,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "calculatePremiums",
+    name: "__calculatePremiums",
     outputs: [
       {
         internalType: "uint256",
