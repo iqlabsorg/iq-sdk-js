@@ -23,3 +23,11 @@ The SDK is modular, meaning application developers can select specific packages 
 | [`@iqprotocol/abstract-storage`](https://www.npmjs.com/package/@iqprotocol/abstract-storage)       | ![npm (scoped)](https://img.shields.io/npm/v/@iqprotocol/abstract-storage?style=flat-square)    |
 | [`@iqprotocol/in-memory-storage`](https://www.npmjs.com/package/@iqprotocol/in-memory-storage)     | ![npm (scoped)](https://img.shields.io/npm/v/@iqprotocol/in-memory-storage?style=flat-square)   |
 | [`@iqprotocol/postgres-storage`](https://www.npmjs.com/package/@iqprotocol/postgres-storage)       | ![npm (scoped)](https://img.shields.io/npm/v/@iqprotocol/postgres-storage?style=flat-square)    |
+
+## Publishing
+The publishing command is interactive. It allows to set individual package versions (no need to change package.json 
+manually). Lerna updates the corresponding package.json and commits the version bump automatically.    
+```shell
+yarn build:prod
+lerna publish --ignore-prepublish
+```
