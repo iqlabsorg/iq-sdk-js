@@ -66,8 +66,25 @@ It includes EVM-compatible blockchain provider and storage provider for Postgre 
 </tr>
 </tbody></table>
 
+<a href="#maintenance" id="maintenance" style="color: inherit; text-decoration: none;">
+  <h2>Maintenance</h2>
+</a>
+
+<a href="#testing" id="testing" style="color: inherit; text-decoration: none;">
+  <h3>Testing</h3>
+</a>
+<pre><code class="language-shell"><span class="hl-0">yarn </span><span class="hl-1">test</span><br/><span class="hl-0">yarn test:integration</span>
+</code></pre>
+
+<a href="#dependency-management" id="dependency-management" style="color: inherit; text-decoration: none;">
+  <h3>Dependency management</h3>
+</a>
+<p>In order to keep dependencies up to date and synchronized across packages, the following commands can be used.</p>
+<pre><code class="language-shell"><span class="hl-0">// Find outdated dependencies manually</span><br/><span class="hl-0">yarn outdated</span><br/><br/><span class="hl-0">// Upgrade dependencies interactively</span><br/><span class="hl-0">yarn upgrade-interactive</span>
+</code></pre>
+
 <a href="#publishing" id="publishing" style="color: inherit; text-decoration: none;">
-  <h2>Publishing</h2>
+  <h3>Publishing</h3>
 </a>
 <p>The publishing command is interactive. It allows to set individual package versions (no need to change package.json 
 manually). Lerna updates the corresponding package.json and commits the version bump automatically.    </p>
